@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caderninho — SpendingTreemap (Estilo Finviz)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #FAFAF9;
+    --surface: #FFFFFF;
+    --border: #E7E5E4;
+    --border-hover: #D6D3D1;
+    --text-primary: #1C1917;
+    --text-secondary: #78716C;
+    --text-tertiary: #A8A29E;
+    --primary: #4F46E5;
+    --primary-hover: #4338CA;
+    --primary-light: #EEF2FF;
+    --positive: #22C55E;
+    --positive-bg: #DCFCE7;
+    --positive-text: #166534;
+    --attention: #EAB308;
+    --attention-bg: #FEF9C3;
+    --attention-text: #854D0E;
+    --alert: #F97316;
+    --alert-bg: #FFF7ED;
+    --critical: #DC2626;
+    --critical-bg: #FEE2E2;
+    --critical-text: #991B1B;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #D6D3D1;
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
+
+  .showcase-header {
+    text-align: center;
+    padding: 40px 24px 32px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .showcase-header h1 { font-size: 24px; font-weight: 700; }
+  .showcase-header p { font-size: 14px; color: var(--text-secondary); margin-top: 6px; max-width: 700px; margin-left: auto; margin-right: auto; }
+
+  .section-divider {
+    text-align: center;
+    padding: 48px 24px 24px;
+  }
+  .section-divider h2 { font-size: 18px; font-weight: 600; }
+  .section-divider p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+  /* ========================================
+     APP FRAME
+     ======================================== */
+  .desktop-frame {
+    max-width: 1200px;
+    margin: 0 auto 48px;
+    padding: 0 24px;
+  }
+
+  .app-container {
+    display: flex;
+    background: var(--bg);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    min-height: 680px;
+  }
+
+  .sidebar {
+    width: 56px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 16px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .sidebar-logo {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 14px;
+    margin-bottom: 16px;
+  }
+  .sidebar-item {
+    width: 40px; height: 40px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary); cursor: pointer;
+    transition: all 0.15s; font-size: 18px;
+  }
+  .sidebar-item:hover { background: var(--bg); color: var(--text-primary); }
+  .sidebar-item.active { background: var(--primary-light); color: var(--primary); }
+
+  .main-content {
+    flex: 1;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .top-bar h1 { font-size: 20px; font-weight: 700; }
+  .top-bar-right { display: flex; gap: 8px; align-items: center; }
+
+  .view-tabs {
+    display: flex;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .view-tab {
+    padding: 6px 14px; font-size: 12px; font-weight: 500;
+    color: var(--text-secondary); cursor: pointer;
+    border-right: 1px solid var(--border); transition: all 0.15s;
+  }
+  .view-tab:last-child { border-right: none; }
+  .view-tab:hover { background: var(--bg); }
+  .view-tab.active { background: var(--primary); color: white; }
+
+  .period-selector { display: flex; gap: 6px; }
+  .period-btn {
+    padding: 4px 12px; font-size: 12px; font-weight: 500;
+    border: 1px solid var(--border); border-radius: 6px;
+    background: var(--surface); color: var(--text-secondary); cursor: pointer;
+  }
+  .period-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+  .breadcrumb {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;
+  }
+  .breadcrumb a { color: var(--primary); text-decoration: none; cursor: pointer; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .breadcrumb .sep { color: var(--text-tertiary); }
+  .breadcrumb .current { font-weight: 500; color: var(--text-primary); }
+  .breadcrumb .back-link {
+    margin-left: auto; font-size: 11px; color: var(--primary); cursor: pointer;
+  }
+
+  /* ========================================
+     TREEMAP CONTAINER
+     ======================================== */
+  .treemap-card {
+    background: var(--surface);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .treemap-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .treemap-meta h2 { font-size: 16px; font-weight: 600; }
+  .treemap-total { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .treemap-total strong { color: var(--text-primary); font-weight: 600; }
+
+  .treemap-legend {
+    display: flex; gap: 16px; margin-bottom: 14px; font-size: 11px; color: var(--text-secondary);
+  }
+  .legend-item { display: flex; align-items: center; gap: 4px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+  /* The treemap itself — absolutely positioned blocks */
+  .treemap-area {
+    position: relative;
+    flex: 1;
+    min-height: 480px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  .tm-block {
+    position: absolute;
+    cursor: pointer;
+    transition: filter 0.15s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    padding: 12px 14px;
+    overflow: hidden;
+    border: 1.5px solid rgba(255,255,255,0.5);
+  }
+  .tm-block:hover {
+    filter: brightness(0.94);
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,0.1);
+    z-index: 2;
+  }
+
+  .tm-label {
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    opacity: 0.75; margin-bottom: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .tm-value {
+    font-weight: 700; font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+  }
+  .tm-percent {
+    font-size: 12px; font-weight: 500; opacity: 0.7; margin-top: 1px;
+  }
+  .tm-bar-wrap {
+    margin-top: auto; padding-top: 6px;
+  }
+  .tm-bar-label {
+    font-size: 10px; opacity: 0.65; margin-bottom: 3px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .tm-bar {
+    height: 4px; border-radius: 2px; overflow: hidden;
+    background: rgba(0,0,0,0.1);
+  }
+  .tm-bar-fill { height: 100%; border-radius: 2px; }
+  .tm-hint {
+    position: absolute; bottom: 8px; right: 10px;
+    font-size: 9px; opacity: 0.45;
+  }
+
+  /* Size classes for text */
+  .tm-block.sz-lg .tm-value { font-size: 26px; }
+  .tm-block.sz-md .tm-value { font-size: 19px; }
+  .tm-block.sz-sm .tm-value { font-size: 15px; }
+  .tm-block.sz-xs .tm-value { font-size: 13px; }
+  .tm-block.sz-xs .tm-label { font-size: 8px; }
+  .tm-block.sz-xs .tm-percent { font-size: 10px; }
+  .tm-block.sz-xs .tm-bar-wrap { display: none; }
+  .tm-block.sz-xxs .tm-value { font-size: 11px; }
+  .tm-block.sz-xxs .tm-label { font-size: 7px; }
+  .tm-block.sz-xxs .tm-percent { display: none; }
+  .tm-block.sz-xxs .tm-bar-wrap { display: none; }
+  .tm-block.sz-xxs .tm-hint { display: none; }
+
+  /* Color themes */
+  .tm-positive { background: linear-gradient(145deg, #C6F6D5, #9AE6B4); color: #14532D; }
+  .tm-positive .tm-bar-fill { background: #22C55E; }
+  .tm-positive-deep { background: linear-gradient(145deg, #86EFAC, #4ADE80); color: #052E16; }
+  .tm-positive-deep .tm-bar-fill { background: #16A34A; }
+  .tm-attention { background: linear-gradient(145deg, #FDE68A, #FCD34D); color: #713F12; }
+  .tm-attention .tm-bar-fill { background: #CA8A04; }
+  .tm-alert { background: linear-gradient(145deg, #FED7AA, #FDBA74); color: #7C2D12; }
+  .tm-alert .tm-bar-fill { background: #EA580C; }
+  .tm-critical { background: linear-gradient(145deg, #FECACA, #FCA5A5); color: #7F1D1D; }
+  .tm-critical .tm-bar-fill { background: #DC2626; }
+  .tm-neutral { background: linear-gradient(145deg, #DDD6FE, #C4B5FD); color: #312E81; }
+  .tm-neutral .tm-bar-fill { background: #7C3AED; }
+  .tm-neutral-light { background: linear-gradient(145deg, #E0E7FF, #C7D2FE); color: #312E81; }
+  .tm-neutral-light .tm-bar-fill { background: #4F46E5; }
+
+  /* Tooltip */
+  .tooltip {
+    position: fixed;
+    background: rgba(28, 25, 23, 0.95);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 1000;
+    display: none;
+    max-width: 260px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    backdrop-filter: blur(8px);
+  }
+  .tooltip .tt-name { font-weight: 600; font-size: 13px; margin-bottom: 6px; }
+  .tooltip .tt-row { display: flex; justify-content: space-between; gap: 20px; padding: 1px 0; font-variant-numeric: tabular-nums; }
+  .tooltip .tt-row .tt-val { font-weight: 500; }
+  .tooltip .tt-divider { height: 1px; background: rgba(255,255,255,0.15); margin: 6px 0; }
+  .tooltip .tt-hint { font-size: 10px; opacity: 0.6; margin-top: 4px; }
+
+  /* Insight banner */
+  .insight-banner {
+    margin-top: 14px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 12px;
+  }
+  .insight-banner.critical { background: var(--critical-bg); border: 1px solid #FECACA; color: var(--critical-text); }
+  .insight-banner .insight-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .insight-banner strong { font-weight: 600; }
+
+  /* ========================================
+     MOBILE
+     ======================================== */
+  .mobile-section {
+    max-width: 900px;
+    margin: 0 auto 48px;
+    padding: 0 24px;
+    display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;
+  }
+  .mobile-frame {
+    width: 375px;
+    background: var(--bg);
+    border-radius: 32px;
+    border: 3px solid #1C1917;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  }
+  .mobile-notch {
+    width: 120px; height: 28px; background: #1C1917;
+    margin: 0 auto; border-radius: 0 0 16px 16px;
+  }
+  .mobile-body { padding: 8px 16px 0; }
+  .mobile-top { display: flex; justify-content: space-between; align-items: center; padding: 8px 0 10px; }
+  .mobile-top h2 { font-size: 16px; font-weight: 600; }
+  .mobile-tabs {
+    display: flex; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 6px; overflow: hidden; margin-bottom: 10px;
+  }
+  .mobile-tab {
+    flex: 1; text-align: center; padding: 6px 0;
+    font-size: 11px; font-weight: 500; color: var(--text-secondary);
+    border-right: 1px solid var(--border);
+  }
+  .mobile-tab:last-child { border-right: none; }
+  .mobile-tab.active { background: var(--primary); color: white; }
+  .mobile-bc { font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; }
+  .mobile-bc a { color: var(--primary); text-decoration: none; }
+
+  .mobile-treemap-area {
+    position: relative;
+    min-height: 400px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--bg);
+    margin-bottom: 10px;
+  }
+
+  .bottom-nav {
+    display: flex;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 6px 0 14px;
+  }
+  .bn-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 4px 0;
+  }
+  .bn-item.active { color: var(--primary); font-weight: 500; }
+  .bn-icon { font-size: 18px; height: 22px; display: flex; align-items: center; }
+  .fab {
+    width: 48px; height: 48px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 24px; font-weight: 300;
+    margin-top: -20px;
+    box-shadow: 0 2px 12px rgba(79, 70, 229, 0.3);
+  }
+
+  /* ========================================
+     FLOW DIAGRAM
+     ======================================== */
+  .flow-section {
+    max-width: 1200px;
+    margin: 0 auto 48px;
+    padding: 0 24px;
+  }
+  .flow-card {
+    background: var(--surface);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 24px;
+    overflow-x: auto;
+  }
+  .flow-steps {
+    display: flex; gap: 12px; min-width: max-content;
+  }
+  .flow-step {
+    width: 240px; flex-shrink: 0;
+    border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+  }
+  .flow-step-head {
+    padding: 8px 12px; background: var(--bg); border-bottom: 1px solid var(--border);
+    font-size: 11px; font-weight: 600; color: var(--text-secondary);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .step-num {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--primary); color: white; font-size: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .flow-step-body {
+    padding: 10px; min-height: 170px; position: relative;
+  }
+  .flow-mini-treemap { position: relative; min-height: 130px; border-radius: 4px; overflow: hidden; background: var(--bg); }
+  .flow-arrow { display: flex; align-items: center; font-size: 20px; color: var(--text-tertiary); flex-shrink: 0; }
+  .flow-step-hint { text-align: center; font-size: 10px; color: var(--primary); margin-top: 6px; }
+
+  /* Comparison */
+  .comparison {
+    max-width: 1200px; margin: 0 auto 48px; padding: 0 24px;
+  }
+  .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .comp-card {
+    background: var(--surface); border-radius: 12px;
+    border: 1px solid var(--border); overflow: hidden;
+  }
+  .comp-head {
+    padding: 14px 16px; border-bottom: 1px solid var(--border);
+    font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .comp-body { padding: 16px; }
+  .comp-treemap { position: relative; min-height: 180px; border-radius: 4px; overflow: hidden; background: #1a1a2e; }
+  .comp-note { font-size: 11px; color: var(--text-secondary); margin-top: 12px; }
+  .comp-note strong { color: var(--text-primary); }
+
+  .info-card {
+    max-width: 1200px; margin: 0 auto 32px; padding: 0 24px;
+  }
+  .info-inner {
+    background: var(--primary-light); border: 1px solid #C7D2FE;
+    border-radius: 12px; padding: 20px 24px;
+    display: flex; gap: 16px; align-items: flex-start;
+  }
+  .info-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--primary); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .info-inner h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .info-inner p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  @media (max-width: 768px) {
+    .comp-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="showcase-header">
+  <h1>SpendingTreemap — Mapa de Gastos</h1>
+  <p>Visualização estilo Finviz com áreas proporcionais reais, cor como status de orçamento, drill-down hierárquico de 4 níveis e tooltip com detalhes no hover.</p>
+</div>
+
+<!-- ================================================
+     NÍVEL 1 — ESSENCIALIDADE
+     ================================================ -->
+<div class="section-divider">
+  <h2>Nível 1 — Por Essencialidade</h2>
+  <p>Cada bloco tem área proporcional ao valor real. Num olhar: onde está o dinheiro e como está o orçamento.</p>
+</div>
+
+<div class="desktop-frame">
+  <div class="app-container">
+    <div class="sidebar">
+      <div class="sidebar-logo">C</div>
+      <div class="sidebar-item">📊</div>
+      <div class="sidebar-item active">📋</div>
+      <div class="sidebar-item">✅</div>
+      <div class="sidebar-item">📈</div>
+      <div class="sidebar-item" style="margin-top:auto;">⚙️</div>
+    </div>
+    <div class="main-content">
+      <div class="top-bar">
+        <h1>Para onde vai o dinheiro</h1>
+        <div class="top-bar-right">
+          <div class="period-selector">
+            <div class="period-btn active">Março</div>
+            <div class="period-btn">Trimestre</div>
+            <div class="period-btn">Ano</div>
+          </div>
+          <div class="view-tabs">
+            <div class="view-tab active">Visual</div>
+            <div class="view-tab">Lista</div>
+            <div class="view-tab">Timeline</div>
+          </div>
+        </div>
+      </div>
+      <div class="breadcrumb">
+        <span class="current">Março 2026</span>
+        <span class="sep">·</span>
+        <span>Todos os gastos</span>
+      </div>
+      <div class="treemap-card">
+        <div class="treemap-meta">
+          <h2>Distribuição por Essencialidade</h2>
+          <div class="treemap-total">Total do mês: <strong>R$ 18.750</strong></div>
+        </div>
+        <div class="treemap-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#4ADE80;"></div>Dentro do orçamento</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#FBBF24;"></div>Próximo do limite</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#F87171;"></div>Estourou</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#A78BFA;"></div>Sem orçamento</div>
+        </div>
+        <div class="treemap-area" id="treemap-level1"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================
+     NÍVEL 2 — CATEGORIAS (dentro de Essenciais)
+     ================================================ -->
+<div class="section-divider">
+  <h2>Nível 2 — Categorias (dentro de Essenciais)</h2>
+  <p>Tocou em "Essenciais" → explode nas categorias. Áreas proporcionais ao gasto real de cada uma.</p>
+</div>
+
+<div class="desktop-frame">
+  <div class="app-container">
+    <div class="sidebar">
+      <div class="sidebar-logo">C</div>
+      <div class="sidebar-item">📊</div>
+      <div class="sidebar-item active">📋</div>
+      <div class="sidebar-item">✅</div>
+      <div class="sidebar-item">📈</div>
+      <div class="sidebar-item" style="margin-top:auto;">⚙️</div>
+    </div>
+    <div class="main-content">
+      <div class="top-bar">
+        <h1>Para onde vai o dinheiro</h1>
+        <div class="top-bar-right">
+          <div class="period-selector">
+            <div class="period-btn active">Março</div>
+            <div class="period-btn">Trimestre</div>
+            <div class="period-btn">Ano</div>
+          </div>
+          <div class="view-tabs">
+            <div class="view-tab active">Visual</div>
+            <div class="view-tab">Lista</div>
+            <div class="view-tab">Timeline</div>
+          </div>
+        </div>
+      </div>
+      <div class="breadcrumb">
+        <a>Março 2026</a><span class="sep">›</span>
+        <span class="current">Essenciais</span>
+        <span class="back-link">← Voltar</span>
+      </div>
+      <div class="treemap-card">
+        <div class="treemap-meta">
+          <h2>Essenciais — R$ 10.680</h2>
+          <div class="treemap-total">87% do orçamento de <strong>R$ 12.200</strong></div>
+        </div>
+        <div class="treemap-area" id="treemap-level2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================
+     NÍVEL 3 — SUBCATEGORIAS (dentro de Supermercado)
+     ================================================ -->
+<div class="section-divider">
+  <h2>Nível 3 — Subcategorias (dentro de Supermercado)</h2>
+  <p>Tocou em "Supermercado" → explode em subcategorias. Onde exatamente o dinheiro está indo?</p>
+</div>
+
+<div class="desktop-frame">
+  <div class="app-container">
+    <div class="sidebar">
+      <div class="sidebar-logo">C</div>
+      <div class="sidebar-item">📊</div>
+      <div class="sidebar-item active">📋</div>
+      <div class="sidebar-item">✅</div>
+      <div class="sidebar-item">📈</div>
+      <div class="sidebar-item" style="margin-top:auto;">⚙️</div>
+    </div>
+    <div class="main-content">
+      <div class="top-bar">
+        <h1>Para onde vai o dinheiro</h1>
+        <div class="top-bar-right">
+          <div class="view-tabs">
+            <div class="view-tab active">Visual</div>
+            <div class="view-tab">Lista</div>
+            <div class="view-tab">Timeline</div>
+          </div>
+        </div>
+      </div>
+      <div class="breadcrumb">
+        <a>Março 2026</a><span class="sep">›</span>
+        <a>Essenciais</a><span class="sep">›</span>
+        <span class="current">Supermercado</span>
+        <span class="back-link">← Voltar</span>
+      </div>
+      <div class="treemap-card">
+        <div class="treemap-meta">
+          <h2>Supermercado — R$ 2.530</h2>
+          <div class="treemap-total">84% do orçamento de <strong>R$ 3.000</strong> · Resta <span style="color:var(--positive);font-weight:600;">R$ 470</span></div>
+        </div>
+        <div class="treemap-area" id="treemap-level3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================
+     NÍVEL 4 — ESTABELECIMENTOS (dentro de Fast Food)
+     ================================================ -->
+<div class="section-divider">
+  <h2>Nível 4 — Estabelecimentos (dentro de Fast Food)</h2>
+  <p>O nível mais profundo. Aqui nasce o insight: "R$ 480/mês no McDonald's = R$ 5.760/ano".</p>
+</div>
+
+<div class="desktop-frame">
+  <div class="app-container">
+    <div class="sidebar">
+      <div class="sidebar-logo">C</div>
+      <div class="sidebar-item">📊</div>
+      <div class="sidebar-item active">📋</div>
+      <div class="sidebar-item">✅</div>
+      <div class="sidebar-item">📈</div>
+      <div class="sidebar-item" style="margin-top:auto;">⚙️</div>
+    </div>
+    <div class="main-content">
+      <div class="top-bar">
+        <h1>Para onde vai o dinheiro</h1>
+        <div class="top-bar-right">
+          <div class="view-tabs">
+            <div class="view-tab active">Visual</div>
+            <div class="view-tab">Lista</div>
+            <div class="view-tab">Timeline</div>
+          </div>
+        </div>
+      </div>
+      <div class="breadcrumb">
+        <a>Março 2026</a><span class="sep">›</span>
+        <a>Essenciais</a><span class="sep">›</span>
+        <a>Supermercado</a><span class="sep">›</span>
+        <span class="current">Fast Food / Prontos</span>
+        <span class="back-link">← Voltar</span>
+      </div>
+      <div class="treemap-card">
+        <div class="treemap-meta">
+          <h2>Fast Food / Prontos — R$ 720</h2>
+          <div class="treemap-total">28% do gasto em Supermercado</div>
+        </div>
+        <div class="treemap-area" id="treemap-level4"></div>
+        <div class="insight-banner critical">
+          <span class="insight-icon">🔍</span>
+          <div>
+            <div style="font-weight:600; margin-bottom:2px;">Você sabia?</div>
+            Fast food representa <strong>28% do supermercado</strong> e <strong>R$ 8.640/ano</strong>.
+            Reduzir 30% liberaria <strong>R$ 216/mês</strong> para outros objetivos.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================
+     FLUXO — 4 TOQUES ATÉ O INSIGHT
+     ================================================ -->
+<div class="section-divider">
+  <h2>Fluxo Completo — 4 Toques até o Insight</h2>
+  <p>Do panorama geral até "R$ 480/mês no McDonald's" em exatamente 4 toques</p>
+</div>
+
+<div class="flow-section">
+  <div class="flow-card">
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-step-head"><div class="step-num">1</div>Essencialidade</div>
+        <div class="flow-step-body">
+          <div style="font-size:10px;color:var(--text-secondary);margin-bottom:4px;">Visão geral</div>
+          <div class="flow-mini-treemap" id="flow-mini-1"></div>
+          <div class="flow-step-hint">👆 Toca em Essenciais</div>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-head"><div class="step-num">2</div>Categorias</div>
+        <div class="flow-step-body">
+          <div style="font-size:10px;color:var(--text-secondary);margin-bottom:4px;">Essenciais ›</div>
+          <div class="flow-mini-treemap" id="flow-mini-2"></div>
+          <div class="flow-step-hint">👆 Toca em Supermercado</div>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-head"><div class="step-num">3</div>Subcategorias</div>
+        <div class="flow-step-body">
+          <div style="font-size:10px;color:var(--text-secondary);margin-bottom:4px;">Essenciais › Supermercado ›</div>
+          <div class="flow-mini-treemap" id="flow-mini-3"></div>
+          <div class="flow-step-hint">👆 Toca em Fast Food</div>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-head"><div class="step-num">4</div>Estabelecimentos</div>
+        <div class="flow-step-body">
+          <div style="font-size:10px;color:var(--text-secondary);margin-bottom:4px;">… › Fast Food ›</div>
+          <div class="flow-mini-treemap" id="flow-mini-4"></div>
+          <div style="background:var(--critical-bg);padding:4px 8px;border-radius:4px;margin-top:6px;font-size:9px;color:var(--critical-text);text-align:center;">
+            💡 R$ 480/mês = R$ 5.760/ano
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================
+     TOOLTIP & HOVER
+     ================================================ -->
+<div class="info-card">
+  <div class="info-inner">
+    <div class="info-icon">🖱️</div>
+    <div>
+      <h3>Hover e Tooltip (Desktop)</h3>
+      <p>Passe o mouse sobre qualquer bloco para ver detalhes: valor, percentual, orçamento, transações e média. No mobile, long press exibe as mesmas informações antes de navegar ao próximo nível.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================
+     COMPARAÇÃO FINVIZ vs. CADERNINHO
+     ================================================ -->
+<div class="section-divider">
+  <h2>Inspiração Finviz vs. Aplicação no Caderninho</h2>
+  <p>Mesma mecânica visual, aplicada ao domínio financeiro pessoal</p>
+</div>
+
+<div class="comparison">
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-head">📈 Finviz — Mercado de Ações</div>
+      <div class="comp-body">
+        <div class="comp-treemap" id="comp-finviz"></div>
+        <div class="comp-note"><strong>Mecânica:</strong> Tamanho = market cap · Cor = performance (verde subiu, vermelho caiu) · Toque = drill-down para ações individuais</div>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-head">📋 Caderninho — Finanças Pessoais</div>
+      <div class="comp-body">
+        <div class="comp-treemap" id="comp-caderninho" style="background: var(--bg);"></div>
+        <div class="comp-note"><strong>Mecânica:</strong> Tamanho = valor gasto · Cor = status do orçamento (verde dentro, amarelo atenção, vermelho estourou) · Toque = drill-down até estabelecimento</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================
+     MOBILE
+     ================================================ -->
+<div class="section-divider">
+  <h2>Mobile — Treemap no Celular</h2>
+  <p>Mesma visualização proporcional real adaptada para tela vertical</p>
+</div>
+
+<div class="mobile-section">
+  <div class="mobile-frame">
+    <div class="mobile-notch"></div>
+    <div class="mobile-body">
+      <div class="mobile-top">
+        <h2>Para onde vai</h2>
+        <span style="font-size:12px;color:var(--text-secondary);">Março</span>
+      </div>
+      <div class="mobile-tabs">
+        <div class="mobile-tab active">Visual</div>
+        <div class="mobile-tab">Lista</div>
+        <div class="mobile-tab">Timeline</div>
+      </div>
+      <div style="font-size:11px;color:var(--text-secondary);margin-bottom:8px;">Total: <strong style="color:var(--text-primary);">R$ 18.750</strong></div>
+      <div class="mobile-treemap-area" id="mobile-level1"></div>
+      <div style="text-align:center;font-size:10px;color:var(--text-tertiary);">Toque num bloco para explorar</div>
+    </div>
+    <div class="bottom-nav">
+      <div class="bn-item"><span class="bn-icon">◻</span>Dashboard</div>
+      <div class="bn-item active"><span class="bn-icon">☰</span>Orçamentos</div>
+      <div class="bn-item"><div class="fab">+</div><span style="margin-top: 4px;">Registrar</span></div>
+      <div class="bn-item"><span class="bn-icon">✓</span>Checklist</div>
+      <div class="bn-item"><span class="bn-icon">→</span>Projeção</div>
+    </div>
+  </div>
+
+  <div class="mobile-frame">
+    <div class="mobile-notch"></div>
+    <div class="mobile-body">
+      <div class="mobile-top">
+        <h2>Essenciais</h2>
+        <span style="font-size:12px;color:var(--primary);cursor:pointer;">← Voltar</span>
+      </div>
+      <div class="mobile-bc"><a>Março</a> › <strong>Essenciais</strong></div>
+      <div style="font-size:11px;color:var(--text-secondary);margin-bottom:8px;">R$ 10.680 de R$ 12.200 · <span style="color:var(--positive);">Resta R$ 1.520</span></div>
+      <div class="mobile-treemap-area" id="mobile-level2"></div>
+    </div>
+    <div class="bottom-nav">
+      <div class="bn-item"><span class="bn-icon">◻</span>Dashboard</div>
+      <div class="bn-item active"><span class="bn-icon">☰</span>Orçamentos</div>
+      <div class="bn-item"><div class="fab">+</div><span style="margin-top: 4px;">Registrar</span></div>
+      <div class="bn-item"><span class="bn-icon">✓</span>Checklist</div>
+      <div class="bn-item"><span class="bn-icon">→</span>Projeção</div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:48px 24px;font-size:12px;color:var(--text-tertiary);">
+  Caderninho · SpendingTreemap com Squarified Treemap Algorithm<br>
+  4 níveis: Essencialidade → Categoria → Subcategoria → Estabelecimento
+</div>
+
+<!-- ================================================
+     TOOLTIP ELEMENT
+     ================================================ -->
+<div class="tooltip" id="tooltip"></div>
+
+<!-- ================================================
+     SQUARIFIED TREEMAP ALGORITHM + RENDERING
+     ================================================ -->
+<script>
+// ============================================
+// SQUARIFIED TREEMAP ALGORITHM
+// Based on Bruls, Huizing, van Wijk (2000)
+// ============================================
+function squarify(items, rect) {
+  const sorted = [...items].sort((a, b) => b.value - a.value);
+  const total = sorted.reduce((s, i) => s + i.value, 0);
+  const results = [];
+  layoutStrip(sorted, rect, total, results);
+  return results;
+}
+
+function layoutStrip(items, rect, totalValue, results) {
+  if (items.length === 0) return;
+  if (items.length === 1) {
+    results.push({ ...items[0], x: rect.x, y: rect.y, w: rect.w, h: rect.h });
+    return;
+  }
+
+  const { x, y, w, h } = rect;
+  const isWide = w >= h;
+  const mainDim = isWide ? h : w;
+
+  let strip = [items[0]];
+  let stripValue = items[0].value;
+  let best = worstRatio(strip, stripValue, mainDim, totalValue, rect);
+
+  for (let i = 1; i < items.length; i++) {
+    const testStrip = [...strip, items[i]];
+    const testValue = stripValue + items[i].value;
+    const testWorst = worstRatio(testStrip, testValue, mainDim, testValue + items.slice(i + 1).reduce((s, it) => s + it.value, 0) > 0 ? totalValue : testValue, rect);
+
+    if (testWorst <= best) {
+      strip = testStrip;
+      stripValue = testValue;
+      best = testWorst;
+    } else {
+      break;
+    }
+  }
+
+  // Layout the strip
+  const stripFraction = stripValue / totalValue;
+  let sx, sy, sw, sh;
+
+  if (isWide) {
+    sw = w * stripFraction;
+    sh = h;
+    sx = x;
+    sy = y;
+  } else {
+    sw = w;
+    sh = h * stripFraction;
+    sx = x;
+    sy = y;
+  }
+
+  let offset = 0;
+  for (const item of strip) {
+    const itemFraction = item.value / stripValue;
+    if (isWide) {
+      const ih = sh * itemFraction;
+      results.push({ ...item, x: sx, y: sy + offset, w: sw, h: ih });
+      offset += ih;
+    } else {
+      const iw = sw * itemFraction;
+      results.push({ ...item, x: sx + offset, y: sy, w: iw, h: sh });
+      offset += iw;
+    }
+  }
+
+  // Remaining items
+  const remaining = items.slice(strip.length);
+  if (remaining.length > 0) {
+    const remainingTotal = totalValue - stripValue;
+    let newRect;
+    if (isWide) {
+      newRect = { x: x + sw, y, w: w - sw, h };
+    } else {
+      newRect = { x, y: y + sh, w, h: h - sh };
+    }
+    layoutStrip(remaining, newRect, remainingTotal, results);
+  }
+}
+
+function worstRatio(strip, stripValue, mainDim, totalValue, rect) {
+  const { w, h } = rect;
+  const isWide = w >= h;
+  const stripDim = isWide ? w * (stripValue / totalValue) : h * (stripValue / totalValue);
+  let worst = 0;
+  for (const item of strip) {
+    const itemDim = (isWide ? h : w) * (item.value / stripValue);
+    const r = Math.max(stripDim / itemDim, itemDim / stripDim);
+    if (r > worst) worst = r;
+  }
+  return worst;
+}
+
+// ============================================
+// RENDERING
+// ============================================
+function formatBRL(v) {
+  return 'R$ ' + v.toLocaleString('pt-BR');
+}
+
+function sizeClass(w, h) {
+  const area = w * h;
+  if (area > 80000) return 'sz-lg';
+  if (area > 35000) return 'sz-md';
+  if (area > 12000) return 'sz-sm';
+  if (area > 4000) return 'sz-xs';
+  return 'sz-xxs';
+}
+
+function renderTreemap(containerId, data, containerPad = 0) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const rect = container.getBoundingClientRect();
+  const W = rect.width - containerPad * 2;
+  const H = rect.height - containerPad * 2;
+
+  const blocks = squarify(data, { x: 0, y: 0, w: W, h: H });
+
+  blocks.forEach(b => {
+    const el = document.createElement('div');
+    el.className = `tm-block ${b.theme} ${sizeClass(b.w, b.h)}`;
+    el.style.left = (b.x + containerPad) + 'px';
+    el.style.top = (b.y + containerPad) + 'px';
+    el.style.width = b.w + 'px';
+    el.style.height = b.h + 'px';
+
+    let html = `<div class="tm-label">${b.name}</div>`;
+    html += `<div class="tm-value">${formatBRL(b.value)}</div>`;
+
+    const total = data.reduce((s, i) => s + i.value, 0);
+    const pct = Math.round(b.value / total * 100);
+    html += `<div class="tm-percent">${pct}%</div>`;
+
+    if (b.budget && b.w > 100 && b.h > 80) {
+      const used = Math.min(Math.round(b.value / b.budget * 100), 100);
+      const rest = b.budget - b.value;
+      html += `<div class="tm-bar-wrap">`;
+      html += `<div class="tm-bar-label">Orçam. ${formatBRL(b.budget)}${rest > 0 ? ' · Resta ' + formatBRL(rest) : ''}</div>`;
+      html += `<div class="tm-bar"><div class="tm-bar-fill" style="width:${used}%"></div></div>`;
+      html += `</div>`;
+    }
+
+    if (b.hint && b.w > 120 && b.h > 90) {
+      html += `<div class="tm-hint">${b.hint}</div>`;
+    }
+
+    // Insight box for special items
+    if (b.insight && b.w > 140 && b.h > 100) {
+      html += `<div style="margin-top:auto;padding-top:6px;">`;
+      html += `<div style="background:rgba(0,0,0,0.08);padding:6px 8px;border-radius:5px;font-size:10px;">`;
+      html += `<div style="font-weight:600;">💡 ${b.insight}</div>`;
+      if (b.insightDetail) html += `<div style="margin-top:2px;opacity:0.8;">${b.insightDetail}</div>`;
+      html += `</div></div>`;
+    }
+
+    el.innerHTML = html;
+
+    // Tooltip
+    if (b.tooltip) {
+      el.addEventListener('mouseenter', (e) => showTooltip(e, b.tooltip));
+      el.addEventListener('mousemove', (e) => moveTooltip(e));
+      el.addEventListener('mouseleave', hideTooltip);
+    }
+
+    container.appendChild(el);
+  });
+}
+
+// ============================================
+// TOOLTIP
+// ============================================
+const tooltipEl = document.getElementById('tooltip');
+
+function showTooltip(e, data) {
+  let html = `<div class="tt-name">${data.name}</div>`;
+  for (const row of data.rows) {
+    html += `<div class="tt-row"><span>${row[0]}</span><span class="tt-val">${row[1]}</span></div>`;
+  }
+  if (data.hint) {
+    html += `<div class="tt-divider"></div>`;
+    html += `<div class="tt-hint">${data.hint}</div>`;
+  }
+  tooltipEl.innerHTML = html;
+  tooltipEl.style.display = 'block';
+  moveTooltip(e);
+}
+
+function moveTooltip(e) {
+  const pad = 12;
+  let x = e.clientX + pad;
+  let y = e.clientY + pad;
+  const tw = tooltipEl.offsetWidth;
+  const th = tooltipEl.offsetHeight;
+  if (x + tw > window.innerWidth - pad) x = e.clientX - tw - pad;
+  if (y + th > window.innerHeight - pad) y = e.clientY - th - pad;
+  tooltipEl.style.left = x + 'px';
+  tooltipEl.style.top = y + 'px';
+}
+
+function hideTooltip() {
+  tooltipEl.style.display = 'none';
+}
+
+// ============================================
+// DATA
+// ============================================
+
+// LEVEL 1 — Essencialidade
+const level1 = [
+  {
+    name: 'Essenciais', value: 10680, theme: 'tm-positive', budget: 12200,
+    hint: 'Toque para explorar →',
+    tooltip: { name: 'Essenciais', rows: [['Gasto','R$ 10.680'],['Orçamento','R$ 12.200'],['Uso','87%'],['Categorias','6'],['Resta','R$ 1.520']], hint: 'Clique para ver categorias' }
+  },
+  {
+    name: 'Qualidade de Vida', value: 5870, theme: 'tm-attention', budget: 6200,
+    hint: 'Toque para explorar →',
+    tooltip: { name: 'Qualidade de Vida', rows: [['Gasto','R$ 5.870'],['Orçamento','R$ 6.200'],['Uso','95%'],['Categorias','5'],['Resta','R$ 330']], hint: 'Próximo do limite' }
+  },
+  {
+    name: 'Investimentos', value: 2200, theme: 'tm-neutral-light', budget: 2500,
+    tooltip: { name: 'Investimentos & Reserva', rows: [['Investido','R$ 2.200'],['Meta','R$ 2.500'],['Progresso','88%']], hint: 'Sem orçamento fixo — meta mensal' }
+  }
+];
+
+// LEVEL 2 — Categorias dentro de Essenciais
+const level2 = [
+  {
+    name: 'Escola', value: 2800, theme: 'tm-positive-deep', budget: 2800,
+    tooltip: { name: 'Escola', rows: [['Gasto','R$ 2.800'],['Orçamento','R$ 2.800'],['Uso','100%'],['Status','Fixo mensal']], hint: 'Mensalidade + material' }
+  },
+  {
+    name: 'Supermercado', value: 2530, theme: 'tm-positive', budget: 3000,
+    hint: 'Toque →',
+    tooltip: { name: 'Supermercado', rows: [['Gasto','R$ 2.530'],['Orçamento','R$ 3.000'],['Uso','84%'],['Transações','23'],['Resta','R$ 470']], hint: 'Clique para ver subcategorias' }
+  },
+  {
+    name: 'Moradia', value: 2200, theme: 'tm-positive', budget: 2200,
+    tooltip: { name: 'Moradia', rows: [['Gasto','R$ 2.200'],['Orçamento','R$ 2.200'],['Uso','100%'],['Status','Aluguel + condomínio']] }
+  },
+  {
+    name: 'Saúde', value: 1350, theme: 'tm-attention', budget: 1400,
+    tooltip: { name: 'Saúde', rows: [['Gasto','R$ 1.350'],['Orçamento','R$ 1.400'],['Uso','96%'],['Resta','R$ 50']], hint: '⚠️ Próximo do limite' }
+  },
+  {
+    name: 'Transporte', value: 1040, theme: 'tm-positive', budget: 1440,
+    tooltip: { name: 'Transporte', rows: [['Gasto','R$ 1.040'],['Orçamento','R$ 1.440'],['Uso','72%'],['Itens','Gasolina + seguro']] }
+  },
+  {
+    name: 'Telecom', value: 760, theme: 'tm-positive-deep', budget: 760,
+    tooltip: { name: 'Telecom', rows: [['Gasto','R$ 760'],['Orçamento','R$ 760'],['Uso','100%'],['Itens','Internet + celulares']] }
+  }
+];
+
+// LEVEL 3 — Subcategorias dentro de Supermercado
+const level3 = [
+  {
+    name: 'Alimentação Básica', value: 1280, theme: 'tm-positive',
+    hint: 'Ver estabelecimentos →',
+    tooltip: { name: 'Alimentação Básica', rows: [['Gasto','R$ 1.280'],['% Supermercado','51%'],['Transações','18'],['Média','R$ 71/compra']], hint: 'Arroz, feijão, carnes, frutas, verduras' }
+  },
+  {
+    name: 'Fast Food / Prontos', value: 720, theme: 'tm-attention',
+    hint: 'Ver estabelecimentos →',
+    tooltip: { name: 'Fast Food / Prontos', rows: [['Gasto','R$ 720'],['% Supermercado','28%'],['Transações','19'],['Média','R$ 38/compra']], hint: '⚠️ Proporção alta — toque para detalhar' }
+  },
+  {
+    name: 'Bebidas', value: 330, theme: 'tm-positive',
+    tooltip: { name: 'Bebidas', rows: [['Gasto','R$ 330'],['% Supermercado','13%'],['Transações','8']] }
+  },
+  {
+    name: 'Limpeza e Higiene', value: 200, theme: 'tm-positive-deep',
+    tooltip: { name: 'Limpeza e Higiene', rows: [['Gasto','R$ 200'],['% Supermercado','8%'],['Transações','4']] }
+  }
+];
+
+// LEVEL 4 — Estabelecimentos dentro de Fast Food
+const level4 = [
+  {
+    name: "McDonald's", value: 480, theme: 'tm-critical',
+    insight: 'R$ 480/mês = R$ 5.760/ano',
+    insightDetail: '14 visitas · Média R$ 34/visita',
+    tooltip: { name: "McDonald's", rows: [['Gasto no mês','R$ 480'],['% do Fast Food','67%'],['Transações','14'],['Média/visita','R$ 34'],['Projeção anual','R$ 5.760']], hint: 'Toque para ver transações individuais' }
+  },
+  {
+    name: 'Burger King', value: 160, theme: 'tm-attention',
+    tooltip: { name: 'Burger King', rows: [['Gasto no mês','R$ 160'],['% do Fast Food','22%'],['Transações','4'],['Média/visita','R$ 40']] }
+  },
+  {
+    name: 'Subway', value: 50, theme: 'tm-positive',
+    tooltip: { name: 'Subway', rows: [['Gasto no mês','R$ 50'],['% do Fast Food','7%'],['Transações','2']] }
+  },
+  {
+    name: "Habib's", value: 30, theme: 'tm-positive-deep',
+    tooltip: { name: "Habib's", rows: [['Gasto no mês','R$ 30'],['% do Fast Food','4%'],['Transações','1']] }
+  }
+];
+
+// COMPARISON — Finviz style
+const finvizData = [
+  { name: 'Technology', value: 3200, theme: '' },
+  { name: 'Healthcare', value: 1800, theme: '' },
+  { name: 'Financial', value: 1500, theme: '' },
+  { name: 'Energy', value: 1200, theme: '' },
+  { name: 'Industrial', value: 900, theme: '' },
+  { name: 'Consumer', value: 800, theme: '' },
+  { name: 'Utilities', value: 400, theme: '' },
+  { name: 'Real Estate', value: 350, theme: '' },
+];
+
+const finvizColors = ['#1B5E20','#388E3C','#4CAF50','#C62828','#D32F2F','#2E7D32','#B71C1C','#43A047'];
+
+const caderninhoCompData = [
+  { name: 'Supermercado', value: 2530, theme: 'tm-positive' },
+  { name: 'Escola', value: 2800, theme: 'tm-positive-deep' },
+  { name: 'Moradia', value: 2200, theme: 'tm-positive' },
+  { name: 'Restaurante', value: 1800, theme: 'tm-attention' },
+  { name: 'Saúde', value: 1350, theme: 'tm-attention' },
+  { name: 'Transporte', value: 1040, theme: 'tm-positive' },
+  { name: 'Telecom', value: 760, theme: 'tm-positive-deep' },
+  { name: 'Fast Food', value: 720, theme: 'tm-critical' },
+  { name: 'Delivery', value: 630, theme: 'tm-alert' },
+  { name: 'Streaming', value: 180, theme: 'tm-positive' },
+];
+
+// ============================================
+// RENDER ALL ON LOAD
+// ============================================
+function renderAll() {
+  // Clear all containers
+  document.querySelectorAll('.treemap-area, .mobile-treemap-area, .flow-mini-treemap, .comp-treemap').forEach(el => {
+    el.innerHTML = '';
+  });
+
+  renderTreemap('treemap-level1', level1);
+  renderTreemap('treemap-level2', level2);
+  renderTreemap('treemap-level3', level3);
+  renderTreemap('treemap-level4', level4);
+
+  // Mobile
+  renderTreemap('mobile-level1', level1);
+  renderTreemap('mobile-level2', level2);
+
+  // Flow mini treemaps
+  renderTreemap('flow-mini-1', level1.map(d => ({...d, hint: null, insight: null})));
+  renderTreemap('flow-mini-2', level2.map(d => ({...d, hint: null, insight: null})));
+  renderTreemap('flow-mini-3', level3.map(d => ({...d, hint: null, insight: null})));
+  renderTreemap('flow-mini-4', level4.map(d => ({...d, hint: null, insight: null, insightDetail: null})));
+
+  // Comparison — Finviz
+  renderFinviz();
+  // Comparison — Caderninho
+  renderTreemap('comp-caderninho', caderninhoCompData);
+}
+
+function renderFinviz() {
+  const container = document.getElementById('comp-finviz');
+  if (!container) return;
+  const rect = container.getBoundingClientRect();
+  const blocks = squarify(finvizData, { x: 0, y: 0, w: rect.width, h: rect.height });
+
+  blocks.forEach((b, i) => {
+    const el = document.createElement('div');
+    el.className = 'tm-block ' + sizeClass(b.w, b.h);
+    el.style.left = b.x + 'px';
+    el.style.top = b.y + 'px';
+    el.style.width = b.w + 'px';
+    el.style.height = b.h + 'px';
+    el.style.background = finvizColors[i % finvizColors.length];
+    el.style.color = 'white';
+
+    const pcts = ['+2.34%','+1.12%','+0.87%','-3.45%','-1.20%','+0.54%','-2.10%','+0.33%'];
+    el.innerHTML = `<div class="tm-label">${b.name}</div><div class="tm-value">${pcts[i]}</div>`;
+    container.appendChild(el);
+  });
+}
+
+// Initial render
+window.addEventListener('load', renderAll);
+// Re-render on resize
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(renderAll, 200);
+});
+</script>
+
+</body>
+</html>

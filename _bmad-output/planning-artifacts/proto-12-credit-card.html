@@ -1,0 +1,1888 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Protótipo 12 — Detalhe do Cartão | Caderninho</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Design Tokens ── */
+    :root {
+      --bg: #FAFAF9;
+      --surface: #FFFFFF;
+      --border: #E7E5E4;
+      --border-hover: #D6D3D1;
+      --text-primary: #1C1917;
+      --text-secondary: #78716C;
+      --text-tertiary: #A8A29E;
+      --primary: #4F46E5;
+      --primary-hover: #4338CA;
+      --primary-light: #EEF2FF;
+      --positive: #22C55E;
+      --positive-bg: #DCFCE7;
+      --positive-text: #166534;
+      --attention: #EAB308;
+      --attention-bg: #FEF9C3;
+      --attention-text: #854D0E;
+      --critical: #DC2626;
+      --critical-bg: #FEE2E2;
+      --critical-text: #991B1B;
+      --radius-card: 12px;
+      --radius-input: 6px;
+      --radius-badge: 100px;
+      --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+      --shadow-card-hover: 0 2px 6px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.06);
+      --transition: 150ms ease;
+      --sidebar-width: 220px;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-variant-numeric: tabular-nums;
+      background: var(--bg);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
+    }
+
+    /* ── Page Title Header ── */
+    .page-title-header {
+      text-align: center;
+      padding: 32px 24px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .page-title-header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .page-title-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* ── App Layout ── */
+    .app-layout {
+      display: flex;
+      min-height: calc(100vh - 94px);
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-width);
+      min-width: var(--sidebar-width);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: calc(100vh - 94px);
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 20px 16px 16px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: -0.01em;
+    }
+
+    .sidebar-separator {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 16px;
+    }
+
+    .sidebar-section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      padding: 16px 16px 8px;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      padding: 0 8px;
+    }
+
+    .sidebar-nav li a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    .sidebar-nav li a:hover {
+      background: var(--bg);
+      color: var(--text-primary);
+    }
+
+    .sidebar-nav li a.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .sidebar-nav li a .nav-icon {
+      width: 18px;
+      text-align: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--critical);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 1px 7px;
+      border-radius: var(--radius-badge);
+      line-height: 1.5;
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding: 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .user-info .user-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .user-info .user-role {
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    /* ── Main Content ── */
+    .main-content {
+      flex: 1;
+      padding: 28px 32px 48px;
+      max-width: 1100px;
+    }
+
+    /* ── Credit Card Hero ── */
+    .card-hero {
+      margin-bottom: 28px;
+    }
+
+    .credit-card-visual {
+      background: linear-gradient(135deg, #4F46E5 0%, #6366F1 40%, #818CF8 100%);
+      border-radius: 16px;
+      padding: 28px 32px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+      max-width: 420px;
+      aspect-ratio: 1.586;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 8px 32px rgba(79, 70, 229, 0.35), 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .credit-card-visual::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -20%;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .credit-card-visual::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -10%;
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .cc-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cc-brand {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .cc-chip {
+      width: 40px;
+      height: 30px;
+      background: linear-gradient(135deg, #FFD700 0%, #DAA520 100%);
+      border-radius: 6px;
+      opacity: 0.85;
+    }
+
+    .cc-number {
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cc-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cc-holder {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    .cc-flag {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      opacity: 0.8;
+    }
+
+    /* ── Metrics Row ── */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 16px 18px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .metric-card .metric-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .metric-card .metric-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .metric-card .metric-value.critical { color: var(--critical); }
+    .metric-card .metric-value.positive { color: var(--positive-text); }
+
+    .metric-card .metric-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: var(--radius-badge);
+      margin-top: 6px;
+    }
+
+    .metric-badge.attention {
+      background: var(--attention-bg);
+      color: var(--attention-text);
+    }
+
+    /* ── Two Column Layout ── */
+    .two-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    /* ── Cards ── */
+    .content-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-header h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .card-header .card-header-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .card-body {
+      padding: 16px 20px 20px;
+    }
+
+    /* ── Warning Banner ── */
+    .warning-banner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--attention-bg);
+      color: var(--attention-text);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    /* ── Cycle Info ── */
+    .cycle-info {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .cycle-info span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .fatura-total {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    /* ── Transaction List ── */
+    .transaction-list {
+      list-style: none;
+    }
+
+    .transaction-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 8px;
+      border-radius: 8px;
+      transition: background var(--transition);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .transaction-item:hover {
+      background: var(--bg);
+    }
+
+    .transaction-item:not(:last-child) {
+      border-bottom: 1px solid #F5F5F4;
+    }
+
+    .transaction-item .tx-date {
+      width: 44px;
+      font-size: 12px;
+      color: var(--text-tertiary);
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .transaction-item .tx-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .transaction-item .tx-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .transaction-item .tx-category {
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    .transaction-item .tx-amount {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-left: 12px;
+      flex-shrink: 0;
+    }
+
+    .transaction-item .tx-actions {
+      display: none;
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      gap: 4px;
+    }
+
+    .transaction-item:hover .tx-actions {
+      display: flex;
+    }
+
+    .transaction-item:hover .tx-amount {
+      opacity: 0.3;
+    }
+
+    .tx-action-btn {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--text-secondary);
+      transition: all var(--transition);
+    }
+
+    .tx-action-btn:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .tx-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: var(--radius-badge);
+      margin-left: 6px;
+    }
+
+    .tx-badge.last-installment {
+      background: var(--positive-bg);
+      color: var(--positive-text);
+    }
+
+    .tx-badge.today {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    /* ── Reconcile Button ── */
+    .btn-reconcile {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 16px;
+      padding: 10px 18px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition);
+      font-family: inherit;
+    }
+
+    .btn-reconcile:hover {
+      background: var(--primary-hover);
+    }
+
+    /* ── Installments Table ── */
+    .installments-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .installments-table thead th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .installments-table thead th:last-child,
+    .installments-table tbody td:last-child {
+      text-align: right;
+    }
+
+    .installments-table tbody td {
+      padding: 10px 10px;
+      border-bottom: 1px solid #F5F5F4;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .installments-table tbody td.secondary {
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    /* ── Timeline Bars ── */
+    .timeline-section {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .timeline-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 14px;
+    }
+
+    .timeline-bar-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .timeline-bar-label {
+      width: 60px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    .timeline-bar-track {
+      flex: 1;
+      height: 20px;
+      background: #F5F5F4;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .timeline-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+      font-size: 10px;
+      font-weight: 600;
+      color: #fff;
+      transition: width 0.6s ease;
+    }
+
+    .timeline-bar-fill.bar-fotos {
+      background: linear-gradient(90deg, #6366F1, #818CF8);
+    }
+
+    .timeline-bar-fill.bar-amazon {
+      background: linear-gradient(90deg, #F59E0B, #FBBF24);
+    }
+
+    .timeline-bar-fill.bar-oculos {
+      background: linear-gradient(90deg, #14B8A6, #2DD4BF);
+    }
+
+    .timeline-annotation {
+      font-size: 10px;
+      color: var(--text-tertiary);
+      font-weight: 500;
+      flex-shrink: 0;
+      width: 100px;
+      text-align: right;
+    }
+
+    /* ── Running Total ── */
+    .running-total {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .running-total .rt-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .running-total .rt-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* ── Bar Chart ── */
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      height: 180px;
+      padding: 0 4px;
+      margin-top: 12px;
+    }
+
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+      position: relative;
+    }
+
+    .bar-value {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .bar-rect {
+      width: 100%;
+      max-width: 56px;
+      border-radius: 6px 6px 2px 2px;
+      transition: opacity var(--transition);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .bar-rect:hover {
+      opacity: 0.85;
+    }
+
+    .bar-rect.current {
+      background: linear-gradient(180deg, #EAB308 0%, #F59E0B 100%);
+    }
+
+    .bar-rect.future {
+      background: linear-gradient(180deg, #6366F1 0%, #818CF8 100%);
+    }
+
+    .bar-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-top: 8px;
+    }
+
+    .bar-tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--text-primary);
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .bar-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: var(--text-primary);
+    }
+
+    .bar-rect:hover .bar-tooltip {
+      display: block;
+    }
+
+    .chart-trend {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--positive-text);
+      background: var(--positive-bg);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+
+    /* ── Mobile Phone Frame ── */
+    .mobile-section {
+      margin-top: 56px;
+      padding-top: 40px;
+      border-top: 2px dashed var(--border);
+    }
+
+    .mobile-section-title {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .mobile-section-sub {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-bottom: 28px;
+    }
+
+    .phone-frame {
+      width: 390px;
+      height: 844px;
+      margin: 0 auto;
+      border: 8px solid #1C1917;
+      border-radius: 44px;
+      background: var(--bg);
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.15);
+    }
+
+    .phone-notch {
+      width: 150px;
+      height: 28px;
+      background: #1C1917;
+      border-radius: 0 0 18px 18px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 5;
+    }
+
+    .phone-screen {
+      height: calc(100% - 28px);
+      overflow-y: auto;
+      padding-bottom: 72px;
+    }
+
+    /* ── Mobile Card Hero ── */
+    .m-card-hero {
+      padding: 16px;
+    }
+
+    .m-credit-card {
+      background: linear-gradient(135deg, #4F46E5 0%, #6366F1 40%, #818CF8 100%);
+      border-radius: 14px;
+      padding: 20px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .m-credit-card::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      right: -15%;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .m-cc-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .m-cc-brand {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .m-cc-chip {
+      width: 32px;
+      height: 24px;
+      background: linear-gradient(135deg, #FFD700, #DAA520);
+      border-radius: 5px;
+      opacity: 0.85;
+    }
+
+    .m-cc-number {
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .m-cc-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      position: relative;
+      z-index: 1;
+    }
+
+    .m-cc-holder {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    .m-cc-flag {
+      font-size: 10px;
+      font-weight: 600;
+      opacity: 0.8;
+    }
+
+    /* ── Mobile Metrics ── */
+    .m-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 0 16px 16px;
+    }
+
+    .m-metric {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+
+    .m-metric .m-metric-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .m-metric .m-metric-value {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .m-metric .m-metric-value.critical { color: var(--critical); }
+    .m-metric .m-metric-value.positive { color: var(--positive-text); }
+
+    /* ── Mobile Tabs ── */
+    .m-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      position: sticky;
+      top: 0;
+      z-index: 4;
+    }
+
+    .m-tab {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all var(--transition);
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      font-family: inherit;
+    }
+
+    .m-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .m-tab:hover:not(.active) {
+      color: var(--text-secondary);
+    }
+
+    /* ── Mobile Tab Content ── */
+    .m-tab-content {
+      display: none;
+      padding: 16px;
+    }
+
+    .m-tab-content.active {
+      display: block;
+    }
+
+    .m-warning-banner {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--attention-bg);
+      color: var(--attention-text);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .m-cycle-info {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .m-fatura-total {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .m-tx-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #F5F5F4;
+    }
+
+    .m-tx-date {
+      width: 38px;
+      font-size: 11px;
+      color: var(--text-tertiary);
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .m-tx-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .m-tx-name {
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .m-tx-cat {
+      font-size: 10px;
+      color: var(--text-tertiary);
+    }
+
+    .m-tx-amount {
+      font-size: 13px;
+      font-weight: 600;
+      flex-shrink: 0;
+      margin-left: 8px;
+    }
+
+    /* ── Mobile Installments ── */
+    .m-installment-card {
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+
+    .m-installment-card .m-inst-name {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .m-installment-card .m-inst-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .m-inst-details .m-inst-val {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* ── Mobile Bottom Nav ── */
+    .m-bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 8px;
+      z-index: 10;
+    }
+
+    .m-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      text-decoration: none;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      transition: color var(--transition);
+    }
+
+    .m-nav-item.active {
+      color: var(--primary);
+    }
+
+    .m-nav-item .m-nav-icon {
+      font-size: 18px;
+    }
+
+    /* Inline Card Brand Icons */
+    .method-brand {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 16px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      vertical-align: middle;
+      margin-right: 4px;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .method-brand-visa {
+      background: #1A1F71;
+      color: #FFFFFF;
+      font-size: 7px;
+      font-style: italic;
+      font-weight: 800;
+    }
+    .method-brand-master {
+      background: #252525;
+      position: relative;
+      overflow: hidden;
+    }
+    .method-brand-master::before,
+    .method-brand-master::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .method-brand-master::before { left: 3px; background: #EB001B; }
+    .method-brand-master::after { right: 3px; background: #F79E1B; }
+
+    /* ── Scrollbar ── */
+    .phone-screen::-webkit-scrollbar {
+      width: 3px;
+    }
+    .phone-screen::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .phone-screen::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Page Title ── -->
+<header class="page-title-header">
+  <h1>Prototipo 12 -- Detalhe do Cartao</h1>
+  <p>Visao completa do cartao de credito</p>
+</header>
+
+<!-- ── App Layout ── -->
+<div class="app-layout">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">Caderninho</div>
+    <div class="sidebar-separator"></div>
+
+    <div class="sidebar-section-label">Principal</div>
+    <ul class="sidebar-nav">
+      <li><a href="#"><span class="nav-icon">&#9776;</span> Dashboard</a></li>
+      <li><a href="#"><span class="nav-icon">&#8644;</span> Transacoes</a></li>
+      <li><a href="#"><span class="nav-icon">&#128176;</span> Orcamento</a></li>
+    </ul>
+
+    <div class="sidebar-section-label">Contas</div>
+    <ul class="sidebar-nav">
+      <li><a href="#"><span class="nav-icon">&#127970;</span> Nubank C/C</a></li>
+      <li><a href="#"><span class="nav-icon">&#127970;</span> Itau C/C</a></li>
+    </ul>
+
+    <div class="sidebar-section-label">Cartoes</div>
+    <ul class="sidebar-nav">
+      <li><a href="#" class="active"><span class="nav-icon">&#128179;</span> <span class="method-brand method-brand-visa">VISA</span>Latam Pass Visa</a></li>
+      <li><a href="#"><span class="nav-icon">&#128179;</span> <span class="method-brand method-brand-master"></span>Nubank Mastercard</a></li>
+    </ul>
+
+    <div class="sidebar-section-label">Outros</div>
+    <ul class="sidebar-nav">
+      <li><a href="#"><span class="nav-icon">&#128200;</span> Relatorios</a></li>
+      <li><a href="#"><span class="nav-icon">&#9881;</span> Configuracoes</a></li>
+    </ul>
+
+    <div class="sidebar-bottom">
+      <div class="user-avatar">VC</div>
+      <div class="user-info">
+        <span class="user-name">Vitor Castilho</span>
+        <span class="user-role">Conta pessoal</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main Content ── -->
+  <main class="main-content">
+
+    <!-- ── Card Hero ── -->
+    <section class="card-hero">
+      <div class="credit-card-visual">
+        <div class="cc-top">
+          <div class="cc-brand"><span class="method-brand method-brand-visa">VISA</span>Latam Pass Visa</div>
+          <div class="cc-chip"></div>
+        </div>
+        <div class="cc-number">**** &nbsp; **** &nbsp; **** &nbsp; 4532</div>
+        <div class="cc-bottom">
+          <div class="cc-holder">Vitor Castilho</div>
+          <div class="cc-flag">VISA</div>
+        </div>
+      </div>
+
+      <!-- Metrics Row -->
+      <div class="metrics-row">
+        <div class="metric-card">
+          <div class="metric-label">Limite Total</div>
+          <div class="metric-value">R$ 10.000</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Utilizado</div>
+          <div class="metric-value critical">R$ 7.180</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Disponivel</div>
+          <div class="metric-value positive">R$ 2.820</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Fatura Estimada Mar</div>
+          <div class="metric-value">R$ 4.200</div>
+          <span class="metric-badge attention">estimativa</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Two Columns ── -->
+    <div class="two-columns">
+
+      <!-- ── LEFT COLUMN ── -->
+      <div class="left-column">
+
+        <!-- Fatura Atual -->
+        <div class="content-card" style="margin-bottom: 24px;">
+          <div class="card-header">
+            <div>
+              <h3>Fatura Atual -- Marco 2026</h3>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="warning-banner">
+              &#9888;&#65039; Estimativa -- aguardando fatura real
+            </div>
+            <div class="cycle-info">
+              <span>&#128197; Ciclo: 08/02 a 07/03</span>
+              <span>&#128198; Vencimento: 15/03</span>
+            </div>
+            <div class="fatura-total">R$ 4.200,00</div>
+
+            <ul class="transaction-list">
+              <li class="transaction-item">
+                <span class="tx-date">10/02</span>
+                <div class="tx-info">
+                  <div class="tx-name">Pao de Acucar</div>
+                  <div class="tx-category">Supermercado</div>
+                </div>
+                <span class="tx-amount">R$ 87,00</span>
+                <div class="tx-actions">
+                  <button class="tx-action-btn" title="Editar">&#9998;</button>
+                  <button class="tx-action-btn" title="Detalhes">&#8942;</button>
+                </div>
+              </li>
+              <li class="transaction-item">
+                <span class="tx-date">12/02</span>
+                <div class="tx-info">
+                  <div class="tx-name">Shell</div>
+                  <div class="tx-category">Gasolina</div>
+                </div>
+                <span class="tx-amount">R$ 180,00</span>
+                <div class="tx-actions">
+                  <button class="tx-action-btn" title="Editar">&#9998;</button>
+                  <button class="tx-action-btn" title="Detalhes">&#8942;</button>
+                </div>
+              </li>
+              <li class="transaction-item">
+                <span class="tx-date">15/02</span>
+                <div class="tx-info">
+                  <div class="tx-name">iFood</div>
+                  <div class="tx-category">Restaurante</div>
+                </div>
+                <span class="tx-amount">R$ 45,00</span>
+                <div class="tx-actions">
+                  <button class="tx-action-btn" title="Editar">&#9998;</button>
+                  <button class="tx-action-btn" title="Detalhes">&#8942;</button>
+                </div>
+              </li>
+              <li class="transaction-item">
+                <span class="tx-date">18/02</span>
+                <div class="tx-info">
+                  <div class="tx-name">Amazon <span class="tx-badge last-installment">2/3</span></div>
+                  <div class="tx-category">Compras</div>
+                </div>
+                <span class="tx-amount">R$ 250,00</span>
+                <div class="tx-actions">
+                  <button class="tx-action-btn" title="Editar">&#9998;</button>
+                  <button class="tx-action-btn" title="Detalhes">&#8942;</button>
+                </div>
+              </li>
+              <li class="transaction-item">
+                <span class="tx-date">20/02</span>
+                <div class="tx-info">
+                  <div class="tx-name">Spotify</div>
+                  <div class="tx-category">Streaming</div>
+                </div>
+                <span class="tx-amount">R$ 22,00</span>
+                <div class="tx-actions">
+                  <button class="tx-action-btn" title="Editar">&#9998;</button>
+                  <button class="tx-action-btn" title="Detalhes">&#8942;</button>
+                </div>
+              </li>
+              <li class="transaction-item">
+                <span class="tx-date">22/02</span>
+                <div class="tx-info">
+                  <div class="tx-name">Uber</div>
+                  <div class="tx-category">Transporte</div>
+                </div>
+                <span class="tx-amount">R$ 38,00</span>
+                <div class="tx-actions">
+                  <button class="tx-action-btn" title="Editar">&#9998;</button>
+                  <button class="tx-action-btn" title="Detalhes">&#8942;</button>
+                </div>
+              </li>
+              <li class="transaction-item">
+                <span class="tx-date">25/02</span>
+                <div class="tx-info">
+                  <div class="tx-name">Drogasil</div>
+                  <div class="tx-category">Farmacia</div>
+                </div>
+                <span class="tx-amount">R$ 65,00</span>
+                <div class="tx-actions">
+                  <button class="tx-action-btn" title="Editar">&#9998;</button>
+                  <button class="tx-action-btn" title="Detalhes">&#8942;</button>
+                </div>
+              </li>
+              <li class="transaction-item">
+                <span class="tx-date">27/02</span>
+                <div class="tx-info">
+                  <div class="tx-name">Netflix</div>
+                  <div class="tx-category">Streaming</div>
+                </div>
+                <span class="tx-amount">R$ 39,90</span>
+                <div class="tx-actions">
+                  <button class="tx-action-btn" title="Editar">&#9998;</button>
+                  <button class="tx-action-btn" title="Detalhes">&#8942;</button>
+                </div>
+              </li>
+              <li class="transaction-item">
+                <span class="tx-date">01/03</span>
+                <div class="tx-info">
+                  <div class="tx-name">Oculos <span class="tx-badge last-installment">4/12</span></div>
+                  <div class="tx-category">Saude</div>
+                </div>
+                <span class="tx-amount">R$ 100,00</span>
+                <div class="tx-actions">
+                  <button class="tx-action-btn" title="Editar">&#9998;</button>
+                  <button class="tx-action-btn" title="Detalhes">&#8942;</button>
+                </div>
+              </li>
+              <li class="transaction-item">
+                <span class="tx-date">03/03</span>
+                <div class="tx-info">
+                  <div class="tx-name">Fotos <span class="tx-badge last-installment">8/10</span></div>
+                  <div class="tx-category">Servicos</div>
+                </div>
+                <span class="tx-amount">R$ 171,00</span>
+                <div class="tx-actions">
+                  <button class="tx-action-btn" title="Editar">&#9998;</button>
+                  <button class="tx-action-btn" title="Detalhes">&#8942;</button>
+                </div>
+              </li>
+            </ul>
+
+            <button class="btn-reconcile">Reconciliar fatura &#8594;</button>
+          </div>
+        </div>
+
+        <!-- Parcelas Ativas -->
+        <div class="content-card">
+          <div class="card-header">
+            <h3>Parcelas Ativas</h3>
+            <span class="card-header-sub">3 series</span>
+          </div>
+          <div class="card-body">
+            <table class="installments-table">
+              <thead>
+                <tr>
+                  <th>Compra</th>
+                  <th>Total</th>
+                  <th>Parcela</th>
+                  <th>Restam</th>
+                  <th>Mensal</th>
+                  <th>Termino</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Fotos</td>
+                  <td>R$ 1.710</td>
+                  <td class="secondary">8/10</td>
+                  <td class="secondary">2</td>
+                  <td>R$ 171</td>
+                  <td class="secondary">Mai 2026</td>
+                </tr>
+                <tr>
+                  <td>Amazon</td>
+                  <td>R$ 750</td>
+                  <td class="secondary">2/3</td>
+                  <td class="secondary">1</td>
+                  <td>R$ 250</td>
+                  <td class="secondary">Abr 2026</td>
+                </tr>
+                <tr>
+                  <td>Oculos</td>
+                  <td>R$ 1.200</td>
+                  <td class="secondary">4/12</td>
+                  <td class="secondary">8</td>
+                  <td>R$ 100</td>
+                  <td class="secondary">Nov 2026</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Timeline -->
+            <div class="timeline-section">
+              <div class="timeline-title">Linha do tempo das parcelas</div>
+
+              <div class="timeline-bar-item">
+                <div class="timeline-bar-label">Fotos</div>
+                <div class="timeline-bar-track">
+                  <div class="timeline-bar-fill bar-fotos" style="width: 25%;">Mai</div>
+                </div>
+                <div class="timeline-annotation">libera R$ 171/mes</div>
+              </div>
+
+              <div class="timeline-bar-item">
+                <div class="timeline-bar-label">Amazon</div>
+                <div class="timeline-bar-track">
+                  <div class="timeline-bar-fill bar-amazon" style="width: 12%;">Abr</div>
+                </div>
+                <div class="timeline-annotation">libera R$ 250/mes</div>
+              </div>
+
+              <div class="timeline-bar-item">
+                <div class="timeline-bar-label">Oculos</div>
+                <div class="timeline-bar-track">
+                  <div class="timeline-bar-fill bar-oculos" style="width: 90%;">Nov</div>
+                </div>
+                <div class="timeline-annotation">libera R$ 100/mes</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── RIGHT COLUMN ── -->
+      <div class="right-column">
+
+        <!-- Transacoes do Ciclo Atual -->
+        <div class="content-card" style="margin-bottom: 24px;">
+          <div class="card-header">
+            <div>
+              <h3>Transacoes do Ciclo Atual (Abr)</h3>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="cycle-info">
+              <span>&#128197; Ciclo: 08/03 a 07/04</span>
+            </div>
+            <div class="running-total">
+              <span class="rt-value">R$ 1.250,00</span>
+              <span class="rt-label">ate agora</span>
+            </div>
+
+            <ul class="transaction-list">
+              <li class="transaction-item">
+                <span class="tx-date">08/03</span>
+                <div class="tx-info">
+                  <div class="tx-name">Pao de Acucar</div>
+                  <div class="tx-category">Supermercado</div>
+                </div>
+                <span class="tx-amount">R$ 92,00</span>
+                <div class="tx-actions">
+                  <button class="tx-action-btn" title="Editar">&#9998;</button>
+                  <button class="tx-action-btn" title="Detalhes">&#8942;</button>
+                </div>
+              </li>
+              <li class="transaction-item">
+                <span class="tx-date">09/03</span>
+                <div class="tx-info">
+                  <div class="tx-name">Shell</div>
+                  <div class="tx-category">Gasolina</div>
+                </div>
+                <span class="tx-amount">R$ 185,00</span>
+                <div class="tx-actions">
+                  <button class="tx-action-btn" title="Editar">&#9998;</button>
+                  <button class="tx-action-btn" title="Detalhes">&#8942;</button>
+                </div>
+              </li>
+              <li class="transaction-item">
+                <span class="tx-date">10/03</span>
+                <div class="tx-info">
+                  <div class="tx-name">Amazon 3/3 <span class="tx-badge last-installment">ultima parcela &#10003;</span></div>
+                  <div class="tx-category">Compras</div>
+                </div>
+                <span class="tx-amount">R$ 250,00</span>
+                <div class="tx-actions">
+                  <button class="tx-action-btn" title="Editar">&#9998;</button>
+                  <button class="tx-action-btn" title="Detalhes">&#8942;</button>
+                </div>
+              </li>
+              <li class="transaction-item">
+                <span class="tx-date">11/03</span>
+                <div class="tx-info">
+                  <div class="tx-name">iFood</div>
+                  <div class="tx-category">Restaurante</div>
+                </div>
+                <span class="tx-amount">R$ 48,00</span>
+                <div class="tx-actions">
+                  <button class="tx-action-btn" title="Editar">&#9998;</button>
+                  <button class="tx-action-btn" title="Detalhes">&#8942;</button>
+                </div>
+              </li>
+              <li class="transaction-item">
+                <span class="tx-date" style="color: var(--primary); font-weight: 600;">Hoje</span>
+                <div class="tx-info">
+                  <div class="tx-name">Uber <span class="tx-badge today">hoje</span></div>
+                  <div class="tx-category">Transporte</div>
+                </div>
+                <span class="tx-amount">R$ 32,00</span>
+                <div class="tx-actions">
+                  <button class="tx-action-btn" title="Editar">&#9998;</button>
+                  <button class="tx-action-btn" title="Detalhes">&#8942;</button>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Projecao de Faturas -->
+        <div class="content-card">
+          <div class="card-header">
+            <h3>Projecao de Faturas</h3>
+            <span class="card-header-sub">Proximos 6 meses</span>
+          </div>
+          <div class="card-body">
+            <div class="bar-chart" id="barChart">
+              <!-- Bars rendered by JS -->
+            </div>
+            <div class="chart-trend">
+              &#8595; Tendencia: fatura diminuindo a medida que parcelas terminam
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- ── MOBILE VERSION ── -->
+    <!-- ══════════════════════════════════════════════ -->
+    <section class="mobile-section">
+      <div class="mobile-section-title">Versao Mobile</div>
+      <div class="mobile-section-sub">iPhone 14 -- 390 x 844 px</div>
+
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+
+          <!-- Mobile Card Hero -->
+          <div class="m-card-hero">
+            <div class="m-credit-card">
+              <div class="m-cc-top">
+                <div class="m-cc-brand"><span class="method-brand method-brand-visa">VISA</span>Latam Pass Visa</div>
+                <div class="m-cc-chip"></div>
+              </div>
+              <div class="m-cc-number">**** &nbsp; **** &nbsp; **** &nbsp; 4532</div>
+              <div class="m-cc-bottom">
+                <div class="m-cc-holder">Vitor Castilho</div>
+                <div class="m-cc-flag">VISA</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Metrics 2x2 -->
+          <div class="m-metrics">
+            <div class="m-metric">
+              <div class="m-metric-label">Limite Total</div>
+              <div class="m-metric-value">R$ 10.000</div>
+            </div>
+            <div class="m-metric">
+              <div class="m-metric-label">Utilizado</div>
+              <div class="m-metric-value critical">R$ 7.180</div>
+            </div>
+            <div class="m-metric">
+              <div class="m-metric-label">Disponivel</div>
+              <div class="m-metric-value positive">R$ 2.820</div>
+            </div>
+            <div class="m-metric">
+              <div class="m-metric-label">Fatura Mar</div>
+              <div class="m-metric-value">R$ 4.200</div>
+            </div>
+          </div>
+
+          <!-- Mobile Tabs -->
+          <div class="m-tabs">
+            <button class="m-tab active" data-tab="m-fatura">Fatura</button>
+            <button class="m-tab" data-tab="m-parcelas">Parcelas</button>
+            <button class="m-tab" data-tab="m-transacoes">Transacoes</button>
+          </div>
+
+          <!-- Tab: Fatura -->
+          <div class="m-tab-content active" id="m-fatura">
+            <div class="m-warning-banner">&#9888;&#65039; Estimativa -- aguardando fatura real</div>
+            <div class="m-cycle-info">Ciclo: 08/02 a 07/03 | Vencimento: 15/03</div>
+            <div class="m-fatura-total">R$ 4.200,00</div>
+
+            <div class="m-tx-item">
+              <span class="m-tx-date">10/02</span>
+              <div class="m-tx-info">
+                <div class="m-tx-name">Pao de Acucar</div>
+                <div class="m-tx-cat">Supermercado</div>
+              </div>
+              <span class="m-tx-amount">R$ 87,00</span>
+            </div>
+            <div class="m-tx-item">
+              <span class="m-tx-date">12/02</span>
+              <div class="m-tx-info">
+                <div class="m-tx-name">Shell</div>
+                <div class="m-tx-cat">Gasolina</div>
+              </div>
+              <span class="m-tx-amount">R$ 180,00</span>
+            </div>
+            <div class="m-tx-item">
+              <span class="m-tx-date">15/02</span>
+              <div class="m-tx-info">
+                <div class="m-tx-name">iFood</div>
+                <div class="m-tx-cat">Restaurante</div>
+              </div>
+              <span class="m-tx-amount">R$ 45,00</span>
+            </div>
+            <div class="m-tx-item">
+              <span class="m-tx-date">18/02</span>
+              <div class="m-tx-info">
+                <div class="m-tx-name">Amazon 2/3</div>
+                <div class="m-tx-cat">Compras</div>
+              </div>
+              <span class="m-tx-amount">R$ 250,00</span>
+            </div>
+            <div class="m-tx-item">
+              <span class="m-tx-date">20/02</span>
+              <div class="m-tx-info">
+                <div class="m-tx-name">Spotify</div>
+                <div class="m-tx-cat">Streaming</div>
+              </div>
+              <span class="m-tx-amount">R$ 22,00</span>
+            </div>
+            <div class="m-tx-item">
+              <span class="m-tx-date">22/02</span>
+              <div class="m-tx-info">
+                <div class="m-tx-name">Uber</div>
+                <div class="m-tx-cat">Transporte</div>
+              </div>
+              <span class="m-tx-amount">R$ 38,00</span>
+            </div>
+            <div class="m-tx-item">
+              <span class="m-tx-date">25/02</span>
+              <div class="m-tx-info">
+                <div class="m-tx-name">Drogasil</div>
+                <div class="m-tx-cat">Farmacia</div>
+              </div>
+              <span class="m-tx-amount">R$ 65,00</span>
+            </div>
+            <div class="m-tx-item">
+              <span class="m-tx-date">27/02</span>
+              <div class="m-tx-info">
+                <div class="m-tx-name">Netflix</div>
+                <div class="m-tx-cat">Streaming</div>
+              </div>
+              <span class="m-tx-amount">R$ 39,90</span>
+            </div>
+          </div>
+
+          <!-- Tab: Parcelas -->
+          <div class="m-tab-content" id="m-parcelas">
+            <div class="m-installment-card">
+              <div class="m-inst-name">Fotos</div>
+              <div class="m-inst-details">
+                <div>Total: <span class="m-inst-val">R$ 1.710</span></div>
+                <div>Parcela: <span class="m-inst-val">8/10</span></div>
+                <div>Mensal: <span class="m-inst-val">R$ 171</span></div>
+                <div>Termino: <span class="m-inst-val">Mai 2026</span></div>
+              </div>
+            </div>
+            <div class="m-installment-card">
+              <div class="m-inst-name">Amazon</div>
+              <div class="m-inst-details">
+                <div>Total: <span class="m-inst-val">R$ 750</span></div>
+                <div>Parcela: <span class="m-inst-val">2/3</span></div>
+                <div>Mensal: <span class="m-inst-val">R$ 250</span></div>
+                <div>Termino: <span class="m-inst-val">Abr 2026</span></div>
+              </div>
+            </div>
+            <div class="m-installment-card">
+              <div class="m-inst-name">Oculos</div>
+              <div class="m-inst-details">
+                <div>Total: <span class="m-inst-val">R$ 1.200</span></div>
+                <div>Parcela: <span class="m-inst-val">4/12</span></div>
+                <div>Mensal: <span class="m-inst-val">R$ 100</span></div>
+                <div>Termino: <span class="m-inst-val">Nov 2026</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab: Transacoes -->
+          <div class="m-tab-content" id="m-transacoes">
+            <div class="m-cycle-info">Ciclo: 08/03 a 07/04</div>
+            <div class="m-fatura-total" style="font-size:18px;">R$ 1.250,00 <span style="font-size:12px;font-weight:400;color:var(--text-secondary);">ate agora</span></div>
+
+            <div class="m-tx-item">
+              <span class="m-tx-date">08/03</span>
+              <div class="m-tx-info">
+                <div class="m-tx-name">Pao de Acucar</div>
+                <div class="m-tx-cat">Supermercado</div>
+              </div>
+              <span class="m-tx-amount">R$ 92,00</span>
+            </div>
+            <div class="m-tx-item">
+              <span class="m-tx-date">09/03</span>
+              <div class="m-tx-info">
+                <div class="m-tx-name">Shell</div>
+                <div class="m-tx-cat">Gasolina</div>
+              </div>
+              <span class="m-tx-amount">R$ 185,00</span>
+            </div>
+            <div class="m-tx-item">
+              <span class="m-tx-date">10/03</span>
+              <div class="m-tx-info">
+                <div class="m-tx-name">Amazon 3/3</div>
+                <div class="m-tx-cat">Compras -- ultima parcela</div>
+              </div>
+              <span class="m-tx-amount">R$ 250,00</span>
+            </div>
+            <div class="m-tx-item">
+              <span class="m-tx-date">11/03</span>
+              <div class="m-tx-info">
+                <div class="m-tx-name">iFood</div>
+                <div class="m-tx-cat">Restaurante</div>
+              </div>
+              <span class="m-tx-amount">R$ 48,00</span>
+            </div>
+            <div class="m-tx-item">
+              <span class="m-tx-date" style="color:var(--primary);font-weight:600;">Hoje</span>
+              <div class="m-tx-info">
+                <div class="m-tx-name">Uber</div>
+                <div class="m-tx-cat">Transporte</div>
+              </div>
+              <span class="m-tx-amount">R$ 32,00</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Mobile Bottom Nav -->
+        <div class="m-bottom-nav">
+          <a href="#" class="m-nav-item">
+            <span class="m-nav-icon">&#9776;</span>
+            <span>Inicio</span>
+          </a>
+          <a href="#" class="m-nav-item">
+            <span class="m-nav-icon">&#8644;</span>
+            <span>Transacoes</span>
+          </a>
+          <a href="#" class="m-nav-item active">
+            <span class="m-nav-icon">&#128179;</span>
+            <span>Cartoes</span>
+          </a>
+          <a href="#" class="m-nav-item">
+            <span class="m-nav-icon">&#128200;</span>
+            <span>Relatorios</span>
+          </a>
+          <a href="#" class="m-nav-item">
+            <span class="m-nav-icon">&#9881;</span>
+            <span>Mais</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // ── Bar Chart Rendering ──
+  (function() {
+    const data = [
+      { month: 'Mar', value: 4200, type: 'current', note: 'Fatura atual (estimativa)' },
+      { month: 'Abr', value: 3800, type: 'future',  note: 'Amazon encerra (3/3)' },
+      { month: 'Mai', value: 3600, type: 'future',  note: 'Fotos encerra (10/10)' },
+      { month: 'Jun', value: 3430, type: 'future',  note: 'Sem parcelas encerrando' },
+      { month: 'Jul', value: 3430, type: 'future',  note: 'Sem parcelas encerrando' },
+      { month: 'Ago', value: 3430, type: 'future',  note: 'Sem parcelas encerrando' },
+    ];
+
+    const maxVal = Math.max(...data.map(d => d.value));
+    const chart = document.getElementById('barChart');
+
+    data.forEach(d => {
+      const col = document.createElement('div');
+      col.className = 'bar-col';
+
+      const valLabel = document.createElement('div');
+      valLabel.className = 'bar-value';
+      valLabel.textContent = 'R$ ' + d.value.toLocaleString('pt-BR');
+
+      const bar = document.createElement('div');
+      bar.className = 'bar-rect ' + d.type;
+      const heightPercent = (d.value / maxVal) * 140;
+      bar.style.height = heightPercent + 'px';
+
+      const tooltip = document.createElement('div');
+      tooltip.className = 'bar-tooltip';
+      tooltip.textContent = d.note;
+      bar.appendChild(tooltip);
+
+      const monthLabel = document.createElement('div');
+      monthLabel.className = 'bar-label';
+      monthLabel.textContent = d.month;
+
+      col.appendChild(valLabel);
+      col.appendChild(bar);
+      col.appendChild(monthLabel);
+      chart.appendChild(col);
+    });
+  })();
+
+  // ── Mobile Tab Switching ──
+  (function() {
+    const tabs = document.querySelectorAll('.m-tab');
+    const contents = document.querySelectorAll('.m-tab-content');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        contents.forEach(c => c.classList.remove('active'));
+
+        tab.classList.add('active');
+        const targetId = tab.getAttribute('data-tab');
+        document.getElementById(targetId).classList.add('active');
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>

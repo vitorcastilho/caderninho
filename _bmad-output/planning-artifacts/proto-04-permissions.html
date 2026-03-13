@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caderninho — Permissões</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #FAFAF9;
+    --surface: #FFFFFF;
+    --border: #E7E5E4;
+    --border-hover: #D6D3D1;
+    --text-primary: #1C1917;
+    --text-secondary: #78716C;
+    --text-tertiary: #A8A29E;
+    --primary: #4F46E5;
+    --primary-hover: #4338CA;
+    --primary-light: #EEF2FF;
+    --positive: #22C55E;
+    --positive-bg: #DCFCE7;
+    --positive-text: #166534;
+    --attention: #EAB308;
+    --attention-bg: #FEF9C3;
+    --attention-text: #854D0E;
+    --critical: #DC2626;
+    --critical-bg: #FEE2E2;
+    --critical-text: #991B1B;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #D6D3D1;
+    color: var(--text-primary);
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ========================================
+     SHOWCASE HEADER
+     ======================================== */
+  .showcase-header {
+    text-align: center;
+    padding: 40px 24px 32px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .showcase-header h1 { font-size: 24px; font-weight: 700; }
+  .showcase-header p {
+    font-size: 14px; color: var(--text-secondary);
+    margin-top: 6px; max-width: 700px;
+    margin-left: auto; margin-right: auto;
+  }
+
+  .section-divider {
+    text-align: center;
+    padding: 48px 24px 24px;
+  }
+  .section-divider h2 { font-size: 18px; font-weight: 600; }
+  .section-divider p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+  /* ========================================
+     DESKTOP FRAME
+     ======================================== */
+  .desktop-frame {
+    max-width: 1200px;
+    margin: 0 auto 48px;
+    padding: 0 24px;
+  }
+
+  .app-container {
+    display: flex;
+    background: var(--bg);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    min-height: 1100px;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 16px 0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 16px; margin-bottom: 24px;
+  }
+  .sidebar-logo-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 14px;
+  }
+  .sidebar-logo-text { font-size: 15px; font-weight: 600; }
+
+  .sidebar-section {
+    padding: 0 8px;
+    margin-bottom: 8px;
+  }
+  .sidebar-section-label {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--text-tertiary);
+    padding: 8px 12px 4px;
+  }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; border-radius: 8px;
+    font-size: 13px; font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .sidebar-item:hover { background: var(--bg); color: var(--text-primary); }
+  .sidebar-item.active {
+    background: var(--primary-light); color: var(--primary); font-weight: 600;
+  }
+  .sidebar-item .si-icon { font-size: 16px; width: 20px; text-align: center; }
+
+  .sidebar-divider {
+    height: 1px; background: var(--border);
+    margin: 12px 16px;
+  }
+
+  .sidebar-user {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 16px; margin-top: auto;
+  }
+  .sidebar-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--primary-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; color: var(--primary);
+  }
+  .sidebar-username { font-size: 12px; color: var(--text-secondary); }
+
+  /* Main content */
+  .main-content {
+    flex: 1;
+    padding: 24px 28px;
+    overflow-y: auto;
+  }
+
+  /* Breadcrumb */
+  .breadcrumb {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text-tertiary);
+    margin-bottom: 16px;
+  }
+  .breadcrumb a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .breadcrumb a:hover { color: var(--primary); }
+  .breadcrumb .bc-sep { color: var(--text-tertiary); }
+  .breadcrumb .bc-current { color: var(--text-primary); font-weight: 500; }
+
+  /* Page header */
+  .page-header {
+    margin-bottom: 20px;
+  }
+  .page-title { font-size: 20px; font-weight: 700; }
+  .page-subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* Info banner */
+  .info-banner {
+    background: var(--primary-light);
+    border: 1px solid #C7D2FE;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--primary-hover);
+  }
+  .info-banner-icon {
+    width: 20px; height: 20px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+
+  /* User card */
+  .user-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .user-card-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: linear-gradient(135deg, #818CF8, #4F46E5);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 18px; font-weight: 600;
+    flex-shrink: 0;
+  }
+  .user-card-info { flex: 1; }
+  .user-card-name { font-size: 15px; font-weight: 600; }
+  .user-card-email { font-size: 12px; color: var(--text-secondary); }
+  .user-card-badges { display: flex; gap: 8px; margin-top: 4px; }
+  .badge {
+    font-size: 11px; font-weight: 500;
+    padding: 2px 10px; border-radius: 100px;
+  }
+  .badge-role {
+    background: var(--primary-light); color: var(--primary);
+  }
+  .badge-status {
+    background: var(--positive-bg); color: var(--positive-text);
+  }
+
+  /* Permission groups */
+  .perm-group {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .perm-group-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .perm-group-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0;
+  }
+  .perm-group-icon.view { background: #DBEAFE; color: #2563EB; }
+  .perm-group-icon.action { background: #FEF3C7; color: #D97706; }
+  .perm-group-icon.entity { background: #E0E7FF; color: #4F46E5; }
+  .perm-group-icon.notify { background: #DCFCE7; color: #16A34A; }
+  .perm-group-title { font-size: 14px; font-weight: 600; }
+  .perm-group-desc { font-size: 12px; color: var(--text-secondary); }
+  .perm-group-count {
+    margin-left: auto; font-size: 11px; color: var(--text-tertiary);
+    flex-shrink: 0;
+  }
+
+  .perm-item {
+    display: flex; align-items: center;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .perm-item:last-child { border-bottom: none; }
+  .perm-item:hover { background: var(--bg); }
+  .perm-item-info { flex: 1; padding-right: 16px; }
+  .perm-item-name {
+    font-size: 13px; font-weight: 500;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .perm-item-desc { font-size: 11px; color: var(--text-tertiary); margin-top: 1px; }
+  .lock-icon {
+    font-size: 11px; color: var(--text-tertiary);
+    display: inline-flex; align-items: center;
+  }
+
+  /* Toggle switch */
+  .toggle {
+    position: relative;
+    width: 40px; height: 22px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .toggle-track {
+    position: absolute; inset: 0;
+    background: var(--border-hover);
+    border-radius: 11px;
+    transition: background 0.2s;
+  }
+  .toggle-thumb {
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    transition: transform 0.2s;
+  }
+  .toggle input:checked ~ .toggle-track {
+    background: var(--primary);
+  }
+  .toggle input:checked ~ .toggle-thumb {
+    transform: translateX(18px);
+  }
+  .toggle.locked {
+    cursor: not-allowed; opacity: 0.6;
+  }
+  .toggle.locked input { pointer-events: none; }
+
+  /* Footer actions */
+  .footer-actions {
+    display: flex; align-items: center; gap: 12px;
+    padding: 20px 0;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 10px 20px; border-radius: 8px;
+    font-size: 13px; font-weight: 500;
+    cursor: pointer; border: none;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn-primary {
+    background: var(--border-hover); color: var(--text-tertiary);
+    cursor: not-allowed;
+  }
+  .btn-primary.active {
+    background: var(--primary); color: white;
+    cursor: pointer;
+  }
+  .btn-primary.active:hover { background: var(--primary-hover); }
+  .btn-ghost {
+    background: none; color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--border-hover); background: var(--bg); }
+  .btn-destructive {
+    background: none; color: var(--critical);
+    border: 1px solid var(--critical-bg);
+    margin-left: auto;
+  }
+  .btn-destructive:hover { background: var(--critical-bg); }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1C1917;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    transition: bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 9999;
+    white-space: nowrap;
+  }
+  .toast.show { bottom: 32px; }
+  .toast-check { color: var(--positive); font-size: 16px; }
+
+  /* ========================================
+     MOBILE SECTION
+     ======================================== */
+  .mobile-section {
+    max-width: 900px;
+    margin: 0 auto 48px;
+    padding: 0 24px;
+    display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;
+  }
+  .mobile-frame {
+    width: 390px;
+    background: var(--bg);
+    border-radius: 32px;
+    border: 3px solid #1C1917;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  }
+  .mobile-notch {
+    width: 120px; height: 28px; background: #1C1917;
+    margin: 0 auto; border-radius: 0 0 16px 16px;
+  }
+  .mobile-body {
+    min-height: 640px;
+    display: flex; flex-direction: column;
+  }
+
+  /* Mobile header */
+  .m-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px 10px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .m-back {
+    font-size: 18px; color: var(--primary);
+    cursor: pointer; width: 24px; text-align: center;
+  }
+  .m-header-title { font-size: 16px; font-weight: 600; flex: 1; }
+
+  /* Mobile user strip */
+  .m-user-strip {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .m-user-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, #818CF8, #4F46E5);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 15px; font-weight: 600;
+    flex-shrink: 0;
+  }
+  .m-user-info { flex: 1; }
+  .m-user-name { font-size: 14px; font-weight: 600; }
+  .m-user-role { font-size: 11px; color: var(--text-secondary); }
+
+  /* Mobile scroll area */
+  .m-scroll {
+    flex: 1;
+    padding: 12px 16px 80px;
+    overflow-y: auto;
+  }
+
+  /* Mobile info banner */
+  .m-info-banner {
+    background: var(--primary-light);
+    border: 1px solid #C7D2FE;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    font-size: 11px;
+    color: var(--primary-hover);
+    display: flex; gap: 8px; align-items: flex-start;
+  }
+  .m-info-icon { flex-shrink: 0; font-size: 12px; margin-top: 1px; }
+
+  /* Mobile accordion */
+  .m-accordion {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .m-accordion-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .m-accordion-header:hover { background: var(--bg); }
+  .m-acc-icon {
+    width: 28px; height: 28px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; flex-shrink: 0;
+  }
+  .m-acc-icon.view { background: #DBEAFE; color: #2563EB; }
+  .m-acc-icon.action { background: #FEF3C7; color: #D97706; }
+  .m-acc-icon.entity { background: #E0E7FF; color: #4F46E5; }
+  .m-acc-icon.notify { background: #DCFCE7; color: #16A34A; }
+  .m-acc-title { font-size: 13px; font-weight: 600; flex: 1; }
+  .m-acc-count { font-size: 11px; color: var(--text-tertiary); }
+  .m-acc-chevron {
+    font-size: 12px; color: var(--text-tertiary);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .m-accordion.open .m-acc-chevron { transform: rotate(180deg); }
+
+  .m-accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .m-accordion.open .m-accordion-body {
+    max-height: 800px;
+  }
+
+  .m-perm-item {
+    display: flex; align-items: center;
+    padding: 10px 14px;
+    border-top: 1px solid var(--border);
+  }
+  .m-perm-info { flex: 1; padding-right: 10px; }
+  .m-perm-name {
+    font-size: 12px; font-weight: 500;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .m-perm-desc { font-size: 10px; color: var(--text-tertiary); margin-top: 1px; }
+
+  .toggle-sm {
+    position: relative;
+    width: 36px; height: 20px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .toggle-sm input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .toggle-sm .toggle-track {
+    position: absolute; inset: 0;
+    background: var(--border-hover);
+    border-radius: 10px;
+    transition: background 0.2s;
+  }
+  .toggle-sm .toggle-thumb {
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    transition: transform 0.2s;
+  }
+  .toggle-sm input:checked ~ .toggle-track {
+    background: var(--primary);
+  }
+  .toggle-sm input:checked ~ .toggle-thumb {
+    transform: translateX(16px);
+  }
+  .toggle-sm.locked {
+    cursor: not-allowed; opacity: 0.6;
+  }
+  .toggle-sm.locked input { pointer-events: none; }
+
+  /* Mobile sticky footer */
+  .m-sticky-footer {
+    padding: 10px 16px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+  }
+  .m-save-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    font-family: inherit;
+    cursor: not-allowed;
+    background: var(--border-hover);
+    color: var(--text-tertiary);
+    transition: all 0.2s;
+  }
+  .m-save-btn.active {
+    background: var(--primary);
+    color: white;
+    cursor: pointer;
+  }
+  .m-save-btn.active:hover { background: var(--primary-hover); }
+
+  /* Bottom nav */
+  .bottom-nav {
+    display: flex;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 6px 0 14px;
+  }
+  .bn-item {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 2px; font-size: 10px; color: var(--text-tertiary);
+    cursor: pointer; padding: 4px 0;
+  }
+  .bn-item.active { color: var(--primary); font-weight: 500; }
+  .bn-icon { font-size: 18px; height: 22px; display: flex; align-items: center; }
+  .fab {
+    width: 48px; height: 48px;
+    background: var(--primary); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 24px; font-weight: 300;
+    margin-top: -20px;
+    box-shadow: 0 2px 12px rgba(79, 70, 229, 0.3);
+  }
+
+  .mobile-label {
+    padding: 6px 16px; font-size: 11px; color: var(--text-secondary);
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+
+  /* More actions mobile */
+  .m-more-actions {
+    padding: 0 16px 16px;
+  }
+  .m-more-link {
+    display: block;
+    text-align: center;
+    font-size: 12px;
+    padding: 10px;
+    color: var(--critical);
+    cursor: pointer;
+    border: 1px solid var(--critical-bg);
+    border-radius: 8px;
+    transition: background 0.15s;
+  }
+  .m-more-link:hover { background: var(--critical-bg); }
+
+  /* Inline Card Brand Icons */
+  .method-brand {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 16px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    vertical-align: middle;
+    margin-right: 4px;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+  .method-brand-visa {
+    background: #1A1F71;
+    color: #FFFFFF;
+    font-size: 7px;
+    font-style: italic;
+    font-weight: 800;
+  }
+  .method-brand-master {
+    background: #252525;
+    position: relative;
+    overflow: hidden;
+  }
+  .method-brand-master::before,
+  .method-brand-master::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .method-brand-master::before { left: 3px; background: #EB001B; }
+  .method-brand-master::after { right: 3px; background: #F79E1B; }
+</style>
+</head>
+<body>
+
+<div class="showcase-header">
+  <h1>Prototipo 04 — Permissoes</h1>
+  <p>Gerenciamento de permissoes de contas vinculadas</p>
+</div>
+
+<!-- ================================================
+     DESKTOP — PERMISSOES
+     ================================================ -->
+<div class="section-divider">
+  <h2>Desktop — Gerenciamento de Permissoes</h2>
+  <p>Sidebar expandida, card do usuario, grupos de permissoes com toggles, acoes no rodape</p>
+</div>
+
+<div class="desktop-frame">
+  <div class="app-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">C</div>
+        <div class="sidebar-logo-text">Caderninho</div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Principal</div>
+        <div class="sidebar-item">
+          <span class="si-icon">&#9633;</span> Dashboard
+        </div>
+        <div class="sidebar-item">
+          <span class="si-icon">&#9776;</span> Orcamentos
+        </div>
+        <div class="sidebar-item">
+          <span class="si-icon">&#10003;</span> Checklist
+        </div>
+        <div class="sidebar-item">
+          <span class="si-icon">&#8594;</span> Projecao
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Configuracoes</div>
+        <div class="sidebar-item active">
+          <span class="si-icon">&#9881;</span> Preferencias
+        </div>
+        <div class="sidebar-item">
+          <span class="si-icon">&#9863;</span> Categorias
+        </div>
+      </div>
+
+      <div style="flex:1;"></div>
+
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">V</div>
+        <div class="sidebar-username">Vitor</div>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="main-content">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="#">Configuracoes</a>
+        <span class="bc-sep">&#8250;</span>
+        <a href="#">Usuarios</a>
+        <span class="bc-sep">&#8250;</span>
+        <a href="#">Tamires</a>
+        <span class="bc-sep">&#8250;</span>
+        <span class="bc-current">Permissoes</span>
+      </div>
+
+      <!-- Page header -->
+      <div class="page-header">
+        <h1 class="page-title">Permissoes de Tamires</h1>
+        <p class="page-subtitle">Defina o que Tamires pode ver e fazer no Caderninho</p>
+      </div>
+
+      <!-- Info banner -->
+      <div class="info-banner">
+        <div class="info-banner-icon">&#9432;</div>
+        <div>As permissoes definem o que Tamires ve e faz no Caderninho. Alteracoes sao aplicadas imediatamente.</div>
+      </div>
+
+      <!-- User card -->
+      <div class="user-card">
+        <div class="user-card-avatar">T</div>
+        <div class="user-card-info">
+          <div class="user-card-name">Tamires</div>
+          <div class="user-card-email">tamires@email.com</div>
+          <div class="user-card-badges">
+            <span class="badge badge-role">Membro</span>
+            <span class="badge badge-status">Ativa</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== GRUPO 1: VISUALIZACAO ===== -->
+      <div class="perm-group">
+        <div class="perm-group-header">
+          <div class="perm-group-icon view">&#128065;</div>
+          <div>
+            <div class="perm-group-title">Visualizacao</div>
+            <div class="perm-group-desc">O que pode ver</div>
+          </div>
+          <div class="perm-group-count">5 de 7 ativos</div>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Dashboard principal <span class="lock-icon" title="Sempre ativo para membros">&#128274;</span></div>
+            <div class="perm-item-desc">Visao geral com resumo financeiro e graficos</div>
+          </div>
+          <label class="toggle locked">
+            <input type="checkbox" checked disabled data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Orcamentos por categoria</div>
+            <div class="perm-item-desc">Ver limites e gastos de cada categoria</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Detalhes de cartao de credito</div>
+            <div class="perm-item-desc">Faturas, parcelas e limites dos cartoes</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Saldo das contas bancarias</div>
+            <div class="perm-item-desc">Visualizar saldos atuais de todas as contas</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Projecao futura</div>
+            <div class="perm-item-desc">Previsao de gastos e saldo para os proximos meses</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Drill-down por estabelecimento</div>
+            <div class="perm-item-desc">Detalhar gastos por local de compra</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Historico de transacoes</div>
+            <div class="perm-item-desc">Lista completa de todas as movimentacoes</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+      </div>
+
+      <!-- ===== GRUPO 2: ACOES ===== -->
+      <div class="perm-group">
+        <div class="perm-group-header">
+          <div class="perm-group-icon action">&#9998;</div>
+          <div>
+            <div class="perm-group-title">Acoes</div>
+            <div class="perm-group-desc">O que pode fazer</div>
+          </div>
+          <div class="perm-group-count">2 de 6 ativos</div>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Registrar gastos</div>
+            <div class="perm-item-desc">Adicionar novas transacoes e despesas</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Editar transacoes proprias</div>
+            <div class="perm-item-desc">Modificar transacoes que ela mesma registrou</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Editar transacoes de outros</div>
+            <div class="perm-item-desc">Modificar transacoes registradas por Vitor</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Marcar contas como pagas (checklist)</div>
+            <div class="perm-item-desc">Confirmar pagamento de itens no checklist mensal</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Criar categorias</div>
+            <div class="perm-item-desc">Adicionar novas categorias de gastos</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Alterar orcamentos</div>
+            <div class="perm-item-desc">Modificar limites e metas de orcamento</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+      </div>
+
+      <!-- ===== GRUPO 3: ENTIDADES ===== -->
+      <div class="perm-group">
+        <div class="perm-group-header">
+          <div class="perm-group-icon entity">&#128179;</div>
+          <div>
+            <div class="perm-group-title">Entidades</div>
+            <div class="perm-group-desc">Quais dados pode acessar</div>
+          </div>
+          <div class="perm-group-count">5 de 8 ativos</div>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Conta Pessoal Vitor</div>
+            <div class="perm-item-desc">Conta bancaria pessoal de Vitor</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Conta Pessoal Tamires <span class="lock-icon" title="Sempre ativo — conta propria">&#128274;</span></div>
+            <div class="perm-item-desc">Conta bancaria pessoal de Tamires</div>
+          </div>
+          <label class="toggle locked">
+            <input type="checkbox" checked disabled data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Empresa Alpha LTDA</div>
+            <div class="perm-item-desc">Conta empresarial Alpha</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Empresa Beta ME</div>
+            <div class="perm-item-desc">Conta empresarial Beta</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Cartao <span class="method-brand method-brand-visa">VISA</span>Latam Pass</div>
+            <div class="perm-item-desc">Cartao de credito Latam Pass</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Cartao Pao de Acucar</div>
+            <div class="perm-item-desc">Cartao de credito Pao de Acucar</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Cartao Uniclass</div>
+            <div class="perm-item-desc">Cartao de credito Uniclass</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Cartao PDA</div>
+            <div class="perm-item-desc">Cartao de credito PDA</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+      </div>
+
+      <!-- ===== GRUPO 4: NOTIFICACOES ===== -->
+      <div class="perm-group">
+        <div class="perm-group-header">
+          <div class="perm-group-icon notify">&#128276;</div>
+          <div>
+            <div class="perm-group-title">Notificacoes</div>
+            <div class="perm-group-desc">Alertas e resumos que recebe</div>
+          </div>
+          <div class="perm-group-count">3 de 3 ativos</div>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Receber alertas de contas a pagar</div>
+            <div class="perm-item-desc">Notificacoes quando contas estao proximas do vencimento</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Receber resumo semanal</div>
+            <div class="perm-item-desc">Email semanal com resumo de gastos e orcamento</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-item-info">
+            <div class="perm-item-name">Alertas de orcamento estourado</div>
+            <div class="perm-item-desc">Aviso quando uma categoria ultrapassa o limite</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked data-group="desktop">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Footer actions -->
+      <div class="footer-actions">
+        <button class="btn btn-primary" id="desktopSaveBtn" onclick="saveDesktop()">Salvar alteracoes</button>
+        <button class="btn btn-ghost" onclick="resetDesktop()">Redefinir para padrao</button>
+        <button class="btn btn-destructive">Remover acesso</button>
+      </div>
+
+    </div><!-- /main-content -->
+  </div><!-- /app-container -->
+</div><!-- /desktop-frame -->
+
+
+<!-- ================================================
+     MOBILE — PERMISSOES
+     ================================================ -->
+<div class="section-divider">
+  <h2>Mobile — Permissoes com Acordeoes</h2>
+  <p>Grupos colapsaveis, toggle compacto, botao salvar fixo no rodape</p>
+</div>
+
+<div class="mobile-section">
+  <!-- Mobile 1: Lista colapsada -->
+  <div class="mobile-frame">
+    <div class="mobile-notch"></div>
+    <div class="mobile-label"><strong>Tamires</strong> — Visao colapsada</div>
+    <div class="mobile-body">
+      <div class="m-header">
+        <span class="m-back">&#8592;</span>
+        <span class="m-header-title">Permissoes de Tamires</span>
+      </div>
+
+      <div class="m-user-strip">
+        <div class="m-user-avatar">T</div>
+        <div class="m-user-info">
+          <div class="m-user-name">Tamires</div>
+          <div class="m-user-role">Membro &middot; Ativa</div>
+        </div>
+      </div>
+
+      <div class="m-scroll" id="mobileScroll1">
+        <div class="m-info-banner">
+          <span class="m-info-icon">&#9432;</span>
+          <span>As permissoes definem o que Tamires ve e faz. Alteracoes sao aplicadas imediatamente.</span>
+        </div>
+
+        <!-- Accordion: Visualizacao -->
+        <div class="m-accordion" data-accordion="m1">
+          <div class="m-accordion-header" onclick="toggleAccordion(this)">
+            <div class="m-acc-icon view">&#128065;</div>
+            <div class="m-acc-title">Visualizacao</div>
+            <div class="m-acc-count">5/7</div>
+            <div class="m-acc-chevron">&#9660;</div>
+          </div>
+          <div class="m-accordion-body">
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Dashboard principal <span class="lock-icon">&#128274;</span></div>
+                <div class="m-perm-desc">Visao geral com resumo financeiro</div>
+              </div>
+              <label class="toggle-sm locked"><input type="checkbox" checked disabled data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Orcamentos por categoria</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Detalhes de cartao de credito</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Saldo das contas bancarias</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Projecao futura</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Drill-down por estabelecimento</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Historico de transacoes</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accordion: Acoes -->
+        <div class="m-accordion" data-accordion="m1">
+          <div class="m-accordion-header" onclick="toggleAccordion(this)">
+            <div class="m-acc-icon action">&#9998;</div>
+            <div class="m-acc-title">Acoes</div>
+            <div class="m-acc-count">2/6</div>
+            <div class="m-acc-chevron">&#9660;</div>
+          </div>
+          <div class="m-accordion-body">
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Registrar gastos</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Editar transacoes proprias</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Editar transacoes de outros</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Marcar contas como pagas</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Criar categorias</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Alterar orcamentos</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accordion: Entidades -->
+        <div class="m-accordion" data-accordion="m1">
+          <div class="m-accordion-header" onclick="toggleAccordion(this)">
+            <div class="m-acc-icon entity">&#128179;</div>
+            <div class="m-acc-title">Entidades</div>
+            <div class="m-acc-count">5/8</div>
+            <div class="m-acc-chevron">&#9660;</div>
+          </div>
+          <div class="m-accordion-body">
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Conta Pessoal Vitor</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Conta Pessoal Tamires <span class="lock-icon">&#128274;</span></div>
+              </div>
+              <label class="toggle-sm locked"><input type="checkbox" checked disabled data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Empresa Alpha LTDA</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Empresa Beta ME</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Cartao <span class="method-brand method-brand-visa">VISA</span>Latam Pass</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Cartao Pao de Acucar</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Cartao Uniclass</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Cartao PDA</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accordion: Notificacoes -->
+        <div class="m-accordion" data-accordion="m1">
+          <div class="m-accordion-header" onclick="toggleAccordion(this)">
+            <div class="m-acc-icon notify">&#128276;</div>
+            <div class="m-acc-title">Notificacoes</div>
+            <div class="m-acc-count">3/3</div>
+            <div class="m-acc-chevron">&#9660;</div>
+          </div>
+          <div class="m-accordion-body">
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Alertas de contas a pagar</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Resumo semanal</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Orcamento estourado</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-more-actions">
+          <div class="m-more-link" style="margin-top: 8px;">Remover acesso de Tamires</div>
+        </div>
+      </div>
+
+      <div class="m-sticky-footer">
+        <button class="m-save-btn" id="mobileSaveBtn1" onclick="saveMobile(this)">Salvar</button>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="bn-item"><span class="bn-icon">&#9633;</span>Dashboard</div>
+        <div class="bn-item"><span class="bn-icon">&#9776;</span>Orcamentos</div>
+        <div class="bn-item"><div class="fab">+</div><span style="margin-top: 4px;">Registrar</span></div>
+        <div class="bn-item"><span class="bn-icon">&#10003;</span>Checklist</div>
+        <div class="bn-item"><span class="bn-icon">&#8594;</span>Projecao</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile 2: Accordion expandido -->
+  <div class="mobile-frame">
+    <div class="mobile-notch"></div>
+    <div class="mobile-label"><strong>Tamires</strong> — Grupo expandido</div>
+    <div class="mobile-body">
+      <div class="m-header">
+        <span class="m-back">&#8592;</span>
+        <span class="m-header-title">Permissoes de Tamires</span>
+      </div>
+
+      <div class="m-user-strip">
+        <div class="m-user-avatar">T</div>
+        <div class="m-user-info">
+          <div class="m-user-name">Tamires</div>
+          <div class="m-user-role">Membro &middot; Ativa</div>
+        </div>
+      </div>
+
+      <div class="m-scroll">
+        <div class="m-info-banner">
+          <span class="m-info-icon">&#9432;</span>
+          <span>As permissoes definem o que Tamires ve e faz. Alteracoes sao aplicadas imediatamente.</span>
+        </div>
+
+        <!-- Accordion: Visualizacao - OPEN -->
+        <div class="m-accordion open" data-accordion="m2">
+          <div class="m-accordion-header" onclick="toggleAccordion(this)">
+            <div class="m-acc-icon view">&#128065;</div>
+            <div class="m-acc-title">Visualizacao</div>
+            <div class="m-acc-count">5/7</div>
+            <div class="m-acc-chevron">&#9660;</div>
+          </div>
+          <div class="m-accordion-body">
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Dashboard principal <span class="lock-icon">&#128274;</span></div>
+                <div class="m-perm-desc">Visao geral com resumo financeiro</div>
+              </div>
+              <label class="toggle-sm locked"><input type="checkbox" checked disabled data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Orcamentos por categoria</div>
+                <div class="m-perm-desc">Ver limites e gastos</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Detalhes de cartao de credito</div>
+                <div class="m-perm-desc">Faturas, parcelas e limites</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Saldo das contas bancarias</div>
+                <div class="m-perm-desc">Saldos atuais de todas as contas</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Projecao futura</div>
+                <div class="m-perm-desc">Previsao para proximos meses</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Drill-down por estabelecimento</div>
+                <div class="m-perm-desc">Detalhar gastos por local</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info">
+                <div class="m-perm-name">Historico de transacoes</div>
+                <div class="m-perm-desc">Lista completa de movimentacoes</div>
+              </div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accordion: Acoes - collapsed -->
+        <div class="m-accordion" data-accordion="m2">
+          <div class="m-accordion-header" onclick="toggleAccordion(this)">
+            <div class="m-acc-icon action">&#9998;</div>
+            <div class="m-acc-title">Acoes</div>
+            <div class="m-acc-count">2/6</div>
+            <div class="m-acc-chevron">&#9660;</div>
+          </div>
+          <div class="m-accordion-body">
+            <div class="m-perm-item">
+              <div class="m-perm-info"><div class="m-perm-name">Registrar gastos</div></div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info"><div class="m-perm-name">Editar transacoes proprias</div></div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info"><div class="m-perm-name">Editar transacoes de outros</div></div>
+              <label class="toggle-sm"><input type="checkbox" data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info"><div class="m-perm-name">Marcar contas como pagas</div></div>
+              <label class="toggle-sm"><input type="checkbox" data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info"><div class="m-perm-name">Criar categorias</div></div>
+              <label class="toggle-sm"><input type="checkbox" data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info"><div class="m-perm-name">Alterar orcamentos</div></div>
+              <label class="toggle-sm"><input type="checkbox" data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accordion: Entidades - collapsed -->
+        <div class="m-accordion" data-accordion="m2">
+          <div class="m-accordion-header" onclick="toggleAccordion(this)">
+            <div class="m-acc-icon entity">&#128179;</div>
+            <div class="m-acc-title">Entidades</div>
+            <div class="m-acc-count">5/8</div>
+            <div class="m-acc-chevron">&#9660;</div>
+          </div>
+          <div class="m-accordion-body">
+            <div class="m-perm-item">
+              <div class="m-perm-info"><div class="m-perm-name">Conta Pessoal Vitor</div></div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info"><div class="m-perm-name">Conta Pessoal Tamires <span class="lock-icon">&#128274;</span></div></div>
+              <label class="toggle-sm locked"><input type="checkbox" checked disabled data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info"><div class="m-perm-name">Empresa Alpha LTDA</div></div>
+              <label class="toggle-sm"><input type="checkbox" data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info"><div class="m-perm-name">Empresa Beta ME</div></div>
+              <label class="toggle-sm"><input type="checkbox" data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info"><div class="m-perm-name">Cartao <span class="method-brand method-brand-visa">VISA</span>Latam Pass</div></div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info"><div class="m-perm-name">Cartao Pao de Acucar</div></div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info"><div class="m-perm-name">Cartao Uniclass</div></div>
+              <label class="toggle-sm"><input type="checkbox" data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info"><div class="m-perm-name">Cartao PDA</div></div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accordion: Notificacoes - collapsed -->
+        <div class="m-accordion" data-accordion="m2">
+          <div class="m-accordion-header" onclick="toggleAccordion(this)">
+            <div class="m-acc-icon notify">&#128276;</div>
+            <div class="m-acc-title">Notificacoes</div>
+            <div class="m-acc-count">3/3</div>
+            <div class="m-acc-chevron">&#9660;</div>
+          </div>
+          <div class="m-accordion-body">
+            <div class="m-perm-item">
+              <div class="m-perm-info"><div class="m-perm-name">Alertas de contas a pagar</div></div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info"><div class="m-perm-name">Resumo semanal</div></div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="m-perm-item">
+              <div class="m-perm-info"><div class="m-perm-name">Orcamento estourado</div></div>
+              <label class="toggle-sm"><input type="checkbox" checked data-group="mobile2"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-more-actions">
+          <div class="m-more-link" style="margin-top: 8px;">Remover acesso de Tamires</div>
+        </div>
+      </div>
+
+      <div class="m-sticky-footer">
+        <button class="m-save-btn" id="mobileSaveBtn2" onclick="saveMobile(this)">Salvar</button>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="bn-item"><span class="bn-icon">&#9633;</span>Dashboard</div>
+        <div class="bn-item"><span class="bn-icon">&#9776;</span>Orcamentos</div>
+        <div class="bn-item"><div class="fab">+</div><span style="margin-top: 4px;">Registrar</span></div>
+        <div class="bn-item"><span class="bn-icon">&#10003;</span>Checklist</div>
+        <div class="bn-item"><span class="bn-icon">&#8594;</span>Projecao</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast">
+  <span class="toast-check">&#10003;</span>
+  Permissoes atualizadas com sucesso
+</div>
+
+<script>
+  // =============================================
+  // Store initial states for change detection
+  // =============================================
+  const initialStates = {};
+
+  function captureInitialStates() {
+    document.querySelectorAll('input[type="checkbox"]').forEach((cb, i) => {
+      initialStates[i] = cb.checked;
+    });
+  }
+
+  function hasChanges(group) {
+    let changed = false;
+    document.querySelectorAll(`input[data-group="${group}"]`).forEach((cb) => {
+      const allCbs = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+      const idx = allCbs.indexOf(cb);
+      if (idx !== -1 && initialStates[idx] !== cb.checked) {
+        changed = true;
+      }
+    });
+    return changed;
+  }
+
+  function updateSaveButtons() {
+    // Desktop save button
+    const desktopBtn = document.getElementById('desktopSaveBtn');
+    if (hasChanges('desktop')) {
+      desktopBtn.classList.add('active');
+    } else {
+      desktopBtn.classList.remove('active');
+    }
+
+    // Mobile save buttons
+    const mobileBtn1 = document.getElementById('mobileSaveBtn1');
+    if (hasChanges('mobile')) {
+      mobileBtn1.classList.add('active');
+    } else {
+      mobileBtn1.classList.remove('active');
+    }
+
+    const mobileBtn2 = document.getElementById('mobileSaveBtn2');
+    if (hasChanges('mobile2')) {
+      mobileBtn2.classList.add('active');
+    } else {
+      mobileBtn2.classList.remove('active');
+    }
+  }
+
+  // =============================================
+  // Toggle switches
+  // =============================================
+  document.querySelectorAll('.toggle:not(.locked), .toggle-sm:not(.locked)').forEach(toggle => {
+    toggle.addEventListener('click', (e) => {
+      // The label click already toggles the checkbox
+      // We just need to update save button states
+      setTimeout(updateSaveButtons, 10);
+    });
+  });
+
+  // =============================================
+  // Accordion toggle
+  // =============================================
+  function toggleAccordion(header) {
+    const accordion = header.closest('.m-accordion');
+    accordion.classList.toggle('open');
+  }
+
+  // =============================================
+  // Toast notification
+  // =============================================
+  function showToast() {
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2500);
+  }
+
+  // =============================================
+  // Save actions
+  // =============================================
+  function saveDesktop() {
+    const btn = document.getElementById('desktopSaveBtn');
+    if (!btn.classList.contains('active')) return;
+    showToast();
+    // Re-capture states after save
+    captureInitialStates();
+    updateSaveButtons();
+  }
+
+  function saveMobile(btn) {
+    const saveBtn = btn;
+    if (!saveBtn.classList.contains('active')) return;
+    showToast();
+    captureInitialStates();
+    updateSaveButtons();
+  }
+
+  // =============================================
+  // Reset to defaults
+  // =============================================
+  function resetDesktop() {
+    // Default states for desktop toggles (matching original spec)
+    const defaults = [
+      true,  // Dashboard (locked)
+      true,  // Orcamentos
+      false, // Detalhes cartao
+      true,  // Saldo
+      true,  // Projecao
+      false, // Drill-down
+      true,  // Historico
+      true,  // Registrar gastos
+      true,  // Editar proprias
+      false, // Editar outros
+      false, // Marcar pagas
+      false, // Criar categorias
+      false, // Alterar orcamentos
+      true,  // Conta Vitor
+      true,  // Conta Tamires (locked)
+      false, // Alpha
+      false, // Beta
+      true,  // Latam Pass
+      true,  // Pao de Acucar
+      false, // Uniclass
+      true,  // PDA
+      true,  // Alertas contas
+      true,  // Resumo semanal
+      true,  // Orcamento estourado
+    ];
+
+    const desktopCbs = document.querySelectorAll('input[data-group="desktop"]');
+    desktopCbs.forEach((cb, i) => {
+      if (!cb.disabled && i < defaults.length) {
+        cb.checked = defaults[i];
+      }
+    });
+    updateSaveButtons();
+  }
+
+  // =============================================
+  // Initialize
+  // =============================================
+  captureInitialStates();
+</script>
+
+</body>
+</html>

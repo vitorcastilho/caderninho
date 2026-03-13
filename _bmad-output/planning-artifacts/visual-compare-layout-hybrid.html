@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caderninho — Layout Híbrido: Sidebar Colapsável</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #FAFAF9;
+    --surface: #FFFFFF;
+    --border: #E7E5E4;
+    --border-hover: #D6D3D1;
+    --text-primary: #1C1917;
+    --text-secondary: #78716C;
+    --text-tertiary: #A8A29E;
+    --primary: #4F46E5;
+    --primary-hover: #4338CA;
+    --primary-light: #EEF2FF;
+    --positive: #22C55E;
+    --positive-bg: #DCFCE7;
+    --positive-text: #166534;
+    --attention: #EAB308;
+    --attention-bg: #FEF9C3;
+    --attention-text: #854D0E;
+    --critical: #DC2626;
+    --critical-bg: #FEE2E2;
+    --critical-text: #991B1B;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #E7E5E4;
+    color: var(--text-primary);
+    line-height: 1.5;
+    padding: 24px;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding: 24px;
+    background: var(--surface);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+  }
+  .page-header h1 { font-size: 20px; font-weight: 600; }
+  .page-header p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+  .section-header {
+    text-align: center;
+    margin: 48px 0 8px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .section-desc {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+  }
+
+  .layout-container {
+    max-width: 1200px;
+    margin: 0 auto 32px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .layout-label {
+    text-align: center;
+    padding: 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .badge {
+    display: inline-block; padding: 4px 14px;
+    background: var(--primary-light); color: var(--primary); border-radius: 100px;
+    font-size: 12px; font-weight: 500; margin-bottom: 6px;
+  }
+  .label-name { font-size: 15px; font-weight: 600; }
+  .label-desc { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* ========================================
+     EXPANDED SIDEBAR
+     ======================================== */
+  .expanded-layout {
+    display: flex;
+    min-height: 520px;
+  }
+
+  .sidebar-expanded {
+    width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 16px 0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-brand {
+    padding: 0 20px 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sidebar-brand-icon {
+    width: 28px; height: 28px;
+    background: var(--primary);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 14px; font-weight: 700;
+  }
+
+  .sidebar-nav { flex: 1; }
+
+  .sidebar-item {
+    padding: 10px 20px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+  }
+  .sidebar-item:hover {
+    background: #F5F5F4;
+    color: var(--text-primary);
+  }
+  .sidebar-item.active {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 500;
+    border-left-color: var(--primary);
+  }
+  .sidebar-icon {
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+  }
+
+  .sidebar-section-label {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 16px 20px 6px;
+  }
+
+  .sidebar-footer {
+    padding: 12px 20px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+
+  .sidebar-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 6px 0;
+    transition: color 0.15s;
+  }
+  .sidebar-toggle:hover { color: var(--text-secondary); }
+  .toggle-icon {
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Content */
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    overflow: auto;
+  }
+
+  .content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .content-title { font-size: 18px; font-weight: 600; }
+  .content-subtitle { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+  .btn-primary {
+    padding: 8px 18px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s;
+  }
+  .btn-primary:hover { background: var(--primary-hover); }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+  .span2 { grid-column: span 2; }
+  .span3 { grid-column: span 3; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .card-title {
+    font-size: 11px; font-weight: 500; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;
+  }
+
+  .row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 7px 0; border-bottom: 1px solid #F5F5F4; font-size: 13px;
+  }
+  .row:last-child { border-bottom: none; }
+  .row .label { color: var(--text-secondary); }
+  .row .value { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .row .value.positive { color: var(--positive); }
+
+  .big-number { font-size: 26px; font-weight: 700; text-align: center; margin: 6px 0; font-variant-numeric: tabular-nums; }
+  .sub-label { font-size: 11px; color: var(--text-secondary); text-align: center; }
+  .detail-label { font-size: 10px; color: var(--text-tertiary); text-align: center; margin-top: 4px; }
+
+  .status {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 500;
+  }
+  .status.ok { background: var(--positive-bg); color: var(--positive-text); }
+
+  .budget { margin-bottom: 12px; }
+  .budget:last-child { margin-bottom: 0; }
+  .budget-header { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 12px; }
+  .budget-name { font-weight: 500; }
+  .budget-vals { color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .bar { height: 6px; background: #F5F5F4; border-radius: 100px; overflow: hidden; }
+  .fill { height: 100%; border-radius: 100px; }
+  .fill.ok { background: linear-gradient(90deg, var(--positive), var(--primary)); }
+  .fill.over { background: var(--critical); }
+  .rest { font-size: 10px; color: var(--text-tertiary); margin-top: 2px; }
+
+  .tamires-blocks { display: flex; gap: 10px; }
+  .tamires-block { flex: 1; padding: 12px; border-radius: 8px; }
+  .tamires-block.ok { background: var(--positive-bg); }
+  .tamires-block.warn { background: var(--attention-bg); }
+  .tamires-block .lbl { font-size: 11px; }
+  .tamires-block.ok .lbl { color: var(--positive-text); }
+  .tamires-block.warn .lbl { color: var(--attention-text); }
+  .tamires-block .val { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .tamires-block.ok .val { color: var(--positive-text); }
+  .tamires-block.warn .val { color: var(--attention-text); }
+  .tamires-block .dtl { font-size: 10px; margin-top: 2px; }
+  .tamires-block.ok .dtl { color: var(--positive-text); }
+  .tamires-block.warn .dtl { color: var(--attention-text); }
+
+  .celebration {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px; border-radius: 8px; font-size: 12px; margin-bottom: 6px;
+  }
+  .celebration:last-child { margin-bottom: 0; }
+  .celebration.ok { background: var(--positive-bg); color: var(--positive-text); }
+  .celebration.info { background: var(--primary-light); color: var(--primary-hover); }
+
+  .view-toggle {
+    display: inline-flex; background: #F5F5F4; border-radius: 8px; padding: 3px;
+    margin-bottom: 12px;
+  }
+  .view-toggle button {
+    padding: 5px 12px; border: none; background: transparent; border-radius: 6px;
+    font-size: 11px; color: var(--text-secondary); cursor: pointer;
+  }
+  .view-toggle button.active {
+    background: var(--surface); color: var(--text-primary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08); font-weight: 500;
+  }
+
+  /* ========================================
+     COLLAPSED SIDEBAR
+     ======================================== */
+  .collapsed-layout {
+    display: flex;
+    min-height: 520px;
+  }
+
+  .sidebar-collapsed {
+    width: 56px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 12px 0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sidebar-collapsed .brand-icon {
+    width: 32px; height: 32px;
+    background: var(--primary);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 15px; font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .collapsed-item {
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    font-size: 16px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 4px;
+    position: relative;
+  }
+  .collapsed-item:hover {
+    background: #F5F5F4;
+    color: var(--text-primary);
+  }
+  .collapsed-item.active {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+  .collapsed-item .tooltip {
+    display: none;
+    position: absolute;
+    left: 52px;
+    background: var(--text-primary);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 10;
+  }
+  .collapsed-item:hover .tooltip {
+    display: block;
+  }
+
+  .collapsed-divider {
+    width: 24px;
+    height: 1px;
+    background: var(--border);
+    margin: 8px 0;
+  }
+
+  .collapsed-footer {
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 12px 0 0;
+  }
+
+  /* Mobile bottom nav preview */
+  .mobile-preview {
+    max-width: 375px;
+    margin: 0 auto;
+    background: var(--bg);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    min-height: 520px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobile-header {
+    padding: 16px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .mobile-header-title { font-size: 17px; font-weight: 600; }
+
+  .mobile-content {
+    flex: 1;
+    padding: 16px;
+    overflow: auto;
+  }
+
+  .mobile-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .mobile-card:last-child { margin-bottom: 0; }
+
+  .mobile-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0; border-bottom: 1px solid #F5F5F4; font-size: 14px;
+  }
+  .mobile-row:last-child { border-bottom: none; }
+  .mobile-label { color: var(--text-secondary); }
+  .mobile-value { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .mobile-value.positive { color: var(--positive); }
+
+  .mobile-budget { margin-bottom: 14px; }
+  .mobile-budget:last-child { margin-bottom: 0; }
+  .mobile-budget-header { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 13px; }
+  .mobile-budget-name { font-weight: 500; }
+  .mobile-budget-vals { color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .mobile-bar { height: 8px; background: #F5F5F4; border-radius: 100px; overflow: hidden; }
+  .mobile-fill { height: 100%; border-radius: 100px; }
+  .mobile-fill.ok { background: linear-gradient(90deg, var(--positive), var(--primary)); }
+  .mobile-fill.over { background: var(--critical); }
+  .mobile-rest { font-size: 11px; color: var(--text-tertiary); margin-top: 3px; }
+
+  .bottom-nav {
+    display: flex;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 8px 0 12px;
+  }
+  .bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 4px 0;
+  }
+  .bottom-nav-item.active {
+    color: var(--primary);
+    font-weight: 500;
+  }
+  .bottom-nav-icon { font-size: 18px; }
+
+  .fab {
+    width: 48px; height: 48px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 24px; font-weight: 300;
+    margin-top: -24px;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+  }
+
+  .mobile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 900px) {
+    body { padding: 16px; }
+    .mobile-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Layout Híbrido: Sidebar Colapsável</h1>
+  <p>A sidebar se recolhe para ícones quando você precisa de mais espaço — e no mobile vira bottom navigation</p>
+</div>
+
+<!-- ========================================
+     DESKTOP: EXPANDED
+     ======================================== -->
+<div class="section-header">Desktop — Sidebar Expandida</div>
+<div class="section-desc">Navegação completa com labels. Bom para aprender o app e navegar entre seções.</div>
+
+<div class="layout-container">
+  <div class="expanded-layout">
+    <div class="sidebar-expanded">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon">C</div>
+        Caderninho
+      </div>
+      <div class="sidebar-nav">
+        <div class="sidebar-item active">
+          <span class="sidebar-icon">◻</span>
+          <span>Dashboard</span>
+        </div>
+        <div class="sidebar-item">
+          <span class="sidebar-icon">↗</span>
+          <span>Registrar</span>
+        </div>
+        <div class="sidebar-item">
+          <span class="sidebar-icon">☰</span>
+          <span>Orçamentos</span>
+        </div>
+        <div class="sidebar-item">
+          <span class="sidebar-icon">✓</span>
+          <span>Checklist</span>
+        </div>
+        <div class="sidebar-item">
+          <span class="sidebar-icon">→</span>
+          <span>Projeção</span>
+        </div>
+        <div class="sidebar-section-label">Configurações</div>
+        <div class="sidebar-item">
+          <span class="sidebar-icon">⚙</span>
+          <span>Contas e Cartões</span>
+        </div>
+        <div class="sidebar-item">
+          <span class="sidebar-icon">◎</span>
+          <span>Categorias</span>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="sidebar-toggle">
+          <span class="toggle-icon">◁</span>
+          <span>Recolher menu</span>
+        </div>
+      </div>
+    </div>
+    <div class="main-content">
+      <div class="content-header">
+        <div>
+          <div class="content-title">Dashboard</div>
+          <div class="content-subtitle">Março 2026 — atualizado agora</div>
+        </div>
+        <button class="btn-primary">+ Registrar gasto</button>
+      </div>
+      <div class="content-grid">
+        <div class="card">
+          <div class="card-title">Resumo de Março</div>
+          <div class="row">
+            <span class="label">Saldo total contas</span>
+            <span class="value">R$ 19.200</span>
+          </div>
+          <div class="row">
+            <span class="label">Contas a pagar</span>
+            <span class="value">R$ 8.400</span>
+          </div>
+          <div class="row">
+            <span class="label">Faturas de cartão</span>
+            <span class="value">R$ 7.180</span>
+          </div>
+          <div class="row">
+            <span class="label">Disponível livre</span>
+            <span class="value positive">R$ 320</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Regra de Ouro</div>
+          <div class="big-number">78%</div>
+          <div class="sub-label">Comprometimento em cartões vs. saldo</div>
+          <div class="detail-label">R$ 7.180 em cartões / R$ 19.200 em conta</div>
+          <div style="text-align: center; margin-top: 8px;">
+            <span class="status ok">Dentro do limite</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Visão Rápida — Tamires</div>
+          <div style="margin-bottom: 8px;">
+            <span class="status ok">Gastos regulares dentro do planejado</span>
+          </div>
+          <div class="tamires-blocks">
+            <div class="tamires-block ok">
+              <div class="lbl">Regulares</div>
+              <div class="val">R$ 12.600</div>
+              <div class="dtl">Dentro do planejado</div>
+            </div>
+            <div class="tamires-block warn">
+              <div class="lbl">Fora do plan.</div>
+              <div class="val">R$ 10.400</div>
+              <div class="dtl">Viagem + Motor</div>
+            </div>
+          </div>
+        </div>
+        <div class="card span3">
+          <div class="card-title">Orçamentos do Mês</div>
+          <div class="view-toggle">
+            <button class="active">Visual</button>
+            <button>Lista</button>
+            <button>Timeline</button>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px 24px;">
+            <div class="budget">
+              <div class="budget-header">
+                <span class="budget-name">Supermercado</span>
+                <span class="budget-vals">R$ 2.122 / R$ 3.000</span>
+              </div>
+              <div class="bar"><div class="fill ok" style="width: 70.7%"></div></div>
+              <div class="rest">Resta R$ 878</div>
+            </div>
+            <div class="budget">
+              <div class="budget-header">
+                <span class="budget-name">Escola</span>
+                <span class="budget-vals">R$ 2.800 / R$ 2.800</span>
+              </div>
+              <div class="bar"><div class="fill ok" style="width: 100%"></div></div>
+              <div class="rest">Pago integralmente</div>
+            </div>
+            <div class="budget">
+              <div class="budget-header">
+                <span class="budget-name">Restaurante</span>
+                <span class="budget-vals">R$ 1.800 / R$ 1.500</span>
+              </div>
+              <div class="bar"><div class="fill over" style="width: 100%"></div></div>
+              <div class="rest" style="color: var(--critical);">Estourou R$ 300</div>
+            </div>
+            <div class="budget">
+              <div class="budget-header">
+                <span class="budget-name">Gasolina</span>
+                <span class="budget-vals">R$ 420 / R$ 600</span>
+              </div>
+              <div class="bar"><div class="fill ok" style="width: 70%"></div></div>
+              <div class="rest">Resta R$ 180</div>
+            </div>
+            <div class="budget">
+              <div class="budget-header">
+                <span class="budget-name">Internet</span>
+                <span class="budget-vals">R$ 158 / R$ 158</span>
+              </div>
+              <div class="bar"><div class="fill ok" style="width: 100%"></div></div>
+              <div class="rest">Pago integralmente</div>
+            </div>
+            <div class="budget">
+              <div class="budget-header">
+                <span class="budget-name">Outros</span>
+                <span class="budget-vals">R$ 450 / R$ 2.000</span>
+              </div>
+              <div class="bar"><div class="fill ok" style="width: 22.5%"></div></div>
+              <div class="rest">Resta R$ 1.550</div>
+            </div>
+          </div>
+        </div>
+        <div class="card span3">
+          <div class="celebration ok">
+            <span>✅</span>
+            <span>Março fechou dentro do planejado</span>
+          </div>
+          <div class="celebration info">
+            <span>↗</span>
+            <span>Reserva: R$ 12.500 (+R$ 500 este mês)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================
+     DESKTOP: COLLAPSED
+     ======================================== -->
+<div class="section-header">Desktop — Sidebar Recolhida</div>
+<div class="section-desc">Só ícones. Mais espaço para dados. Tooltip aparece no hover. O Vitor pode alternar quando quiser.</div>
+
+<div class="layout-container">
+  <div class="collapsed-layout">
+    <div class="sidebar-collapsed">
+      <div class="brand-icon">C</div>
+      <div class="collapsed-item active">
+        ◻
+        <span class="tooltip">Dashboard</span>
+      </div>
+      <div class="collapsed-item">
+        ↗
+        <span class="tooltip">Registrar</span>
+      </div>
+      <div class="collapsed-item">
+        ☰
+        <span class="tooltip">Orçamentos</span>
+      </div>
+      <div class="collapsed-item">
+        ✓
+        <span class="tooltip">Checklist</span>
+      </div>
+      <div class="collapsed-item">
+        →
+        <span class="tooltip">Projeção</span>
+      </div>
+      <div class="collapsed-divider"></div>
+      <div class="collapsed-item">
+        ⚙
+        <span class="tooltip">Configurações</span>
+      </div>
+      <div class="collapsed-footer">
+        <div class="collapsed-item" style="margin-bottom: 0;">
+          ▷
+          <span class="tooltip">Expandir menu</span>
+        </div>
+      </div>
+    </div>
+    <div class="main-content">
+      <div class="content-header">
+        <div>
+          <div class="content-title">Dashboard</div>
+          <div class="content-subtitle">Março 2026 — atualizado agora</div>
+        </div>
+        <button class="btn-primary">+ Registrar gasto</button>
+      </div>
+      <div class="content-grid">
+        <div class="card">
+          <div class="card-title">Resumo de Março</div>
+          <div class="row">
+            <span class="label">Saldo total contas</span>
+            <span class="value">R$ 19.200</span>
+          </div>
+          <div class="row">
+            <span class="label">Contas a pagar</span>
+            <span class="value">R$ 8.400</span>
+          </div>
+          <div class="row">
+            <span class="label">Faturas de cartão</span>
+            <span class="value">R$ 7.180</span>
+          </div>
+          <div class="row">
+            <span class="label">Disponível livre</span>
+            <span class="value positive">R$ 320</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Regra de Ouro</div>
+          <div class="big-number">78%</div>
+          <div class="sub-label">Comprometimento em cartões vs. saldo</div>
+          <div class="detail-label">R$ 7.180 em cartões / R$ 19.200 em conta</div>
+          <div style="text-align: center; margin-top: 8px;">
+            <span class="status ok">Dentro do limite</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Visão Rápida — Tamires</div>
+          <div style="margin-bottom: 8px;">
+            <span class="status ok">Gastos regulares dentro do planejado</span>
+          </div>
+          <div class="tamires-blocks">
+            <div class="tamires-block ok">
+              <div class="lbl">Regulares</div>
+              <div class="val">R$ 12.600</div>
+              <div class="dtl">Dentro do planejado</div>
+            </div>
+            <div class="tamires-block warn">
+              <div class="lbl">Fora do plan.</div>
+              <div class="val">R$ 10.400</div>
+              <div class="dtl">Viagem + Motor</div>
+            </div>
+          </div>
+        </div>
+        <div class="card span3">
+          <div class="card-title">Orçamentos do Mês</div>
+          <div class="view-toggle">
+            <button class="active">Visual</button>
+            <button>Lista</button>
+            <button>Timeline</button>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px 24px;">
+            <div class="budget">
+              <div class="budget-header">
+                <span class="budget-name">Supermercado</span>
+                <span class="budget-vals">R$ 2.122 / R$ 3.000</span>
+              </div>
+              <div class="bar"><div class="fill ok" style="width: 70.7%"></div></div>
+              <div class="rest">Resta R$ 878</div>
+            </div>
+            <div class="budget">
+              <div class="budget-header">
+                <span class="budget-name">Escola</span>
+                <span class="budget-vals">R$ 2.800 / R$ 2.800</span>
+              </div>
+              <div class="bar"><div class="fill ok" style="width: 100%"></div></div>
+              <div class="rest">Pago integralmente</div>
+            </div>
+            <div class="budget">
+              <div class="budget-header">
+                <span class="budget-name">Restaurante</span>
+                <span class="budget-vals">R$ 1.800 / R$ 1.500</span>
+              </div>
+              <div class="bar"><div class="fill over" style="width: 100%"></div></div>
+              <div class="rest" style="color: var(--critical);">Estourou R$ 300</div>
+            </div>
+            <div class="budget">
+              <div class="budget-header">
+                <span class="budget-name">Gasolina</span>
+                <span class="budget-vals">R$ 420 / R$ 600</span>
+              </div>
+              <div class="bar"><div class="fill ok" style="width: 70%"></div></div>
+              <div class="rest">Resta R$ 180</div>
+            </div>
+            <div class="budget">
+              <div class="budget-header">
+                <span class="budget-name">Internet</span>
+                <span class="budget-vals">R$ 158 / R$ 158</span>
+              </div>
+              <div class="bar"><div class="fill ok" style="width: 100%"></div></div>
+              <div class="rest">Pago integralmente</div>
+            </div>
+            <div class="budget">
+              <div class="budget-header">
+                <span class="budget-name">Outros</span>
+                <span class="budget-vals">R$ 450 / R$ 2.000</span>
+              </div>
+              <div class="bar"><div class="fill ok" style="width: 22.5%"></div></div>
+              <div class="rest">Resta R$ 1.550</div>
+            </div>
+          </div>
+        </div>
+        <div class="card span3">
+          <div class="celebration ok">
+            <span>✅</span>
+            <span>Março fechou dentro do planejado</span>
+          </div>
+          <div class="celebration info">
+            <span>↗</span>
+            <span>Reserva: R$ 12.500 (+R$ 500 este mês)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================
+     MOBILE
+     ======================================== -->
+<div class="section-header">Mobile — Bottom Navigation + FAB</div>
+<div class="section-desc">No celular, a sidebar vira bottom nav. Registro rápido pelo botão central (FAB).</div>
+
+<div class="mobile-grid">
+
+  <!-- Mobile: Dashboard Vitor -->
+  <div class="layout-container" style="margin: 0;">
+    <div class="layout-label">
+      <div class="badge">Mobile — Vitor</div>
+      <div class="label-name">Dashboard + Registro Rápido</div>
+    </div>
+    <div class="mobile-preview">
+      <div class="mobile-header">
+        <div class="mobile-header-title">Março 2026</div>
+        <span class="status ok">No planejado</span>
+      </div>
+      <div class="mobile-content">
+        <div class="mobile-card">
+          <div class="card-title">Resumo</div>
+          <div class="mobile-row">
+            <span class="mobile-label">Saldo contas</span>
+            <span class="mobile-value">R$ 19.200</span>
+          </div>
+          <div class="mobile-row">
+            <span class="mobile-label">Contas a pagar</span>
+            <span class="mobile-value">R$ 8.400</span>
+          </div>
+          <div class="mobile-row">
+            <span class="mobile-label">Faturas cartão</span>
+            <span class="mobile-value">R$ 7.180</span>
+          </div>
+          <div class="mobile-row">
+            <span class="mobile-label">Disponível livre</span>
+            <span class="mobile-value positive">R$ 320</span>
+          </div>
+        </div>
+        <div class="mobile-card">
+          <div class="card-title">Orçamentos</div>
+          <div class="mobile-budget">
+            <div class="mobile-budget-header">
+              <span class="mobile-budget-name">Supermercado</span>
+              <span class="mobile-budget-vals">R$ 2.122 / R$ 3.000</span>
+            </div>
+            <div class="mobile-bar"><div class="mobile-fill ok" style="width: 70.7%"></div></div>
+            <div class="mobile-rest">Resta R$ 878</div>
+          </div>
+          <div class="mobile-budget">
+            <div class="mobile-budget-header">
+              <span class="mobile-budget-name">Restaurante</span>
+              <span class="mobile-budget-vals">R$ 1.800 / R$ 1.500</span>
+            </div>
+            <div class="mobile-bar"><div class="mobile-fill over" style="width: 100%"></div></div>
+            <div class="mobile-rest" style="color: var(--critical);">Estourou R$ 300</div>
+          </div>
+          <div class="mobile-budget">
+            <div class="mobile-budget-header">
+              <span class="mobile-budget-name">Gasolina</span>
+              <span class="mobile-budget-vals">R$ 420 / R$ 600</span>
+            </div>
+            <div class="mobile-bar"><div class="mobile-fill ok" style="width: 70%"></div></div>
+            <div class="mobile-rest">Resta R$ 180</div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="bottom-nav-item active">
+          <span class="bottom-nav-icon">◻</span>
+          <span>Dashboard</span>
+        </div>
+        <div class="bottom-nav-item">
+          <span class="bottom-nav-icon">☰</span>
+          <span>Orçamentos</span>
+        </div>
+        <div class="bottom-nav-item">
+          <div class="fab">+</div>
+          <span style="margin-top: 4px;">Registrar</span>
+        </div>
+        <div class="bottom-nav-item">
+          <span class="bottom-nav-icon">✓</span>
+          <span>Checklist</span>
+        </div>
+        <div class="bottom-nav-item">
+          <span class="bottom-nav-icon">→</span>
+          <span>Projeção</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile: Dashboard Tamires -->
+  <div class="layout-container" style="margin: 0;">
+    <div class="layout-label">
+      <div class="badge">Mobile — Tamires</div>
+      <div class="label-name">Dashboard Simplificado</div>
+    </div>
+    <div class="mobile-preview">
+      <div class="mobile-header">
+        <div class="mobile-header-title">Março 2026</div>
+        <span class="status ok">No planejado</span>
+      </div>
+      <div class="mobile-content">
+        <div class="mobile-card">
+          <div style="margin-bottom: 12px;">
+            <span class="status ok">Gastos regulares dentro do planejado</span>
+          </div>
+          <div class="tamires-blocks" style="flex-direction: column;">
+            <div class="tamires-block ok">
+              <div class="lbl">Gastos regulares</div>
+              <div class="val">R$ 12.600</div>
+              <div class="dtl">Dentro do planejado</div>
+            </div>
+            <div class="tamires-block warn">
+              <div class="lbl">Fora do planejado</div>
+              <div class="val">R$ 10.400</div>
+              <div class="dtl">Viagem R$ 9.000 + Motor R$ 1.400</div>
+            </div>
+          </div>
+        </div>
+        <div class="mobile-card">
+          <div class="card-title">Orçamentos Principais</div>
+          <div class="mobile-budget">
+            <div class="mobile-budget-header">
+              <span class="mobile-budget-name">Supermercado</span>
+              <span class="mobile-budget-vals">R$ 2.122 / R$ 3.000</span>
+            </div>
+            <div class="mobile-bar"><div class="mobile-fill ok" style="width: 70.7%"></div></div>
+            <div class="mobile-rest">Resta R$ 878</div>
+          </div>
+          <div class="mobile-budget">
+            <div class="mobile-budget-header">
+              <span class="mobile-budget-name">Restaurante</span>
+              <span class="mobile-budget-vals">R$ 1.800 / R$ 1.500</span>
+            </div>
+            <div class="mobile-bar"><div class="mobile-fill over" style="width: 100%"></div></div>
+            <div class="mobile-rest" style="color: var(--critical);">Estourou R$ 300</div>
+          </div>
+        </div>
+        <div class="mobile-card">
+          <div class="celebration ok" style="margin: 0;">
+            <span>✅</span>
+            <span>Março fechou dentro do planejado</span>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="bottom-nav-item active">
+          <span class="bottom-nav-icon">◻</span>
+          <span>Dashboard</span>
+        </div>
+        <div class="bottom-nav-item">
+          <span class="bottom-nav-icon">☰</span>
+          <span>Orçamentos</span>
+        </div>
+        <div class="bottom-nav-item">
+          <div class="fab">+</div>
+          <span style="margin-top: 4px;">Registrar</span>
+        </div>
+        <div class="bottom-nav-item">
+          <span class="bottom-nav-icon">✓</span>
+          <span>Checklist</span>
+        </div>
+        <div class="bottom-nav-item">
+          <span class="bottom-nav-icon">→</span>
+          <span>Projeção</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

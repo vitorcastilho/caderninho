@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Protótipo 13 — Reconciliação de Fatura | Caderninho</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Design Tokens ── */
+    :root {
+      --bg: #FAFAF9;
+      --surface: #FFFFFF;
+      --border: #E7E5E4;
+      --border-hover: #D6D3D1;
+      --text-primary: #1C1917;
+      --text-secondary: #78716C;
+      --text-tertiary: #A8A29E;
+      --primary: #4F46E5;
+      --primary-hover: #4338CA;
+      --primary-light: #EEF2FF;
+      --positive: #22C55E;
+      --positive-bg: #DCFCE7;
+      --positive-text: #166534;
+      --attention: #EAB308;
+      --attention-bg: #FEF9C3;
+      --attention-text: #854D0E;
+      --critical: #DC2626;
+      --critical-bg: #FEE2E2;
+      --critical-text: #991B1B;
+      --radius-card: 12px;
+      --radius-input: 6px;
+      --radius-badge: 100px;
+      --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+      --shadow-card-hover: 0 2px 6px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.06);
+      --transition: 150ms ease;
+      --sidebar-width: 220px;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-variant-numeric: tabular-nums;
+      background: var(--bg);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
+    }
+
+    /* ── Page Title Header ── */
+    .page-title-header {
+      text-align: center;
+      padding: 32px 24px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .page-title-header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .page-title-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* ── App Layout ── */
+    .app-layout {
+      display: flex;
+      min-height: calc(100vh - 94px);
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 24px 0;
+      flex-shrink: 0;
+    }
+    .sidebar-logo {
+      padding: 0 20px 24px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-logo span {
+      width: 28px;
+      height: 28px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    .sidebar nav { display: flex; flex-direction: column; gap: 2px; }
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all var(--transition);
+    }
+    .sidebar a:hover { background: var(--bg); color: var(--text-primary); }
+    .sidebar a.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .sidebar a .icon { width: 20px; text-align: center; font-size: 16px; }
+
+    /* ── Main Content ── */
+    .main-content {
+      flex: 1;
+      padding: 32px 40px 120px;
+      max-width: 1100px;
+      overflow-y: auto;
+    }
+
+    /* ── Content Header ── */
+    .content-header {
+      margin-bottom: 28px;
+    }
+    .content-header-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 4px;
+    }
+    .content-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .content-header .subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: var(--radius-badge);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .badge-attention {
+      background: var(--attention-bg);
+      color: var(--attention-text);
+    }
+    .badge-positive {
+      background: var(--positive-bg);
+      color: var(--positive-text);
+    }
+    .badge-critical {
+      background: var(--critical-bg);
+      color: var(--critical-text);
+    }
+
+    /* ── Summary Cards ── */
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .summary-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 20px;
+      box-shadow: var(--shadow-card);
+    }
+    .summary-card .label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    .summary-card .value {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .summary-card .value.editable-value {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .summary-card .value input {
+      font-family: inherit;
+      font-variant-numeric: tabular-nums;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-input);
+      padding: 2px 8px;
+      width: 180px;
+      background: var(--bg);
+      outline: none;
+      transition: border-color var(--transition);
+    }
+    .summary-card .value input:focus {
+      border-color: var(--primary);
+      border-style: solid;
+    }
+    .summary-card .value.critical { color: var(--critical); }
+    .summary-card .value.positive { color: var(--positive-text); }
+    .summary-card .diff-note {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-top: 4px;
+    }
+    .summary-card .diff-note.critical { color: var(--critical-text); }
+    .summary-card .diff-note.positive { color: var(--positive-text); }
+
+    /* ── Transaction Table ── */
+    .table-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+    .table-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .table-header-bar h3 {
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .table-header-bar .counter {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead th {
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    thead th:first-child { padding-left: 20px; width: 44px; }
+    thead th:last-child { text-align: right; padding-right: 20px; }
+    tbody td {
+      padding: 12px 16px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody td:first-child { padding-left: 20px; }
+    tbody td:last-child { padding-right: 20px; }
+    tbody td.mono {
+      font-variant-numeric: tabular-nums;
+      font-weight: 500;
+    }
+    tbody td.align-right { text-align: right; }
+
+    /* Row states */
+    tr.row-ok { background: #fff; }
+    tr.row-ok:hover { background: #FAFAF9; }
+    tr.row-divergence { background: #FFFBEB; }
+    tr.row-divergence:hover { background: #FEF9C3; }
+    tr.row-missing { background: #FEF2F2; }
+    tr.row-missing:hover { background: #FEE2E2; }
+    tr.row-extra { background: #F5F3FF; }
+    tr.row-extra:hover { background: #EDE9FE; }
+
+    /* Status badges in table */
+    .status-ok {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--positive-text);
+    }
+    .status-divergence {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--attention-text);
+    }
+    .status-missing {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--critical-text);
+    }
+    .status-extra {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--primary);
+    }
+
+    /* Checkboxes */
+    .checkbox-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .checkbox {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+      background: #fff;
+      flex-shrink: 0;
+    }
+    .checkbox:hover { border-color: var(--primary); }
+    .checkbox.checked {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+    .checkbox.checked::after {
+      content: '';
+      width: 6px;
+      height: 10px;
+      border: solid #fff;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg) translate(-1px, -1px);
+    }
+    .checkbox.warning-check {
+      background: var(--attention);
+      border-color: var(--attention);
+    }
+    .checkbox.warning-check::after {
+      content: '!';
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      border: none;
+      transform: none;
+    }
+    .checkbox.error-check {
+      background: var(--critical);
+      border-color: var(--critical);
+    }
+    .checkbox.error-check::after {
+      content: '';
+      width: 10px;
+      height: 2px;
+      background: #fff;
+      border: none;
+      transform: none;
+    }
+
+    /* Action buttons */
+    .row-actions {
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: var(--radius-input);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .btn-sm:hover {
+      background: var(--bg);
+      border-color: var(--border-hover);
+    }
+    .btn-sm.btn-attention {
+      background: var(--attention-bg);
+      border-color: var(--attention);
+      color: var(--attention-text);
+    }
+    .btn-sm.btn-attention:hover {
+      background: #FDE68A;
+    }
+    .btn-sm.btn-critical {
+      background: var(--critical-bg);
+      border-color: var(--critical);
+      color: var(--critical-text);
+    }
+    .btn-sm.btn-critical:hover {
+      background: #FECACA;
+    }
+    .btn-sm.btn-primary-sm {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .btn-sm.btn-primary-sm:hover {
+      background: #E0E7FF;
+    }
+
+    /* Inline edit */
+    .inline-edit {
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+    .inline-edit.active { display: inline-flex; }
+    .inline-edit input {
+      font-family: inherit;
+      font-variant-numeric: tabular-nums;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 4px 8px;
+      border: 1px solid var(--primary);
+      border-radius: var(--radius-input);
+      width: 100px;
+      outline: none;
+    }
+    .inline-edit .btn-confirm-edit {
+      padding: 4px 8px;
+      font-size: 12px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-input);
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 500;
+    }
+    .inline-edit .btn-cancel-edit {
+      padding: 4px 8px;
+      font-size: 12px;
+      background: var(--bg);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 500;
+    }
+    .value-display.hidden { display: none; }
+
+    /* ── Sticky Footer ── */
+    .resolution-footer {
+      position: fixed;
+      bottom: 0;
+      left: var(--sidebar-width);
+      right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 16px 40px;
+      box-shadow: 0 -4px 16px rgba(0,0,0,.06);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .diff-counter {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .diff-counter .diff-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+    .diff-counter .diff-value {
+      font-size: 18px;
+      font-weight: 700;
+      transition: all 300ms ease;
+    }
+    .diff-counter .diff-value.critical { color: var(--critical); }
+    .diff-counter .diff-value.attention { color: var(--attention-text); }
+    .diff-counter .diff-value.positive { color: var(--positive-text); }
+    .diff-counter .diff-value.zero { color: var(--positive-text); }
+    .progress-counter {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .progress-counter strong {
+      color: var(--text-primary);
+    }
+    .balanced-msg {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--positive-text);
+      background: var(--positive-bg);
+      padding: 6px 14px;
+      border-radius: var(--radius-badge);
+    }
+    .balanced-msg.visible { display: inline-flex; }
+    .footer-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .btn-confirm {
+      padding: 10px 28px;
+      font-size: 15px;
+      font-weight: 600;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+    .btn-confirm:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+    .btn-confirm:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .confirm-note {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      max-width: 320px;
+      text-align: right;
+    }
+
+    /* ── Mobile Frame ── */
+    .mobile-section {
+      margin-top: 48px;
+      padding-top: 40px;
+      border-top: 2px dashed var(--border);
+    }
+    .mobile-section-title {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .mobile-section-title h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .mobile-section-title p {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .phone-frame {
+      width: 390px;
+      height: 844px;
+      border: 8px solid #1C1917;
+      border-radius: 44px;
+      margin: 0 auto;
+      background: var(--bg);
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+    }
+    .phone-notch {
+      width: 160px;
+      height: 34px;
+      background: #1C1917;
+      border-radius: 0 0 20px 20px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 10;
+    }
+    .phone-screen {
+      height: calc(100% - 34px);
+      overflow-y: auto;
+      padding-bottom: 80px;
+    }
+
+    /* Mobile Header */
+    .m-header {
+      background: var(--surface);
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .m-header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .m-back {
+      font-size: 20px;
+      color: var(--primary);
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    .m-header h3 {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .m-header .m-subtitle {
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    /* Mobile Summary */
+    .m-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      padding: 12px;
+    }
+    .m-summary-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+    .m-summary-card .m-label {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+    .m-summary-card .m-value {
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .m-summary-card .m-value.critical { color: var(--critical); }
+
+    /* Mobile Transaction Cards */
+    .m-transactions {
+      padding: 0 12px;
+    }
+    .m-transactions-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 12px 4px 8px;
+    }
+    .m-tx-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 8px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 200ms ease;
+    }
+    .m-tx-card.m-row-ok { border-left: 3px solid var(--positive); }
+    .m-tx-card.m-row-divergence {
+      border-left: 3px solid var(--attention);
+      background: #FFFBEB;
+    }
+    .m-tx-card.m-row-missing {
+      border-left: 3px solid var(--critical);
+      background: #FEF2F2;
+    }
+    .m-tx-card.m-row-extra {
+      border-left: 3px solid var(--primary);
+      background: #F5F3FF;
+    }
+    .m-tx-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+    .m-tx-desc {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .m-tx-cat {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .m-tx-date {
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+    .m-tx-values {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-top: 8px;
+    }
+    .m-tx-val-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .m-tx-val-label {
+      font-size: 10px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .m-tx-val {
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .m-tx-status {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: var(--radius-badge);
+    }
+    .m-tx-status.m-status-ok { background: var(--positive-bg); color: var(--positive-text); }
+    .m-tx-status.m-status-div { background: var(--attention-bg); color: var(--attention-text); }
+    .m-tx-status.m-status-miss { background: var(--critical-bg); color: var(--critical-text); }
+    .m-tx-status.m-status-extra { background: var(--primary-light); color: var(--primary); }
+    .m-tx-swipe-hint {
+      font-size: 10px;
+      color: var(--text-tertiary);
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    /* Mobile Footer */
+    .m-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      z-index: 20;
+    }
+    .m-footer-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+    }
+    .m-footer-diff {
+      display: flex;
+      flex-direction: column;
+    }
+    .m-footer-diff-label {
+      font-size: 10px;
+      color: var(--text-secondary);
+    }
+    .m-footer-diff-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--critical);
+    }
+    .m-btn-confirm {
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      opacity: 0.45;
+      font-family: inherit;
+    }
+
+    /* Mobile Bottom Nav */
+    .m-bottom-nav {
+      display: flex;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .m-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 8px 0;
+      font-size: 10px;
+      color: var(--text-tertiary);
+      text-decoration: none;
+    }
+    .m-nav-item.active { color: var(--primary); }
+    .m-nav-item .m-nav-icon { font-size: 18px; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      background: var(--positive-text);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 4px 16px rgba(0,0,0,.15);
+      z-index: 999;
+      transform: translateY(-20px);
+      opacity: 0;
+      transition: all 300ms ease;
+      pointer-events: none;
+    }
+    .toast.visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Inline Card Brand Icons */
+    .method-brand {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 16px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      vertical-align: middle;
+      margin-right: 4px;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .method-brand-visa {
+      background: #1A1F71;
+      color: #FFFFFF;
+      font-size: 7px;
+      font-style: italic;
+      font-weight: 800;
+    }
+    .method-brand-master {
+      background: #252525;
+      position: relative;
+      overflow: hidden;
+    }
+    .method-brand-master::before,
+    .method-brand-master::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .method-brand-master::before { left: 3px; background: #EB001B; }
+    .method-brand-master::after { right: 3px; background: #F79E1B; }
+
+    /* ── Animations ── */
+    @keyframes pulse-green {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .pulse { animation: pulse-green 400ms ease; }
+
+    @keyframes flash-value {
+      0% { background: transparent; }
+      30% { background: var(--attention-bg); }
+      100% { background: transparent; }
+    }
+    .flash { animation: flash-value 600ms ease; }
+  </style>
+</head>
+<body>
+
+  <!-- Page Title -->
+  <div class="page-title-header">
+    <h1>Protótipo 13 — Reconciliação de Fatura</h1>
+    <p>Conferência da fatura real vs. estimativa</p>
+  </div>
+
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <span>C</span> Caderninho
+      </div>
+      <nav>
+        <a href="#"><span class="icon">&#x1F3E0;</span> Início</a>
+        <a href="#"><span class="icon">&#x1F4B3;</span> Cartões</a>
+        <a href="#"><span class="icon">&#x1F4CA;</span> Dashboard</a>
+        <a href="#" class="active"><span class="icon">&#x1F4CB;</span> Faturas</a>
+        <a href="#"><span class="icon">&#x2705;</span> Checklist</a>
+        <a href="#"><span class="icon">&#x2699;</span> Ajustes</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+      <!-- Content Header -->
+      <div class="content-header">
+        <div class="content-header-top">
+          <h2>Reconciliar Fatura — <span class="method-brand method-brand-visa">VISA</span>Latam Pass Visa</h2>
+          <span class="badge badge-attention" id="headerBadge">Em reconciliação</span>
+        </div>
+        <div class="subtitle">Ciclo Março 2026 (08/02 a 07/03)</div>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <div class="label">Estimativa do app</div>
+          <div class="value" id="estimateValue">R$4.200,00</div>
+          <div class="diff-note">Baseado nas transações registradas</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Fatura real</div>
+          <div class="value editable-value">
+            <span style="color:var(--text-tertiary);font-size:16px">R$</span>
+            <input type="text" id="faturaInput" value="4.350,00" />
+          </div>
+          <div class="diff-note">Valor informado pelo banco</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Diferença</div>
+          <div class="value critical" id="diffCardValue">R$150,00</div>
+          <div class="diff-note critical" id="diffCardNote">Necessita resolução</div>
+        </div>
+      </div>
+
+      <!-- Transaction Table -->
+      <div class="table-container">
+        <div class="table-header-bar">
+          <h3>Conferência de Transações</h3>
+          <span class="counter" id="tableCounter">7 de 9 transações conferidas</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Data</th>
+              <th>Descrição</th>
+              <th>Categoria</th>
+              <th>Valor App</th>
+              <th>Valor Fatura</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="txBody">
+            <!-- Rows generated by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ── Mobile Section ── -->
+      <div class="mobile-section">
+        <div class="mobile-section-title">
+          <h3>Versão Mobile (390 x 844)</h3>
+          <p>Visualização em smartphone com cards deslizáveis</p>
+        </div>
+
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <!-- Mobile Header -->
+            <div class="m-header">
+              <div class="m-header-top">
+                <button class="m-back">&#8592;</button>
+                <h3>Reconciliar Fatura</h3>
+                <span class="badge badge-attention" style="font-size:10px;padding:2px 8px;">Em reconciliação</span>
+              </div>
+              <div class="m-subtitle"><span class="method-brand method-brand-visa">VISA</span>Latam Pass Visa — Ciclo Mar/2026</div>
+            </div>
+
+            <!-- Mobile Summary -->
+            <div class="m-summary">
+              <div class="m-summary-card">
+                <div class="m-label">Estimativa</div>
+                <div class="m-value">R$4.200</div>
+              </div>
+              <div class="m-summary-card">
+                <div class="m-label">Fatura real</div>
+                <div class="m-value">R$4.350</div>
+              </div>
+              <div class="m-summary-card">
+                <div class="m-label">Diferença</div>
+                <div class="m-value critical">R$150</div>
+              </div>
+            </div>
+
+            <!-- Mobile Transaction Cards -->
+            <div class="m-transactions">
+              <div class="m-transactions-label">Transações (9)</div>
+
+              <div class="m-tx-card m-row-ok">
+                <div class="m-tx-top">
+                  <div>
+                    <div class="m-tx-desc">Pão de Açúcar</div>
+                    <div class="m-tx-cat">Supermercado</div>
+                  </div>
+                  <div class="m-tx-date">10/02</div>
+                </div>
+                <div class="m-tx-values">
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$87,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$87,00</span></div>
+                  <span class="m-tx-status m-status-ok">Confere</span>
+                </div>
+              </div>
+
+              <div class="m-tx-card m-row-ok">
+                <div class="m-tx-top">
+                  <div>
+                    <div class="m-tx-desc">Shell Gasolina</div>
+                    <div class="m-tx-cat">Gasolina</div>
+                  </div>
+                  <div class="m-tx-date">12/02</div>
+                </div>
+                <div class="m-tx-values">
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$180,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$180,00</span></div>
+                  <span class="m-tx-status m-status-ok">Confere</span>
+                </div>
+              </div>
+
+              <div class="m-tx-card m-row-ok">
+                <div class="m-tx-top">
+                  <div>
+                    <div class="m-tx-desc">iFood</div>
+                    <div class="m-tx-cat">Restaurante</div>
+                  </div>
+                  <div class="m-tx-date">15/02</div>
+                </div>
+                <div class="m-tx-values">
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$45,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$45,00</span></div>
+                  <span class="m-tx-status m-status-ok">Confere</span>
+                </div>
+              </div>
+
+              <div class="m-tx-card m-row-ok">
+                <div class="m-tx-top">
+                  <div>
+                    <div class="m-tx-desc">Amazon 2/3</div>
+                    <div class="m-tx-cat">Compras</div>
+                  </div>
+                  <div class="m-tx-date">18/02</div>
+                </div>
+                <div class="m-tx-values">
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$250,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$250,00</span></div>
+                  <span class="m-tx-status m-status-ok">Confere</span>
+                </div>
+              </div>
+
+              <div class="m-tx-card m-row-ok">
+                <div class="m-tx-top">
+                  <div>
+                    <div class="m-tx-desc">Spotify</div>
+                    <div class="m-tx-cat">Streaming</div>
+                  </div>
+                  <div class="m-tx-date">20/02</div>
+                </div>
+                <div class="m-tx-values">
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$22,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$22,00</span></div>
+                  <span class="m-tx-status m-status-ok">Confere</span>
+                </div>
+              </div>
+
+              <div class="m-tx-card m-row-divergence">
+                <div class="m-tx-top">
+                  <div>
+                    <div class="m-tx-desc">Uber</div>
+                    <div class="m-tx-cat">Transporte</div>
+                  </div>
+                  <div class="m-tx-date">22/02</div>
+                </div>
+                <div class="m-tx-values">
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$32,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$38,00</span></div>
+                  <span class="m-tx-status m-status-div">+R$6,00</span>
+                </div>
+              </div>
+
+              <div class="m-tx-card m-row-ok">
+                <div class="m-tx-top">
+                  <div>
+                    <div class="m-tx-desc">Netflix</div>
+                    <div class="m-tx-cat">Streaming</div>
+                  </div>
+                  <div class="m-tx-date">25/02</div>
+                </div>
+                <div class="m-tx-values">
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$45,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$45,00</span></div>
+                  <span class="m-tx-status m-status-ok">Confere</span>
+                </div>
+              </div>
+
+              <div class="m-tx-card m-row-missing">
+                <div class="m-tx-top">
+                  <div>
+                    <div class="m-tx-desc">Farmácia</div>
+                    <div class="m-tx-cat">Não registrada</div>
+                  </div>
+                  <div class="m-tx-date">—</div>
+                </div>
+                <div class="m-tx-values">
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">—</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$67,00</span></div>
+                  <span class="m-tx-status m-status-miss">Registrar</span>
+                </div>
+              </div>
+
+              <div class="m-tx-card m-row-extra">
+                <div class="m-tx-top">
+                  <div>
+                    <div class="m-tx-desc">Padaria</div>
+                    <div class="m-tx-cat">Alimentação</div>
+                  </div>
+                  <div class="m-tx-date">01/03</div>
+                </div>
+                <div class="m-tx-values">
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$15,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">—</span></div>
+                  <span class="m-tx-status m-status-extra">Mover ciclo</span>
+                </div>
+              </div>
+
+              <div class="m-tx-swipe-hint">Deslize para esquerda para desmarcar</div>
+            </div>
+          </div>
+
+          <!-- Mobile Footer -->
+          <div class="m-footer">
+            <div class="m-footer-content">
+              <div class="m-footer-diff">
+                <span class="m-footer-diff-label">Diferença restante</span>
+                <span class="m-footer-diff-value">R$150,00</span>
+              </div>
+              <button class="m-btn-confirm" disabled>Confirmar R$4.350,00</button>
+            </div>
+            <div class="m-bottom-nav">
+              <a class="m-nav-item" href="#"><span class="m-nav-icon">&#x1F3E0;</span>Início</a>
+              <a class="m-nav-item" href="#"><span class="m-nav-icon">&#x1F4B3;</span>Cartões</a>
+              <a class="m-nav-item active" href="#"><span class="m-nav-icon">&#x1F4CB;</span>Faturas</a>
+              <a class="m-nav-item" href="#"><span class="m-nav-icon">&#x2705;</span>Checklist</a>
+              <a class="m-nav-item" href="#"><span class="m-nav-icon">&#x2699;</span>Ajustes</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Sticky Resolution Footer -->
+  <div class="resolution-footer" id="resolutionFooter">
+    <div class="footer-left">
+      <div class="diff-counter">
+        <span class="diff-label">Diferença restante:</span>
+        <span class="diff-value critical" id="footerDiffValue">R$150,00</span>
+      </div>
+      <span class="progress-counter" id="progressCounter"><strong>7</strong> de <strong>9</strong> transações conferidas</span>
+      <span class="balanced-msg" id="balancedMsg">Fatura equilibrada!</span>
+    </div>
+    <div class="footer-right">
+      <button class="btn-confirm" id="btnConfirm" disabled>Confirmar Fatura R$4.350,00</button>
+      <span class="confirm-note">Ao confirmar, a fatura será adicionada como conta a pagar no Checklist (vence 15/03)</span>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ── Transaction Data ──
+    const transactions = [
+      { id: 1, date: '10/02', desc: 'Pão de Açúcar', cat: 'Supermercado', appVal: 8700, fatVal: 8700, status: 'ok', checked: true },
+      { id: 2, date: '12/02', desc: 'Shell Gasolina', cat: 'Gasolina', appVal: 18000, fatVal: 18000, status: 'ok', checked: true },
+      { id: 3, date: '15/02', desc: 'iFood', cat: 'Restaurante', appVal: 4500, fatVal: 4500, status: 'ok', checked: true },
+      { id: 4, date: '18/02', desc: 'Amazon 2/3', cat: 'Compras', appVal: 25000, fatVal: 25000, status: 'ok', checked: true },
+      { id: 5, date: '20/02', desc: 'Spotify', cat: 'Streaming', appVal: 2200, fatVal: 2200, status: 'ok', checked: true },
+      { id: 6, date: '22/02', desc: 'Uber', cat: 'Transporte', appVal: 3200, fatVal: 3800, status: 'divergence', checked: true },
+      { id: 7, date: '25/02', desc: 'Netflix', cat: 'Streaming', appVal: 4500, fatVal: 4500, status: 'ok', checked: true },
+      { id: 8, date: '—', desc: 'Farmácia', cat: '—', appVal: 0, fatVal: 6700, status: 'missing', checked: false },
+      { id: 9, date: '01/03', desc: 'Padaria', cat: 'Alimentação', appVal: 1500, fatVal: 0, status: 'extra', checked: false },
+    ];
+
+    const ESTIMATE = 420000; // R$4.200,00 in cents
+    let faturaReal = 435000;  // R$4.350,00 in cents
+
+    // ── Helpers ──
+    function formatBRL(cents) {
+      const abs = Math.abs(cents);
+      const str = (abs / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      return (cents < 0 ? '-' : '') + 'R$' + str;
+    }
+
+    function formatBRLShort(cents) {
+      const abs = Math.abs(cents);
+      const str = (abs / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      return str;
+    }
+
+    function parseBRL(str) {
+      const cleaned = str.replace(/[^\d,]/g, '').replace(',', '.');
+      return Math.round(parseFloat(cleaned) * 100) || 0;
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 2500);
+    }
+
+    // ── Compute State ──
+    function computeReconciled() {
+      let reconciledAppTotal = 0;
+      let reconciledFatTotal = 0;
+      let checkedCount = 0;
+      const total = transactions.length;
+
+      transactions.forEach(tx => {
+        if (tx.checked || tx.status === 'resolved') {
+          if (tx.status !== 'extra' || tx.checked) {
+            // For extra items that are unchecked, they should be moved to next cycle
+          }
+          if (tx.status === 'extra' && !tx.checked) {
+            // Not in fatura, skip from fatura total
+          } else {
+            reconciledFatTotal += tx.fatVal;
+          }
+          reconciledAppTotal += tx.appVal;
+          if (tx.checked) checkedCount++;
+        }
+      });
+
+      // Difference = faturaReal - sum of all checked fatura values
+      // We need to account for all items in the fatura
+      let totalCheckedFat = 0;
+      let totalCheckedApp = 0;
+      transactions.forEach(tx => {
+        if (tx.checked) {
+          totalCheckedFat += tx.fatVal;
+          totalCheckedApp += tx.appVal;
+          checkedCount; // already counted
+        }
+      });
+
+      // The difference is: faturaReal - totalCheckedFat
+      // When all fatura items are checked and their values match, diff = 0
+      const diff = faturaReal - totalCheckedFat;
+
+      return { diff, checkedCount, total, totalCheckedApp, totalCheckedFat };
+    }
+
+    function recalcEstimate() {
+      let total = 0;
+      transactions.forEach(tx => {
+        if (tx.status !== 'missing') {
+          total += tx.appVal;
+        }
+      });
+      return total;
+    }
+
+    // ── Render Table ──
+    function renderTable() {
+      const tbody = document.getElementById('txBody');
+      tbody.innerHTML = '';
+
+      transactions.forEach(tx => {
+        const tr = document.createElement('tr');
+
+        // Row class
+        if (tx.status === 'ok' || tx.status === 'resolved') tr.className = 'row-ok';
+        else if (tx.status === 'divergence') tr.className = 'row-divergence';
+        else if (tx.status === 'missing') tr.className = 'row-missing';
+        else if (tx.status === 'extra') tr.className = 'row-extra';
+
+        // Checkbox
+        let cbClass = 'checkbox';
+        if (tx.checked && tx.status === 'ok') cbClass += ' checked';
+        else if (tx.checked && tx.status === 'resolved') cbClass += ' checked';
+        else if (tx.checked && tx.status === 'divergence') cbClass += ' warning-check';
+        else if (tx.status === 'missing' && !tx.checked) cbClass += ' error-check';
+        else if (tx.checked) cbClass += ' checked';
+
+        // Status text
+        let statusHTML = '';
+        if (tx.status === 'ok' || tx.status === 'resolved') {
+          statusHTML = '<span class="status-ok">Confere &#10003;</span>';
+        } else if (tx.status === 'divergence') {
+          const diff = tx.fatVal - tx.appVal;
+          statusHTML = `<span class="status-divergence">Divergência (${diff > 0 ? '+' : ''}${formatBRL(diff)})</span>`;
+        } else if (tx.status === 'missing') {
+          statusHTML = '<span class="status-missing">Não registrada</span>';
+        } else if (tx.status === 'extra') {
+          statusHTML = '<span class="status-extra">Não na fatura</span>';
+        }
+
+        // Actions
+        let actionsHTML = '';
+        if (tx.status === 'divergence') {
+          actionsHTML = `
+            <button class="btn-sm btn-attention" onclick="startCorrect(${tx.id})">Corrigir valor</button>
+          `;
+        } else if (tx.status === 'missing') {
+          actionsHTML = `
+            <button class="btn-sm btn-critical" onclick="registerMissing(${tx.id})">Registrar</button>
+          `;
+        } else if (tx.status === 'extra') {
+          actionsHTML = `
+            <button class="btn-sm btn-primary-sm" onclick="moveNextCycle(${tx.id})">Mover p/ próx. ciclo</button>
+          `;
+        } else if (tx.checked) {
+          actionsHTML = `
+            <button class="btn-sm" onclick="uncheckTx(${tx.id})">Desmarcar</button>
+          `;
+        }
+
+        // Fatura value cell — may be inline editable
+        const fatValId = `fatVal-${tx.id}`;
+        const editId = `edit-${tx.id}`;
+        let fatValCell = '';
+        if (tx.status === 'divergence') {
+          fatValCell = `
+            <span class="value-display" id="${fatValId}">${tx.fatVal ? formatBRL(tx.fatVal) : '—'}</span>
+            <span class="inline-edit" id="${editId}">
+              <input type="text" value="${formatBRLShort(tx.fatVal)}" id="editInput-${tx.id}" />
+              <button class="btn-confirm-edit" onclick="confirmCorrect(${tx.id})">OK</button>
+              <button class="btn-cancel-edit" onclick="cancelCorrect(${tx.id})">X</button>
+            </span>
+          `;
+        } else {
+          fatValCell = tx.fatVal ? formatBRL(tx.fatVal) : '—';
+        }
+
+        tr.innerHTML = `
+          <td><div class="checkbox-cell"><div class="${cbClass}" data-id="${tx.id}" onclick="toggleCheck(${tx.id})"></div></div></td>
+          <td class="mono">${tx.date}</td>
+          <td><strong>${tx.desc}</strong></td>
+          <td style="color:var(--text-secondary)">${tx.cat}</td>
+          <td class="mono">${tx.appVal ? formatBRL(tx.appVal) : '—'}</td>
+          <td class="mono">${fatValCell}</td>
+          <td>${statusHTML}</td>
+          <td class="align-right"><div class="row-actions">${actionsHTML}</div></td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ── Update UI ──
+    function updateUI() {
+      const { diff, checkedCount, total, totalCheckedApp, totalCheckedFat } = computeReconciled();
+
+      // Estimate card
+      const estimate = recalcEstimate();
+      document.getElementById('estimateValue').textContent = formatBRL(estimate);
+
+      // Diff card
+      const diffCard = document.getElementById('diffCardValue');
+      const diffNote = document.getElementById('diffCardNote');
+      diffCard.textContent = formatBRL(Math.abs(diff));
+      if (diff === 0) {
+        diffCard.className = 'value positive';
+        diffNote.textContent = 'Fatura equilibrada!';
+        diffNote.className = 'diff-note positive';
+      } else {
+        diffCard.className = 'value critical';
+        diffNote.textContent = 'Necessita resolução';
+        diffNote.className = 'diff-note critical';
+      }
+
+      // Footer diff
+      const footerDiff = document.getElementById('footerDiffValue');
+      footerDiff.textContent = formatBRL(Math.abs(diff));
+      footerDiff.classList.add('flash');
+      setTimeout(() => footerDiff.classList.remove('flash'), 600);
+      if (diff === 0) {
+        footerDiff.className = 'diff-value zero';
+      } else if (Math.abs(diff) < 10000) {
+        footerDiff.className = 'diff-value attention';
+      } else {
+        footerDiff.className = 'diff-value critical';
+      }
+
+      // Progress
+      document.getElementById('progressCounter').innerHTML = `<strong>${checkedCount}</strong> de <strong>${total}</strong> transações conferidas`;
+      document.getElementById('tableCounter').textContent = `${checkedCount} de ${total} transações conferidas`;
+
+      // Balanced message
+      const balancedMsg = document.getElementById('balancedMsg');
+      if (diff === 0) {
+        balancedMsg.classList.add('visible');
+        balancedMsg.classList.add('pulse');
+        setTimeout(() => balancedMsg.classList.remove('pulse'), 400);
+      } else {
+        balancedMsg.classList.remove('visible');
+      }
+
+      // Confirm button
+      const btnConfirm = document.getElementById('btnConfirm');
+      btnConfirm.disabled = diff !== 0;
+      btnConfirm.textContent = `Confirmar Fatura ${formatBRL(faturaReal)}`;
+
+      // Header badge
+      const headerBadge = document.getElementById('headerBadge');
+      if (diff === 0) {
+        headerBadge.textContent = 'Equilibrada';
+        headerBadge.className = 'badge badge-positive';
+      } else {
+        headerBadge.textContent = 'Em reconciliação';
+        headerBadge.className = 'badge badge-attention';
+      }
+    }
+
+    // ── Interactions ──
+    function toggleCheck(id) {
+      const tx = transactions.find(t => t.id === id);
+      if (!tx) return;
+
+      // Missing items need to be registered first
+      if (tx.status === 'missing' && !tx.checked) {
+        showToast('Registre esta transação antes de confirmar');
+        return;
+      }
+
+      tx.checked = !tx.checked;
+      renderTable();
+      updateUI();
+    }
+
+    function uncheckTx(id) {
+      const tx = transactions.find(t => t.id === id);
+      if (!tx) return;
+      tx.checked = false;
+      renderTable();
+      updateUI();
+      showToast(`"${tx.desc}" desmarcada`);
+    }
+
+    function startCorrect(id) {
+      const display = document.getElementById(`fatVal-${id}`);
+      const edit = document.getElementById(`edit-${id}`);
+      if (display && edit) {
+        display.classList.add('hidden');
+        edit.classList.add('active');
+        const input = document.getElementById(`editInput-${id}`);
+        if (input) input.focus();
+      }
+    }
+
+    function confirmCorrect(id) {
+      const tx = transactions.find(t => t.id === id);
+      const input = document.getElementById(`editInput-${id}`);
+      if (!tx || !input) return;
+
+      const newVal = parseBRL(input.value);
+      if (newVal <= 0) return;
+
+      // Update fatura total: remove old fatura val, add new
+      faturaReal = faturaReal - tx.fatVal + newVal;
+
+      // If new value matches app value, mark as resolved
+      if (newVal === tx.appVal) {
+        tx.fatVal = newVal;
+        tx.status = 'resolved';
+        tx.checked = true;
+        showToast(`"${tx.desc}" corrigida — valores conferem!`);
+      } else {
+        tx.fatVal = newVal;
+        showToast(`"${tx.desc}" atualizada para ${formatBRL(newVal)}`);
+      }
+
+      // Update fatura input
+      document.getElementById('faturaInput').value = formatBRLShort(faturaReal);
+
+      renderTable();
+      updateUI();
+    }
+
+    function cancelCorrect(id) {
+      const display = document.getElementById(`fatVal-${id}`);
+      const edit = document.getElementById(`edit-${id}`);
+      if (display && edit) {
+        display.classList.remove('hidden');
+        edit.classList.remove('active');
+      }
+    }
+
+    function registerMissing(id) {
+      const tx = transactions.find(t => t.id === id);
+      if (!tx) return;
+
+      // Simulate registration: set app value = fatura value, mark as resolved
+      tx.appVal = tx.fatVal;
+      tx.cat = 'Saúde';
+      tx.date = '—';
+      tx.status = 'resolved';
+      tx.checked = true;
+
+      showToast(`"${tx.desc}" registrada como R$${formatBRLShort(tx.fatVal)} — Saúde`);
+      renderTable();
+      updateUI();
+    }
+
+    function moveNextCycle(id) {
+      const tx = transactions.find(t => t.id === id);
+      if (!tx) return;
+
+      // Remove from this reconciliation (set fatVal to 0, uncheck)
+      tx.checked = false;
+      tx.fatVal = 0;
+      tx.status = 'extra';
+
+      showToast(`"${tx.desc}" será movida para o próximo ciclo`);
+      renderTable();
+      updateUI();
+    }
+
+    // ── Fatura Input Handler ──
+    document.getElementById('faturaInput').addEventListener('change', function() {
+      const val = parseBRL(this.value);
+      if (val > 0) {
+        faturaReal = val;
+        this.value = formatBRLShort(faturaReal);
+        renderTable();
+        updateUI();
+      }
+    });
+
+    // ── Confirm Button ──
+    document.getElementById('btnConfirm').addEventListener('click', function() {
+      if (this.disabled) return;
+      const headerBadge = document.getElementById('headerBadge');
+      headerBadge.textContent = 'Confirmada';
+      headerBadge.className = 'badge badge-positive';
+      showToast('Fatura confirmada! Adicionada ao Checklist com vencimento 15/03.');
+      this.textContent = 'Fatura Confirmada';
+      this.disabled = true;
+
+      // Visual feedback
+      const footer = document.getElementById('resolutionFooter');
+      footer.style.background = '#F0FDF4';
+      footer.style.borderTopColor = '#86EFAC';
+    });
+
+    // ── Initial Render ──
+    renderTable();
+    updateUI();
+  </script>
+
+</body>
+</html>

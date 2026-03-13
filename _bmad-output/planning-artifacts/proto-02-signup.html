@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caderninho — Protótipo 02: Criar Conta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #FAFAF9;
+    --surface: #FFFFFF;
+    --border: #E7E5E4;
+    --border-hover: #D6D3D1;
+    --text-primary: #1C1917;
+    --text-secondary: #78716C;
+    --text-tertiary: #A8A29E;
+    --primary: #4F46E5;
+    --primary-hover: #4338CA;
+    --primary-light: #EEF2FF;
+    --positive: #22C55E;
+    --positive-bg: #DCFCE7;
+    --critical: #DC2626;
+    --critical-bg: #FEE2E2;
+    --strength-weak: #DC2626;
+    --strength-medium: #EAB308;
+    --strength-strong: #22C55E;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.5;
+    padding: 24px;
+  }
+
+  /* ── Page header ── */
+  .page-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .page-header .subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+  }
+  .page-header .badge {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 12px;
+    background: var(--primary-light);
+    color: var(--primary);
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  /* ── Layout: two versions side by side ── */
+  .versions {
+    display: flex;
+    gap: 48px;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  .version-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .version-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .version-label::before,
+  .version-label::after {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Mobile phone frame ── */
+  .phone-frame {
+    width: 390px;
+    min-height: 780px;
+    background: var(--surface);
+    border-radius: 40px;
+    border: 8px solid #1C1917;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04);
+  }
+  .phone-frame::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 28px;
+    background: #1C1917;
+    border-radius: 0 0 16px 16px;
+    z-index: 10;
+  }
+  .phone-screen {
+    padding: 48px 24px 32px;
+    background: var(--bg);
+    min-height: 100%;
+  }
+
+  /* ── Desktop card frame ── */
+  .desktop-frame {
+    width: 900px;
+    background: var(--bg);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+  }
+  .desktop-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .desktop-toolbar .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+  .desktop-toolbar .dot:nth-child(1) { background: #FCA5A5; }
+  .desktop-toolbar .dot:nth-child(2) { background: #FDE68A; }
+  .desktop-toolbar .dot:nth-child(3) { background: #86EFAC; }
+  .desktop-toolbar .url-bar {
+    flex: 1;
+    margin-left: 8px;
+    padding: 6px 12px;
+    background: var(--bg);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+  .desktop-content {
+    padding: 48px 24px 64px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 720px;
+    background: var(--bg);
+  }
+
+  /* ── Signup card (shared styles) ── */
+  .signup-card {
+    background: var(--surface);
+    border-radius: 12px;
+    width: 100%;
+  }
+  .desktop-content .signup-card {
+    max-width: 500px;
+    padding: 40px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  }
+
+  /* ── Back button ── */
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    padding: 4px 0;
+    margin-bottom: 24px;
+    transition: color 0.15s;
+  }
+  .back-btn:hover { color: var(--text-primary); }
+  .back-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* ── Headings inside signup ── */
+  .signup-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .signup-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  /* ── Form fields ── */
+  .form-row {
+    display: flex;
+    gap: 12px;
+  }
+  .form-group {
+    margin-bottom: 20px;
+    flex: 1;
+  }
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .form-input {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text-primary);
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .form-input::placeholder {
+    color: var(--text-tertiary);
+  }
+  .form-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  }
+  .form-input.valid {
+    border-color: var(--positive);
+  }
+  .form-input.valid:focus {
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+  }
+  .form-input.error {
+    border-color: var(--critical);
+  }
+  .form-input.error:focus {
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  }
+  .form-input.has-toggle {
+    padding-right: 44px;
+  }
+  .error-msg {
+    font-size: 12px;
+    color: var(--critical);
+    margin-top: 4px;
+    display: none;
+  }
+  .form-group.has-error .error-msg {
+    display: block;
+  }
+
+  /* ── Toggle password visibility ── */
+  .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    color: var(--text-tertiary);
+    transition: color 0.15s;
+  }
+  .toggle-password:hover {
+    color: var(--text-secondary);
+  }
+  .toggle-password svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* ── Password strength bar ── */
+  .strength-section {
+    margin-top: 8px;
+    margin-bottom: 4px;
+  }
+  .strength-bar-container {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+  .strength-segment {
+    height: 4px;
+    border-radius: 2px;
+    flex: 1;
+    background: var(--border);
+    transition: background 0.25s;
+  }
+  .strength-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    transition: color 0.2s;
+  }
+
+  /* ── Password requirements checklist ── */
+  .pw-requirements {
+    margin-top: 12px;
+    margin-bottom: 4px;
+  }
+  .pw-req {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    padding: 2px 0;
+    transition: color 0.2s;
+  }
+  .pw-req.met {
+    color: var(--positive);
+  }
+  .pw-req .check-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: var(--border);
+    transition: background 0.2s;
+  }
+  .pw-req.met .check-icon {
+    background: var(--positive);
+  }
+  .pw-req .check-icon svg {
+    width: 10px;
+    height: 10px;
+    color: #fff;
+  }
+
+  /* ── Primary button ── */
+  .btn-primary {
+    width: 100%;
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    color: #FFFFFF;
+    background: var(--primary);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    margin-top: 8px;
+  }
+  .btn-primary:hover {
+    background: var(--primary-hover);
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+  }
+  .btn-primary:active {
+    transform: scale(0.985);
+  }
+  .btn-primary:disabled {
+    background: #A5B4FC;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+
+  /* ── Terms text ── */
+  .terms-text {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    text-align: center;
+    margin-top: 16px;
+    line-height: 1.6;
+  }
+  .terms-text a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .terms-text a:hover {
+    text-decoration: underline;
+  }
+
+  /* ── Login link ── */
+  .login-link {
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .login-link a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .login-link a:hover {
+    text-decoration: underline;
+  }
+
+  /* ── Logo / branding ── */
+  .brand-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .brand-mark .icon-circle {
+    width: 36px;
+    height: 36px;
+    background: var(--primary);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .brand-mark .icon-circle svg {
+    width: 20px;
+    height: 20px;
+    color: #fff;
+  }
+  .brand-mark span {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  /* ── Desktop two-column row ── */
+  .desktop-content .form-row-2col {
+    display: flex;
+    gap: 12px;
+  }
+  .desktop-content .form-row-2col .form-group {
+    flex: 1;
+  }
+
+  /* ── Responsive tweaks ── */
+  @media (max-width: 1400px) {
+    .versions { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Page Title -->
+<div class="page-header">
+  <h1>Protótipo 02 — Criar Conta</h1>
+  <p class="subtitle">Cadastro de novo usuário</p>
+  <span class="badge">Stone & Indigo</span>
+</div>
+
+<div class="versions">
+
+  <!-- ═══════════════════════════════════ -->
+  <!-- MOBILE VERSION                      -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="version-column">
+    <div class="version-label">Mobile — 390px</div>
+    <div class="phone-frame">
+      <div class="phone-screen">
+
+        <!-- Back button -->
+        <button class="back-btn" aria-label="Voltar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          Voltar
+        </button>
+
+        <div class="signup-card" id="mobile-form">
+          <!-- Heading -->
+          <h2 class="signup-title">Criar conta</h2>
+          <p class="signup-subtitle">Configure seu Caderninho em poucos minutos</p>
+
+          <!-- Nome completo -->
+          <div class="form-group" id="m-nome-group">
+            <label for="m-nome">Nome completo</label>
+            <div class="input-wrapper">
+              <input class="form-input" type="text" id="m-nome" autocomplete="name">
+            </div>
+            <div class="error-msg" id="m-nome-error">Informe seu nome completo</div>
+          </div>
+
+          <!-- E-mail -->
+          <div class="form-group" id="m-email-group">
+            <label for="m-email">E-mail</label>
+            <div class="input-wrapper">
+              <input class="form-input" type="email" id="m-email" autocomplete="email">
+            </div>
+            <div class="error-msg" id="m-email-error">Informe um e-mail válido</div>
+          </div>
+
+          <!-- Senha -->
+          <div class="form-group" id="m-senha-group">
+            <label for="m-senha">Senha</label>
+            <div class="input-wrapper">
+              <input class="form-input has-toggle" type="password" id="m-senha">
+              <button class="toggle-password" type="button" data-target="m-senha" aria-label="Mostrar senha">
+                <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg class="eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                  <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"></path>
+                  <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Strength indicator -->
+            <div class="strength-section" id="m-strength-section">
+              <div class="strength-bar-container">
+                <div class="strength-segment" id="m-seg1"></div>
+                <div class="strength-segment" id="m-seg2"></div>
+                <div class="strength-segment" id="m-seg3"></div>
+              </div>
+              <span class="strength-label" id="m-strength-label"></span>
+            </div>
+
+            <!-- Password requirements -->
+            <div class="pw-requirements" id="m-pw-requirements">
+              <div class="pw-req" id="m-req-length">
+                <span class="check-icon">
+                  <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="2.5 6 5 8.5 9.5 3.5"></polyline>
+                  </svg>
+                </span>
+                <span>Mínimo 8 caracteres</span>
+              </div>
+              <div class="pw-req" id="m-req-upper">
+                <span class="check-icon">
+                  <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="2.5 6 5 8.5 9.5 3.5"></polyline>
+                  </svg>
+                </span>
+                <span>Uma letra maiúscula</span>
+              </div>
+              <div class="pw-req" id="m-req-number">
+                <span class="check-icon">
+                  <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="2.5 6 5 8.5 9.5 3.5"></polyline>
+                  </svg>
+                </span>
+                <span>Um número</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Confirmar senha -->
+          <div class="form-group" id="m-confirmar-group">
+            <label for="m-confirmar">Confirmar senha</label>
+            <div class="input-wrapper">
+              <input class="form-input has-toggle" type="password" id="m-confirmar">
+              <button class="toggle-password" type="button" data-target="m-confirmar" aria-label="Mostrar senha">
+                <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg class="eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                  <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"></path>
+                  <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="error-msg" id="m-confirmar-error">As senhas não coincidem</div>
+          </div>
+
+          <!-- Submit -->
+          <button class="btn-primary" id="m-submit-btn" type="button">Criar conta</button>
+
+          <!-- Terms -->
+          <p class="terms-text">
+            Ao criar sua conta, você concorda com os
+            <a href="#">Termos de Uso</a> e
+            <a href="#">Política de Privacidade</a>
+          </p>
+
+          <!-- Login link -->
+          <div class="login-link">
+            Já tem conta? <a href="#">Entrar</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ -->
+  <!-- DESKTOP VERSION                     -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="version-column">
+    <div class="version-label">Desktop — 900px</div>
+    <div class="desktop-frame">
+      <div class="desktop-toolbar">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="url-bar">caderninho.app/criar-conta</span>
+      </div>
+      <div class="desktop-content">
+        <div class="signup-card" id="desktop-form">
+
+          <!-- Brand -->
+          <div class="brand-mark">
+            <div class="icon-circle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 016.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"></path>
+              </svg>
+            </div>
+            <span>Caderninho</span>
+          </div>
+
+          <!-- Heading -->
+          <h2 class="signup-title" style="text-align:center;">Criar conta</h2>
+          <p class="signup-subtitle" style="text-align:center;">Configure seu Caderninho em poucos minutos</p>
+
+          <!-- Nome + Email side by side -->
+          <div class="form-row-2col">
+            <div class="form-group" id="d-nome-group">
+              <label for="d-nome">Nome completo</label>
+              <div class="input-wrapper">
+                <input class="form-input" type="text" id="d-nome" autocomplete="name">
+              </div>
+              <div class="error-msg" id="d-nome-error">Informe seu nome completo</div>
+            </div>
+
+            <div class="form-group" id="d-email-group">
+              <label for="d-email">E-mail</label>
+              <div class="input-wrapper">
+                <input class="form-input" type="email" id="d-email" autocomplete="email">
+              </div>
+              <div class="error-msg" id="d-email-error">Informe um e-mail válido</div>
+            </div>
+          </div>
+
+          <!-- Senha -->
+          <div class="form-group" id="d-senha-group">
+            <label for="d-senha">Senha</label>
+            <div class="input-wrapper">
+              <input class="form-input has-toggle" type="password" id="d-senha">
+              <button class="toggle-password" type="button" data-target="d-senha" aria-label="Mostrar senha">
+                <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg class="eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                  <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"></path>
+                  <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Strength indicator -->
+            <div class="strength-section" id="d-strength-section">
+              <div class="strength-bar-container">
+                <div class="strength-segment" id="d-seg1"></div>
+                <div class="strength-segment" id="d-seg2"></div>
+                <div class="strength-segment" id="d-seg3"></div>
+              </div>
+              <span class="strength-label" id="d-strength-label"></span>
+            </div>
+
+            <!-- Password requirements -->
+            <div class="pw-requirements" id="d-pw-requirements">
+              <div class="pw-req" id="d-req-length">
+                <span class="check-icon">
+                  <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="2.5 6 5 8.5 9.5 3.5"></polyline>
+                  </svg>
+                </span>
+                <span>Mínimo 8 caracteres</span>
+              </div>
+              <div class="pw-req" id="d-req-upper">
+                <span class="check-icon">
+                  <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="2.5 6 5 8.5 9.5 3.5"></polyline>
+                  </svg>
+                </span>
+                <span>Uma letra maiúscula</span>
+              </div>
+              <div class="pw-req" id="d-req-number">
+                <span class="check-icon">
+                  <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="2.5 6 5 8.5 9.5 3.5"></polyline>
+                  </svg>
+                </span>
+                <span>Um número</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Confirmar senha -->
+          <div class="form-group" id="d-confirmar-group">
+            <label for="d-confirmar">Confirmar senha</label>
+            <div class="input-wrapper">
+              <input class="form-input has-toggle" type="password" id="d-confirmar">
+              <button class="toggle-password" type="button" data-target="d-confirmar" aria-label="Mostrar senha">
+                <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg class="eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                  <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"></path>
+                  <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="error-msg" id="d-confirmar-error">As senhas não coincidem</div>
+          </div>
+
+          <!-- Submit -->
+          <button class="btn-primary" id="d-submit-btn" type="button">Criar conta</button>
+
+          <!-- Terms -->
+          <p class="terms-text">
+            Ao criar sua conta, você concorda com os
+            <a href="#">Termos de Uso</a> e
+            <a href="#">Política de Privacidade</a>
+          </p>
+
+          <!-- Login link -->
+          <div class="login-link">
+            Já tem conta? <a href="#">Entrar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ── Utility: get elements by prefix ──
+  function getFormElements(prefix) {
+    return {
+      nome: document.getElementById(prefix + '-nome'),
+      nomeGroup: document.getElementById(prefix + '-nome-group'),
+      email: document.getElementById(prefix + '-email'),
+      emailGroup: document.getElementById(prefix + '-email-group'),
+      senha: document.getElementById(prefix + '-senha'),
+      senhaGroup: document.getElementById(prefix + '-senha-group'),
+      confirmar: document.getElementById(prefix + '-confirmar'),
+      confirmarGroup: document.getElementById(prefix + '-confirmar-group'),
+      seg1: document.getElementById(prefix + '-seg1'),
+      seg2: document.getElementById(prefix + '-seg2'),
+      seg3: document.getElementById(prefix + '-seg3'),
+      strengthLabel: document.getElementById(prefix + '-strength-label'),
+      reqLength: document.getElementById(prefix + '-req-length'),
+      reqUpper: document.getElementById(prefix + '-req-upper'),
+      reqNumber: document.getElementById(prefix + '-req-number'),
+      submitBtn: document.getElementById(prefix + '-submit-btn'),
+    };
+  }
+
+  // ── Password strength checker ──
+  function checkPasswordStrength(password) {
+    var hasLength = password.length >= 8;
+    var hasUpper = /[A-Z]/.test(password);
+    var hasNumber = /[0-9]/.test(password);
+    var score = (hasLength ? 1 : 0) + (hasUpper ? 1 : 0) + (hasNumber ? 1 : 0);
+
+    return {
+      score: score,
+      hasLength: hasLength,
+      hasUpper: hasUpper,
+      hasNumber: hasNumber,
+    };
+  }
+
+  // ── Update strength UI ──
+  function updateStrengthUI(els, password) {
+    var result = checkPasswordStrength(password);
+
+    // Reset segments
+    var resetColor = 'var(--border)';
+    els.seg1.style.background = resetColor;
+    els.seg2.style.background = resetColor;
+    els.seg3.style.background = resetColor;
+
+    if (password.length === 0) {
+      els.strengthLabel.textContent = '';
+      els.reqLength.classList.remove('met');
+      els.reqUpper.classList.remove('met');
+      els.reqNumber.classList.remove('met');
+      return result;
+    }
+
+    // Update requirement checks
+    els.reqLength.classList.toggle('met', result.hasLength);
+    els.reqUpper.classList.toggle('met', result.hasUpper);
+    els.reqNumber.classList.toggle('met', result.hasNumber);
+
+    // Strength bar & label
+    if (result.score === 1) {
+      els.seg1.style.background = 'var(--strength-weak)';
+      els.strengthLabel.textContent = 'Fraca';
+      els.strengthLabel.style.color = 'var(--strength-weak)';
+    } else if (result.score === 2) {
+      els.seg1.style.background = 'var(--strength-medium)';
+      els.seg2.style.background = 'var(--strength-medium)';
+      els.strengthLabel.textContent = 'Média';
+      els.strengthLabel.style.color = 'var(--strength-medium)';
+    } else if (result.score === 3) {
+      els.seg1.style.background = 'var(--strength-strong)';
+      els.seg2.style.background = 'var(--strength-strong)';
+      els.seg3.style.background = 'var(--strength-strong)';
+      els.strengthLabel.textContent = 'Forte';
+      els.strengthLabel.style.color = 'var(--strength-strong)';
+    }
+
+    return result;
+  }
+
+  // ── Email validation ──
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  // ── Initialize form behavior ──
+  function initForm(prefix) {
+    var els = getFormElements(prefix);
+
+    // Password typing handler
+    els.senha.addEventListener('input', function() {
+      var pw = els.senha.value;
+      updateStrengthUI(els, pw);
+
+      // Live validation on password field
+      if (pw.length > 0) {
+        var result = checkPasswordStrength(pw);
+        if (result.score === 3) {
+          els.senha.classList.add('valid');
+          els.senha.classList.remove('error');
+        } else {
+          els.senha.classList.remove('valid');
+          els.senha.classList.remove('error');
+        }
+      } else {
+        els.senha.classList.remove('valid');
+        els.senha.classList.remove('error');
+      }
+
+      // Also re-check confirm match
+      if (els.confirmar.value.length > 0) {
+        validateConfirm(els);
+      }
+    });
+
+    // Confirm password handler
+    els.confirmar.addEventListener('input', function() {
+      validateConfirm(els);
+    });
+
+    // Name blur validation
+    els.nome.addEventListener('blur', function() {
+      if (els.nome.value.trim().length > 0) {
+        els.nome.classList.add('valid');
+        els.nome.classList.remove('error');
+        els.nomeGroup.classList.remove('has-error');
+      } else if (els.nome.value.length > 0) {
+        els.nome.classList.add('error');
+        els.nome.classList.remove('valid');
+        els.nomeGroup.classList.add('has-error');
+      }
+    });
+
+    // Email blur validation
+    els.email.addEventListener('blur', function() {
+      if (els.email.value.trim().length > 0) {
+        if (isValidEmail(els.email.value.trim())) {
+          els.email.classList.add('valid');
+          els.email.classList.remove('error');
+          els.emailGroup.classList.remove('has-error');
+        } else {
+          els.email.classList.add('error');
+          els.email.classList.remove('valid');
+          els.emailGroup.classList.add('has-error');
+        }
+      }
+    });
+
+    // Submit button
+    els.submitBtn.addEventListener('click', function() {
+      var valid = true;
+
+      // Validate name
+      if (els.nome.value.trim().length === 0) {
+        els.nome.classList.add('error');
+        els.nome.classList.remove('valid');
+        els.nomeGroup.classList.add('has-error');
+        valid = false;
+      } else {
+        els.nome.classList.add('valid');
+        els.nome.classList.remove('error');
+        els.nomeGroup.classList.remove('has-error');
+      }
+
+      // Validate email
+      if (!isValidEmail(els.email.value.trim())) {
+        els.email.classList.add('error');
+        els.email.classList.remove('valid');
+        els.emailGroup.classList.add('has-error');
+        valid = false;
+      } else {
+        els.email.classList.add('valid');
+        els.email.classList.remove('error');
+        els.emailGroup.classList.remove('has-error');
+      }
+
+      // Validate password strength
+      var pwResult = checkPasswordStrength(els.senha.value);
+      if (pwResult.score < 3) {
+        els.senha.classList.add('error');
+        els.senha.classList.remove('valid');
+        valid = false;
+      } else {
+        els.senha.classList.add('valid');
+        els.senha.classList.remove('error');
+      }
+
+      // Validate confirm
+      if (els.confirmar.value !== els.senha.value || els.confirmar.value.length === 0) {
+        els.confirmar.classList.add('error');
+        els.confirmar.classList.remove('valid');
+        els.confirmarGroup.classList.add('has-error');
+        valid = false;
+      } else {
+        els.confirmar.classList.add('valid');
+        els.confirmar.classList.remove('error');
+        els.confirmarGroup.classList.remove('has-error');
+      }
+
+      if (valid) {
+        els.submitBtn.textContent = 'Conta criada!';
+        els.submitBtn.style.background = 'var(--positive)';
+        setTimeout(function() {
+          els.submitBtn.textContent = 'Criar conta';
+          els.submitBtn.style.background = '';
+        }, 2000);
+      }
+    });
+  }
+
+  function validateConfirm(els) {
+    var confirmVal = els.confirmar.value;
+    var senhaVal = els.senha.value;
+
+    if (confirmVal.length === 0) {
+      els.confirmar.classList.remove('valid', 'error');
+      els.confirmarGroup.classList.remove('has-error');
+      return;
+    }
+
+    if (confirmVal === senhaVal && senhaVal.length > 0) {
+      els.confirmar.classList.add('valid');
+      els.confirmar.classList.remove('error');
+      els.confirmarGroup.classList.remove('has-error');
+    } else {
+      els.confirmar.classList.add('error');
+      els.confirmar.classList.remove('valid');
+      els.confirmarGroup.classList.add('has-error');
+    }
+  }
+
+  // ── Toggle password visibility ──
+  document.querySelectorAll('.toggle-password').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var targetId = btn.getAttribute('data-target');
+      var input = document.getElementById(targetId);
+      var eyeOpen = btn.querySelector('.eye-open');
+      var eyeClosed = btn.querySelector('.eye-closed');
+
+      if (input.type === 'password') {
+        input.type = 'text';
+        eyeOpen.style.display = 'none';
+        eyeClosed.style.display = 'block';
+      } else {
+        input.type = 'password';
+        eyeOpen.style.display = 'block';
+        eyeClosed.style.display = 'none';
+      }
+    });
+  });
+
+  // ── Initialize both forms ──
+  initForm('m');
+  initForm('d');
+
+})();
+</script>
+</body>
+</html>

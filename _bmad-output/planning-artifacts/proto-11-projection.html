@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protótipo 11 — Projeção e Timeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF9;
+    --surface: #FFF;
+    --border: #E7E5E4;
+    --text-primary: #1C1917;
+    --text-secondary: #78716C;
+    --text-tertiary: #A8A29E;
+    --primary: #4F46E5;
+    --primary-hover: #4338CA;
+    --primary-light: #EEF2FF;
+    --positive: #22C55E;
+    --positive-bg: #DCFCE7;
+    --positive-text: #166534;
+    --attention: #EAB308;
+    --attention-bg: #FEF9C3;
+    --critical: #DC2626;
+    --critical-bg: #FEE2E2;
+    --critical-text: #991B1B;
+    --sidebar-width: 240px;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+    --shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-variant-numeric: tabular-nums;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+  }
+
+  .sidebar-logo {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-logo h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+  }
+
+  .sidebar-logo span {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-weight: 400;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-decoration: none;
+  }
+
+  .nav-item:hover {
+    background: var(--bg);
+    color: var(--text-primary);
+  }
+
+  .nav-item.active {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .nav-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .sidebar-footer {
+    padding: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .user-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border-radius: var(--radius-sm);
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .user-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .user-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .user-email {
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+
+  /* ── MAIN ── */
+  .main-content {
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+    padding: 32px;
+  }
+
+  .page-header {
+    margin-bottom: 24px;
+  }
+
+  .page-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+  }
+
+  .page-header p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  /* ── PROJECTION HEADER ── */
+  .projection-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .projection-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .range-selector {
+    display: flex;
+    gap: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  .range-btn {
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border-right: 1px solid var(--border);
+  }
+
+  .range-btn:last-child {
+    border-right: none;
+  }
+
+  .range-btn:hover {
+    color: var(--text-primary);
+    background: var(--surface);
+  }
+
+  .range-btn.active {
+    background: var(--primary);
+    color: #FFF;
+    font-weight: 600;
+  }
+
+  /* ── LEGEND ── */
+  .legend-bar {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    color: var(--text-secondary);
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .legend-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .legend-swatch.fixed {
+    background: var(--bg);
+    border: 1px solid var(--border);
+  }
+
+  .legend-swatch.draggable {
+    background: var(--primary-light);
+    border: 1.5px dashed var(--primary);
+  }
+
+  .legend-swatch.margin-pos {
+    background: var(--positive-bg);
+    border: 1px solid var(--positive);
+  }
+
+  .legend-swatch.margin-neg {
+    background: var(--critical-bg);
+    border: 1px solid var(--critical);
+  }
+
+  /* ── TIMELINE KANBAN ── */
+  .timeline-container {
+    position: relative;
+    margin-bottom: 32px;
+  }
+
+  .timeline-scroll {
+    overflow-x: auto;
+    overflow-y: visible;
+    padding-bottom: 12px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .timeline-scroll::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .timeline-scroll::-webkit-scrollbar-track {
+    background: var(--bg);
+    border-radius: 3px;
+  }
+
+  .timeline-scroll::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+  }
+
+  .timeline-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--text-tertiary);
+  }
+
+  .timeline-columns {
+    display: flex;
+    gap: 12px;
+    min-width: max-content;
+  }
+
+  /* ── MONTH COLUMN ── */
+  .month-column {
+    width: 192px;
+    min-width: 192px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .month-column:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  .month-column.current {
+    border-color: var(--positive);
+    border-width: 2px;
+  }
+
+  .month-column.negative-margin {
+    border-color: var(--critical);
+    border-top-width: 3px;
+  }
+
+  .month-column.positive-margin {
+    border-top: 3px solid var(--positive);
+  }
+
+  .month-header {
+    padding: 12px 14px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .month-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .month-year {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-weight: 500;
+  }
+
+  .month-current-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--positive-text);
+    background: var(--positive-bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-left: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .month-body {
+    padding: 10px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 120px;
+  }
+
+  .month-body.drag-over {
+    background: var(--primary-light);
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+    margin-bottom: 2px;
+  }
+
+  .section-label:first-child {
+    margin-top: 0;
+  }
+
+  /* ── ITEM CARD ── */
+  .item-card {
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  .item-card.fixed {
+    background: var(--bg);
+    border: 1px solid var(--border);
+  }
+
+  .item-card.variable {
+    background: var(--bg);
+    border: 1px solid var(--border);
+  }
+
+  .item-card.installment {
+    background: #F5F3FF;
+    border: 1px solid #DDD6FE;
+  }
+
+  .item-card.installment.finished {
+    background: var(--positive-bg);
+    border: 1px solid var(--positive);
+  }
+
+  .item-card.draggable-item {
+    background: var(--primary-light);
+    border: 1.5px dashed var(--primary);
+    cursor: grab;
+    transition: all 0.15s ease;
+  }
+
+  .item-card.draggable-item:hover {
+    box-shadow: 0 2px 6px rgba(79, 70, 229, 0.15);
+    transform: translateY(-1px);
+  }
+
+  .item-card.draggable-item:active {
+    cursor: grabbing;
+    opacity: 0.8;
+  }
+
+  .item-card.dragging {
+    opacity: 0.4;
+    transform: scale(0.96);
+  }
+
+  .item-name {
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .item-value {
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-size: 11px;
+  }
+
+  .item-approx {
+    color: var(--text-tertiary);
+    font-size: 10px;
+    margin-right: 1px;
+  }
+
+  .installment-tag {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--primary);
+    background: #E0E7FF;
+    padding: 1px 4px;
+    border-radius: 2px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .finished-tag {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--positive-text);
+    background: var(--positive-bg);
+    padding: 1px 4px;
+    border-radius: 2px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .drag-handle {
+    color: var(--primary);
+    font-size: 12px;
+    flex-shrink: 0;
+    opacity: 0.6;
+    cursor: grab;
+    user-select: none;
+  }
+
+  .freed-badge {
+    margin-top: 2px;
+    padding: 4px 8px;
+    background: var(--positive-bg);
+    border: 1px solid var(--positive);
+    border-radius: var(--radius-sm);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--positive-text);
+    text-align: center;
+  }
+
+  /* ── MARGIN BADGE ── */
+  .month-footer {
+    padding: 8px 10px;
+    border-top: 1px solid var(--border);
+  }
+
+  .margin-badge {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .margin-badge.positive {
+    background: var(--positive-bg);
+    color: var(--positive-text);
+  }
+
+  .margin-badge.negative {
+    background: var(--critical-bg);
+    color: var(--critical-text);
+  }
+
+  .margin-label {
+    font-weight: 500;
+    font-size: 11px;
+  }
+
+  .margin-value {
+    font-weight: 700;
+  }
+
+  .margin-extra {
+    font-size: 10px;
+    font-weight: 500;
+    opacity: 0.8;
+  }
+
+  /* ── SIMULATION PANEL ── */
+  .simulation-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .sim-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sim-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sim-body {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 0;
+  }
+
+  .sim-form {
+    padding: 20px 24px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .form-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-primary);
+    background: var(--surface);
+    transition: border-color 0.15s ease;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 20px;
+    background: var(--primary);
+    color: #FFF;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .btn-primary:hover {
+    background: var(--primary-hover);
+  }
+
+  /* ── SIMULATION RESULT ── */
+  .sim-result {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .result-verdict {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--positive-bg);
+    border: 1px solid var(--positive);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--positive-text);
+  }
+
+  .result-instruction {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .result-instruction strong {
+    color: var(--text-primary);
+  }
+
+  .cut-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+
+  .cut-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cut-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .cut-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+  }
+
+  .cut-item-name {
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .cut-item-detail {
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  .cut-item-saving {
+    font-weight: 700;
+    color: var(--positive-text);
+    font-size: 12px;
+  }
+
+  .cut-bar-track {
+    height: 6px;
+    background: var(--bg);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .cut-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+
+  .cut-bar-fill.restaurante { background: #6366F1; width: 74%; }
+  .cut-bar-fill.delivery { background: #8B5CF6; width: 18%; }
+  .cut-bar-fill.pessoais { background: #A78BFA; width: 8%; }
+
+  .cut-total {
+    margin-top: 4px;
+    padding: 10px 14px;
+    background: var(--primary-light);
+    border: 1px solid #C7D2FE;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .cut-total-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  .cut-total-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .cut-total-note {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    text-align: right;
+  }
+
+  /* ── MOBILE FRAME ── */
+  .mobile-section {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 2px dashed var(--border);
+  }
+
+  .mobile-section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+
+  .mobile-section-subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+  }
+
+  .phone-frame {
+    width: 390px;
+    height: 844px;
+    border: 3px solid #1C1917;
+    border-radius: 40px;
+    overflow: hidden;
+    background: var(--bg);
+    margin: 0 auto;
+    position: relative;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .phone-notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 160px;
+    height: 28px;
+    background: #1C1917;
+    border-radius: 0 0 18px 18px;
+    z-index: 10;
+  }
+
+  .phone-screen {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-top: 40px;
+    padding-bottom: 76px;
+  }
+
+  .phone-screen::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ── MOBILE CONTENT ── */
+  .mobile-header {
+    padding: 12px 20px;
+  }
+
+  .mobile-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .mobile-header p {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .mobile-range-selector {
+    display: flex;
+    gap: 0;
+    margin: 0 20px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  .mobile-range-btn {
+    flex: 1;
+    padding: 6px 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .mobile-range-btn.active {
+    background: var(--primary);
+    color: #FFF;
+    font-weight: 600;
+  }
+
+  .mobile-timeline-scroll {
+    overflow-x: auto;
+    padding: 0 20px 14px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mobile-timeline-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobile-timeline-columns {
+    display: flex;
+    gap: 10px;
+    min-width: max-content;
+  }
+
+  .mobile-month-card {
+    width: 170px;
+    min-width: 170px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .mobile-month-card.positive-margin {
+    border-top: 3px solid var(--positive);
+  }
+
+  .mobile-month-card.negative-margin {
+    border-top: 3px solid var(--critical);
+  }
+
+  .mobile-month-header {
+    padding: 10px 12px 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mobile-month-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .mobile-month-body {
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 80px;
+  }
+
+  .mobile-item {
+    padding: 5px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .mobile-item.fixed {
+    background: var(--bg);
+    border: 1px solid var(--border);
+  }
+
+  .mobile-item.draggable-item {
+    background: var(--primary-light);
+    border: 1.5px dashed var(--primary);
+  }
+
+  .mobile-item .item-name {
+    font-size: 10px;
+  }
+
+  .mobile-item .item-value {
+    font-size: 10px;
+  }
+
+  .mobile-month-footer {
+    padding: 6px 8px;
+    border-top: 1px solid var(--border);
+  }
+
+  .mobile-margin-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .mobile-margin-badge.positive {
+    background: var(--positive-bg);
+    color: var(--positive-text);
+  }
+
+  .mobile-margin-badge.negative {
+    background: var(--critical-bg);
+    color: var(--critical-text);
+  }
+
+  /* ── MOBILE SIM PANEL ── */
+  .mobile-sim-panel {
+    margin: 14px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .mobile-sim-header {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .mobile-sim-form {
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .mobile-form-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .mobile-form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .mobile-form-group label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .mobile-form-group input {
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+  }
+
+  .mobile-sim-btn {
+    padding: 10px;
+    background: var(--primary);
+    color: #FFF;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .mobile-sim-result {
+    padding: 12px 14px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mobile-result-verdict {
+    padding: 8px 10px;
+    background: var(--positive-bg);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--positive-text);
+  }
+
+  .mobile-cut-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    padding: 4px 0;
+  }
+
+  .mobile-cut-name {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .mobile-cut-saving {
+    color: var(--positive-text);
+    font-weight: 700;
+  }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 72px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 8px;
+    padding-bottom: 8px;
+  }
+
+  .bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+
+  .bottom-nav-item.active {
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .bottom-nav-icon {
+    font-size: 20px;
+  }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 8px 0;
+  }
+
+  /* ── EMPTY MONTHS (gray placeholders) ── */
+  .month-column.empty-month {
+    opacity: 0.55;
+  }
+
+  .month-column.empty-month .month-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-tertiary);
+    font-size: 12px;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<!-- ════ SIDEBAR ════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h1>Caderninho</h1>
+    <span>Finanças pessoais</span>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-item" href="#">
+      <span class="nav-icon">&#9633;</span> Dashboard
+    </a>
+    <a class="nav-item" href="#">
+      <span class="nav-icon">&#8644;</span> Transações
+    </a>
+    <a class="nav-item" href="#">
+      <span class="nav-icon">&#9041;</span> Cartões
+    </a>
+    <a class="nav-item" href="#">
+      <span class="nav-icon">&#9783;</span> Categorias
+    </a>
+    <a class="nav-item" href="#">
+      <span class="nav-icon">&#128200;</span> Relatórios
+    </a>
+    <a class="nav-item active" href="#">
+      <span class="nav-icon">&#128197;</span> Projeção
+    </a>
+    <a class="nav-item" href="#">
+      <span class="nav-icon">&#9881;</span> Ajustes
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-pill">
+      <div class="user-avatar">VC</div>
+      <div class="user-info">
+        <div class="user-name">Vitor C.</div>
+        <div class="user-email">vitor@email.com</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ════ MAIN CONTENT ════ -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h2>Protótipo 11 — Projeção e Timeline</h2>
+    <p>Planejamento financeiro futuro com Kanban</p>
+  </div>
+
+  <!-- Projection Header -->
+  <div class="projection-header">
+    <div class="projection-title">Projeção Financeira</div>
+    <div class="range-selector">
+      <button class="range-btn" data-months="6">6 meses</button>
+      <button class="range-btn active" data-months="12">12 meses</button>
+      <button class="range-btn" data-months="24">24 meses</button>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend-bar">
+    <div class="legend-item">
+      <div class="legend-swatch fixed"></div>
+      <span>Fixo (não arrastável)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch draggable"></div>
+      <span>Planejado (arrastável)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch margin-pos"></div>
+      <span>Margem positiva</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch margin-neg"></div>
+      <span>Margem negativa</span>
+    </div>
+  </div>
+
+  <!-- ════ TIMELINE KANBAN ════ -->
+  <div class="timeline-container">
+    <div class="timeline-scroll" id="timelineScroll">
+      <div class="timeline-columns" id="timelineColumns">
+        <!-- Columns generated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SIMULATION PANEL ════ -->
+  <div class="simulation-panel">
+    <div class="sim-header">
+      <h3>&#127919; Simular meta — "Dá pra ir?"</h3>
+    </div>
+    <div class="sim-body">
+      <div class="sim-form">
+        <div class="form-group">
+          <label>O que você quer?</label>
+          <input type="text" value="Viagem São Paulo" placeholder="Ex: Viagem, compra...">
+        </div>
+        <div class="form-group">
+          <label>Quanto custa?</label>
+          <input type="text" value="R$ 3.500" placeholder="R$ 0,00">
+        </div>
+        <div class="form-group">
+          <label>Quando?</label>
+          <input type="month" value="2026-06">
+        </div>
+        <button class="btn-primary" onclick="simulateGoal()">
+          &#9889; Simular
+        </button>
+      </div>
+      <div class="sim-result" id="simResult">
+        <div class="result-verdict">&#10003; Viável com ajustes</div>
+        <p class="result-instruction">
+          Economize <strong>R$ 945/mês</strong> nos próximos <strong>4 meses</strong> para alcançar sua meta de <strong>R$ 3.500</strong> em Junho 2026.
+        </p>
+        <div class="cut-section-title">De onde cortar:</div>
+        <div class="cut-list">
+          <div class="cut-item">
+            <div class="cut-item-header">
+              <span class="cut-item-name">Restaurante</span>
+              <span class="cut-item-saving">-R$ 750/mês</span>
+            </div>
+            <div class="cut-item-detail">Atual R$ 2.500 → reduzir 30%</div>
+            <div class="cut-bar-track">
+              <div class="cut-bar-fill restaurante"></div>
+            </div>
+          </div>
+          <div class="cut-item">
+            <div class="cut-item-header">
+              <span class="cut-item-name">Delivery</span>
+              <span class="cut-item-saving">-R$ 180/mês</span>
+            </div>
+            <div class="cut-item-detail">Atual R$ 900 → reduzir 20%</div>
+            <div class="cut-bar-track">
+              <div class="cut-bar-fill delivery"></div>
+            </div>
+          </div>
+          <div class="cut-item">
+            <div class="cut-item-header">
+              <span class="cut-item-name">Compras pessoais</span>
+              <span class="cut-item-saving">-R$ 75/mês</span>
+            </div>
+            <div class="cut-item-detail">Atual R$ 500 → reduzir 15%</div>
+            <div class="cut-bar-track">
+              <div class="cut-bar-fill pessoais"></div>
+            </div>
+          </div>
+        </div>
+        <div class="cut-total">
+          <span class="cut-total-label">Total possível</span>
+          <span class="cut-total-value">R$ 1.005/mês</span>
+        </div>
+        <div class="cut-total-note">R$ 60 acima do necessário — folga para imprevistos</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ MOBILE SECTION ════ -->
+  <div class="mobile-section">
+    <div class="mobile-section-title">Versão Mobile (390px)</div>
+    <div class="mobile-section-subtitle">Visualização responsiva com scroll horizontal e painel de simulação</div>
+
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+
+        <!-- Mobile Header -->
+        <div class="mobile-header">
+          <h2>Projeção</h2>
+          <p>Planejamento financeiro futuro</p>
+        </div>
+
+        <!-- Mobile Range Selector -->
+        <div class="mobile-range-selector">
+          <button class="mobile-range-btn">6m</button>
+          <button class="mobile-range-btn active">12m</button>
+          <button class="mobile-range-btn">24m</button>
+        </div>
+
+        <!-- Mobile Timeline -->
+        <div class="mobile-timeline-scroll">
+          <div class="mobile-timeline-columns">
+
+            <!-- Mar 2026 -->
+            <div class="mobile-month-card positive-margin">
+              <div class="mobile-month-header">
+                <div class="mobile-month-name">Mar 2026 <span class="month-current-tag">Atual</span></div>
+              </div>
+              <div class="mobile-month-body">
+                <div class="mobile-item fixed">
+                  <span class="item-name">Escola</span>
+                  <span class="item-value">R$2.800</span>
+                </div>
+                <div class="mobile-item fixed">
+                  <span class="item-name">Aluguel</span>
+                  <span class="item-value">R$1.800</span>
+                </div>
+                <div class="mobile-item fixed">
+                  <span class="item-name">Supermercado</span>
+                  <span class="item-value">~R$3.000</span>
+                </div>
+              </div>
+              <div class="mobile-month-footer">
+                <div class="mobile-margin-badge positive">
+                  <span>Margem</span>
+                  <span>R$750</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Apr 2026 -->
+            <div class="mobile-month-card positive-margin">
+              <div class="mobile-month-header">
+                <div class="mobile-month-name">Abr 2026</div>
+              </div>
+              <div class="mobile-month-body">
+                <div class="mobile-item fixed">
+                  <span class="item-name">Escola</span>
+                  <span class="item-value">R$2.800</span>
+                </div>
+                <div class="mobile-item fixed">
+                  <span class="item-name">Aluguel</span>
+                  <span class="item-value">R$1.800</span>
+                </div>
+                <div class="mobile-item fixed">
+                  <span class="item-name">Fotos 9/10</span>
+                  <span class="item-value">R$171</span>
+                </div>
+              </div>
+              <div class="mobile-month-footer">
+                <div class="mobile-margin-badge positive">
+                  <span>Margem</span>
+                  <span>R$920</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sep 2026 -->
+            <div class="mobile-month-card negative-margin">
+              <div class="mobile-month-header">
+                <div class="mobile-month-name">Set 2026</div>
+              </div>
+              <div class="mobile-month-body">
+                <div class="mobile-item fixed">
+                  <span class="item-name">Escola</span>
+                  <span class="item-value">R$2.800</span>
+                </div>
+                <div class="mobile-item draggable-item">
+                  <span class="item-name">Seguro Carro</span>
+                  <span class="item-value">R$2.800</span>
+                </div>
+                <div class="mobile-item draggable-item">
+                  <span class="item-name">Troca Óleo</span>
+                  <span class="item-value">R$500</span>
+                </div>
+              </div>
+              <div class="mobile-month-footer">
+                <div class="mobile-margin-badge negative">
+                  <span>Margem</span>
+                  <span>-R$1.600</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Nov 2026 -->
+            <div class="mobile-month-card negative-margin">
+              <div class="mobile-month-header">
+                <div class="mobile-month-name">Nov 2026</div>
+              </div>
+              <div class="mobile-month-body">
+                <div class="mobile-item fixed">
+                  <span class="item-name">Escola</span>
+                  <span class="item-value">R$2.800</span>
+                </div>
+                <div class="mobile-item draggable-item">
+                  <span class="item-name">Rematrícula</span>
+                  <span class="item-value">R$1.200</span>
+                </div>
+                <div class="mobile-item draggable-item">
+                  <span class="item-name">Mat. Escolar</span>
+                  <span class="item-value">R$1.500</span>
+                </div>
+              </div>
+              <div class="mobile-month-footer">
+                <div class="mobile-margin-badge negative">
+                  <span>Margem</span>
+                  <span>-R$780</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Mobile Simulation Panel -->
+        <div class="mobile-sim-panel">
+          <div class="mobile-sim-header">&#127919; Simular meta</div>
+          <div class="mobile-sim-form">
+            <div class="mobile-form-group">
+              <label>O que você quer?</label>
+              <input type="text" value="Viagem São Paulo">
+            </div>
+            <div class="mobile-form-row">
+              <div class="mobile-form-group">
+                <label>Quanto custa?</label>
+                <input type="text" value="R$ 3.500">
+              </div>
+              <div class="mobile-form-group">
+                <label>Quando?</label>
+                <input type="text" value="Jun 2026">
+              </div>
+            </div>
+            <button class="mobile-sim-btn">&#9889; Simular</button>
+          </div>
+          <div class="mobile-sim-result">
+            <div class="mobile-result-verdict">&#10003; Viável com ajustes</div>
+            <div class="mobile-cut-item">
+              <span class="mobile-cut-name">Restaurante -30%</span>
+              <span class="mobile-cut-saving">-R$750</span>
+            </div>
+            <div class="mobile-cut-item">
+              <span class="mobile-cut-name">Delivery -20%</span>
+              <span class="mobile-cut-saving">-R$180</span>
+            </div>
+            <div class="mobile-cut-item">
+              <span class="mobile-cut-name">Compras -15%</span>
+              <span class="mobile-cut-saving">-R$75</span>
+            </div>
+            <div style="padding: 6px 10px; background: var(--primary-light); border-radius: 4px; font-size: 12px; font-weight: 700; color: var(--primary); text-align: center; margin-top: 4px;">
+              Total: R$ 1.005/mês
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /phone-screen -->
+
+      <!-- Bottom Nav -->
+      <div class="bottom-nav">
+        <div class="bottom-nav-item">
+          <span class="bottom-nav-icon">&#9633;</span>
+          <span>Início</span>
+        </div>
+        <div class="bottom-nav-item">
+          <span class="bottom-nav-icon">&#8644;</span>
+          <span>Transações</span>
+        </div>
+        <div class="bottom-nav-item active">
+          <span class="bottom-nav-icon">&#128197;</span>
+          <span>Projeção</span>
+        </div>
+        <div class="bottom-nav-item">
+          <span class="bottom-nav-icon">&#128200;</span>
+          <span>Relatórios</span>
+        </div>
+        <div class="bottom-nav-item">
+          <span class="bottom-nav-icon">&#8943;</span>
+          <span>Mais</span>
+        </div>
+      </div>
+    </div><!-- /phone-frame -->
+  </div><!-- /mobile-section -->
+
+</main>
+
+<script>
+// ═══════ MONTH DATA ═══════
+const MONTHS_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const MONTHS_SHORT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+const BASE_INCOME = 12000; // hypothetical monthly income
+
+const fixedItems = [
+  { name: 'Escola', value: 2800, type: 'fixed' },
+  { name: 'Aluguel', value: 1800, type: 'fixed' },
+  { name: 'Internet', value: 158, type: 'fixed' },
+];
+
+const variableItems = [
+  { name: 'Supermercado', value: 3000, type: 'variable', approx: true },
+  { name: 'Gasolina', value: 600, type: 'variable', approx: true },
+];
+
+// Build 24 months of data starting March 2026
+function buildMonthsData(count) {
+  const months = [];
+  const startMonth = 2; // March (0-indexed)
+  const startYear = 2026;
+
+  for (let i = 0; i < count; i++) {
+    const m = (startMonth + i) % 12;
+    const y = startYear + Math.floor((startMonth + i) / 12);
+    const key = `${y}-${String(m+1).padStart(2,'0')}`;
+
+    const data = {
+      key,
+      month: m,
+      year: y,
+      label: MONTHS_PT[m],
+      labelShort: MONTHS_SHORT[m],
+      isCurrent: (i === 0),
+      fixedItems: [...fixedItems],
+      variableItems: (i <= 2) ? [...variableItems] : [...variableItems], // always show variable
+      installments: [],
+      planned: [],
+      freedBadge: null,
+      marginOverride: null,
+    };
+
+    // Installments: Fotos - March (8/10), April (9/10), May (10/10)
+    if (i === 0) {
+      data.installments.push({ name: 'Fotos', installment: '8/10', value: 171 });
+    } else if (i === 1) {
+      data.installments.push({ name: 'Fotos', installment: '9/10', value: 171 });
+    } else if (i === 2) {
+      data.installments.push({ name: 'Fotos', installment: '10/10', value: 171, isLast: true });
+    }
+
+    // Planned (draggable) items
+    // September 2026 = index 6
+    if (i === 6) {
+      data.planned.push({ id: 'seguro-carro', name: 'Seguro Carro', value: 2800 });
+      data.planned.push({ id: 'troca-oleo', name: 'Troca Óleo', value: 500 });
+    }
+
+    // November 2026 = index 8
+    if (i === 8) {
+      data.planned.push({ id: 'rematricula', name: 'Rematrícula', value: 1200 });
+      data.planned.push({ id: 'material-escolar', name: 'Material Escolar', value: 1500 });
+    }
+
+    // Freed badge for June (index 3)
+    if (i === 3) {
+      data.freedBadge = 'Libera R$171/mês';
+    }
+
+    // Calculate margins
+    const fixedTotal = fixedItems.reduce((s, it) => s + it.value, 0);
+    const varTotal = variableItems.reduce((s, it) => s + it.value, 0);
+    const installTotal = data.installments.reduce((s, it) => s + it.value, 0);
+    const plannedTotal = data.planned.reduce((s, it) => s + it.value, 0);
+    const totalExpense = fixedTotal + varTotal + installTotal + plannedTotal;
+    let margin = BASE_INCOME - totalExpense;
+
+    // Custom margin overrides for specific months to match spec
+    if (i === 0) margin = 750;
+    if (i === 1) margin = 920;
+    if (i === 2) margin = 920;
+    if (i === 3) margin = 1091;
+    if (i === 6) margin = -1600;
+    if (i === 8) margin = -780;
+
+    data.margin = margin;
+
+    months.push(data);
+  }
+
+  return months;
+}
+
+let currentRange = 12;
+let monthsData = buildMonthsData(24);
+let draggedItem = null;
+let dragSourceMonth = null;
+
+function renderTimeline() {
+  const container = document.getElementById('timelineColumns');
+  container.innerHTML = '';
+
+  const visibleCount = currentRange;
+  const data = monthsData.slice(0, visibleCount);
+
+  data.forEach((month, idx) => {
+    const col = document.createElement('div');
+    col.className = 'month-column';
+    if (month.isCurrent) col.classList.add('current');
+    if (month.margin >= 0) col.classList.add('positive-margin');
+    else col.classList.add('negative-margin');
+
+    col.dataset.monthIndex = idx;
+
+    // Header
+    const header = document.createElement('div');
+    header.className = 'month-header';
+    header.innerHTML = `
+      <span class="month-name">${month.labelShort} ${month.year}${month.isCurrent ? '<span class="month-current-tag">Atual</span>' : ''}</span>
+    `;
+    col.appendChild(header);
+
+    // Body
+    const body = document.createElement('div');
+    body.className = 'month-body';
+    body.dataset.monthIndex = idx;
+
+    // Drop zone
+    body.addEventListener('dragover', handleDragOver);
+    body.addEventListener('dragenter', handleDragEnter);
+    body.addEventListener('dragleave', handleDragLeave);
+    body.addEventListener('drop', handleDrop);
+
+    // Fixed items
+    if (month.fixedItems.length > 0) {
+      const label = document.createElement('div');
+      label.className = 'section-label';
+      label.textContent = 'Fixos';
+      body.appendChild(label);
+
+      month.fixedItems.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'item-card fixed';
+        card.innerHTML = `
+          <span class="item-name">${item.name}</span>
+          <span class="item-value">R$${item.value.toLocaleString('pt-BR')}</span>
+        `;
+        body.appendChild(card);
+      });
+    }
+
+    // Variable items
+    if (month.variableItems.length > 0 && idx <= 5) {
+      const label = document.createElement('div');
+      label.className = 'section-label';
+      label.textContent = 'Variáveis';
+      body.appendChild(label);
+
+      month.variableItems.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'item-card variable';
+        card.innerHTML = `
+          <span class="item-name">${item.name}</span>
+          <span class="item-value">${item.approx ? '<span class="item-approx">~</span>' : ''}R$${item.value.toLocaleString('pt-BR')}</span>
+        `;
+        body.appendChild(card);
+      });
+    }
+
+    // Installments
+    if (month.installments.length > 0) {
+      const label = document.createElement('div');
+      label.className = 'section-label';
+      label.textContent = 'Parcelas';
+      body.appendChild(label);
+
+      month.installments.forEach(item => {
+        const card = document.createElement('div');
+        card.className = `item-card installment${item.isLast ? ' finished' : ''}`;
+        card.innerHTML = `
+          <span class="item-name">${item.name}</span>
+          <span class="${item.isLast ? 'finished-tag' : 'installment-tag'}">${item.installment}</span>
+          <span class="item-value">R$${item.value}</span>
+        `;
+        body.appendChild(card);
+      });
+    }
+
+    // Freed badge
+    if (month.freedBadge) {
+      const badge = document.createElement('div');
+      badge.className = 'freed-badge';
+      badge.textContent = month.freedBadge;
+      body.appendChild(badge);
+    }
+
+    // Planned (draggable) items
+    if (month.planned.length > 0) {
+      const label = document.createElement('div');
+      label.className = 'section-label';
+      label.textContent = 'Planejado';
+      body.appendChild(label);
+
+      month.planned.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'item-card draggable-item';
+        card.draggable = true;
+        card.dataset.itemId = item.id;
+        card.dataset.sourceMonth = idx;
+        card.innerHTML = `
+          <span class="drag-handle" title="Arraste para mover">&#8801;</span>
+          <span class="item-name">${item.name}</span>
+          <span class="item-value">R$${item.value.toLocaleString('pt-BR')}</span>
+        `;
+
+        card.addEventListener('dragstart', handleDragStart);
+        card.addEventListener('dragend', handleDragEnd);
+
+        body.appendChild(card);
+      });
+    }
+
+    col.appendChild(body);
+
+    // Footer (margin)
+    const footer = document.createElement('div');
+    footer.className = 'month-footer';
+    const isPositive = month.margin >= 0;
+    const marginAbs = Math.abs(month.margin);
+    const extraText = (idx === 3) ? '<div class="margin-extra">+R$171 liberado</div>' : '';
+    footer.innerHTML = `
+      <div class="margin-badge ${isPositive ? 'positive' : 'negative'}">
+        <span class="margin-label">Margem</span>
+        <span class="margin-value">${isPositive ? '' : '-'}R$${marginAbs.toLocaleString('pt-BR')}</span>
+      </div>
+      ${extraText}
+    `;
+    col.appendChild(footer);
+
+    container.appendChild(col);
+  });
+}
+
+// ═══════ DRAG & DROP ═══════
+function handleDragStart(e) {
+  draggedItem = e.target.closest('.draggable-item');
+  dragSourceMonth = parseInt(draggedItem.dataset.sourceMonth);
+  const itemId = draggedItem.dataset.itemId;
+
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', itemId);
+
+  requestAnimationFrame(() => {
+    draggedItem.classList.add('dragging');
+  });
+}
+
+function handleDragEnd(e) {
+  if (draggedItem) {
+    draggedItem.classList.remove('dragging');
+  }
+  document.querySelectorAll('.month-body.drag-over').forEach(el => {
+    el.classList.remove('drag-over');
+  });
+  draggedItem = null;
+  dragSourceMonth = null;
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+}
+
+function handleDragEnter(e) {
+  e.preventDefault();
+  const monthBody = e.target.closest('.month-body');
+  if (monthBody) {
+    monthBody.classList.add('drag-over');
+  }
+}
+
+function handleDragLeave(e) {
+  const monthBody = e.target.closest('.month-body');
+  if (monthBody && !monthBody.contains(e.relatedTarget)) {
+    monthBody.classList.remove('drag-over');
+  }
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  const monthBody = e.target.closest('.month-body');
+  if (!monthBody) return;
+  monthBody.classList.remove('drag-over');
+
+  const targetMonthIndex = parseInt(monthBody.dataset.monthIndex);
+  const itemId = e.dataTransfer.getData('text/plain');
+
+  if (dragSourceMonth === targetMonthIndex) return;
+
+  // Find the item in source month
+  const sourceMonth = monthsData[dragSourceMonth];
+  const itemIndex = sourceMonth.planned.findIndex(it => it.id === itemId);
+  if (itemIndex === -1) return;
+
+  const [item] = sourceMonth.planned.splice(itemIndex, 1);
+  monthsData[targetMonthIndex].planned.push(item);
+
+  // Recalculate margins for affected months
+  recalcMargin(dragSourceMonth);
+  recalcMargin(targetMonthIndex);
+
+  renderTimeline();
+  showToast(`"${item.name}" movido para ${monthsData[targetMonthIndex].labelShort} ${monthsData[targetMonthIndex].year}`);
+}
+
+function recalcMargin(idx) {
+  const month = monthsData[idx];
+  const fixedTotal = month.fixedItems.reduce((s, it) => s + it.value, 0);
+  const varTotal = month.variableItems.reduce((s, it) => s + it.value, 0);
+  const installTotal = month.installments.reduce((s, it) => s + it.value, 0);
+  const plannedTotal = month.planned.reduce((s, it) => s + it.value, 0);
+
+  // Base margin (without planned items) depends on month
+  let baseMargin;
+  if (idx === 0) baseMargin = 750;
+  else if (idx === 1) baseMargin = 920;
+  else if (idx === 2) baseMargin = 920;
+  else if (idx === 3) baseMargin = 1091;
+  else baseMargin = 1091; // after installments free up
+
+  // For months 6 and 8, recalculate from their original base
+  if (idx >= 4) baseMargin = 1091;
+
+  month.margin = baseMargin - plannedTotal;
+}
+
+// ═══════ RANGE SELECTOR ═══════
+document.querySelectorAll('.range-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    currentRange = parseInt(this.dataset.months);
+    renderTimeline();
+  });
+});
+
+// ═══════ SIMULATION ═══════
+function simulateGoal() {
+  const result = document.getElementById('simResult');
+  result.style.opacity = '0';
+  result.style.transform = 'translateY(10px)';
+  setTimeout(() => {
+    result.style.transition = 'all 0.4s ease';
+    result.style.opacity = '1';
+    result.style.transform = 'translateY(0)';
+  }, 100);
+
+  // Animate bars
+  document.querySelectorAll('.cut-bar-fill').forEach(bar => {
+    const targetWidth = bar.style.width || getComputedStyle(bar).width;
+    bar.style.width = '0';
+    setTimeout(() => {
+      bar.style.width = targetWidth;
+    }, 200);
+  });
+}
+
+// ═══════ TOAST ═══════
+function showToast(message) {
+  const existing = document.querySelector('.toast-notification');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.className = 'toast-notification';
+  toast.style.cssText = `
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--text-primary);
+    color: #FFF;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    z-index: 9999;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    opacity: 0;
+    transition: all 0.3s ease;
+  `;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+  });
+
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(-50%) translateY(20px)';
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+}
+
+// ═══════ INIT ═══════
+renderTimeline();
+</script>
+
+</body>
+</html>

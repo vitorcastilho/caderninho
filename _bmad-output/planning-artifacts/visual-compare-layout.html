@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caderninho — Comparação de Densidade e Layout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #FAFAF9;
+    --surface: #FFFFFF;
+    --border: #E7E5E4;
+    --border-hover: #D6D3D1;
+    --text-primary: #1C1917;
+    --text-secondary: #78716C;
+    --text-tertiary: #A8A29E;
+    --primary: #4F46E5;
+    --primary-hover: #4338CA;
+    --primary-light: #EEF2FF;
+    --positive: #22C55E;
+    --positive-bg: #DCFCE7;
+    --positive-text: #166534;
+    --attention: #EAB308;
+    --attention-bg: #FEF9C3;
+    --attention-text: #854D0E;
+    --critical: #DC2626;
+    --critical-bg: #FEE2E2;
+    --critical-text: #991B1B;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #E7E5E4;
+    color: var(--text-primary);
+    line-height: 1.5;
+    padding: 24px;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 24px;
+    background: var(--surface);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+  }
+  .page-header h1 { font-size: 20px; font-weight: 600; }
+  .page-header p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+  .section-header {
+    text-align: center;
+    margin: 48px 0 24px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .section-desc {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: -16px 0 24px;
+  }
+
+  /* ========================================
+     DENSITY COMPARISON
+     ======================================== */
+
+  .density-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    max-width: 1200px;
+    margin: 0 auto 48px;
+  }
+
+  .density-option {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .density-label {
+    text-align: center;
+    padding: 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .density-badge {
+    display: inline-block; padding: 4px 14px;
+    background: var(--primary-light); color: var(--primary); border-radius: 100px;
+    font-size: 12px; font-weight: 500; margin-bottom: 6px;
+  }
+  .density-name { font-size: 15px; font-weight: 600; }
+  .density-desc { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* Dense version */
+  .dense-dashboard {
+    padding: 12px;
+  }
+  .dense-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px; margin-bottom: 8px;
+  }
+  .dense-card:last-child { margin-bottom: 0; }
+  .dense-title {
+    font-size: 10px; font-weight: 500; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
+  }
+  .dense-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 4px 0; border-bottom: 1px solid #F5F5F4;
+    font-size: 12px;
+  }
+  .dense-row:last-child { border-bottom: none; }
+  .dense-label { color: var(--text-secondary); }
+  .dense-value { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .dense-value.positive { color: var(--positive); }
+
+  .dense-budget { margin-bottom: 8px; }
+  .dense-budget:last-child { margin-bottom: 0; }
+  .dense-budget-header { display: flex; justify-content: space-between; margin-bottom: 2px; font-size: 11px; }
+  .dense-budget-name { font-weight: 500; }
+  .dense-budget-values { color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .dense-bar { height: 4px; background: #F5F5F4; border-radius: 100px; overflow: hidden; }
+  .dense-fill { height: 100%; border-radius: 100px; }
+  .dense-fill.ok { background: linear-gradient(90deg, var(--positive), var(--primary)); }
+  .dense-fill.over { background: var(--critical); }
+
+  .dense-status {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 100px; font-size: 10px; font-weight: 500;
+  }
+  .dense-status.ok { background: var(--positive-bg); color: var(--positive-text); }
+
+  .dense-gauge-value { font-size: 22px; font-weight: 700; text-align: center; margin: 4px 0; font-variant-numeric: tabular-nums; }
+  .dense-gauge-sub { font-size: 10px; color: var(--text-secondary); text-align: center; }
+
+  .dense-alert {
+    padding: 6px 10px; border-radius: 6px; font-size: 11px; margin-bottom: 4px;
+  }
+  .dense-alert:last-child { margin-bottom: 0; }
+  .dense-alert.ok { background: var(--positive-bg); color: var(--positive-text); }
+  .dense-alert.info { background: var(--primary-light); color: var(--primary-hover); }
+
+  .dense-grid-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  /* Spacious version */
+  .spacious-dashboard {
+    padding: 20px;
+  }
+  .spacious-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; margin-bottom: 16px;
+  }
+  .spacious-card:last-child { margin-bottom: 0; }
+  .spacious-title {
+    font-size: 12px; font-weight: 500; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px;
+  }
+  .spacious-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .spacious-row:last-child { border-bottom: none; }
+  .spacious-label { color: var(--text-secondary); }
+  .spacious-value { font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .spacious-value.positive { color: var(--positive); }
+
+  .spacious-budget { margin-bottom: 18px; }
+  .spacious-budget:last-child { margin-bottom: 0; }
+  .spacious-budget-header { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px; }
+  .spacious-budget-name { font-weight: 500; }
+  .spacious-budget-values { color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .spacious-bar { height: 8px; background: #F5F5F4; border-radius: 100px; overflow: hidden; }
+  .spacious-fill { height: 100%; border-radius: 100px; }
+  .spacious-fill.ok { background: linear-gradient(90deg, var(--positive), var(--primary)); }
+  .spacious-fill.over { background: var(--critical); }
+  .spacious-rest { font-size: 11px; color: var(--text-tertiary); margin-top: 4px; }
+
+  .spacious-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 500;
+  }
+  .spacious-status.ok { background: var(--positive-bg); color: var(--positive-text); }
+
+  .spacious-gauge-value { font-size: 28px; font-weight: 700; text-align: center; margin: 8px 0; font-variant-numeric: tabular-nums; }
+  .spacious-gauge-sub { font-size: 12px; color: var(--text-secondary); text-align: center; }
+  .spacious-gauge-detail { font-size: 11px; color: var(--text-tertiary); text-align: center; margin-top: 4px; }
+
+  .spacious-alert {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 10px;
+  }
+  .spacious-alert:last-child { margin-bottom: 0; }
+  .spacious-alert.ok { background: var(--positive-bg); color: var(--positive-text); }
+  .spacious-alert.info { background: var(--primary-light); color: var(--primary-hover); }
+
+  /* ========================================
+     LAYOUT COMPARISON
+     ======================================== */
+
+  .layout-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .layout-option {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .layout-label {
+    text-align: center;
+    padding: 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Layout A: Sidebar */
+  .sidebar-layout {
+    display: flex;
+    min-height: 400px;
+  }
+  .sidebar {
+    width: 200px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 16px 0;
+    flex-shrink: 0;
+  }
+  .sidebar-item {
+    padding: 10px 20px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .sidebar-item:hover { background: #F5F5F4; color: var(--text-primary); }
+  .sidebar-item.active {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 500;
+    border-right: 2px solid var(--primary);
+  }
+  .sidebar-icon { font-size: 16px; width: 20px; text-align: center; }
+  .sidebar-content {
+    flex: 1;
+    padding: 20px;
+  }
+  .sidebar-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .sc-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px;
+  }
+  .sc-title {
+    font-size: 11px; font-weight: 500; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;
+  }
+  .sc-row {
+    display: flex; justify-content: space-between;
+    padding: 6px 0; border-bottom: 1px solid #F5F5F4; font-size: 13px;
+  }
+  .sc-row:last-child { border-bottom: none; }
+  .sc-label { color: var(--text-secondary); }
+  .sc-value { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .sc-value.positive { color: var(--positive); }
+  .sc-big { font-size: 24px; font-weight: 700; text-align: center; margin: 8px 0; font-variant-numeric: tabular-nums; }
+  .sc-sub { font-size: 11px; color: var(--text-secondary); text-align: center; }
+
+  .sc-budget { margin-bottom: 10px; }
+  .sc-budget:last-child { margin-bottom: 0; }
+  .sc-budget-header { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px; }
+  .sc-budget-name { font-weight: 500; }
+  .sc-budget-vals { color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .sc-bar { height: 6px; background: #F5F5F4; border-radius: 100px; overflow: hidden; }
+  .sc-fill { height: 100%; border-radius: 100px; }
+  .sc-fill.ok { background: linear-gradient(90deg, var(--positive), var(--primary)); }
+  .sc-fill.over { background: var(--critical); }
+  .sc-rest { font-size: 10px; color: var(--text-tertiary); margin-top: 2px; }
+  .sc-full { grid-column: 1 / -1; }
+  .sc-status {
+    display: inline-flex; padding: 3px 10px; border-radius: 100px;
+    font-size: 11px; font-weight: 500;
+  }
+  .sc-status.ok { background: var(--positive-bg); color: var(--positive-text); }
+
+  /* Layout B: Top nav + Grid */
+  .topnav-layout {
+    min-height: 400px;
+  }
+  .topnav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .topnav-brand { font-size: 15px; font-weight: 600; }
+  .topnav-links { display: flex; gap: 4px; }
+  .topnav-link {
+    padding: 6px 14px; border-radius: 8px; font-size: 13px;
+    color: var(--text-secondary); text-decoration: none;
+    transition: all 0.15s;
+  }
+  .topnav-link:hover { background: #F5F5F4; color: var(--text-primary); }
+  .topnav-link.active {
+    background: var(--primary-light); color: var(--primary); font-weight: 500;
+  }
+  .topnav-actions { display: flex; gap: 8px; align-items: center; }
+  .topnav-btn {
+    padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500;
+    border: none; cursor: pointer;
+    background: var(--primary); color: white;
+  }
+  .topnav-content {
+    padding: 20px;
+  }
+  .topnav-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  .tn-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px;
+  }
+  .tn-title {
+    font-size: 11px; font-weight: 500; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;
+  }
+  .tn-row {
+    display: flex; justify-content: space-between;
+    padding: 6px 0; border-bottom: 1px solid #F5F5F4; font-size: 13px;
+  }
+  .tn-row:last-child { border-bottom: none; }
+  .tn-label { color: var(--text-secondary); }
+  .tn-value { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .tn-value.positive { color: var(--positive); }
+  .tn-big { font-size: 24px; font-weight: 700; text-align: center; margin: 8px 0; font-variant-numeric: tabular-nums; }
+  .tn-sub { font-size: 11px; color: var(--text-secondary); text-align: center; }
+  .tn-full { grid-column: 1 / -1; }
+  .tn-span2 { grid-column: span 2; }
+
+  .tn-budget { margin-bottom: 10px; }
+  .tn-budget:last-child { margin-bottom: 0; }
+  .tn-budget-header { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px; }
+  .tn-budget-name { font-weight: 500; }
+  .tn-budget-vals { color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .tn-bar { height: 6px; background: #F5F5F4; border-radius: 100px; overflow: hidden; }
+  .tn-fill { height: 100%; border-radius: 100px; }
+  .tn-fill.ok { background: linear-gradient(90deg, var(--positive), var(--primary)); }
+  .tn-fill.over { background: var(--critical); }
+  .tn-rest { font-size: 10px; color: var(--text-tertiary); margin-top: 2px; }
+  .tn-status {
+    display: inline-flex; padding: 3px 10px; border-radius: 100px;
+    font-size: 11px; font-weight: 500;
+  }
+  .tn-status.ok { background: var(--positive-bg); color: var(--positive-text); }
+
+  .tn-tamires-card {
+    display: flex; gap: 12px;
+  }
+  .tn-tamires-block {
+    flex: 1; padding: 12px; border-radius: 8px;
+  }
+  .tn-tamires-block.ok { background: var(--positive-bg); }
+  .tn-tamires-block.warn { background: var(--attention-bg); }
+  .tn-tamires-block .lbl { font-size: 11px; margin-bottom: 2px; }
+  .tn-tamires-block.ok .lbl { color: var(--positive-text); }
+  .tn-tamires-block.warn .lbl { color: var(--attention-text); }
+  .tn-tamires-block .val { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .tn-tamires-block.ok .val { color: var(--positive-text); }
+  .tn-tamires-block.warn .val { color: var(--attention-text); }
+  .tn-tamires-block .detail { font-size: 10px; margin-top: 2px; }
+  .tn-tamires-block.ok .detail { color: var(--positive-text); }
+  .tn-tamires-block.warn .detail { color: var(--attention-text); }
+
+  @media (max-width: 900px) {
+    .density-grid { grid-template-columns: 1fr; }
+    .sidebar-layout { flex-direction: column; }
+    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); padding: 8px 0; display: flex; overflow-x: auto; }
+    .sidebar-item { white-space: nowrap; }
+    .sidebar-content-grid { grid-template-columns: 1fr; }
+    .topnav-content-grid { grid-template-columns: 1fr; }
+    .tn-span2 { grid-column: span 1; }
+    body { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Comparação de Densidade e Layout</h1>
+  <p>Como deve ser a sensação da interface? Densa e eficiente ou espaçada e clara? Sidebar ou top nav?</p>
+</div>
+
+<!-- ========================================
+     SECTION 1: DENSITY
+     ======================================== -->
+
+<div class="section-header">Densidade: Compacto vs. Espaçado</div>
+<div class="section-desc">Mesmos dados, mais ou menos "respiro" entre os elementos</div>
+
+<div class="density-grid">
+
+  <!-- Dense -->
+  <div class="density-option">
+    <div class="density-label">
+      <div class="density-badge">Opção A</div>
+      <div class="density-name">Compacto — Mais informação visível</div>
+      <div class="density-desc">Planilha evoluída. Tudo em uma tela, sem scroll. Ideal para o Vitor no desktop.</div>
+    </div>
+    <div class="dense-dashboard">
+      <div class="dense-grid-inner">
+        <div class="dense-card">
+          <div class="dense-title">Resumo de Março</div>
+          <div class="dense-row">
+            <span class="dense-label">Saldo contas</span>
+            <span class="dense-value">R$ 19.200</span>
+          </div>
+          <div class="dense-row">
+            <span class="dense-label">Contas a pagar</span>
+            <span class="dense-value">R$ 8.400</span>
+          </div>
+          <div class="dense-row">
+            <span class="dense-label">Faturas cartão</span>
+            <span class="dense-value">R$ 7.180</span>
+          </div>
+          <div class="dense-row">
+            <span class="dense-label">Disponível livre</span>
+            <span class="dense-value positive">R$ 320</span>
+          </div>
+        </div>
+        <div class="dense-card">
+          <div class="dense-title">Regra de Ouro</div>
+          <div class="dense-gauge-value">78%</div>
+          <div class="dense-gauge-sub">Cartões vs. saldo</div>
+          <div style="text-align: center; margin-top: 6px;">
+            <span class="dense-status ok">Dentro do limite</span>
+          </div>
+        </div>
+      </div>
+      <div class="dense-card">
+        <div class="dense-title">Orçamentos</div>
+        <div class="dense-budget">
+          <div class="dense-budget-header">
+            <span class="dense-budget-name">Supermercado</span>
+            <span class="dense-budget-values">R$ 2.122 / R$ 3.000</span>
+          </div>
+          <div class="dense-bar"><div class="dense-fill ok" style="width: 70.7%"></div></div>
+        </div>
+        <div class="dense-budget">
+          <div class="dense-budget-header">
+            <span class="dense-budget-name">Escola</span>
+            <span class="dense-budget-values">R$ 2.800 / R$ 2.800</span>
+          </div>
+          <div class="dense-bar"><div class="dense-fill ok" style="width: 100%"></div></div>
+        </div>
+        <div class="dense-budget">
+          <div class="dense-budget-header">
+            <span class="dense-budget-name">Restaurante</span>
+            <span class="dense-budget-values">R$ 1.800 / R$ 1.500</span>
+          </div>
+          <div class="dense-bar"><div class="dense-fill over" style="width: 100%"></div></div>
+        </div>
+        <div class="dense-budget">
+          <div class="dense-budget-header">
+            <span class="dense-budget-name">Gasolina</span>
+            <span class="dense-budget-values">R$ 420 / R$ 600</span>
+          </div>
+          <div class="dense-bar"><div class="dense-fill ok" style="width: 70%"></div></div>
+        </div>
+        <div class="dense-budget">
+          <div class="dense-budget-header">
+            <span class="dense-budget-name">Outros</span>
+            <span class="dense-budget-values">R$ 450 / R$ 2.000</span>
+          </div>
+          <div class="dense-bar"><div class="dense-fill ok" style="width: 22.5%"></div></div>
+        </div>
+      </div>
+      <div class="dense-grid-inner">
+        <div class="dense-card">
+          <div class="dense-alert ok">✅ Março dentro do planejado</div>
+          <div class="dense-alert info">↗ Reserva: R$ 12.500 (+R$ 500)</div>
+        </div>
+        <div class="dense-card">
+          <div class="dense-title">Tamires — Visão Rápida</div>
+          <div class="dense-row">
+            <span class="dense-label" style="color: var(--positive-text);">Regulares ✅</span>
+            <span class="dense-value" style="font-size: 12px;">R$ 12.600</span>
+          </div>
+          <div class="dense-row">
+            <span class="dense-label" style="color: var(--attention-text);">Fora do plan.</span>
+            <span class="dense-value" style="font-size: 12px;">R$ 10.400</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spacious -->
+  <div class="density-option">
+    <div class="density-label">
+      <div class="density-badge">Opção B</div>
+      <div class="density-name">Espaçado — Mais clareza visual</div>
+      <div class="density-desc">Mais respiro, números maiores, hierarquia clara. Ideal para a Tamires e mobile.</div>
+    </div>
+    <div class="spacious-dashboard">
+      <div class="spacious-card">
+        <div class="spacious-title">Resumo de Março</div>
+        <div class="spacious-row">
+          <span class="spacious-label">Saldo total contas</span>
+          <span class="spacious-value">R$ 19.200</span>
+        </div>
+        <div class="spacious-row">
+          <span class="spacious-label">Contas a pagar</span>
+          <span class="spacious-value">R$ 8.400</span>
+        </div>
+        <div class="spacious-row">
+          <span class="spacious-label">Faturas de cartão</span>
+          <span class="spacious-value">R$ 7.180</span>
+        </div>
+        <div class="spacious-row">
+          <span class="spacious-label">Valor disponível livre</span>
+          <span class="spacious-value positive">R$ 320</span>
+        </div>
+      </div>
+      <div class="spacious-card">
+        <div class="spacious-title">Regra de Ouro</div>
+        <div class="spacious-gauge-value">78%</div>
+        <div class="spacious-gauge-sub">Comprometimento em cartões vs. saldo</div>
+        <div class="spacious-gauge-detail">R$ 7.180 em cartões / R$ 19.200 em conta</div>
+        <div style="text-align: center; margin-top: 10px;">
+          <span class="spacious-status ok">Dentro do limite</span>
+        </div>
+      </div>
+      <div class="spacious-card">
+        <div class="spacious-title">Orçamentos do Mês</div>
+        <div class="spacious-budget">
+          <div class="spacious-budget-header">
+            <span class="spacious-budget-name">Supermercado</span>
+            <span class="spacious-budget-values">R$ 2.122 / R$ 3.000</span>
+          </div>
+          <div class="spacious-bar"><div class="spacious-fill ok" style="width: 70.7%"></div></div>
+          <div class="spacious-rest">Resta R$ 878</div>
+        </div>
+        <div class="spacious-budget">
+          <div class="spacious-budget-header">
+            <span class="spacious-budget-name">Restaurante</span>
+            <span class="spacious-budget-values">R$ 1.800 / R$ 1.500</span>
+          </div>
+          <div class="spacious-bar"><div class="spacious-fill over" style="width: 100%"></div></div>
+          <div class="spacious-rest" style="color: var(--critical);">Estourou R$ 300</div>
+        </div>
+        <div class="spacious-budget">
+          <div class="spacious-budget-header">
+            <span class="spacious-budget-name">Gasolina</span>
+            <span class="spacious-budget-values">R$ 420 / R$ 600</span>
+          </div>
+          <div class="spacious-bar"><div class="spacious-fill ok" style="width: 70%"></div></div>
+          <div class="spacious-rest">Resta R$ 180</div>
+        </div>
+      </div>
+      <div class="spacious-alert ok">
+        <span>✅</span>
+        <span>Março fechou dentro do planejado</span>
+      </div>
+      <div class="spacious-alert info">
+        <span>↗</span>
+        <span>Reserva: R$ 12.500 (+R$ 500 este mês)</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ========================================
+     SECTION 2: LAYOUT
+     ======================================== -->
+
+<div class="section-header">Layout Desktop: Sidebar vs. Top Navigation</div>
+<div class="section-desc">Onde fica a navegação e como o conteúdo se organiza na tela</div>
+
+<div class="layout-grid">
+
+  <!-- Layout A: Sidebar -->
+  <div class="layout-option">
+    <div class="layout-label">
+      <div class="density-badge">Layout A</div>
+      <div class="density-name">Sidebar Lateral — Navegação vertical fixa</div>
+      <div class="density-desc">Sempre visível, organiza seções como um app desktop. Conteúdo ocupa o restante da tela.</div>
+    </div>
+    <div class="sidebar-layout">
+      <div class="sidebar">
+        <div class="sidebar-item active">
+          <span class="sidebar-icon">◻</span>
+          <span>Dashboard</span>
+        </div>
+        <div class="sidebar-item">
+          <span class="sidebar-icon">↗</span>
+          <span>Registrar</span>
+        </div>
+        <div class="sidebar-item">
+          <span class="sidebar-icon">☰</span>
+          <span>Orçamentos</span>
+        </div>
+        <div class="sidebar-item">
+          <span class="sidebar-icon">✓</span>
+          <span>Checklist</span>
+        </div>
+        <div class="sidebar-item">
+          <span class="sidebar-icon">→</span>
+          <span>Projeção</span>
+        </div>
+        <div class="sidebar-item">
+          <span class="sidebar-icon">⚙</span>
+          <span>Configurações</span>
+        </div>
+      </div>
+      <div class="sidebar-content">
+        <div class="sidebar-content-grid">
+          <div class="sc-card">
+            <div class="sc-title">Resumo de Março</div>
+            <div class="sc-row">
+              <span class="sc-label">Saldo contas</span>
+              <span class="sc-value">R$ 19.200</span>
+            </div>
+            <div class="sc-row">
+              <span class="sc-label">Contas a pagar</span>
+              <span class="sc-value">R$ 8.400</span>
+            </div>
+            <div class="sc-row">
+              <span class="sc-label">Faturas cartão</span>
+              <span class="sc-value">R$ 7.180</span>
+            </div>
+            <div class="sc-row">
+              <span class="sc-label">Disponível livre</span>
+              <span class="sc-value positive">R$ 320</span>
+            </div>
+          </div>
+          <div class="sc-card">
+            <div class="sc-title">Regra de Ouro</div>
+            <div class="sc-big">78%</div>
+            <div class="sc-sub">Cartões vs. saldo</div>
+            <div style="text-align: center; margin-top: 8px;">
+              <span class="sc-status ok">Dentro do limite</span>
+            </div>
+          </div>
+          <div class="sc-card sc-full">
+            <div class="sc-title">Orçamentos do Mês</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px;">
+              <div class="sc-budget">
+                <div class="sc-budget-header">
+                  <span class="sc-budget-name">Supermercado</span>
+                  <span class="sc-budget-vals">R$ 2.122 / R$ 3.000</span>
+                </div>
+                <div class="sc-bar"><div class="sc-fill ok" style="width: 70.7%"></div></div>
+                <div class="sc-rest">Resta R$ 878</div>
+              </div>
+              <div class="sc-budget">
+                <div class="sc-budget-header">
+                  <span class="sc-budget-name">Escola</span>
+                  <span class="sc-budget-vals">R$ 2.800 / R$ 2.800</span>
+                </div>
+                <div class="sc-bar"><div class="sc-fill ok" style="width: 100%"></div></div>
+                <div class="sc-rest">Pago integralmente</div>
+              </div>
+              <div class="sc-budget">
+                <div class="sc-budget-header">
+                  <span class="sc-budget-name">Restaurante</span>
+                  <span class="sc-budget-vals">R$ 1.800 / R$ 1.500</span>
+                </div>
+                <div class="sc-bar"><div class="sc-fill over" style="width: 100%"></div></div>
+                <div class="sc-rest" style="color: var(--critical);">Estourou R$ 300</div>
+              </div>
+              <div class="sc-budget">
+                <div class="sc-budget-header">
+                  <span class="sc-budget-name">Gasolina</span>
+                  <span class="sc-budget-vals">R$ 420 / R$ 600</span>
+                </div>
+                <div class="sc-bar"><div class="sc-fill ok" style="width: 70%"></div></div>
+                <div class="sc-rest">Resta R$ 180</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layout B: Top Nav -->
+  <div class="layout-option">
+    <div class="layout-label">
+      <div class="density-badge">Layout B</div>
+      <div class="density-name">Top Navigation — Barra horizontal + grid de 3 colunas</div>
+      <div class="density-desc">Navegação compacta no topo, conteúdo usa toda a largura. Mais espaço horizontal para dados.</div>
+    </div>
+    <div class="topnav-layout">
+      <div class="topnav">
+        <div class="topnav-brand">Caderninho</div>
+        <div class="topnav-links">
+          <a class="topnav-link active">Dashboard</a>
+          <a class="topnav-link">Orçamentos</a>
+          <a class="topnav-link">Checklist</a>
+          <a class="topnav-link">Projeção</a>
+        </div>
+        <div class="topnav-actions">
+          <button class="topnav-btn">+ Registrar</button>
+        </div>
+      </div>
+      <div class="topnav-content">
+        <div class="topnav-content-grid">
+          <div class="tn-card">
+            <div class="tn-title">Resumo de Março</div>
+            <div class="tn-row">
+              <span class="tn-label">Saldo contas</span>
+              <span class="tn-value">R$ 19.200</span>
+            </div>
+            <div class="tn-row">
+              <span class="tn-label">Contas a pagar</span>
+              <span class="tn-value">R$ 8.400</span>
+            </div>
+            <div class="tn-row">
+              <span class="tn-label">Faturas cartão</span>
+              <span class="tn-value">R$ 7.180</span>
+            </div>
+            <div class="tn-row">
+              <span class="tn-label">Disponível livre</span>
+              <span class="tn-value positive">R$ 320</span>
+            </div>
+          </div>
+          <div class="tn-card">
+            <div class="tn-title">Regra de Ouro</div>
+            <div class="tn-big">78%</div>
+            <div class="tn-sub">Cartões vs. saldo</div>
+            <div style="text-align: center; margin-top: 8px;">
+              <span class="tn-status ok">Dentro do limite</span>
+            </div>
+          </div>
+          <div class="tn-card">
+            <div class="tn-title">Tamires — Visão Rápida</div>
+            <div style="margin-bottom: 8px;">
+              <span class="tn-status ok">Gastos regulares dentro do planejado</span>
+            </div>
+            <div class="tn-tamires-card">
+              <div class="tn-tamires-block ok">
+                <div class="lbl">Regulares</div>
+                <div class="val">R$ 12.600</div>
+                <div class="detail">Dentro do planejado</div>
+              </div>
+              <div class="tn-tamires-block warn">
+                <div class="lbl">Fora do plan.</div>
+                <div class="val">R$ 10.400</div>
+                <div class="detail">Viagem + Motor</div>
+              </div>
+            </div>
+          </div>
+          <div class="tn-card tn-full">
+            <div class="tn-title">Orçamentos do Mês</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px 24px;">
+              <div class="tn-budget">
+                <div class="tn-budget-header">
+                  <span class="tn-budget-name">Supermercado</span>
+                  <span class="tn-budget-vals">R$ 2.122 / R$ 3.000</span>
+                </div>
+                <div class="tn-bar"><div class="tn-fill ok" style="width: 70.7%"></div></div>
+                <div class="tn-rest">Resta R$ 878</div>
+              </div>
+              <div class="tn-budget">
+                <div class="tn-budget-header">
+                  <span class="tn-budget-name">Escola</span>
+                  <span class="tn-budget-vals">R$ 2.800 / R$ 2.800</span>
+                </div>
+                <div class="tn-bar"><div class="tn-fill ok" style="width: 100%"></div></div>
+                <div class="tn-rest">Pago integralmente</div>
+              </div>
+              <div class="tn-budget">
+                <div class="tn-budget-header">
+                  <span class="tn-budget-name">Restaurante</span>
+                  <span class="tn-budget-vals">R$ 1.800 / R$ 1.500</span>
+                </div>
+                <div class="tn-bar"><div class="tn-fill over" style="width: 100%"></div></div>
+                <div class="tn-rest" style="color: var(--critical);">Estourou R$ 300</div>
+              </div>
+              <div class="tn-budget">
+                <div class="tn-budget-header">
+                  <span class="tn-budget-name">Gasolina</span>
+                  <span class="tn-budget-vals">R$ 420 / R$ 600</span>
+                </div>
+                <div class="tn-bar"><div class="tn-fill ok" style="width: 70%"></div></div>
+                <div class="tn-rest">Resta R$ 180</div>
+              </div>
+              <div class="tn-budget">
+                <div class="tn-budget-header">
+                  <span class="tn-budget-name">Internet</span>
+                  <span class="tn-budget-vals">R$ 158 / R$ 158</span>
+                </div>
+                <div class="tn-bar"><div class="tn-fill ok" style="width: 100%"></div></div>
+                <div class="tn-rest">Pago integralmente</div>
+              </div>
+              <div class="tn-budget">
+                <div class="tn-budget-header">
+                  <span class="tn-budget-name">Outros</span>
+                  <span class="tn-budget-vals">R$ 450 / R$ 2.000</span>
+                </div>
+                <div class="tn-bar"><div class="tn-fill ok" style="width: 22.5%"></div></div>
+                <div class="tn-rest">Resta R$ 1.550</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

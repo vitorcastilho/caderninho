@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protótipo 15 — Drill-down / Tap to Trace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF9;
+    --surface: #FFF;
+    --border: #E7E5E4;
+    --text-primary: #1C1917;
+    --text-secondary: #78716C;
+    --text-tertiary: #A8A29E;
+    --primary: #4F46E5;
+    --primary-hover: #4338CA;
+    --primary-light: #EEF2FF;
+    --positive: #22C55E;
+    --positive-bg: #DCFCE7;
+    --positive-text: #166534;
+    --attention: #EAB308;
+    --attention-bg: #FEF9C3;
+    --critical: #DC2626;
+    --critical-bg: #FEE2E2;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-variant-numeric: tabular-nums;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Page Header ── */
+  .page-header {
+    text-align: center;
+    padding: 48px 24px 16px;
+  }
+
+  .page-header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--text-primary);
+  }
+
+  .page-header .subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-top: 6px;
+    font-weight: 400;
+  }
+
+  .page-header .badge {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 4px 14px;
+    background: var(--primary-light);
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 100px;
+  }
+
+  /* ── Section titles ── */
+  .section-title {
+    text-align: center;
+    padding: 40px 24px 8px;
+  }
+
+  .section-title h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .section-title p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+  }
+
+  /* ── Mobile Storyboard ── */
+  .storyboard {
+    display: flex;
+    gap: 12px;
+    padding: 24px 32px 48px;
+    overflow-x: auto;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+  }
+
+  .story-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .story-arrow {
+    font-size: 24px;
+    color: var(--primary);
+    font-weight: 700;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .story-arrow .tap-label {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--primary);
+    white-space: nowrap;
+  }
+
+  .phone-frame {
+    width: 320px;
+    height: 580px;
+    background: var(--surface);
+    border-radius: 32px;
+    border: 3px solid #D6D3D1;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  .phone-notch {
+    width: 120px;
+    height: 24px;
+    background: #D6D3D1;
+    border-radius: 0 0 16px 16px;
+    margin: 0 auto;
+  }
+
+  .phone-screen {
+    padding: 12px 16px;
+    height: calc(100% - 24px);
+    overflow-y: auto;
+  }
+
+  .phone-screen::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  .phone-screen::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+  }
+
+  .level-label {
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .level-label span {
+    display: inline-block;
+    padding: 2px 10px;
+    background: var(--primary);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 100px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Breadcrumb ── */
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .breadcrumb .back-arrow {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: var(--bg);
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-right: 4px;
+    flex-shrink: 0;
+  }
+
+  .breadcrumb .crumb {
+    color: var(--primary);
+    font-weight: 500;
+  }
+
+  .breadcrumb .sep {
+    color: var(--text-tertiary);
+  }
+
+  .breadcrumb .crumb-current {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  /* ── Level 1: Dashboard ── */
+  .mini-dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .mini-dashboard-header .greeting {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .mini-dashboard-header .greeting strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .mini-dashboard-header .avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  .mini-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+  }
+
+  .mini-card .card-label {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    font-weight: 600;
+  }
+
+  .mini-card .card-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .mini-card .card-value .tap-hint {
+    font-size: 14px;
+    color: var(--primary);
+    opacity: 0.7;
+  }
+
+  .mini-card .card-change {
+    font-size: 10px;
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  .mini-card .card-change.negative {
+    color: var(--critical);
+  }
+
+  .mini-card .card-change.positive-change {
+    color: var(--positive-text);
+  }
+
+  .mini-card.highlighted {
+    border: 2px solid var(--primary);
+    background: var(--primary-light);
+    position: relative;
+  }
+
+  .mini-card.highlighted::after {
+    content: 'TAP';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 8px;
+    font-weight: 700;
+    background: var(--primary);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .tap-finger {
+    position: absolute;
+    font-size: 24px;
+    z-index: 5;
+    animation: tap-pulse 2s ease-in-out infinite;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  }
+
+  @keyframes tap-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.1); opacity: 1; }
+  }
+
+  .mini-chart-placeholder {
+    height: 50px;
+    background: linear-gradient(135deg, var(--bg) 0%, var(--border) 100%);
+    border-radius: 8px;
+    margin-top: 8px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 3px;
+    padding: 8px;
+  }
+
+  .mini-chart-placeholder .bar {
+    width: 8px;
+    background: var(--primary);
+    border-radius: 2px 2px 0 0;
+    opacity: 0.3;
+  }
+
+  /* ── Level 2: Essencialidade ── */
+  .screen-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+
+  .screen-total {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+  }
+
+  .breakdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .breakdown-item:hover {
+    border-color: var(--primary);
+    background: var(--primary-light);
+  }
+
+  .breakdown-item.highlighted-item {
+    border: 2px solid var(--primary);
+    background: var(--primary-light);
+  }
+
+  .breakdown-item .item-color {
+    width: 4px;
+    height: 36px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .breakdown-item .item-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .breakdown-item .item-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .breakdown-item .item-bar-track {
+    height: 4px;
+    background: var(--bg);
+    border-radius: 2px;
+    margin-top: 4px;
+    width: 100%;
+  }
+
+  .breakdown-item .item-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .breakdown-item .item-values {
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .breakdown-item .item-amount {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .breakdown-item .item-pct {
+    font-size: 10px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .breakdown-item .item-arrow {
+    font-size: 14px;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+  }
+
+  /* ── Level 4 specifics ── */
+  .sub-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-tertiary);
+    margin: 12px 0 6px;
+    padding-left: 2px;
+  }
+
+  .sub-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    margin-bottom: 3px;
+    background: var(--bg);
+  }
+
+  .sub-item .sub-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .sub-item .sub-info {
+    flex: 1;
+  }
+
+  .sub-item .sub-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .sub-item .sub-meta {
+    font-size: 9px;
+    color: var(--text-tertiary);
+  }
+
+  .sub-item .sub-values {
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .sub-item .sub-amount {
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .sub-item .sub-pct {
+    font-size: 9px;
+    color: var(--text-secondary);
+  }
+
+  .expanded-section {
+    margin-left: 12px;
+    border-left: 2px solid var(--primary);
+    padding-left: 10px;
+    margin-bottom: 8px;
+  }
+
+  .expanded-section .exp-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 4px;
+  }
+
+  /* ── Insight Callout ── */
+  .insight-callout {
+    background: var(--attention-bg);
+    border: 1px solid var(--attention);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-top: 10px;
+  }
+
+  .insight-callout .insight-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #92400E;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .insight-callout .insight-line {
+    font-size: 11px;
+    color: #78350F;
+    line-height: 1.5;
+  }
+
+  .insight-callout .insight-line strong {
+    font-weight: 700;
+  }
+
+  /* ── Desktop Section ── */
+  .desktop-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 32px 64px;
+  }
+
+  .desktop-container {
+    display: flex;
+    gap: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+    height: 680px;
+  }
+
+  /* ── Desktop: Left dashboard ── */
+  .desktop-left {
+    flex: 1;
+    background: var(--bg);
+    padding: 24px;
+    position: relative;
+    overflow-y: auto;
+  }
+
+  .desktop-left::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(250, 250, 249, 0.5);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .desktop-dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .desktop-dash-header h3 {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .desktop-dash-header .month-selector {
+    font-size: 13px;
+    color: var(--text-secondary);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 8px;
+  }
+
+  .desktop-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .desktop-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+
+  .desktop-card .dc-label {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    font-weight: 600;
+  }
+
+  .desktop-card .dc-value {
+    font-size: 24px;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  .desktop-card .dc-change {
+    font-size: 11px;
+    margin-top: 2px;
+    font-weight: 500;
+  }
+
+  .desktop-card.dc-highlighted {
+    border: 2px solid var(--primary);
+    background: var(--primary-light);
+    z-index: 3;
+    position: relative;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+  }
+
+  .desktop-card.dc-highlighted::after {
+    content: 'Drill-down ativo';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9px;
+    font-weight: 700;
+    background: var(--primary);
+    color: white;
+    padding: 2px 10px;
+    border-radius: 100px;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+  }
+
+  .desktop-chart-placeholder {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-tertiary);
+    font-size: 13px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .desktop-list-placeholder {
+    margin-top: 16px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .desktop-list-placeholder .dl-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .desktop-list-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 4px;
+  }
+
+  .desktop-list-item .dli-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    background: var(--bg);
+  }
+
+  .desktop-list-item .dli-info {
+    flex: 1;
+  }
+
+  .desktop-list-item .dli-name {
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .desktop-list-item .dli-cat {
+    font-size: 10px;
+    color: var(--text-tertiary);
+  }
+
+  .desktop-list-item .dli-amount {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* ── Desktop: Side panel ── */
+  .desktop-right {
+    width: 420px;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel-header h3 {
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .panel-close {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .panel-close:hover {
+    background: var(--critical-bg);
+    color: var(--critical);
+    border-color: var(--critical);
+  }
+
+  .panel-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 20px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .panel-breadcrumb .pb-link {
+    color: var(--primary);
+    cursor: pointer;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .panel-breadcrumb .pb-link:hover {
+    text-decoration: underline;
+  }
+
+  .panel-breadcrumb .pb-sep {
+    color: var(--text-tertiary);
+  }
+
+  .panel-body {
+    flex: 1;
+    padding: 16px 20px;
+    overflow-y: auto;
+  }
+
+  .panel-body::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .panel-body::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+  }
+
+  /* ── Tree Structure ── */
+  .tree-node {
+    margin-bottom: 2px;
+  }
+
+  .tree-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .tree-row:hover {
+    background: var(--bg);
+  }
+
+  .tree-row.active {
+    background: var(--primary-light);
+  }
+
+  .tree-toggle {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+
+  .tree-toggle.expanded {
+    color: var(--primary);
+  }
+
+  .tree-icon {
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .tree-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tree-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    flex-shrink: 0;
+  }
+
+  .tree-pct {
+    font-size: 10px;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+    min-width: 36px;
+    text-align: right;
+  }
+
+  .tree-bar {
+    width: 40px;
+    height: 4px;
+    background: var(--bg);
+    border-radius: 2px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .tree-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+  }
+
+  .tree-children {
+    margin-left: 24px;
+    border-left: 1px solid var(--border);
+    padding-left: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+  }
+
+  .tree-children.collapsed {
+    max-height: 0;
+    opacity: 0;
+  }
+
+  .tree-children.expanded {
+    max-height: 2000px;
+    opacity: 1;
+  }
+
+  .tree-leaf .tree-toggle {
+    visibility: hidden;
+  }
+
+  .tree-leaf .tree-name {
+    color: var(--text-secondary);
+  }
+
+  /* Level-specific colors */
+  .tree-row[data-level="0"] .tree-name { font-weight: 700; font-size: 14px; }
+  .tree-row[data-level="1"] .tree-name { font-weight: 600; }
+  .tree-row[data-level="2"] .tree-name { font-weight: 500; }
+  .tree-row[data-level="3"] .tree-name { font-weight: 500; }
+  .tree-row[data-level="4"] .tree-name { font-weight: 400; color: var(--text-secondary); font-size: 12px; }
+
+  /* ── Panel insight ── */
+  .panel-insight {
+    margin-top: 16px;
+    padding: 12px 14px;
+    background: var(--attention-bg);
+    border: 1px solid var(--attention);
+    border-radius: 10px;
+  }
+
+  .panel-insight .pi-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #92400E;
+    margin-bottom: 4px;
+  }
+
+  .panel-insight .pi-text {
+    font-size: 12px;
+    color: #78350F;
+    line-height: 1.5;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 1400px) {
+    .storyboard {
+      justify-content: flex-start;
+      padding: 24px 16px 48px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .desktop-container {
+      flex-direction: column;
+      height: auto;
+    }
+    .desktop-right {
+      width: 100%;
+      border-left: none;
+      border-top: 1px solid var(--border);
+    }
+    .desktop-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ── Animations ── */
+  @keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.3); }
+    70% { box-shadow: 0 0 0 6px rgba(79, 70, 229, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
+  }
+
+  .mini-card.highlighted {
+    animation: pulse-ring 2s ease-in-out infinite;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- PAGE HEADER                                            -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="page-header">
+  <h1>Prototipo 15 -- Drill-down / Tap to Trace</h1>
+  <p class="subtitle">Cada numero conta sua historia -- 4 niveis de profundidade</p>
+  <span class="badge">Caderninho Design System</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- MOBILE STORYBOARD                                      -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-title">
+  <h2>Mobile Storyboard</h2>
+  <p>Jornada de drill-down em 4 telas -- toque qualquer numero para explorar</p>
+</div>
+
+<div class="storyboard">
+
+  <!-- ──────── LEVEL 1: Dashboard ──────── -->
+  <div class="story-step">
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="level-label"><span>Nivel 1 -- Dashboard</span></div>
+
+        <div class="mini-dashboard-header">
+          <div class="greeting">Oi, <strong>Vitor</strong><br><span style="font-size:10px;color:var(--text-tertiary)">Marco 2026</span></div>
+          <div class="avatar">VC</div>
+        </div>
+
+        <!-- Saldo -->
+        <div class="mini-card">
+          <div class="card-label">Saldo consolidado</div>
+          <div class="card-value" style="font-size:18px;">R$24.320</div>
+          <div class="card-change positive-change">+2,1% vs fev</div>
+        </div>
+
+        <!-- Receitas -->
+        <div class="mini-card">
+          <div class="card-label">Receitas do mes</div>
+          <div class="card-value" style="font-size:18px;">R$22.500 <span class="tap-hint">--></span></div>
+          <div class="card-change positive-change">Salario + freelance</div>
+        </div>
+
+        <!-- Gastos — HIGHLIGHTED -->
+        <div class="mini-card highlighted" style="position:relative;">
+          <div class="card-label">Gastos do mes</div>
+          <div class="card-value">R$15.880 <span class="tap-hint">--></span></div>
+          <div class="card-change negative">+8,3% vs fev</div>
+          <span class="tap-finger" style="bottom:8px;right:40px;">👆</span>
+        </div>
+
+        <!-- Investimentos -->
+        <div class="mini-card">
+          <div class="card-label">Investimentos</div>
+          <div class="card-value" style="font-size:18px;">R$142.800 <span class="tap-hint">--></span></div>
+          <div class="card-change positive-change">+1,4% este mes</div>
+        </div>
+
+        <!-- Mini chart -->
+        <div class="mini-chart-placeholder">
+          <div class="bar" style="height:18px;"></div>
+          <div class="bar" style="height:24px;"></div>
+          <div class="bar" style="height:20px;"></div>
+          <div class="bar" style="height:30px;"></div>
+          <div class="bar" style="height:26px;"></div>
+          <div class="bar" style="height:22px;"></div>
+          <div class="bar" style="height:35px;background:var(--primary);opacity:0.7;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="story-arrow">
+    <span class="tap-label">Toca</span>
+    -->
+  </div>
+
+  <!-- ──────── LEVEL 2: Essencialidade ──────── -->
+  <div class="story-step">
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="level-label"><span>Nivel 2 -- Essencialidade</span></div>
+
+        <div class="breadcrumb">
+          <div class="back-arrow">&larr;</div>
+          <span class="crumb">Dashboard</span>
+          <span class="sep">&gt;</span>
+          <span class="crumb-current">Gastos do Mes</span>
+        </div>
+
+        <div class="screen-title">Gastos de Marco</div>
+        <div class="screen-total">Total: R$15.880,00</div>
+
+        <!-- Stacked bar overview -->
+        <div style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin-bottom:16px;">
+          <div style="width:60%;background:var(--positive);"></div>
+          <div style="width:30%;background:var(--primary);"></div>
+          <div style="width:10%;background:var(--text-tertiary);"></div>
+        </div>
+
+        <!-- Essencial -->
+        <div class="breakdown-item">
+          <div class="item-color" style="background:var(--positive);"></div>
+          <div class="item-info">
+            <div class="item-name">Essencial</div>
+            <div class="item-bar-track">
+              <div class="item-bar-fill" style="width:60%;background:var(--positive);"></div>
+            </div>
+          </div>
+          <div class="item-values">
+            <div class="item-amount">R$9.580</div>
+            <div class="item-pct">60%</div>
+          </div>
+          <div class="item-arrow">--></div>
+        </div>
+
+        <!-- Qualidade de Vida — HIGHLIGHTED -->
+        <div class="breakdown-item highlighted-item">
+          <div class="item-color" style="background:var(--primary);"></div>
+          <div class="item-info">
+            <div class="item-name">Qualidade de Vida</div>
+            <div class="item-bar-track">
+              <div class="item-bar-fill" style="width:30%;background:var(--primary);"></div>
+            </div>
+          </div>
+          <div class="item-values">
+            <div class="item-amount">R$4.800</div>
+            <div class="item-pct">30%</div>
+          </div>
+          <div class="item-arrow" style="color:var(--primary);font-weight:700;">--></div>
+          <span class="tap-finger" style="bottom:-4px;right:4px;font-size:18px;">👆</span>
+        </div>
+
+        <!-- Nao Essencial -->
+        <div class="breakdown-item">
+          <div class="item-color" style="background:var(--text-tertiary);"></div>
+          <div class="item-info">
+            <div class="item-name">Nao Essencial</div>
+            <div class="item-bar-track">
+              <div class="item-bar-fill" style="width:10%;background:var(--text-tertiary);"></div>
+            </div>
+          </div>
+          <div class="item-values">
+            <div class="item-amount">R$1.500</div>
+            <div class="item-pct">10%</div>
+          </div>
+          <div class="item-arrow">--></div>
+        </div>
+
+        <!-- Legend -->
+        <div style="margin-top:16px;padding:10px 12px;background:var(--bg);border-radius:8px;">
+          <div style="font-size:10px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Distribuicao ideal</div>
+          <div style="display:flex;gap:12px;font-size:11px;color:var(--text-secondary);">
+            <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--positive);margin-right:4px;"></span>50-60%</span>
+            <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--primary);margin-right:4px;"></span>20-30%</span>
+            <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--text-tertiary);margin-right:4px;"></span>10-20%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="story-arrow">
+    <span class="tap-label">Toca</span>
+    -->
+  </div>
+
+  <!-- ──────── LEVEL 3: Categorias ──────── -->
+  <div class="story-step">
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="level-label"><span>Nivel 3 -- Categorias</span></div>
+
+        <div class="breadcrumb">
+          <div class="back-arrow">&larr;</div>
+          <span class="crumb">Dashboard</span>
+          <span class="sep">&gt;</span>
+          <span class="crumb">Gastos</span>
+          <span class="sep">&gt;</span>
+          <span class="crumb-current">Qualidade de Vida</span>
+        </div>
+
+        <div class="screen-title">Qualidade de Vida</div>
+        <div class="screen-total">Total: R$4.800,00 -- 30% dos gastos</div>
+
+        <!-- Categories -->
+        <div class="breakdown-item highlighted-item">
+          <div class="item-color" style="background:var(--primary);"></div>
+          <div class="item-info">
+            <div class="item-name">🍽 Restaurante</div>
+            <div class="item-bar-track">
+              <div class="item-bar-fill" style="width:37.5%;background:var(--primary);"></div>
+            </div>
+          </div>
+          <div class="item-values">
+            <div class="item-amount">R$1.800</div>
+            <div class="item-pct">37,5%</div>
+          </div>
+          <div class="item-arrow" style="color:var(--primary);font-weight:700;">--></div>
+          <span class="tap-finger" style="bottom:-4px;right:4px;font-size:18px;">👆</span>
+        </div>
+
+        <div class="breakdown-item">
+          <div class="item-color" style="background:#6366F1;"></div>
+          <div class="item-info">
+            <div class="item-name">🚗 Transporte</div>
+            <div class="item-bar-track">
+              <div class="item-bar-fill" style="width:18.8%;background:#6366F1;"></div>
+            </div>
+          </div>
+          <div class="item-values">
+            <div class="item-amount">R$900</div>
+            <div class="item-pct">18,8%</div>
+          </div>
+          <div class="item-arrow">--></div>
+        </div>
+
+        <div class="breakdown-item">
+          <div class="item-color" style="background:#8B5CF6;"></div>
+          <div class="item-info">
+            <div class="item-name">📦 Compras</div>
+            <div class="item-bar-track">
+              <div class="item-bar-fill" style="width:15.6%;background:#8B5CF6;"></div>
+            </div>
+          </div>
+          <div class="item-values">
+            <div class="item-amount">R$750</div>
+            <div class="item-pct">15,6%</div>
+          </div>
+          <div class="item-arrow">--></div>
+        </div>
+
+        <div class="breakdown-item">
+          <div class="item-color" style="background:#A78BFA;"></div>
+          <div class="item-info">
+            <div class="item-name">🎉 Lazer</div>
+            <div class="item-bar-track">
+              <div class="item-bar-fill" style="width:13.5%;background:#A78BFA;"></div>
+            </div>
+          </div>
+          <div class="item-values">
+            <div class="item-amount">R$650</div>
+            <div class="item-pct">13,5%</div>
+          </div>
+          <div class="item-arrow">--></div>
+        </div>
+
+        <div class="breakdown-item">
+          <div class="item-color" style="background:#C4B5FD;"></div>
+          <div class="item-info">
+            <div class="item-name">☕ Cafeteria</div>
+            <div class="item-bar-track">
+              <div class="item-bar-fill" style="width:8.3%;background:#C4B5FD;"></div>
+            </div>
+          </div>
+          <div class="item-values">
+            <div class="item-amount">R$400</div>
+            <div class="item-pct">8,3%</div>
+          </div>
+          <div class="item-arrow">--></div>
+        </div>
+
+        <div class="breakdown-item">
+          <div class="item-color" style="background:#DDD6FE;"></div>
+          <div class="item-info">
+            <div class="item-name">🎬 Entretenimento</div>
+            <div class="item-bar-track">
+              <div class="item-bar-fill" style="width:6.3%;background:#DDD6FE;"></div>
+            </div>
+          </div>
+          <div class="item-values">
+            <div class="item-amount">R$300</div>
+            <div class="item-pct">6,3%</div>
+          </div>
+          <div class="item-arrow">--></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="story-arrow">
+    <span class="tap-label">Toca</span>
+    -->
+  </div>
+
+  <!-- ──────── LEVEL 4: Estabelecimentos ──────── -->
+  <div class="story-step">
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="level-label"><span>Nivel 4 -- Estabelecimentos</span></div>
+
+        <div class="breadcrumb">
+          <div class="back-arrow">&larr;</div>
+          <span class="crumb">Dashboard</span>
+          <span class="sep">&gt;</span>
+          <span class="crumb">Gastos</span>
+          <span class="sep">&gt;</span>
+          <span class="crumb">Q. Vida</span>
+          <span class="sep">&gt;</span>
+          <span class="crumb-current">Restaurante</span>
+        </div>
+
+        <div class="screen-title">🍽 Restaurante</div>
+        <div class="screen-total">Total: R$1.800,00 -- 37,5% de Q. Vida</div>
+
+        <!-- Subcategories -->
+        <div class="sub-section-label">Subcategorias</div>
+
+        <div class="breakdown-item" style="padding:8px 10px;">
+          <div class="item-color" style="background:var(--primary);height:28px;"></div>
+          <div class="item-info">
+            <div class="item-name" style="font-size:12px;">🍔 Fast Food</div>
+            <div class="item-bar-track">
+              <div class="item-bar-fill" style="width:40%;background:var(--primary);"></div>
+            </div>
+          </div>
+          <div class="item-values">
+            <div class="item-amount" style="font-size:12px;">R$720</div>
+            <div class="item-pct">40%</div>
+          </div>
+          <div class="item-arrow" style="color:var(--primary);font-size:10px;">▼</div>
+        </div>
+
+        <!-- Expanded: Fast Food establishments -->
+        <div class="expanded-section">
+          <div class="exp-label">Estabelecimentos -- Fast Food</div>
+
+          <div class="sub-item">
+            <div class="sub-icon" style="background:var(--critical-bg);color:var(--critical);">M</div>
+            <div class="sub-info">
+              <div class="sub-name">McDonald's</div>
+              <div class="sub-meta">12 transacoes</div>
+            </div>
+            <div class="sub-values">
+              <div class="sub-amount" style="color:var(--text-primary);">R$480</div>
+              <div class="sub-pct">67%</div>
+            </div>
+          </div>
+
+          <div class="sub-item">
+            <div class="sub-icon" style="background:var(--attention-bg);color:#92400E;">B</div>
+            <div class="sub-info">
+              <div class="sub-name">Burger King</div>
+              <div class="sub-meta">4 transacoes</div>
+            </div>
+            <div class="sub-values">
+              <div class="sub-amount" style="color:var(--text-primary);">R$160</div>
+              <div class="sub-pct">22%</div>
+            </div>
+          </div>
+
+          <div class="sub-item">
+            <div class="sub-icon" style="background:var(--positive-bg);color:var(--positive-text);">S</div>
+            <div class="sub-info">
+              <div class="sub-name">Subway</div>
+              <div class="sub-meta">3 transacoes</div>
+            </div>
+            <div class="sub-values">
+              <div class="sub-amount" style="color:var(--text-primary);">R$80</div>
+              <div class="sub-pct">11%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="breakdown-item" style="padding:8px 10px;">
+          <div class="item-color" style="background:#6366F1;height:28px;"></div>
+          <div class="item-info">
+            <div class="item-name" style="font-size:12px;">🛵 Delivery</div>
+            <div class="item-bar-track">
+              <div class="item-bar-fill" style="width:35%;background:#6366F1;"></div>
+            </div>
+          </div>
+          <div class="item-values">
+            <div class="item-amount" style="font-size:12px;">R$630</div>
+            <div class="item-pct">35%</div>
+          </div>
+          <div class="item-arrow">▶</div>
+        </div>
+
+        <div class="breakdown-item" style="padding:8px 10px;">
+          <div class="item-color" style="background:#8B5CF6;height:28px;"></div>
+          <div class="item-info">
+            <div class="item-name" style="font-size:12px;">🍷 Jantar fora</div>
+            <div class="item-bar-track">
+              <div class="item-bar-fill" style="width:25%;background:#8B5CF6;"></div>
+            </div>
+          </div>
+          <div class="item-values">
+            <div class="item-amount" style="font-size:12px;">R$450</div>
+            <div class="item-pct">25%</div>
+          </div>
+          <div class="item-arrow">▶</div>
+        </div>
+
+        <!-- INSIGHT CALLOUT -->
+        <div class="insight-callout">
+          <div class="insight-title">💡 Insight</div>
+          <div class="insight-line"><strong>R$480/mes no McDonald's = R$5.760/ano</strong></div>
+          <div class="insight-line">12 visitas este mes -- media de R$40 por visita</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- DESKTOP VERSION                                        -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-title" style="margin-top:16px;">
+  <h2>Desktop -- Side Panel</h2>
+  <p>Drill-down via painel lateral com arvore expansivel</p>
+</div>
+
+<div class="desktop-section">
+  <div class="desktop-container">
+
+    <!-- ── Left: Dashboard (dimmed) ── -->
+    <div class="desktop-left">
+      <div class="desktop-dash-header">
+        <h3>Dashboard -- Marco 2026</h3>
+        <div class="month-selector">Marco 2026 ▾</div>
+      </div>
+
+      <div class="desktop-cards">
+        <div class="desktop-card">
+          <div class="dc-label">Saldo</div>
+          <div class="dc-value">R$24.320</div>
+          <div class="dc-change" style="color:var(--positive-text);">+2,1%</div>
+        </div>
+        <div class="desktop-card dc-highlighted">
+          <div class="dc-label">Gastos do mes</div>
+          <div class="dc-value" style="color:var(--primary);">R$15.880</div>
+          <div class="dc-change" style="color:var(--critical);">+8,3% vs fev</div>
+        </div>
+        <div class="desktop-card">
+          <div class="dc-label">Receitas</div>
+          <div class="dc-value">R$22.500</div>
+          <div class="dc-change" style="color:var(--positive-text);">Salario + freelance</div>
+        </div>
+      </div>
+
+      <div class="desktop-chart-placeholder">
+        <span>Grafico de tendencia mensal</span>
+      </div>
+
+      <div class="desktop-list-placeholder">
+        <div class="dl-title">Ultimas transacoes</div>
+        <div class="desktop-list-item">
+          <div class="dli-icon">🍔</div>
+          <div class="dli-info">
+            <div class="dli-name">McDonald's</div>
+            <div class="dli-cat">Fast Food -- Restaurante</div>
+          </div>
+          <div class="dli-amount" style="color:var(--critical);">-R$42</div>
+        </div>
+        <div class="desktop-list-item">
+          <div class="dli-icon">🚗</div>
+          <div class="dli-info">
+            <div class="dli-name">Uber</div>
+            <div class="dli-cat">Transporte -- Q. Vida</div>
+          </div>
+          <div class="dli-amount" style="color:var(--critical);">-R$28</div>
+        </div>
+        <div class="desktop-list-item">
+          <div class="dli-icon">☕</div>
+          <div class="dli-info">
+            <div class="dli-name">Starbucks</div>
+            <div class="dli-cat">Cafeteria -- Q. Vida</div>
+          </div>
+          <div class="dli-amount" style="color:var(--critical);">-R$18</div>
+        </div>
+        <div class="desktop-list-item">
+          <div class="dli-icon">🏠</div>
+          <div class="dli-info">
+            <div class="dli-name">Aluguel</div>
+            <div class="dli-cat">Moradia -- Essencial</div>
+          </div>
+          <div class="dli-amount" style="color:var(--critical);">-R$3.200</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Right: Side Panel ── -->
+    <div class="desktop-right">
+      <div class="panel-header">
+        <h3>Drill-down</h3>
+        <div class="panel-close" title="Fechar painel">&times;</div>
+      </div>
+
+      <div class="panel-breadcrumb">
+        <span class="pb-link">Dashboard</span>
+        <span class="pb-sep">&gt;</span>
+        <span class="pb-link">Gastos</span>
+        <span class="pb-sep">&gt;</span>
+        <span class="pb-link">Qualidade de Vida</span>
+        <span class="pb-sep">&gt;</span>
+        <span class="pb-link">Restaurante</span>
+        <span class="pb-sep">&gt;</span>
+        <span style="color:var(--text-secondary);font-weight:500;">Fast Food</span>
+      </div>
+
+      <div class="panel-body" id="treeContainer">
+        <!-- Tree is built by JS -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- JAVASCRIPT                                             -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  // ── Tree data model ──
+  const treeData = {
+    name: 'Gastos do Mes',
+    value: 'R$15.880',
+    pct: '',
+    color: '#1C1917',
+    expanded: true,
+    children: [
+      {
+        name: 'Essencial',
+        value: 'R$9.580',
+        pct: '60%',
+        color: '#22C55E',
+        expanded: false,
+        children: [
+          { name: 'Moradia', value: 'R$3.200', pct: '33,4%', color: '#22C55E', children: [] },
+          { name: 'Alimentacao', value: 'R$2.400', pct: '25%', color: '#22C55E', children: [] },
+          { name: 'Saude', value: 'R$1.800', pct: '18,8%', color: '#22C55E', children: [] },
+          { name: 'Contas fixas', value: 'R$1.280', pct: '13,4%', color: '#22C55E', children: [] },
+          { name: 'Educacao', value: 'R$900', pct: '9,4%', color: '#22C55E', children: [] }
+        ]
+      },
+      {
+        name: 'Qualidade de Vida',
+        value: 'R$4.800',
+        pct: '30%',
+        color: '#4F46E5',
+        expanded: true,
+        children: [
+          {
+            name: '🍽 Restaurante',
+            value: 'R$1.800',
+            pct: '37,5%',
+            color: '#4F46E5',
+            expanded: true,
+            children: [
+              {
+                name: '🍔 Fast Food',
+                value: 'R$720',
+                pct: '40%',
+                color: '#4F46E5',
+                expanded: true,
+                children: [
+                  { name: "McDonald's", value: 'R$480', pct: '67%', color: '#DC2626', meta: '12 transacoes', children: [] },
+                  { name: 'Burger King', value: 'R$160', pct: '22%', color: '#EAB308', meta: '4 transacoes', children: [] },
+                  { name: 'Subway', value: 'R$80', pct: '11%', color: '#22C55E', meta: '3 transacoes', children: [] }
+                ]
+              },
+              {
+                name: '🛵 Delivery',
+                value: 'R$630',
+                pct: '35%',
+                color: '#6366F1',
+                expanded: false,
+                children: [
+                  { name: 'iFood', value: 'R$380', pct: '60%', color: '#DC2626', meta: '8 pedidos', children: [] },
+                  { name: 'Rappi', value: 'R$250', pct: '40%', color: '#6366F1', meta: '5 pedidos', children: [] }
+                ]
+              },
+              {
+                name: '🍷 Jantar fora',
+                value: 'R$450',
+                pct: '25%',
+                color: '#8B5CF6',
+                expanded: false,
+                children: [
+                  { name: 'Outback', value: 'R$280', pct: '62%', color: '#8B5CF6', meta: '2 visitas', children: [] },
+                  { name: 'Cantina Italiana', value: 'R$170', pct: '38%', color: '#A78BFA', meta: '1 visita', children: [] }
+                ]
+              }
+            ]
+          },
+          { name: '🚗 Transporte', value: 'R$900', pct: '18,8%', color: '#6366F1', expanded: false, children: [
+            { name: 'Uber', value: 'R$520', pct: '58%', color: '#6366F1', meta: '14 corridas', children: [] },
+            { name: '99', value: 'R$280', pct: '31%', color: '#8B5CF6', meta: '8 corridas', children: [] },
+            { name: 'Combustivel', value: 'R$100', pct: '11%', color: '#A78BFA', meta: '2 abastecimentos', children: [] }
+          ]},
+          { name: '📦 Compras', value: 'R$750', pct: '15,6%', color: '#8B5CF6', expanded: false, children: [] },
+          { name: '🎉 Lazer', value: 'R$650', pct: '13,5%', color: '#A78BFA', expanded: false, children: [] },
+          { name: '☕ Cafeteria', value: 'R$400', pct: '8,3%', color: '#C4B5FD', expanded: false, children: [] },
+          { name: '🎬 Entretenimento', value: 'R$300', pct: '6,3%', color: '#DDD6FE', expanded: false, children: [] }
+        ]
+      },
+      {
+        name: 'Nao Essencial',
+        value: 'R$1.500',
+        pct: '10%',
+        color: '#A8A29E',
+        expanded: false,
+        children: [
+          { name: 'Compras impulsivas', value: 'R$800', pct: '53%', color: '#A8A29E', children: [] },
+          { name: 'Assinaturas', value: 'R$450', pct: '30%', color: '#A8A29E', children: [] },
+          { name: 'Outros', value: 'R$250', pct: '17%', color: '#A8A29E', children: [] }
+        ]
+      }
+    ]
+  };
+
+  // ── Parse percentage to number for bar width ──
+  function pctToNum(pctStr) {
+    if (!pctStr) return 100;
+    return parseFloat(pctStr.replace('%', '').replace(',', '.')) || 0;
+  }
+
+  // ── Build tree HTML recursively ──
+  function buildTree(node, level) {
+    const hasChildren = node.children && node.children.length > 0;
+    const isLeaf = !hasChildren;
+    const isExpanded = node.expanded === true;
+
+    const el = document.createElement('div');
+    el.className = 'tree-node' + (isLeaf ? ' tree-leaf' : '');
+
+    // Row
+    const row = document.createElement('div');
+    row.className = 'tree-row' + (isExpanded && hasChildren ? ' active' : '');
+    row.setAttribute('data-level', level);
+
+    // Toggle icon
+    const toggle = document.createElement('span');
+    toggle.className = 'tree-toggle' + (isExpanded ? ' expanded' : '');
+    toggle.textContent = hasChildren ? (isExpanded ? '▼' : '▶') : '·';
+    row.appendChild(toggle);
+
+    // Name
+    const name = document.createElement('span');
+    name.className = 'tree-name';
+    name.textContent = node.name;
+    if (node.meta) {
+      name.textContent += ' ';
+      const metaSpan = document.createElement('span');
+      metaSpan.style.cssText = 'font-size:10px;color:#A8A29E;font-weight:400;';
+      metaSpan.textContent = '(' + node.meta + ')';
+      name.appendChild(metaSpan);
+    }
+    row.appendChild(name);
+
+    // Value
+    const value = document.createElement('span');
+    value.className = 'tree-value';
+    value.textContent = node.value;
+    row.appendChild(value);
+
+    // Percentage
+    if (node.pct) {
+      const pct = document.createElement('span');
+      pct.className = 'tree-pct';
+      pct.textContent = node.pct;
+      row.appendChild(pct);
+
+      // Mini bar
+      const bar = document.createElement('span');
+      bar.className = 'tree-bar';
+      const barFill = document.createElement('span');
+      barFill.className = 'tree-bar-fill';
+      barFill.style.width = Math.min(pctToNum(node.pct), 100) + '%';
+      barFill.style.background = node.color || 'var(--primary)';
+      bar.appendChild(barFill);
+      row.appendChild(bar);
+    }
+
+    el.appendChild(row);
+
+    // Children container
+    if (hasChildren) {
+      const childrenContainer = document.createElement('div');
+      childrenContainer.className = 'tree-children ' + (isExpanded ? 'expanded' : 'collapsed');
+
+      node.children.forEach(function (child) {
+        childrenContainer.appendChild(buildTree(child, level + 1));
+      });
+
+      el.appendChild(childrenContainer);
+
+      // Click handler
+      row.addEventListener('click', function () {
+        const isCurrentlyExpanded = childrenContainer.classList.contains('expanded');
+        if (isCurrentlyExpanded) {
+          childrenContainer.classList.remove('expanded');
+          childrenContainer.classList.add('collapsed');
+          toggle.textContent = '▶';
+          toggle.classList.remove('expanded');
+          row.classList.remove('active');
+        } else {
+          childrenContainer.classList.remove('collapsed');
+          childrenContainer.classList.add('expanded');
+          toggle.textContent = '▼';
+          toggle.classList.add('expanded');
+          row.classList.add('active');
+        }
+      });
+
+      row.style.cursor = 'pointer';
+      row.title = 'Clique para expandir/recolher';
+    } else {
+      row.style.cursor = 'default';
+    }
+
+    return el;
+  }
+
+  // ── Render tree ──
+  var container = document.getElementById('treeContainer');
+  container.appendChild(buildTree(treeData, 0));
+
+  // ── Add insight below tree ──
+  var insightDiv = document.createElement('div');
+  insightDiv.className = 'panel-insight';
+  insightDiv.innerHTML =
+    '<div class="pi-title">💡 Insight automatico</div>' +
+    '<div class="pi-text"><strong>R$480/mes no McDonald\'s = R$5.760/ano</strong><br>' +
+    '12 visitas este mes -- media de R$40 por visita.<br>' +
+    'Representa 3% do total de gastos mensais.</div>';
+  container.appendChild(insightDiv);
+
+})();
+</script>
+
+</body>
+</html>

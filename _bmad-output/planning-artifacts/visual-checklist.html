@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caderninho — Checklist Mensal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #FAFAF9;
+    --surface: #FFFFFF;
+    --border: #E7E5E4;
+    --border-hover: #D6D3D1;
+    --text-primary: #1C1917;
+    --text-secondary: #78716C;
+    --text-tertiary: #A8A29E;
+    --primary: #4F46E5;
+    --primary-hover: #4338CA;
+    --primary-light: #EEF2FF;
+    --positive: #22C55E;
+    --positive-bg: #DCFCE7;
+    --positive-text: #166534;
+    --attention: #EAB308;
+    --attention-bg: #FEF9C3;
+    --attention-text: #854D0E;
+    --alert: #F97316;
+    --alert-bg: #FFF7ED;
+    --critical: #DC2626;
+    --critical-bg: #FEE2E2;
+    --critical-text: #991B1B;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #D6D3D1;
+    color: var(--text-primary);
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ========================================
+     HEADER
+     ======================================== */
+  .showcase-header {
+    text-align: center;
+    padding: 40px 24px 32px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .showcase-header h1 { font-size: 24px; font-weight: 700; }
+  .showcase-header p {
+    font-size: 14px; color: var(--text-secondary);
+    margin-top: 6px; max-width: 700px;
+    margin-left: auto; margin-right: auto;
+  }
+
+  .section-divider {
+    text-align: center;
+    padding: 48px 24px 24px;
+  }
+  .section-divider h2 { font-size: 18px; font-weight: 600; }
+  .section-divider p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+  /* ========================================
+     DESKTOP FRAME
+     ======================================== */
+  .desktop-frame {
+    max-width: 1200px;
+    margin: 0 auto 48px;
+    padding: 0 24px;
+  }
+
+  .app-container {
+    display: flex;
+    background: var(--bg);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    min-height: 780px;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 16px 0;
+    flex-shrink: 0;
+  }
+  .sidebar-logo {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 16px; margin-bottom: 24px;
+  }
+  .sidebar-logo-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 14px;
+  }
+  .sidebar-logo-text { font-size: 15px; font-weight: 600; }
+
+  .sidebar-section {
+    padding: 0 8px;
+    margin-bottom: 8px;
+  }
+  .sidebar-section-label {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--text-tertiary);
+    padding: 8px 12px 4px;
+  }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; border-radius: 8px;
+    font-size: 13px; font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .sidebar-item:hover { background: var(--bg); color: var(--text-primary); }
+  .sidebar-item.active {
+    background: var(--primary-light); color: var(--primary); font-weight: 600;
+  }
+  .sidebar-item .si-icon { font-size: 16px; width: 20px; text-align: center; }
+  .sidebar-item .si-badge {
+    margin-left: auto;
+    background: var(--critical);
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 10px;
+  }
+  .sidebar-item .si-badge-warn {
+    margin-left: auto;
+    background: var(--attention-bg);
+    color: var(--attention-text);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 10px;
+  }
+
+  .sidebar-divider {
+    height: 1px; background: var(--border);
+    margin: 12px 16px;
+  }
+
+  .sidebar-user {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 16px; margin-top: auto;
+  }
+  .sidebar-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--primary-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; color: var(--primary);
+  }
+  .sidebar-username { font-size: 12px; color: var(--text-secondary); }
+
+  /* Main content */
+  .main-content {
+    flex: 1;
+    padding: 24px 28px;
+    overflow-y: auto;
+  }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+  .page-title { font-size: 20px; font-weight: 700; }
+  .page-subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* Progress ring */
+  .progress-ring-wrap {
+    display: flex; align-items: center; gap: 14px;
+  }
+  .progress-ring {
+    position: relative;
+    width: 56px; height: 56px;
+  }
+  .progress-ring svg { transform: rotate(-90deg); }
+  .progress-ring-bg {
+    fill: none; stroke: var(--border); stroke-width: 5;
+  }
+  .progress-ring-fill {
+    fill: none; stroke: var(--primary); stroke-width: 5;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease;
+  }
+  .progress-ring-text {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: var(--primary);
+  }
+  .progress-info { text-align: right; }
+  .progress-info .pi-count { font-size: 14px; font-weight: 600; }
+  .progress-info .pi-label { font-size: 11px; color: var(--text-secondary); }
+
+  /* Summary cards row */
+  .summary-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .sc-label { font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
+  .sc-value { font-size: 18px; font-weight: 700; }
+  .sc-sub { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
+
+  /* Today banner */
+  .today-banner {
+    background: var(--primary-light);
+    border: 1px solid #C7D2FE;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .today-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--primary);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .today-text { font-size: 13px; }
+  .today-text strong { font-weight: 600; }
+  .today-actions { margin-left: auto; display: flex; gap: 8px; }
+  .today-btn {
+    padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 500;
+    cursor: pointer; border: none; transition: all 0.15s;
+  }
+  .today-btn-primary {
+    background: var(--primary); color: white;
+  }
+  .today-btn-primary:hover { background: var(--primary-hover); }
+  .today-btn-ghost {
+    background: transparent; color: var(--primary);
+    border: 1px solid #C7D2FE;
+  }
+
+  /* Checklist groups */
+  .checklist-group {
+    margin-bottom: 20px;
+  }
+  .group-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    margin-bottom: 4px;
+  }
+  .group-icon {
+    width: 24px; height: 24px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+  }
+  .group-title { font-size: 13px; font-weight: 600; }
+  .group-count { font-size: 11px; color: var(--text-tertiary); }
+  .group-total {
+    margin-left: auto; font-size: 13px; font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  /* Checklist items */
+  .cl-list {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .cl-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+  .cl-item:last-child { border-bottom: none; }
+  .cl-item:hover { background: #FAFAF9; }
+  .cl-item.confirmed { opacity: 0.55; }
+  .cl-item.overdue { background: #FEF2F2; }
+
+  /* Checkbox */
+  .cl-check {
+    width: 22px; height: 22px; border-radius: 6px;
+    border: 2px solid var(--border-hover);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; cursor: pointer; transition: all 0.15s;
+  }
+  .cl-check:hover { border-color: var(--primary); }
+  .cl-check.checked {
+    background: var(--positive); border-color: var(--positive); color: white;
+  }
+  .cl-check.auto-checked {
+    background: var(--primary-light); border-color: #C7D2FE; color: var(--primary);
+  }
+
+  .cl-info { flex: 1; min-width: 0; }
+  .cl-name {
+    font-size: 13px; font-weight: 500;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .cl-name .cl-tag {
+    font-size: 9px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.3px;
+    padding: 1px 6px; border-radius: 4px;
+  }
+  .tag-fixed { background: var(--primary-light); color: var(--primary); }
+  .tag-variable { background: var(--attention-bg); color: var(--attention-text); }
+  .tag-installment { background: #F3E8FF; color: #6B21A8; }
+  .tag-overdue { background: var(--critical-bg); color: var(--critical-text); }
+
+  .cl-details {
+    font-size: 11px; color: var(--text-tertiary); margin-top: 1px;
+    display: flex; gap: 8px;
+  }
+
+  .cl-due {
+    font-size: 11px; color: var(--text-tertiary);
+    text-align: right; white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .cl-due.today { color: var(--primary); font-weight: 600; }
+  .cl-due.past { color: var(--critical); font-weight: 600; }
+
+  .cl-value {
+    font-size: 14px; font-weight: 600; text-align: right;
+    white-space: nowrap; flex-shrink: 0; min-width: 90px;
+  }
+  .cl-value.pending { color: var(--text-primary); }
+  .cl-value.done { color: var(--positive-text); text-decoration: line-through; text-decoration-color: var(--positive); }
+
+  .cl-actions {
+    display: flex; gap: 4px; flex-shrink: 0;
+  }
+  .cl-action-btn {
+    width: 28px; height: 28px; border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; cursor: pointer; color: var(--text-secondary);
+    transition: all 0.15s;
+  }
+  .cl-action-btn:hover {
+    border-color: var(--primary); color: var(--primary); background: var(--primary-light);
+  }
+
+  /* Variable value editor */
+  .cl-value-edit {
+    display: flex; align-items: center; gap: 4px;
+    flex-shrink: 0;
+  }
+  .cl-value-input {
+    width: 90px; padding: 4px 8px;
+    border: 1px solid var(--attention);
+    border-radius: 6px; font-size: 13px; font-weight: 600;
+    text-align: right; background: var(--attention-bg);
+    color: var(--attention-text);
+    font-family: inherit;
+    font-variant-numeric: tabular-nums;
+  }
+  .cl-value-input:focus {
+    outline: none; border-color: var(--primary);
+    background: var(--primary-light); color: var(--primary);
+  }
+
+  /* Reconciliation section */
+  .reconciliation {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 8px;
+  }
+  .recon-title {
+    font-size: 13px; font-weight: 600; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .recon-row {
+    display: flex; justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+  }
+  .recon-row:last-child { border-bottom: none; }
+  .recon-label { color: var(--text-secondary); }
+  .recon-value { font-weight: 600; }
+  .recon-match { color: var(--positive); }
+  .recon-mismatch { color: var(--critical); }
+
+  /* ========================================
+     MOBILE
+     ======================================== */
+  .mobile-section {
+    max-width: 900px;
+    margin: 0 auto 48px;
+    padding: 0 24px;
+    display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;
+  }
+  .mobile-frame {
+    width: 375px;
+    background: var(--bg);
+    border-radius: 32px;
+    border: 3px solid #1C1917;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  }
+  .mobile-notch {
+    width: 120px; height: 28px; background: #1C1917;
+    margin: 0 auto; border-radius: 0 0 16px 16px;
+  }
+  .mobile-body {
+    padding: 8px 16px 0;
+    min-height: 580px;
+  }
+  .mobile-top {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0 6px;
+  }
+  .mobile-top h2 { font-size: 17px; font-weight: 700; }
+
+  .mobile-progress {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+  .mp-bar-wrap { flex: 1; }
+  .mp-bar {
+    height: 6px; border-radius: 3px; background: var(--border);
+    overflow: hidden;
+  }
+  .mp-bar-fill {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--primary), #818CF8);
+  }
+  .mp-label { font-size: 11px; color: var(--text-secondary); margin-top: 3px; }
+  .mp-count { font-size: 16px; font-weight: 700; color: var(--primary); flex-shrink: 0; }
+
+  .m-today-alert {
+    background: var(--primary-light); border: 1px solid #C7D2FE;
+    border-radius: 8px; padding: 10px 12px;
+    margin-bottom: 12px;
+    font-size: 12px;
+  }
+  .m-today-alert strong { font-weight: 600; }
+  .m-today-actions {
+    display: flex; gap: 8px; margin-top: 8px;
+  }
+  .m-today-btn {
+    flex: 1; padding: 8px; border-radius: 6px;
+    text-align: center; font-size: 12px; font-weight: 500;
+    border: none; cursor: pointer;
+  }
+  .m-today-btn-primary { background: var(--primary); color: white; }
+  .m-today-btn-ghost { background: transparent; color: var(--primary); border: 1px solid #C7D2FE; }
+
+  .m-group-label {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--text-tertiary);
+    padding: 10px 0 4px;
+    display: flex; justify-content: space-between;
+  }
+
+  .m-cl-list {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 4px;
+  }
+  .m-cl-item {
+    display: flex; align-items: center;
+    padding: 10px 12px; gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .m-cl-item:last-child { border-bottom: none; }
+  .m-cl-item.confirmed { opacity: 0.5; }
+  .m-cl-item.overdue { background: #FEF2F2; }
+
+  .m-cl-check {
+    width: 20px; height: 20px; border-radius: 5px;
+    border: 2px solid var(--border-hover);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 11px;
+  }
+  .m-cl-check.checked { background: var(--positive); border-color: var(--positive); color: white; }
+  .m-cl-check.auto { background: var(--primary-light); border-color: #C7D2FE; color: var(--primary); }
+
+  .m-cl-info { flex: 1; min-width: 0; }
+  .m-cl-name { font-size: 13px; font-weight: 500; }
+  .m-cl-sub { font-size: 10px; color: var(--text-tertiary); margin-top: 1px; }
+
+  .m-cl-right { text-align: right; flex-shrink: 0; }
+  .m-cl-value { font-size: 13px; font-weight: 600; }
+  .m-cl-due { font-size: 10px; color: var(--text-tertiary); margin-top: 1px; }
+  .m-cl-due.today { color: var(--primary); font-weight: 600; }
+  .m-cl-due.past { color: var(--critical); font-weight: 600; }
+
+  /* Bottom nav — padrão oficial */
+  .bottom-nav {
+    display: flex;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 6px 0 14px;
+  }
+  .bn-item {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 2px; font-size: 10px; color: var(--text-tertiary);
+    cursor: pointer; padding: 4px 0;
+  }
+  .bn-item.active { color: var(--primary); font-weight: 500; }
+  .bn-icon { font-size: 18px; height: 22px; display: flex; align-items: center; }
+  .fab {
+    width: 48px; height: 48px;
+    background: var(--primary); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 24px; font-weight: 300;
+    margin-top: -20px;
+    box-shadow: 0 2px 12px rgba(79, 70, 229, 0.3);
+  }
+
+  .mobile-label {
+    padding: 6px 16px; font-size: 11px; color: var(--text-secondary);
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+
+  /* Overdue badge animation */
+  @keyframes pulse-red {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+  .pulse { animation: pulse-red 2s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<div class="showcase-header">
+  <h1>Checklist Mensal — Ciclo de Controle</h1>
+  <p>Visão completa do mês: gastos fixos confirmados automaticamente, variáveis aguardando atualização, parcelas calculadas. Progresso visual e reconciliação com saldo real.</p>
+</div>
+
+<!-- ================================================
+     DESKTOP — CHECKLIST COMPLETA
+     ================================================ -->
+<div class="section-divider">
+  <h2>Desktop — Visão Completa do Mês</h2>
+  <p>Sidebar expandida, progresso visual, grupos por tipo de gasto, banner do dia com vencimentos</p>
+</div>
+
+<div class="desktop-frame">
+  <div class="app-container">
+    <!-- Sidebar expandida -->
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">C</div>
+        <div class="sidebar-logo-text">Caderninho</div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Principal</div>
+        <div class="sidebar-item">
+          <span class="si-icon">◻</span> Dashboard
+        </div>
+        <div class="sidebar-item">
+          <span class="si-icon">☰</span> Orçamentos
+        </div>
+        <div class="sidebar-item active">
+          <span class="si-icon">✓</span> Checklist
+          <span class="si-badge">1</span>
+        </div>
+        <div class="sidebar-item">
+          <span class="si-icon">→</span> Projeção
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Configurações</div>
+        <div class="sidebar-item">
+          <span class="si-icon">⚙</span> Preferências
+        </div>
+        <div class="sidebar-item">
+          <span class="si-icon">☷</span> Categorias
+        </div>
+      </div>
+
+      <div style="flex:1;"></div>
+
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">V</div>
+        <div class="sidebar-username">Vitor</div>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="main-content">
+
+      <!-- Page header with progress -->
+      <div class="page-header">
+        <div>
+          <div class="page-title">Checklist — Março 2026</div>
+          <div class="page-subtitle">Controle de gastos do mês. Confirme pagamentos, atualize valores variáveis.</div>
+        </div>
+        <div class="progress-ring-wrap">
+          <div class="progress-info">
+            <div class="pi-count">10 de 14</div>
+            <div class="pi-label">confirmadas</div>
+          </div>
+          <div class="progress-ring">
+            <svg width="56" height="56" viewBox="0 0 56 56">
+              <circle class="progress-ring-bg" cx="28" cy="28" r="24"></circle>
+              <circle class="progress-ring-fill" cx="28" cy="28" r="24"
+                stroke-dasharray="150.8"
+                stroke-dashoffset="43.1"></circle>
+            </svg>
+            <div class="progress-ring-text">71%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary cards -->
+      <div class="summary-row">
+        <div class="summary-card">
+          <div class="sc-label">Total do mês</div>
+          <div class="sc-value">R$ 16.758</div>
+          <div class="sc-sub">14 itens</div>
+        </div>
+        <div class="summary-card">
+          <div class="sc-label">Confirmados</div>
+          <div class="sc-value" style="color: var(--positive);">R$ 12.158</div>
+          <div class="sc-sub">10 itens pagos</div>
+        </div>
+        <div class="summary-card">
+          <div class="sc-label">Pendentes</div>
+          <div class="sc-value" style="color: var(--attention-text);">R$ 4.600</div>
+          <div class="sc-sub">3 itens aguardando</div>
+        </div>
+        <div class="summary-card">
+          <div class="sc-label" style="color: var(--critical);">Atrasado</div>
+          <div class="sc-value" style="color: var(--critical);">R$ 158</div>
+          <div class="sc-sub" style="color: var(--critical);">1 item vencido</div>
+        </div>
+      </div>
+
+      <!-- Today banner -->
+      <div class="today-banner">
+        <div class="today-icon">📅</div>
+        <div class="today-text">
+          <strong>Hoje, 11 de março</strong> — vence <strong>Plano de Saúde R$ 890</strong> (débito automático).
+        </div>
+        <div class="today-actions">
+          <button class="today-btn today-btn-primary">Confirmar pagamento</button>
+          <button class="today-btn today-btn-ghost">Adiar</button>
+        </div>
+      </div>
+
+      <!-- ===== GRUPO 1: FIXOS ===== -->
+      <div class="checklist-group">
+        <div class="group-header">
+          <div class="group-icon" style="background: var(--primary-light); color: var(--primary);">F</div>
+          <div class="group-title">Fixos mensais</div>
+          <div class="group-count">7 de 7 confirmados</div>
+          <div class="group-total">R$ 8.118</div>
+        </div>
+        <div class="cl-list">
+          <!-- Aluguel -->
+          <div class="cl-item confirmed">
+            <div class="cl-check checked">✓</div>
+            <div class="cl-info">
+              <div class="cl-name">Aluguel + Condomínio <span class="cl-tag tag-fixed">Fixo</span></div>
+              <div class="cl-details"><span>Transferência · Conta Bradesco</span></div>
+            </div>
+            <div class="cl-due">Venc. 05/mar</div>
+            <div class="cl-value done">R$ 2.200</div>
+            <div class="cl-actions">
+              <div class="cl-action-btn" title="Editar">✎</div>
+            </div>
+          </div>
+          <!-- Escola -->
+          <div class="cl-item confirmed">
+            <div class="cl-check checked">✓</div>
+            <div class="cl-info">
+              <div class="cl-name">Escola <span class="cl-tag tag-fixed">Fixo</span></div>
+              <div class="cl-details"><span>Boleto · Pago em 03/mar</span></div>
+            </div>
+            <div class="cl-due">Venc. 05/mar</div>
+            <div class="cl-value done">R$ 2.800</div>
+            <div class="cl-actions">
+              <div class="cl-action-btn" title="Editar">✎</div>
+            </div>
+          </div>
+          <!-- Internet -->
+          <div class="cl-item overdue">
+            <div class="cl-check" style="border-color: var(--critical);">
+              <span style="color: var(--critical); font-size: 14px;" class="pulse">!</span>
+            </div>
+            <div class="cl-info">
+              <div class="cl-name">Internet Vivo <span class="cl-tag tag-overdue">Atrasado</span></div>
+              <div class="cl-details"><span>Débito automático · Não confirmado</span></div>
+            </div>
+            <div class="cl-due past">Venceu 07/mar</div>
+            <div class="cl-value pending">R$ 158</div>
+            <div class="cl-actions">
+              <div class="cl-action-btn" title="Confirmar" style="border-color: var(--critical); color: var(--critical);">✓</div>
+              <div class="cl-action-btn" title="Editar">✎</div>
+            </div>
+          </div>
+          <!-- Celulares -->
+          <div class="cl-item confirmed">
+            <div class="cl-check checked">✓</div>
+            <div class="cl-info">
+              <div class="cl-name">Celulares (3 linhas) <span class="cl-tag tag-fixed">Fixo</span></div>
+              <div class="cl-details"><span>Débito automático · Conta Itaú</span></div>
+            </div>
+            <div class="cl-due">Venc. 02/mar</div>
+            <div class="cl-value done">R$ 260</div>
+            <div class="cl-actions">
+              <div class="cl-action-btn" title="Editar">✎</div>
+            </div>
+          </div>
+          <!-- Streaming -->
+          <div class="cl-item confirmed">
+            <div class="cl-check checked">✓</div>
+            <div class="cl-info">
+              <div class="cl-name">Streaming (Netflix + Spotify + Disney) <span class="cl-tag tag-fixed">Fixo</span></div>
+              <div class="cl-details"><span>Cartão Latam Pass · Automático</span></div>
+            </div>
+            <div class="cl-due">Venc. 01/mar</div>
+            <div class="cl-value done">R$ 110</div>
+            <div class="cl-actions">
+              <div class="cl-action-btn" title="Editar">✎</div>
+            </div>
+          </div>
+          <!-- Seguro -->
+          <div class="cl-item confirmed">
+            <div class="cl-check checked">✓</div>
+            <div class="cl-info">
+              <div class="cl-name">Seguro do carro <span class="cl-tag tag-fixed">Fixo</span></div>
+              <div class="cl-details"><span>Débito automático · Conta Bradesco</span></div>
+            </div>
+            <div class="cl-due">Venc. 10/mar</div>
+            <div class="cl-value done">R$ 340</div>
+            <div class="cl-actions">
+              <div class="cl-action-btn" title="Editar">✎</div>
+            </div>
+          </div>
+          <!-- Plano de saúde — hoje -->
+          <div class="cl-item">
+            <div class="cl-check"></div>
+            <div class="cl-info">
+              <div class="cl-name">Plano de Saúde <span class="cl-tag tag-fixed">Fixo</span></div>
+              <div class="cl-details"><span>Débito automático · Conta Itaú</span></div>
+            </div>
+            <div class="cl-due today">Hoje</div>
+            <div class="cl-value pending">R$ 890</div>
+            <div class="cl-actions">
+              <div class="cl-action-btn" title="Confirmar" style="border-color: var(--primary); color: var(--primary);">✓</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== GRUPO 2: VARIÁVEIS ===== -->
+      <div class="checklist-group">
+        <div class="group-header">
+          <div class="group-icon" style="background: var(--attention-bg); color: var(--attention-text);">V</div>
+          <div class="group-title">Variáveis</div>
+          <div class="group-count">1 de 3 atualizado</div>
+          <div class="group-total">R$ 3.540</div>
+        </div>
+        <div class="cl-list">
+          <!-- Conta de luz — já atualizado -->
+          <div class="cl-item confirmed">
+            <div class="cl-check checked">✓</div>
+            <div class="cl-info">
+              <div class="cl-name">Conta de Luz <span class="cl-tag tag-variable">Variável</span></div>
+              <div class="cl-details">
+                <span>Base: R$ 280</span>
+                <span>·</span>
+                <span style="color: var(--critical);">Real: R$ 320 (+R$ 40)</span>
+              </div>
+            </div>
+            <div class="cl-due">Venc. 08/mar</div>
+            <div class="cl-value done">R$ 320</div>
+            <div class="cl-actions">
+              <div class="cl-action-btn" title="Editar">✎</div>
+            </div>
+          </div>
+          <!-- Fatura Latam Pass — pendente -->
+          <div class="cl-item">
+            <div class="cl-check"></div>
+            <div class="cl-info">
+              <div class="cl-name">Fatura Latam Pass Visa <span class="cl-tag tag-variable">Variável</span></div>
+              <div class="cl-details">
+                <span>Estimativa: R$ 2.200</span>
+                <span>·</span>
+                <span style="color: var(--attention-text);">Aguardando fatura real</span>
+              </div>
+            </div>
+            <div class="cl-due">Venc. 15/mar</div>
+            <div class="cl-value-edit">
+              <input class="cl-value-input" value="2.200" placeholder="Valor real">
+            </div>
+            <div class="cl-actions">
+              <div class="cl-action-btn" title="Confirmar" style="border-color: var(--primary); color: var(--primary);">✓</div>
+            </div>
+          </div>
+          <!-- Fatura Pão de Açúcar — pendente -->
+          <div class="cl-item">
+            <div class="cl-check"></div>
+            <div class="cl-info">
+              <div class="cl-name">Fatura Pão de Açúcar Master <span class="cl-tag tag-variable">Variável</span></div>
+              <div class="cl-details">
+                <span>Estimativa: R$ 1.020</span>
+                <span>·</span>
+                <span style="color: var(--attention-text);">Aguardando fatura real</span>
+              </div>
+            </div>
+            <div class="cl-due">Venc. 20/mar</div>
+            <div class="cl-value-edit">
+              <input class="cl-value-input" value="1.020" placeholder="Valor real">
+            </div>
+            <div class="cl-actions">
+              <div class="cl-action-btn" title="Confirmar" style="border-color: var(--primary); color: var(--primary);">✓</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== GRUPO 3: PARCELAS ===== -->
+      <div class="checklist-group">
+        <div class="group-header">
+          <div class="group-icon" style="background: #F3E8FF; color: #6B21A8;">P</div>
+          <div class="group-title">Parcelas de cartão</div>
+          <div class="group-count">2 de 2 · automático</div>
+          <div class="group-total">R$ 571</div>
+        </div>
+        <div class="cl-list">
+          <!-- Fotos -->
+          <div class="cl-item confirmed">
+            <div class="cl-check auto-checked">↻</div>
+            <div class="cl-info">
+              <div class="cl-name">Ensaio Fotográfico <span class="cl-tag tag-installment">8 de 10</span></div>
+              <div class="cl-details">
+                <span>Cartão Latam Pass</span>
+                <span>·</span>
+                <span>Última em mai/2026</span>
+              </div>
+            </div>
+            <div class="cl-due" style="color: var(--text-tertiary);">Automático</div>
+            <div class="cl-value done">R$ 171</div>
+            <div class="cl-actions">
+              <div class="cl-action-btn" title="Detalhes">⋯</div>
+            </div>
+          </div>
+          <!-- Cadeira gamer -->
+          <div class="cl-item confirmed">
+            <div class="cl-check auto-checked">↻</div>
+            <div class="cl-info">
+              <div class="cl-name">Cadeira Gamer <span class="cl-tag tag-installment">4 de 6</span></div>
+              <div class="cl-details">
+                <span>Cartão Pão de Açúcar</span>
+                <span>·</span>
+                <span>Última em jul/2026</span>
+              </div>
+            </div>
+            <div class="cl-due" style="color: var(--text-tertiary);">Automático</div>
+            <div class="cl-value done">R$ 400</div>
+            <div class="cl-actions">
+              <div class="cl-action-btn" title="Detalhes">⋯</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== RECONCILIAÇÃO ===== -->
+      <div class="reconciliation">
+        <div class="recon-title">
+          <span>🏦</span> Reconciliação — Saldo real vs. app
+        </div>
+        <div class="recon-row">
+          <span class="recon-label">Saldo app (Bradesco)</span>
+          <span class="recon-value">R$ 8.420</span>
+        </div>
+        <div class="recon-row">
+          <span class="recon-label">Saldo real (banco)</span>
+          <span class="recon-value">R$ 8.420</span>
+        </div>
+        <div class="recon-row">
+          <span class="recon-label">Diferença</span>
+          <span class="recon-value recon-match">R$ 0 ✓ Bate</span>
+        </div>
+        <div style="margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px;">
+          <div class="recon-row">
+            <span class="recon-label">Saldo app (Itaú)</span>
+            <span class="recon-value">R$ 4.230</span>
+          </div>
+          <div class="recon-row">
+            <span class="recon-label">Saldo real (banco)</span>
+            <span class="recon-value">R$ 4.230</span>
+          </div>
+          <div class="recon-row">
+            <span class="recon-label">Diferença</span>
+            <span class="recon-value recon-match">R$ 0 ✓ Bate</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ================================================
+     MOBILE — VISÃO DO DIA + RESUMO
+     ================================================ -->
+<div class="section-divider">
+  <h2>Mobile — Visão do Dia</h2>
+  <p>Foco no que importa agora: vencimentos do dia, itens pendentes, progresso rápido</p>
+</div>
+
+<div class="mobile-section">
+  <!-- Mobile 1: Visão do dia -->
+  <div class="mobile-frame">
+    <div class="mobile-notch"></div>
+    <div class="mobile-body">
+      <div class="mobile-label"><strong>Vitor</strong> — Checklist do dia</div>
+      <div class="mobile-top">
+        <h2>Março 2026</h2>
+        <span style="font-size: 12px; color: var(--text-secondary);">11 de março</span>
+      </div>
+
+      <!-- Progress -->
+      <div class="mobile-progress">
+        <div class="mp-bar-wrap">
+          <div class="mp-bar"><div class="mp-bar-fill" style="width: 71%;"></div></div>
+          <div class="mp-label">10 de 14 confirmadas</div>
+        </div>
+        <div class="mp-count">71%</div>
+      </div>
+
+      <!-- Today alert -->
+      <div class="m-today-alert">
+        📅 Hoje vence <strong>Plano de Saúde — R$ 890</strong>
+        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Débito automático · Conta Itaú</div>
+        <div class="m-today-actions">
+          <button class="m-today-btn m-today-btn-primary">Confirmar pagamento</button>
+          <button class="m-today-btn m-today-btn-ghost">Adiar</button>
+        </div>
+      </div>
+
+      <!-- Atrasado -->
+      <div class="m-group-label">
+        <span style="color: var(--critical);">Atrasado</span>
+        <span style="color: var(--critical);">R$ 158</span>
+      </div>
+      <div class="m-cl-list">
+        <div class="m-cl-item overdue">
+          <div class="m-cl-check" style="border-color: var(--critical);">
+            <span style="color: var(--critical);" class="pulse">!</span>
+          </div>
+          <div class="m-cl-info">
+            <div class="m-cl-name">Internet Vivo</div>
+            <div class="m-cl-sub">Débito automático · Não confirmado</div>
+          </div>
+          <div class="m-cl-right">
+            <div class="m-cl-value" style="color: var(--critical);">R$ 158</div>
+            <div class="m-cl-due past">Venceu 07/mar</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Próximos -->
+      <div class="m-group-label">
+        <span>Próximos vencimentos</span>
+        <span>R$ 3.220</span>
+      </div>
+      <div class="m-cl-list">
+        <div class="m-cl-item">
+          <div class="m-cl-check"></div>
+          <div class="m-cl-info">
+            <div class="m-cl-name">Fatura Latam Pass</div>
+            <div class="m-cl-sub">Variável · Estimativa</div>
+          </div>
+          <div class="m-cl-right">
+            <div class="m-cl-value">R$ 2.200</div>
+            <div class="m-cl-due">15/mar</div>
+          </div>
+        </div>
+        <div class="m-cl-item">
+          <div class="m-cl-check"></div>
+          <div class="m-cl-info">
+            <div class="m-cl-name">Fatura Pão de Açúcar</div>
+            <div class="m-cl-sub">Variável · Estimativa</div>
+          </div>
+          <div class="m-cl-right">
+            <div class="m-cl-value">R$ 1.020</div>
+            <div class="m-cl-due">20/mar</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirmados resumo -->
+      <div class="m-group-label">
+        <span style="color: var(--positive-text);">Confirmados</span>
+        <span style="color: var(--positive-text);">R$ 12.158</span>
+      </div>
+      <div style="font-size: 11px; color: var(--text-tertiary); padding: 4px 0 8px;">
+        10 itens pagos · Toque para expandir
+      </div>
+
+    </div>
+    <div class="bottom-nav">
+      <div class="bn-item"><span class="bn-icon">◻</span>Dashboard</div>
+      <div class="bn-item"><span class="bn-icon">☰</span>Orçamentos</div>
+      <div class="bn-item"><div class="fab">+</div><span style="margin-top: 4px;">Registrar</span></div>
+      <div class="bn-item active"><span class="bn-icon">✓</span>Checklist</div>
+      <div class="bn-item"><span class="bn-icon">→</span>Projeção</div>
+    </div>
+  </div>
+
+  <!-- Mobile 2: Atualização de valor variável -->
+  <div class="mobile-frame">
+    <div class="mobile-notch"></div>
+    <div class="mobile-body">
+      <div class="mobile-label"><strong>Vitor</strong> — Atualizando fatura</div>
+      <div class="mobile-top">
+        <h2>Fatura Latam Pass</h2>
+        <span style="font-size: 12px; color: var(--primary); cursor: pointer;">← Voltar</span>
+      </div>
+
+      <!-- Fatura detail card -->
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 12px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+          <div>
+            <div style="font-size: 11px; color: var(--text-tertiary);">Estimativa</div>
+            <div style="font-size: 18px; font-weight: 600; color: var(--text-tertiary); text-decoration: line-through;">R$ 2.200</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 11px; color: var(--primary);">Valor real</div>
+            <div style="font-size: 24px; font-weight: 700; color: var(--primary);">R$ 2.347</div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 6px; align-items: center; padding: 8px 10px; background: var(--attention-bg); border-radius: 6px; font-size: 12px; color: var(--attention-text);">
+          <span>⚠️</span>
+          <span>Diferença de <strong>+R$ 147</strong> da estimativa. Orçamento será recalculado.</span>
+        </div>
+      </div>
+
+      <!-- Impact preview -->
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 12px;">
+        <div style="font-size: 12px; font-weight: 600; margin-bottom: 10px;">Impacto no mês</div>
+        <div style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px;">
+          <span style="color: var(--text-secondary);">Total confirmado</span>
+          <span style="font-weight: 500;">R$ 12.158 → R$ 14.505</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px;">
+          <span style="color: var(--text-secondary);">Pendente restante</span>
+          <span style="font-weight: 500;">R$ 4.600 → R$ 2.253</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px; border-top: 1px solid var(--border); margin-top: 6px; padding-top: 8px;">
+          <span style="font-weight: 600;">Margem livre</span>
+          <span style="font-weight: 700; color: var(--positive);">R$ 1.373</span>
+        </div>
+      </div>
+
+      <!-- Composição da fatura -->
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px;">
+        <div style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">Composição da fatura</div>
+        <div style="font-size: 11px;">
+          <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--border);">
+            <span style="color: var(--text-secondary);">Supermercado (4x)</span>
+            <span style="font-weight: 500;">R$ 687</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--border);">
+            <span style="color: var(--text-secondary);">Restaurante (6x)</span>
+            <span style="font-weight: 500;">R$ 542</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--border);">
+            <span style="color: var(--text-secondary);">Parcela Fotos (8/10)</span>
+            <span style="font-weight: 500;">R$ 171</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--border);">
+            <span style="color: var(--text-secondary);">Streaming</span>
+            <span style="font-weight: 500;">R$ 110</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+            <span style="color: var(--text-secondary);">Outros (9x)</span>
+            <span style="font-weight: 500;">R$ 837</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirm button -->
+      <div style="padding: 16px 0 8px;">
+        <button style="width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;">
+          Confirmar R$ 2.347
+        </button>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="bn-item"><span class="bn-icon">◻</span>Dashboard</div>
+      <div class="bn-item"><span class="bn-icon">☰</span>Orçamentos</div>
+      <div class="bn-item"><div class="fab">+</div><span style="margin-top: 4px;">Registrar</span></div>
+      <div class="bn-item active"><span class="bn-icon">✓</span>Checklist</div>
+      <div class="bn-item"><span class="bn-icon">→</span>Projeção</div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:48px 24px;font-size:12px;color:var(--text-tertiary);">
+  Caderninho · MonthChecklist · Ciclo Mensal de Controle<br>
+  Fixos (automáticos) · Variáveis (atualizar quando souber) · Parcelas (calculadas) · Reconciliação
+</div>
+
+</body>
+</html>

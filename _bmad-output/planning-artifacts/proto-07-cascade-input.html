@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Protótipo 07 — Registro Rápido (Cascade Input) | Caderninho</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Design Tokens ── */
+    :root {
+      --bg: #FAFAF9;
+      --surface: #FFFFFF;
+      --border: #E7E5E4;
+      --border-hover: #D6D3D1;
+      --text-primary: #1C1917;
+      --text-secondary: #78716C;
+      --text-tertiary: #A8A29E;
+      --primary: #4F46E5;
+      --primary-hover: #4338CA;
+      --primary-light: #EEF2FF;
+      --positive: #22C55E;
+      --positive-bg: #DCFCE7;
+      --positive-text: #166534;
+      --attention: #EAB308;
+      --attention-bg: #FEF9C3;
+      --critical: #DC2626;
+      --critical-bg: #FEE2E2;
+      --radius-card: 12px;
+      --radius-input: 8px;
+      --radius-badge: 100px;
+      --radius-chip: 10px;
+      --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+      --shadow-card-lg: 0 2px 6px rgba(0,0,0,.06), 0 8px 32px rgba(0,0,0,.06);
+      --shadow-sheet: -4px 0 24px rgba(0,0,0,.12);
+      --transition: 150ms ease;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-variant-numeric: tabular-nums;
+      background: var(--bg);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
+    }
+
+    /* ── Page Header ── */
+    .page-header {
+      text-align: center;
+      padding: 48px 24px 40px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .page-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .page-header p {
+      font-size: 15px;
+      color: var(--text-secondary);
+    }
+
+    /* ── Section Headers ── */
+    .section-header {
+      padding: 40px 32px 16px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+    .section-header h2 {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    .section-header p {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-top: 4px;
+    }
+
+    /* ── Phone Frame ── */
+    .phone-row {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      padding: 0 32px 48px;
+      flex-wrap: wrap;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .phone-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .phone-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .phone-label span {
+      display: block;
+      font-weight: 400;
+      font-size: 11px;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+    }
+
+    .phone-frame {
+      width: 320px;
+      height: 640px;
+      border-radius: 32px;
+      border: 3px solid #1C1917;
+      background: #000;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,.15);
+    }
+
+    .phone-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 28px;
+      background: #1C1917;
+      border-radius: 0 0 16px 16px;
+      z-index: 10;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── Overlay + Bottom Sheet ── */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 1;
+    }
+
+    .bottom-sheet {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-radius: 20px 20px 0 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .bottom-sheet-scroll {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .bottom-sheet-scroll::-webkit-scrollbar { display: none; }
+
+    .bottom-sheet-footer {
+      padding: 8px 20px 16px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+
+    .bottom-sheet-footer .btn-confirm {
+      margin: 0;
+      width: 100%;
+    }
+
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 10px auto 0;
+    }
+
+    .sheet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px 12px;
+    }
+
+    .sheet-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .sheet-close {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg);
+      color: var(--text-secondary);
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background var(--transition);
+    }
+    .sheet-close:hover { background: var(--border); }
+
+    /* ── Valor Display ── */
+    .valor-display {
+      text-align: center;
+      padding: 20px 20px 16px;
+    }
+
+    .valor-prefix {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+    }
+
+    .valor-amount {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .valor-amount.placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .valor-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 32px;
+      background: var(--primary);
+      vertical-align: middle;
+      margin-left: 2px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* ── Numeric Keypad ── */
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 12px 20px 24px;
+    }
+
+    .key {
+      height: 52px;
+      border-radius: var(--radius-input);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-family: 'Inter', sans-serif;
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--text-primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+      user-select: none;
+    }
+
+    .key:hover {
+      background: var(--bg);
+      border-color: var(--border-hover);
+    }
+
+    .key:active {
+      transform: scale(0.95);
+      background: var(--border);
+    }
+
+    .key.backspace {
+      color: var(--text-secondary);
+      font-size: 18px;
+    }
+
+    /* ── Summary Bar ── */
+    .summary-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: nowrap;
+      overflow: hidden;
+    }
+
+    .summary-amount {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      flex-shrink: 0;
+    }
+
+    .summary-sep {
+      color: var(--text-tertiary);
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .summary-cat {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 2px 8px;
+      border-radius: var(--radius-badge);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-shrink: 1;
+      min-width: 0;
+    }
+
+    /* ── Section Label ── */
+    .field-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      padding: 14px 20px 8px;
+    }
+
+    /* ── Chips Grid ── */
+    .chips-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 0 20px;
+    }
+
+    .chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: var(--radius-chip);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+
+    .chip:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .chip.selected {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .chip-emoji {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .chip-link {
+      grid-column: 1 / -1;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--primary);
+      padding: 8px;
+      cursor: pointer;
+      transition: color var(--transition);
+    }
+    .chip-link:hover { color: var(--primary-hover); }
+
+    /* ── Where Chips (single row) ── */
+    .chips-row {
+      display: flex;
+      gap: 8px;
+      padding: 0 20px;
+      flex-wrap: wrap;
+    }
+
+    .chip-sm {
+      padding: 8px 12px;
+      border-radius: var(--radius-chip);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+
+    .chip-sm:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .chip-sm.selected {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+
+    /* ── Payment Selector ── */
+    .payment-selector {
+      margin: 0 20px;
+      padding: 10px 14px;
+      border-radius: var(--radius-input);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .payment-selector:hover { border-color: var(--border-hover); }
+
+    .payment-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .payment-detail {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      margin-top: 1px;
+    }
+
+    .payment-arrow {
+      font-size: 10px;
+      color: var(--text-tertiary);
+    }
+
+    /* ── Impact Preview ── */
+    .impact-preview {
+      margin: 14px 20px;
+      padding: 12px 14px;
+      border-radius: var(--radius-input);
+      background: var(--bg);
+      border-left: 3px solid var(--primary);
+    }
+
+    .impact-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .impact-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .impact-label {
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .impact-value {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 11px;
+    }
+
+    .impact-arrow {
+      color: var(--text-tertiary);
+      margin: 0 4px;
+    }
+
+    /* ── Budget Bar ── */
+    .budget-bar-container {
+      margin-top: 4px;
+    }
+
+    .budget-bar-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .budget-bar-track {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .budget-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 800ms cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .budget-bar-fill.ok { background: var(--primary); }
+    .budget-bar-fill.warning { background: var(--attention); }
+    .budget-bar-fill.danger { background: var(--critical); }
+
+    .budget-bar-values {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--text-tertiary);
+      margin-top: 3px;
+    }
+
+    .budget-remaining {
+      font-size: 10px;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+    }
+
+    /* ── Confirm Button ── */
+    .btn-confirm {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 14px 20px;
+      padding: 0;
+      height: 48px;
+      border-radius: var(--radius-chip);
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      width: calc(100% - 40px);
+    }
+
+    .btn-confirm:hover { background: var(--primary-hover); }
+    .btn-confirm:active { transform: scale(0.98); }
+
+    .btn-cancel {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      padding: 8px;
+      cursor: pointer;
+      transition: color var(--transition);
+      margin-bottom: 16px;
+    }
+    .btn-cancel:hover { color: var(--text-secondary); }
+
+    /* ── Confirmation Summary ── */
+    .confirm-summary {
+      padding: 16px 20px;
+      text-align: center;
+    }
+
+    .confirm-amount {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .confirm-details {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .confirm-details strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* ── Desktop Section ── */
+    .desktop-frame-wrapper {
+      padding: 0 32px 48px;
+      display: flex;
+      justify-content: center;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .desktop-frame {
+      width: 900px;
+      height: 680px;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: var(--bg);
+      overflow: hidden;
+      box-shadow: var(--shadow-card-lg);
+      position: relative;
+      display: flex;
+    }
+
+    .desktop-dashboard {
+      flex: 1;
+      background: var(--bg);
+      padding: 24px;
+      opacity: 0.35;
+      position: relative;
+    }
+
+    .desktop-placeholder {
+      border-radius: 8px;
+      background: var(--border);
+      margin-bottom: 16px;
+    }
+
+    .desktop-sheet {
+      width: 400px;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      box-shadow: var(--shadow-sheet);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .desktop-sheet-scroll {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+
+    .desktop-sheet-footer {
+      padding: 12px 24px 16px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+
+    .desktop-sheet-footer .btn-confirm {
+      margin: 0;
+      width: 100%;
+    }
+
+    .desktop-sheet .sheet-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .desktop-sheet .field-label {
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
+    .desktop-sheet .chips-grid,
+    .desktop-sheet .chips-row {
+      padding: 0 24px;
+    }
+
+    .desktop-sheet .payment-selector {
+      margin: 0 24px;
+    }
+
+    .desktop-sheet .impact-preview {
+      margin: 14px 24px;
+    }
+
+    .desktop-sheet .btn-confirm {
+      margin: 14px 24px;
+      width: calc(100% - 48px);
+    }
+
+    .desktop-sheet .valor-input-inline {
+      padding: 16px 24px;
+    }
+
+    .valor-input-field {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: var(--radius-input);
+      border: 2px solid var(--primary);
+      background: var(--surface);
+      font-family: 'Inter', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      outline: none;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .valor-input-prefix {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      margin-bottom: 4px;
+    }
+
+    /* ── Installment Roller Picker (scroll-wheel style) ── */
+    .installment-section {
+      padding: 0 20px;
+    }
+
+    .installment-roller {
+      position: relative;
+      width: 100%;
+      height: 44px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    .roller-fade-left {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 40px;
+      background: linear-gradient(to right, var(--surface), transparent);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .roller-fade-right {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 40px;
+      background: linear-gradient(to left, var(--surface), transparent);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .roller-highlight {
+      position: absolute;
+      left: 50%;
+      top: 4px;
+      bottom: 4px;
+      width: 48px;
+      transform: translateX(-50%);
+      background: var(--primary-light);
+      border-radius: 6px;
+      border: 1px solid var(--primary);
+      z-index: 1;
+      transition: none;
+    }
+
+    .roller-track {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 3;
+    }
+
+    .roller-item {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      transition: all 200ms ease;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .roller-item.far { opacity: 0.3; }
+    .roller-item.near { opacity: 0.5; }
+    .roller-item.selected {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--primary);
+      opacity: 1;
+    }
+
+    .installment-result {
+      text-align: center;
+      padding: 10px 20px 0;
+    }
+
+    .installment-result-main {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .installment-result-sub {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .installment-impact-note {
+      font-size: 11px;
+      color: var(--primary);
+      font-style: italic;
+      font-weight: 500;
+      margin-top: 6px;
+    }
+
+    /* ── Divider ── */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 40px 32px;
+      max-width: 1600px;
+    }
+
+    /* ── State Step Indicator ── */
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      margin-top: 10px;
+    }
+
+    .step-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+
+    .step-dot.active {
+      width: 18px;
+      border-radius: 3px;
+      background: var(--primary);
+    }
+
+    .step-dot.done {
+      background: var(--primary);
+      opacity: 0.4;
+    }
+
+    /* ── Animations ── */
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes barFill {
+      from { width: 0; }
+    }
+
+    .animate-in {
+      animation: slideUp 400ms ease forwards;
+    }
+
+    /* ── Dashboard placeholder shapes ── */
+    .dash-topbar {
+      height: 48px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      border-radius: 0;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 12px;
+    }
+
+    .dash-topbar-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+
+    .dash-topbar-rect {
+      width: 100px;
+      height: 14px;
+      border-radius: 4px;
+      background: var(--border);
+    }
+
+    .dash-card-placeholder {
+      background: var(--surface);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .dash-card-placeholder .line {
+      height: 10px;
+      border-radius: 4px;
+      background: var(--border);
+      margin-bottom: 8px;
+    }
+    .dash-card-placeholder .line:last-child { margin-bottom: 0; }
+
+    /* Inline Card Brand Icons */
+    .method-brand {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 16px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      vertical-align: middle;
+      margin-right: 4px;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .method-brand-visa {
+      background: #1A1F71;
+      color: #FFFFFF;
+      font-size: 7px;
+      font-style: italic;
+      font-weight: 800;
+    }
+    .method-brand-master {
+      background: #252525;
+      position: relative;
+      overflow: hidden;
+    }
+    .method-brand-master::before,
+    .method-brand-master::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .method-brand-master::before { left: 3px; background: #EB001B; }
+    .method-brand-master::after { right: 3px; background: #F79E1B; }
+
+    /* ── Responsive ── */
+    @media (max-width: 1400px) {
+      .phone-row { gap: 20px; }
+    }
+    @media (max-width: 900px) {
+      .phone-row { gap: 16px; padding: 0 16px 48px; }
+      .phone-frame { width: 280px; height: 580px; }
+      .desktop-frame { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- PAGE HEADER                                  -->
+  <!-- ════════════════════════════════════════════ -->
+  <header class="page-header">
+    <h1>Protótipo 07 — Registro Rápido (Cascade Input)</h1>
+    <p>Fluxo progressivo de ~5 segundos</p>
+  </header>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- MOBILE FLOW                                  -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="section-header">
+    <h2>Fluxo Mobile — 4 Estados Progressivos</h2>
+    <p>Cada estado revela a próxima camada de informação, mantendo o foco no essencial</p>
+  </div>
+
+  <div class="phone-row">
+
+    <!-- ──── STATE 1: Valor ──── -->
+    <div class="phone-column">
+      <div class="phone-label">
+        Estado 1: Valor
+        <span>Foco total no número</span>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="overlay"></div>
+          <div class="bottom-sheet" style="height: 480px;">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+              <span class="sheet-title">Novo Gasto</span>
+              <button class="sheet-close" title="Fechar">✕</button>
+            </div>
+
+            <div class="valor-display" style="padding-top: 32px; padding-bottom: 24px;">
+              <div>
+                <span class="valor-prefix">R$ </span>
+                <span class="valor-amount placeholder">____</span>
+                <span class="valor-cursor"></span>
+              </div>
+            </div>
+
+            <div class="step-indicator" style="justify-content: center; margin-bottom: 12px;">
+              <div class="step-dot active"></div>
+              <div class="step-dot"></div>
+              <div class="step-dot"></div>
+              <div class="step-dot"></div>
+            </div>
+
+            <div class="keypad" id="keypad1">
+              <button class="key" data-val="1">1</button>
+              <button class="key" data-val="2">2</button>
+              <button class="key" data-val="3">3</button>
+              <button class="key" data-val="4">4</button>
+              <button class="key" data-val="5">5</button>
+              <button class="key" data-val="6">6</button>
+              <button class="key" data-val="7">7</button>
+              <button class="key" data-val="8">8</button>
+              <button class="key" data-val="9">9</button>
+              <button class="key" data-val=",">,</button>
+              <button class="key" data-val="0">0</button>
+              <button class="key backspace" data-val="back">&#9003;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──── STATE 2: Categoria ──── -->
+    <div class="phone-column">
+      <div class="phone-label">
+        Estado 2: Categoria
+        <span>Após digitar o valor</span>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="overlay"></div>
+          <div class="bottom-sheet" style="height: 480px;">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+              <span class="sheet-title">Novo Gasto</span>
+              <button class="sheet-close" title="Fechar">✕</button>
+            </div>
+
+            <div class="summary-bar">
+              <span class="summary-amount">R$ 87,00</span>
+            </div>
+
+            <div class="step-indicator" style="justify-content: center; padding: 8px 0;">
+              <div class="step-dot done"></div>
+              <div class="step-dot active"></div>
+              <div class="step-dot"></div>
+              <div class="step-dot"></div>
+            </div>
+
+            <div class="field-label">Categorias Frequentes</div>
+            <div class="chips-grid" id="catGrid">
+              <div class="chip selected" data-cat="supermercado">
+                <span class="chip-emoji">&#x1F6D2;</span> Supermercado
+              </div>
+              <div class="chip" data-cat="gasolina">
+                <span class="chip-emoji">&#x26FD;</span> Gasolina
+              </div>
+              <div class="chip" data-cat="restaurante">
+                <span class="chip-emoji">&#x1F37D;</span> Restaurante
+              </div>
+              <div class="chip" data-cat="moradia">
+                <span class="chip-emoji">&#x1F3E0;</span> Moradia
+              </div>
+              <div class="chip" data-cat="transporte">
+                <span class="chip-emoji">&#x1F697;</span> Transporte
+              </div>
+              <div class="chip" data-cat="compras">
+                <span class="chip-emoji">&#x1F4E6;</span> Compras
+              </div>
+              <div class="chip-link">+ Todas categorias</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──── STATE 3: Detalhes + Impacto ──── -->
+    <div class="phone-column">
+      <div class="phone-label">
+        Estado 3: Detalhes + Impacto
+        <span>Estabelecimento, pagamento e prévia</span>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="overlay"></div>
+          <div class="bottom-sheet" style="height: 520px;">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+              <span class="sheet-title">Novo Gasto</span>
+              <button class="sheet-close" title="Fechar">✕</button>
+            </div>
+
+            <div class="summary-bar">
+              <span class="summary-amount">R$ 87,00</span>
+              <span class="summary-sep">·</span>
+              <span class="summary-cat">&#x1F6D2; Supermercado</span>
+            </div>
+
+            <div class="step-indicator" style="justify-content: center; padding: 8px 0;">
+              <div class="step-dot done"></div>
+              <div class="step-dot done"></div>
+              <div class="step-dot active"></div>
+              <div class="step-dot"></div>
+            </div>
+
+            <div class="field-label">Onde?</div>
+            <div class="chips-row" id="storeChips">
+              <div class="chip-sm selected">Pão de Açúcar</div>
+              <div class="chip-sm">Extra</div>
+              <div class="chip-sm">Assaí</div>
+              <div class="chip-sm" style="color: var(--primary); border-color: var(--primary-light);">+ Outro</div>
+            </div>
+
+            <div class="field-label">Pagamento</div>
+            <div class="payment-selector">
+              <div>
+                <div class="payment-name"><span class="method-brand method-brand-visa">VISA</span>Latam Pass Visa &#x25BE;</div>
+                <div class="payment-detail">(à vista)</div>
+              </div>
+              <span class="payment-arrow">&#x276F;</span>
+            </div>
+
+            <div class="impact-preview">
+              <div class="impact-row">
+                <span class="impact-label">Limite Latam</span>
+                <span>
+                  <span class="impact-value">R$ 4.213</span>
+                  <span class="impact-arrow">&rarr;</span>
+                  <span class="impact-value">R$ 4.126</span>
+                </span>
+              </div>
+              <div class="budget-bar-container">
+                <div class="budget-bar-label">Supermercado</div>
+                <div class="budget-bar-track">
+                  <div class="budget-bar-fill ok animated-bar" style="width: 73.7%;"></div>
+                </div>
+                <div class="budget-bar-values">
+                  <span>R$ 2.122 / R$ 3.000</span>
+                  <span style="color: var(--attention);">Resta R$ 878</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──── STATE 4: Confirmar ──── -->
+    <div class="phone-column">
+      <div class="phone-label">
+        Estado 4: Confirmar
+        <span>Revisão final e impacto</span>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="overlay"></div>
+          <div class="bottom-sheet" style="height: 480px;">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+              <span class="sheet-title">Confirmar Gasto</span>
+              <button class="sheet-close" title="Fechar">✕</button>
+            </div>
+
+            <div class="step-indicator" style="justify-content: center; padding: 4px 0 8px;">
+              <div class="step-dot done"></div>
+              <div class="step-dot done"></div>
+              <div class="step-dot done"></div>
+              <div class="step-dot active"></div>
+            </div>
+
+            <div class="confirm-summary">
+              <div class="confirm-amount">R$ 87,00</div>
+              <div class="confirm-details">
+                <strong>&#x1F6D2; Supermercado</strong> &rarr; Pão de Açúcar<br>
+                <span class="method-brand method-brand-visa">VISA</span>Latam Pass Visa · à vista
+              </div>
+            </div>
+
+            <div class="impact-preview">
+              <div class="impact-row">
+                <span class="impact-label">Limite Latam</span>
+                <span>
+                  <span class="impact-value">R$ 4.213</span>
+                  <span class="impact-arrow">&rarr;</span>
+                  <span class="impact-value">R$ 4.126</span>
+                </span>
+              </div>
+              <div class="budget-bar-container">
+                <div class="budget-bar-label">Supermercado</div>
+                <div class="budget-bar-track">
+                  <div class="budget-bar-fill ok animated-bar" style="width: 73.7%;"></div>
+                </div>
+                <div class="budget-bar-values">
+                  <span>R$ 2.122 / R$ 3.000</span>
+                  <span style="color: var(--attention);">Resta R$ 878</span>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn-confirm" id="btnConfirm">
+              &#x2713; Confirmar
+            </button>
+            <div class="btn-cancel">Cancelar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- DESKTOP VERSION                              -->
+  <!-- ════════════════════════════════════════════ -->
+  <hr class="section-divider">
+
+  <div class="section-header">
+    <h2>Desktop — Side Sheet (400px)</h2>
+    <p>Painel lateral desliza sobre o dashboard com todos os campos visíveis</p>
+  </div>
+
+  <div class="desktop-frame-wrapper">
+    <div class="desktop-frame">
+      <!-- Left: Dimmed Dashboard -->
+      <div class="desktop-dashboard">
+        <div class="dash-topbar">
+          <div class="dash-topbar-circle"></div>
+          <div class="dash-topbar-rect"></div>
+          <div style="flex:1"></div>
+          <div class="dash-topbar-rect" style="width: 60px;"></div>
+        </div>
+        <div class="dash-card-placeholder">
+          <div class="line" style="width: 40%;"></div>
+          <div class="line" style="width: 70%;"></div>
+          <div class="line" style="width: 55%;"></div>
+        </div>
+        <div class="dash-card-placeholder">
+          <div class="line" style="width: 60%;"></div>
+          <div class="line" style="width: 80%;"></div>
+          <div class="line" style="width: 30%;"></div>
+          <div class="line" style="width: 65%;"></div>
+        </div>
+        <div class="dash-card-placeholder">
+          <div class="line" style="width: 45%;"></div>
+          <div class="line" style="width: 50%;"></div>
+        </div>
+        <div class="dash-card-placeholder">
+          <div class="line" style="width: 70%;"></div>
+          <div class="line" style="width: 40%;"></div>
+          <div class="line" style="width: 55%;"></div>
+        </div>
+      </div>
+
+      <!-- Right: Side Sheet -->
+      <div class="desktop-sheet">
+        <div class="sheet-header" style="flex-shrink: 0;">
+          <span class="sheet-title" style="font-size: 18px;">Novo Gasto</span>
+          <button class="sheet-close" title="Fechar">✕</button>
+        </div>
+
+        <div class="desktop-sheet-scroll">
+          <div class="valor-input-inline">
+            <div class="valor-input-prefix">Valor</div>
+            <input type="text" class="valor-input-field" value="R$ 87,00" readonly>
+          </div>
+
+          <div class="field-label">Categoria</div>
+          <div class="chips-grid" style="margin-bottom: 4px;" id="desktopCatGrid">
+            <div class="chip selected" data-cat="supermercado">
+              <span class="chip-emoji">&#x1F6D2;</span> Supermercado
+            </div>
+            <div class="chip" data-cat="gasolina">
+              <span class="chip-emoji">&#x26FD;</span> Gasolina
+            </div>
+            <div class="chip" data-cat="restaurante">
+              <span class="chip-emoji">&#x1F37D;</span> Restaurante
+            </div>
+            <div class="chip" data-cat="moradia">
+              <span class="chip-emoji">&#x1F3E0;</span> Moradia
+            </div>
+            <div class="chip" data-cat="transporte">
+              <span class="chip-emoji">&#x1F697;</span> Transporte
+            </div>
+            <div class="chip" data-cat="compras">
+              <span class="chip-emoji">&#x1F4E6;</span> Compras
+            </div>
+            <div class="chip-link">+ Todas categorias</div>
+          </div>
+
+          <div class="field-label">Onde?</div>
+          <div class="chips-row" id="desktopStoreChips">
+            <div class="chip-sm selected">Pão de Açúcar</div>
+            <div class="chip-sm">Extra</div>
+            <div class="chip-sm">Assaí</div>
+            <div class="chip-sm" style="color: var(--primary); border-color: var(--primary-light);">+ Outro</div>
+          </div>
+
+          <div class="field-label">Pagamento</div>
+          <div class="payment-selector">
+            <div>
+              <div class="payment-name"><span class="method-brand method-brand-visa">VISA</span>Latam Pass Visa &#x25BE;</div>
+              <div class="payment-detail">(à vista)</div>
+            </div>
+            <span class="payment-arrow">&#x276F;</span>
+          </div>
+
+          <div class="impact-preview" style="margin-bottom: 8px;">
+            <div class="impact-row">
+              <span class="impact-label">Limite Latam</span>
+              <span>
+                <span class="impact-value">R$ 4.213</span>
+                <span class="impact-arrow">&rarr;</span>
+                <span class="impact-value">R$ 4.126</span>
+              </span>
+            </div>
+            <div class="budget-bar-container">
+              <div class="budget-bar-label">Supermercado</div>
+              <div class="budget-bar-track">
+                <div class="budget-bar-fill ok animated-bar" style="width: 73.7%;"></div>
+              </div>
+              <div class="budget-bar-values">
+                <span>R$ 2.122 / R$ 3.000</span>
+                <span style="color: var(--attention);">Resta R$ 878</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="desktop-sheet-footer">
+          <button class="btn-confirm" id="btnConfirmDesktop">✓ Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- BONUS: CREDIT CARD VARIATION                 -->
+  <!-- ════════════════════════════════════════════ -->
+  <hr class="section-divider">
+
+  <div class="section-header">
+    <h2>Bonus — Variação Cartão de Crédito (Parcelamento)</h2>
+    <p>Roller picker horizontal de parcelas aparece ao selecionar pagamento com cartão</p>
+  </div>
+
+  <div class="phone-row">
+    <div class="phone-column">
+      <div class="phone-label">
+        Parcelamento
+        <span>Roller picker horizontal de parcelas</span>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="overlay"></div>
+          <div class="bottom-sheet" style="height: 590px;">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+              <span class="sheet-title">Novo Gasto</span>
+              <button class="sheet-close" title="Fechar">✕</button>
+            </div>
+
+            <div class="bottom-sheet-scroll">
+              <div class="summary-bar">
+                <span class="summary-amount">R$ 87,00</span>
+                <span class="summary-sep">·</span>
+                <span class="summary-cat">&#x1F6D2; Supermercado</span>
+              </div>
+
+              <div class="field-label">Onde?</div>
+              <div class="chips-row">
+                <div class="chip-sm selected">Pão de Açúcar</div>
+                <div class="chip-sm">Extra</div>
+                <div class="chip-sm">Assaí</div>
+              </div>
+
+              <div class="field-label">Pagamento</div>
+              <div class="chips-row" id="ccPaymentChips">
+                <div class="chip-sm selected"><span class="method-brand method-brand-master"></span>Nubank Master</div>
+                <div class="chip-sm"><span class="method-brand method-brand-visa">VISA</span>Latam Visa</div>
+                <div class="chip-sm"><span class="method-brand method-brand-visa">VISA</span>Itaú Débito</div>
+                <div class="chip-sm">PIX</div>
+              </div>
+
+              <div class="field-label">Parcelas</div>
+              <div class="installment-section">
+                <div class="installment-roller">
+                  <div class="roller-fade-left"></div>
+                  <div class="roller-fade-right"></div>
+                  <div class="roller-highlight"></div>
+                  <div class="roller-track" id="installmentTrack">
+                    <span class="roller-item far" data-parcelas="0" data-valor="87,00" data-meses="Mar 2026">À vista</span>
+                    <span class="roller-item near" data-parcelas="1" data-valor="87,00" data-meses="Abr 2026">1x</span>
+                    <span class="roller-item selected" data-parcelas="2" data-valor="43,50" data-meses="Abr e Mai 2026">2x</span>
+                    <span class="roller-item near" data-parcelas="3" data-valor="29,00" data-meses="Abr a Jun 2026">3x</span>
+                    <span class="roller-item far" data-parcelas="4" data-valor="21,75" data-meses="Abr a Jul 2026">4x</span>
+                  </div>
+                </div>
+              </div>
+              <div class="installment-result">
+                <div class="installment-result-main" id="installmentResultMain">2x de R$ 43,50</div>
+                <div class="installment-result-sub" id="installmentResultSub">Abr e Mai 2026</div>
+              </div>
+
+              <div class="impact-preview" style="margin-top: 10px;">
+                <div class="impact-row">
+                  <span class="impact-label">Limite Nubank</span>
+                  <span>
+                    <span class="impact-value">R$ 8.500</span>
+                    <span class="impact-arrow">→</span>
+                    <span class="impact-value">R$ 8.413</span>
+                  </span>
+                </div>
+                <div class="budget-bar-container">
+                  <div class="budget-bar-label">Supermercado</div>
+                  <div class="budget-bar-track">
+                    <div class="budget-bar-fill ok animated-bar" style="width: 70.4%;"></div>
+                  </div>
+                  <div class="budget-bar-values">
+                    <span>R$ 2.079 / R$ 3.000</span>
+                    <span style="color: var(--attention);">Resta R$ 921</span>
+                  </div>
+                </div>
+                <div class="installment-impact-note">
+                  Comprometimento total no cartão: R$ 87,00
+                </div>
+              </div>
+            </div>
+
+            <div class="bottom-sheet-footer">
+              <button class="btn-confirm" id="btnConfirmCC">✓ Confirmar 2x R$ 43,50</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- INTERACTIVE JAVASCRIPT                       -->
+  <!-- ════════════════════════════════════════════ -->
+  <script>
+    // ── Chip selection (toggle in grids) ──
+    function setupChipSelection(containerId, multiSelect) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      const chips = container.querySelectorAll('.chip, .chip-sm, .installment-chip');
+      chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          if (!multiSelect) {
+            chips.forEach(c => c.classList.remove('selected'));
+          }
+          chip.classList.toggle('selected');
+        });
+      });
+    }
+
+    // Mobile category grid
+    setupChipSelection('catGrid', false);
+    // Mobile store chips
+    setupChipSelection('storeChips', false);
+    // Desktop category grid
+    setupChipSelection('desktopCatGrid', false);
+    // Desktop store chips
+    setupChipSelection('desktopStoreChips', false);
+
+    // ── Installment Roller Picker ──
+    const installmentTrack = document.getElementById('installmentTrack');
+    const resultMain = document.getElementById('installmentResultMain');
+    const resultSub = document.getElementById('installmentResultSub');
+    const btnConfirmCC = document.getElementById('btnConfirmCC');
+
+    if (installmentTrack) {
+      const rollerItems = installmentTrack.querySelectorAll('.roller-item');
+      rollerItems.forEach((item, idx) => {
+        item.addEventListener('click', () => {
+          // Clear all distance classes
+          rollerItems.forEach(i => i.classList.remove('selected', 'near', 'far'));
+          // Set selected
+          item.classList.add('selected');
+          // Set near/far based on distance from selected
+          rollerItems.forEach((i, iIdx) => {
+            if (i === item) return;
+            const dist = Math.abs(iIdx - idx);
+            if (dist === 1) i.classList.add('near');
+            else i.classList.add('far');
+          });
+          // Update result text
+          const parcelas = item.dataset.parcelas;
+          const valor = item.dataset.valor;
+          const meses = item.dataset.meses;
+          const label = item.textContent.trim();
+          if (resultMain) {
+            resultMain.textContent = label === 'À vista'
+              ? 'R$ ' + valor + ' à vista'
+              : parcelas + 'x de R$ ' + valor;
+          }
+          if (resultSub) resultSub.textContent = meses;
+          if (btnConfirmCC) {
+            btnConfirmCC.textContent = label === 'À vista'
+              ? '✓ Confirmar R$ 87,00 à vista'
+              : '✓ Confirmar ' + parcelas + 'x R$ ' + valor;
+          }
+        });
+      });
+    }
+
+    // CC payment chips
+    setupChipSelection('ccPaymentChips', false);
+
+    // ── Keypad interaction (State 1) ──
+    const keypad = document.getElementById('keypad1');
+    const displayEl = keypad?.closest('.bottom-sheet')?.querySelector('.valor-amount');
+    let currentValue = '';
+
+    if (keypad && displayEl) {
+      keypad.querySelectorAll('.key').forEach(key => {
+        key.addEventListener('click', () => {
+          const val = key.dataset.val;
+          if (val === 'back') {
+            currentValue = currentValue.slice(0, -1);
+          } else {
+            if (currentValue.length < 10) {
+              currentValue += val;
+            }
+          }
+
+          if (currentValue === '') {
+            displayEl.textContent = '____';
+            displayEl.classList.add('placeholder');
+          } else {
+            displayEl.textContent = formatCurrency(currentValue);
+            displayEl.classList.remove('placeholder');
+          }
+        });
+      });
+    }
+
+    function formatCurrency(raw) {
+      // Simple display: just show what was typed
+      if (raw.includes(',')) {
+        return raw;
+      }
+      return raw;
+    }
+
+    // ── Confirm button feedback ──
+    function setupConfirmButton(btnId, originalText) {
+      const btn = document.getElementById(btnId);
+      if (btn) {
+        const origText = originalText || btn.textContent;
+        btn.addEventListener('click', () => {
+          btn.style.background = '#22C55E';
+          btn.textContent = '✓ Registrado!';
+          setTimeout(() => {
+            btn.style.background = '';
+            btn.textContent = origText;
+          }, 2000);
+        });
+      }
+    }
+
+    setupConfirmButton('btnConfirm', '✓ Confirmar');
+    setupConfirmButton('btnConfirmDesktop', '✓ Confirmar');
+
+    // CC confirm button (special: updates text dynamically)
+    if (btnConfirmCC) {
+      btnConfirmCC.addEventListener('click', () => {
+        const origText = btnConfirmCC.textContent;
+        btnConfirmCC.style.background = '#22C55E';
+        btnConfirmCC.textContent = '✓ Registrado!';
+        setTimeout(() => {
+          btnConfirmCC.style.background = '';
+          btnConfirmCC.textContent = origText;
+        }, 2000);
+      });
+    }
+
+    // ── Animate budget bars on scroll into view ──
+    const bars = document.querySelectorAll('.animated-bar');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const bar = entry.target;
+          const targetWidth = bar.style.width;
+          bar.style.width = '0%';
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              bar.style.width = targetWidth;
+            });
+          });
+          observer.unobserve(bar);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    bars.forEach(bar => observer.observe(bar));
+
+    // ── Close button clicks (visual feedback only) ──
+    document.querySelectorAll('.sheet-close').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const sheet = btn.closest('.bottom-sheet') || btn.closest('.desktop-sheet');
+        if (sheet) {
+          sheet.style.opacity = '0.5';
+          sheet.style.transform = 'translateY(10px)';
+          setTimeout(() => {
+            sheet.style.opacity = '';
+            sheet.style.transform = '';
+          }, 600);
+        }
+      });
+    });
+
+    // ── Payment selector click feedback ──
+    document.querySelectorAll('.payment-selector').forEach(sel => {
+      sel.addEventListener('click', () => {
+        sel.style.borderColor = 'var(--primary)';
+        setTimeout(() => {
+          sel.style.borderColor = '';
+        }, 800);
+      });
+    });
+  </script>
+
+</body>
+</html>

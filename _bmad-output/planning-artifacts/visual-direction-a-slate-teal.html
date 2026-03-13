@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caderninho — Direção A: Slate & Teal</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #FAFAFA;
+    --surface: #FFFFFF;
+    --border: #E2E8F0;
+    --border-hover: #CBD5E1;
+    --text-primary: #1E293B;
+    --text-secondary: #64748B;
+    --text-tertiary: #94A3B8;
+    --primary: #0D9488;
+    --primary-hover: #0F766E;
+    --primary-light: #CCFBF1;
+    --positive: #10B981;
+    --positive-bg: #D1FAE5;
+    --positive-text: #065F46;
+    --informative: #64748B;
+    --attention: #F59E0B;
+    --attention-bg: #FEF3C7;
+    --attention-text: #92400E;
+    --alert: #F97316;
+    --alert-bg: #FFF7ED;
+    --critical: #EF4444;
+    --critical-bg: #FEE2E2;
+    --critical-text: #991B1B;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.5;
+    padding: 24px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header h1 { font-size: 20px; font-weight: 600; color: var(--text-primary); }
+  .header .subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+  .header .badge {
+    display: inline-block; margin-top: 8px; padding: 4px 12px;
+    background: var(--primary-light); color: var(--primary); border-radius: 100px;
+    font-size: 12px; font-weight: 500;
+  }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 900px; margin: 0 auto; }
+  .full-width { grid-column: 1 / -1; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; transition: box-shadow 0.2s;
+  }
+  .card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .card-title {
+    font-size: 12px; font-weight: 500; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;
+  }
+
+  /* Dashboard summary */
+  .summary-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-label { font-size: 14px; color: var(--text-secondary); }
+  .summary-value { font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .summary-value.positive { color: var(--positive); }
+  .summary-value.attention { color: var(--attention); }
+  .summary-value.critical { color: var(--critical); }
+
+  /* Status badge */
+  .status {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 100px; font-size: 12px; font-weight: 500;
+  }
+  .status.ok { background: var(--positive-bg); color: var(--positive-text); }
+  .status.warn { background: var(--attention-bg); color: var(--attention-text); }
+  .status.danger { background: var(--critical-bg); color: var(--critical-text); }
+
+  /* Budget bars */
+  .budget-item { margin-bottom: 16px; }
+  .budget-item:last-child { margin-bottom: 0; }
+  .budget-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .budget-name { font-size: 13px; font-weight: 500; }
+  .budget-values { font-size: 12px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .budget-bar { height: 8px; background: #F1F5F9; border-radius: 100px; overflow: hidden; }
+  .budget-fill { height: 100%; border-radius: 100px; transition: width 0.5s ease; }
+  .budget-fill.ok { background: linear-gradient(90deg, var(--positive), var(--primary)); }
+  .budget-fill.near { background: var(--attention); }
+  .budget-fill.over { background: var(--critical); }
+  .budget-rest { font-size: 11px; color: var(--text-tertiary); margin-top: 4px; }
+
+  /* Golden Rule Gauge */
+  .gauge-container { text-align: center; padding: 16px 0; }
+  .gauge-visual {
+    width: 180px; height: 100px; margin: 0 auto 12px; position: relative;
+    overflow: hidden;
+  }
+  .gauge-bg {
+    width: 180px; height: 180px; border-radius: 50%;
+    border: 16px solid #F1F5F9; border-bottom-color: transparent;
+    border-left-color: transparent; transform: rotate(225deg); position: absolute; top: 0;
+  }
+  .gauge-fill {
+    width: 180px; height: 180px; border-radius: 50%;
+    border: 16px solid transparent; border-top-color: var(--primary);
+    border-right-color: var(--primary); transform: rotate(225deg);
+    position: absolute; top: 0;
+    clip-path: polygon(0 0, 75% 0, 75% 100%, 0 100%);
+  }
+  .gauge-label { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .gauge-sublabel { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .gauge-detail { font-size: 11px; color: var(--text-tertiary); margin-top: 8px; }
+
+  /* Cascade Input mockup */
+  .cascade-mockup {
+    background: var(--surface); border-radius: 16px;
+    padding: 24px; border: 1px solid var(--border);
+  }
+  .cascade-value {
+    font-size: 32px; font-weight: 700; text-align: center;
+    margin-bottom: 20px; font-variant-numeric: tabular-nums;
+  }
+  .cascade-value span { color: var(--text-tertiary); font-weight: 400; }
+  .cascade-section-label {
+    font-size: 11px; color: var(--text-secondary); text-transform: uppercase;
+    letter-spacing: 0.5px; margin-bottom: 8px;
+  }
+  .cascade-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .chip {
+    padding: 8px 16px; border-radius: 100px; font-size: 13px;
+    border: 1px solid var(--border); background: var(--surface); cursor: pointer;
+    transition: all 0.15s;
+  }
+  .chip:hover { border-color: var(--primary); color: var(--primary); }
+  .chip.selected {
+    background: var(--primary); color: white; border-color: var(--primary);
+  }
+  .cascade-impact {
+    background: #F8FAFC; border-radius: 8px; padding: 12px 16px;
+    margin-top: 16px; border-left: 3px solid var(--primary);
+  }
+  .cascade-impact-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+  .cascade-impact-row:last-child { margin-bottom: 0; }
+  .cascade-impact-row .label { color: var(--text-secondary); }
+  .cascade-impact-row .value { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .cascade-impact-bar { margin-top: 8px; }
+  .btn-confirm {
+    display: block; width: 100%; margin-top: 20px; padding: 14px;
+    background: var(--primary); color: white; border: none; border-radius: 10px;
+    font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.15s;
+  }
+  .btn-confirm:hover { background: var(--primary-hover); }
+
+  /* Tap to trace */
+  .trace-container { font-size: 14px; }
+  .trace-total {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; background: #F8FAFC; border-radius: 8px;
+    cursor: pointer; margin-bottom: 8px; border: 1px solid var(--border);
+  }
+  .trace-total:hover { border-color: var(--primary); }
+  .trace-total .label { color: var(--text-secondary); }
+  .trace-total .value { font-weight: 700; font-size: 18px; font-variant-numeric: tabular-nums; }
+  .trace-breakdown {
+    padding: 0 8px; border-left: 2px solid var(--border); margin-left: 16px;
+  }
+  .trace-line {
+    display: flex; justify-content: space-between; padding: 8px 12px;
+    border-radius: 6px; cursor: pointer; font-size: 13px; transition: background 0.1s;
+  }
+  .trace-line:hover { background: #F8FAFC; }
+  .trace-line .label { color: var(--text-secondary); }
+  .trace-line .value { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .trace-line.negative .value { color: var(--critical); }
+  .trace-result {
+    display: flex; justify-content: space-between; padding: 10px 12px;
+    border-top: 1px solid var(--border); margin-top: 4px; font-weight: 600;
+  }
+  .trace-breadcrumb { font-size: 11px; color: var(--text-tertiary); margin-bottom: 12px; }
+  .trace-breadcrumb span { color: var(--primary); cursor: pointer; }
+
+  /* Timeline */
+  .timeline-months { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; }
+  .timeline-month {
+    min-width: 160px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px; flex-shrink: 0;
+  }
+  .timeline-month-header {
+    font-size: 13px; font-weight: 600; margin-bottom: 10px;
+    padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  }
+  .timeline-item {
+    font-size: 12px; padding: 6px 8px; margin-bottom: 4px;
+    border-radius: 6px; background: #F8FAFC;
+    display: flex; justify-content: space-between;
+  }
+  .timeline-item.draggable {
+    border: 1px dashed var(--border-hover); cursor: grab; background: var(--surface);
+  }
+  .timeline-item .name { color: var(--text-secondary); }
+  .timeline-item .amount { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .timeline-margin {
+    margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center; font-size: 12px;
+  }
+  .timeline-margin .label { color: var(--text-secondary); }
+  .timeline-margin .value { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .timeline-margin .value.positive { color: var(--positive); }
+  .timeline-margin .value.negative { color: var(--critical); }
+
+  /* View mode toggle */
+  .view-toggle {
+    display: inline-flex; background: #F1F5F9; border-radius: 8px; padding: 3px;
+    margin-bottom: 16px;
+  }
+  .view-toggle button {
+    padding: 6px 14px; border: none; background: transparent; border-radius: 6px;
+    font-size: 12px; color: var(--text-secondary); cursor: pointer; transition: all 0.15s;
+  }
+  .view-toggle button.active {
+    background: var(--surface); color: var(--text-primary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08); font-weight: 500;
+  }
+
+  /* Celebration */
+  .celebration {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; background: var(--positive-bg); border-radius: 8px;
+    font-size: 13px; color: var(--positive-text);
+  }
+
+  .section-title {
+    font-size: 16px; font-weight: 600; margin: 32px 0 16px; color: var(--text-primary);
+  }
+  .section-title:first-of-type { margin-top: 0; }
+
+  @media (max-width: 768px) {
+    .grid { grid-template-columns: 1fr; }
+    body { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Caderninho</h1>
+  <div class="subtitle">Direcao Visual A — Slate & Teal</div>
+  <div class="badge">Profissional com calor</div>
+</div>
+
+<div class="grid">
+
+  <!-- Dashboard Summary -->
+  <div class="card">
+    <div class="card-title">Resumo de Marco</div>
+    <div class="summary-row">
+      <span class="summary-label">Saldo total contas</span>
+      <span class="summary-value">R$ 19.200</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">Contas a pagar</span>
+      <span class="summary-value">R$ 8.400</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">Faturas de cartao</span>
+      <span class="summary-value">R$ 7.180</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">Valor disponivel livre</span>
+      <span class="summary-value positive">R$ 320</span>
+    </div>
+  </div>
+
+  <!-- Golden Rule -->
+  <div class="card">
+    <div class="card-title">Regra de Ouro</div>
+    <div class="gauge-container">
+      <div class="gauge-visual">
+        <div class="gauge-bg"></div>
+        <div class="gauge-fill"></div>
+      </div>
+      <div class="gauge-label">78%</div>
+      <div class="gauge-sublabel">Comprometimento em cartoes vs. saldo</div>
+      <div class="gauge-detail">R$ 7.180 em cartoes / R$ 19.200 em conta</div>
+      <div style="margin-top: 10px;">
+        <span class="status ok">Dentro do limite</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Budget Progress -->
+  <div class="card">
+    <div class="card-title">Orcamentos do Mes</div>
+    <div class="view-toggle">
+      <button class="active">Visual</button>
+      <button>Lista</button>
+      <button>Timeline</button>
+    </div>
+    <div class="budget-item">
+      <div class="budget-header">
+        <span class="budget-name">Supermercado</span>
+        <span class="budget-values">R$ 2.122 / R$ 3.000</span>
+      </div>
+      <div class="budget-bar"><div class="budget-fill ok" style="width: 70.7%"></div></div>
+      <div class="budget-rest">Resta R$ 878</div>
+    </div>
+    <div class="budget-item">
+      <div class="budget-header">
+        <span class="budget-name">Escola</span>
+        <span class="budget-values">R$ 2.800 / R$ 2.800</span>
+      </div>
+      <div class="budget-bar"><div class="budget-fill ok" style="width: 100%"></div></div>
+      <div class="budget-rest">Pago integralmente</div>
+    </div>
+    <div class="budget-item">
+      <div class="budget-header">
+        <span class="budget-name">Gasolina</span>
+        <span class="budget-values">R$ 420 / R$ 600</span>
+      </div>
+      <div class="budget-bar"><div class="budget-fill ok" style="width: 70%"></div></div>
+      <div class="budget-rest">Resta R$ 180</div>
+    </div>
+    <div class="budget-item">
+      <div class="budget-header">
+        <span class="budget-name">Restaurante</span>
+        <span class="budget-values">R$ 1.800 / R$ 1.500</span>
+      </div>
+      <div class="budget-bar"><div class="budget-fill over" style="width: 100%"></div></div>
+      <div class="budget-rest" style="color: var(--critical);">Estourou R$ 300</div>
+    </div>
+    <div class="budget-item">
+      <div class="budget-header">
+        <span class="budget-name">Outros</span>
+        <span class="budget-values">R$ 450 / R$ 2.000</span>
+      </div>
+      <div class="budget-bar"><div class="budget-fill ok" style="width: 22.5%"></div></div>
+      <div class="budget-rest">Resta R$ 1.550</div>
+    </div>
+  </div>
+
+  <!-- Tap to Trace -->
+  <div class="card">
+    <div class="card-title">Tap to Trace</div>
+    <div class="trace-container">
+      <div class="trace-breadcrumb">Dashboard > <span>Valor disponivel livre</span></div>
+      <div class="trace-total">
+        <span class="label">Valor disponivel livre</span>
+        <span class="value">R$ 320</span>
+      </div>
+      <div class="trace-breakdown">
+        <div class="trace-line">
+          <span class="label">Saldo total contas</span>
+          <span class="value">R$ 19.200</span>
+        </div>
+        <div class="trace-line negative">
+          <span class="label">- Contas a pagar</span>
+          <span class="value">- R$ 8.400</span>
+        </div>
+        <div class="trace-line negative">
+          <span class="label">- Faturas cartao</span>
+          <span class="value">- R$ 7.180</span>
+        </div>
+        <div class="trace-line negative">
+          <span class="label">- Orcamentos restantes</span>
+          <span class="value">- R$ 3.300</span>
+        </div>
+        <div class="trace-result">
+          <span class="label">= Disponivel livre</span>
+          <span class="value" style="color: var(--positive);">R$ 320</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cascade Input -->
+  <div class="card full-width">
+    <div class="card-title">Registro Rapido (Cascade Input)</div>
+    <div class="cascade-mockup" style="max-width: 380px; margin: 0 auto;">
+      <div class="cascade-value"><span>R$ </span>87<span>,00</span></div>
+      <div class="cascade-section-label">Categoria</div>
+      <div class="cascade-chips">
+        <div class="chip selected">Supermercado</div>
+        <div class="chip">Gasolina</div>
+        <div class="chip">Restaurante</div>
+        <div class="chip">Outros</div>
+      </div>
+      <div class="cascade-section-label">Onde?</div>
+      <div class="cascade-chips">
+        <div class="chip selected">Pao de Acucar</div>
+        <div class="chip">Extra</div>
+        <div class="chip">Assai</div>
+      </div>
+      <div class="cascade-section-label">Pagamento</div>
+      <div class="cascade-chips">
+        <div class="chip selected">Latam Pass Visa</div>
+        <div class="chip">Itau Debito</div>
+      </div>
+      <div class="cascade-impact">
+        <div class="cascade-impact-row">
+          <span class="label">Limite Latam Pass</span>
+          <span class="value">R$ 4.213 → R$ 4.126</span>
+        </div>
+        <div class="cascade-impact-row">
+          <span class="label">Orcamento Supermercado</span>
+          <span class="value">R$ 2.122 / R$ 3.000</span>
+        </div>
+        <div class="cascade-impact-bar">
+          <div class="budget-bar"><div class="budget-fill ok" style="width: 70.7%"></div></div>
+          <div class="budget-rest">Resta R$ 878</div>
+        </div>
+      </div>
+      <button class="btn-confirm">Confirmar</button>
+    </div>
+  </div>
+
+  <!-- Tamires Dashboard -->
+  <div class="card full-width">
+    <div class="card-title">Dashboard da Tamires — "Entendi sem perguntar"</div>
+    <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
+      <span class="status ok">Gastos regulares dentro do planejado</span>
+    </div>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+      <div style="flex: 1; min-width: 200px; padding: 16px; background: var(--positive-bg); border-radius: 10px;">
+        <div style="font-size: 12px; color: var(--positive-text); margin-bottom: 4px;">Gastos regulares</div>
+        <div style="font-size: 22px; font-weight: 700; color: var(--positive-text); font-variant-numeric: tabular-nums;">R$ 12.600</div>
+        <div style="font-size: 12px; color: var(--positive-text); margin-top: 4px;">Dentro do planejado</div>
+      </div>
+      <div style="flex: 1; min-width: 200px; padding: 16px; background: var(--attention-bg); border-radius: 10px;">
+        <div style="font-size: 12px; color: var(--attention-text); margin-bottom: 4px;">Fora do planejado</div>
+        <div style="font-size: 22px; font-weight: 700; color: var(--attention-text); font-variant-numeric: tabular-nums;">R$ 10.400</div>
+        <div style="font-size: 12px; color: var(--attention-text); margin-top: 4px;">Viagem R$ 9.000 + Motor R$ 1.400</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline Kanban -->
+  <div class="card full-width">
+    <div class="card-title">Timeline de Planejamento (Kanban)</div>
+    <div class="view-toggle">
+      <button>Visual</button>
+      <button>Lista</button>
+      <button class="active">Timeline</button>
+    </div>
+    <div class="timeline-months">
+      <div class="timeline-month">
+        <div class="timeline-month-header">Mar 2026</div>
+        <div class="timeline-item"><span class="name">Escola</span><span class="amount">R$ 2.800</span></div>
+        <div class="timeline-item"><span class="name">Fotos 8/10</span><span class="amount">R$ 171</span></div>
+        <div class="timeline-margin">
+          <span class="label">Margem</span>
+          <span class="value positive">R$ 750</span>
+        </div>
+      </div>
+      <div class="timeline-month">
+        <div class="timeline-month-header">Abr 2026</div>
+        <div class="timeline-item"><span class="name">Escola</span><span class="amount">R$ 2.800</span></div>
+        <div class="timeline-item"><span class="name">Fotos 9/10</span><span class="amount">R$ 171</span></div>
+        <div class="timeline-margin">
+          <span class="label">Margem</span>
+          <span class="value positive">R$ 920</span>
+        </div>
+      </div>
+      <div class="timeline-month">
+        <div class="timeline-month-header">Mai 2026</div>
+        <div class="timeline-item"><span class="name">Escola</span><span class="amount">R$ 2.800</span></div>
+        <div class="timeline-item" style="background: var(--positive-bg);">
+          <span class="name" style="color: var(--positive-text);">Fotos 10/10 ✓</span>
+          <span class="amount" style="color: var(--positive-text);">Libera R$171</span>
+        </div>
+        <div class="timeline-margin">
+          <span class="label">Margem</span>
+          <span class="value positive">R$ 1.091</span>
+        </div>
+      </div>
+      <div class="timeline-month">
+        <div class="timeline-month-header">Set 2026</div>
+        <div class="timeline-item draggable"><span class="name">Seguro Carro</span><span class="amount">R$ 2.800</span></div>
+        <div class="timeline-item draggable"><span class="name">Troca Oleo</span><span class="amount">R$ 500</span></div>
+        <div class="timeline-margin">
+          <span class="label">Margem</span>
+          <span class="value negative">- R$ 1.600</span>
+        </div>
+      </div>
+      <div class="timeline-month">
+        <div class="timeline-month-header">Nov 2026</div>
+        <div class="timeline-item draggable"><span class="name">Rematricula</span><span class="amount">R$ 1.200</span></div>
+        <div class="timeline-item draggable"><span class="name">Mat. Escolar</span><span class="amount">R$ 1.500</span></div>
+        <div class="timeline-margin">
+          <span class="label">Margem</span>
+          <span class="value negative">- R$ 780</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Celebration -->
+  <div class="card full-width">
+    <div class="card-title">Celebracoes Sobrias</div>
+    <div class="celebration" style="margin-bottom: 10px;">
+      <span>✅</span>
+      <span>Marco fechou dentro do planejado</span>
+    </div>
+    <div class="celebration" style="background: var(--primary-light); color: var(--primary-hover); margin-bottom: 10px;">
+      <span>↗</span>
+      <span>Reserva: R$ 12.500 (+R$ 500 este mes)</span>
+    </div>
+    <div class="celebration" style="background: #F8FAFC; color: var(--text-secondary);">
+      <span>🔓</span>
+      <span>Parcela Fotos concluida — R$ 171/mes liberados a partir de abril</span>
+    </div>
+  </div>
+
+  <!-- Alert Scale -->
+  <div class="card full-width">
+    <div class="card-title">Escala de Gravidade</div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div style="padding: 10px 16px; background: #F8FAFC; border-radius: 8px; border-left: 3px solid var(--informative); font-size: 13px; color: var(--text-secondary);">
+        <strong>Informativo:</strong> Restaurante chegou a 80% do orcamento
+      </div>
+      <div style="padding: 10px 16px; background: var(--attention-bg); border-radius: 8px; border-left: 3px solid var(--attention); font-size: 13px; color: var(--attention-text);">
+        <strong>Atencao:</strong> Restaurante estourou o orcamento em R$ 300
+      </div>
+      <div style="padding: 10px 16px; background: var(--alert-bg); border-radius: 8px; border-left: 3px solid var(--alert); font-size: 13px; color: #9A3412;">
+        <strong>Alerta:</strong> Comprometimento em cartoes atingiu 92% do saldo
+      </div>
+      <div style="padding: 10px 16px; background: var(--critical-bg); border-radius: 8px; border-left: 3px solid var(--critical); font-size: 13px; color: var(--critical-text);">
+        <strong>Critico:</strong> Mes projetado para fechar negativo em R$ 1.200
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

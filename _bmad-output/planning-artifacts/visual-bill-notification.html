@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caderninho — Sinalização de Contas a Pagar (Versão Final)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #FAFAF9;
+    --surface: #FFFFFF;
+    --border: #E7E5E4;
+    --border-hover: #D6D3D1;
+    --text-primary: #1C1917;
+    --text-secondary: #78716C;
+    --text-tertiary: #A8A29E;
+    --primary: #4F46E5;
+    --primary-hover: #4338CA;
+    --primary-light: #EEF2FF;
+    --positive: #22C55E;
+    --positive-bg: #DCFCE7;
+    --positive-text: #166534;
+    --attention: #EAB308;
+    --attention-bg: #FEF9C3;
+    --attention-text: #854D0E;
+    --alert: #F97316;
+    --alert-bg: #FFF7ED;
+    --critical: #DC2626;
+    --critical-bg: #FEE2E2;
+    --critical-text: #991B1B;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #D6D3D1;
+    color: var(--text-primary);
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .showcase-header {
+    text-align: center;
+    padding: 40px 24px 32px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .showcase-header h1 { font-size: 24px; font-weight: 700; }
+  .showcase-header p {
+    font-size: 14px; color: var(--text-secondary);
+    margin-top: 6px; max-width: 750px;
+    margin-left: auto; margin-right: auto;
+  }
+
+  .section-divider {
+    text-align: center;
+    padding: 48px 24px 24px;
+  }
+  .section-divider h2 { font-size: 18px; font-weight: 600; }
+  .section-divider p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; max-width: 650px; margin: 4px auto 0; }
+
+  /* ========================================
+     DESKTOP FRAME
+     ======================================== */
+  .desktop-frame {
+    max-width: 1200px;
+    margin: 0 auto 48px;
+    padding: 0 24px;
+  }
+  .app-container {
+    display: flex;
+    background: var(--bg);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .sidebar {
+    width: 56px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 16px 0;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px; flex-shrink: 0;
+  }
+  .sidebar-logo {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 14px;
+    margin-bottom: 16px;
+  }
+  .sidebar-item {
+    width: 40px; height: 40px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary); cursor: pointer;
+    transition: all 0.15s; font-size: 18px;
+    position: relative;
+  }
+  .sidebar-item:hover { background: var(--bg); color: var(--text-primary); }
+  .sidebar-item.active { background: var(--primary-light); color: var(--primary); }
+  .si-badge {
+    position: absolute; top: 2px; right: 2px;
+    min-width: 16px; height: 16px;
+    background: var(--critical); color: white;
+    font-size: 9px; font-weight: 700;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 4px;
+  }
+  .si-dot {
+    position: absolute; top: 5px; right: 5px;
+    width: 8px; height: 8px;
+    background: var(--primary); border-radius: 50%;
+    border: 2px solid var(--surface);
+  }
+
+  .main-content {
+    flex: 1; padding: 24px; overflow-y: auto;
+  }
+
+  .top-bar {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 20px;
+  }
+  .top-bar h1 { font-size: 20px; font-weight: 700; }
+
+  /* Summary card */
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+  }
+  .summary-title {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--text-tertiary); margin-bottom: 10px;
+  }
+  .summary-line {
+    display: flex; justify-content: space-between;
+    padding: 4px 0; font-size: 13px;
+  }
+  .summary-label { color: var(--text-secondary); }
+  .summary-value { font-weight: 600; }
+  .summary-value.negative { color: var(--critical); }
+  .summary-divider { height: 1px; background: var(--border); margin: 8px 0; }
+  .summary-result {
+    display: flex; justify-content: space-between;
+    padding: 4px 0; font-size: 14px; font-weight: 700;
+  }
+
+  /* Dashboard grid */
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .dash-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .dc-title {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--text-tertiary); margin-bottom: 8px;
+  }
+  .dc-value { font-size: 22px; font-weight: 700; margin-bottom: 2px; }
+  .dc-sub { font-size: 12px; color: var(--text-secondary); }
+
+  /* ========================================
+     BANNER (aparece 1 dia antes e no dia)
+     ======================================== */
+  .bill-banner {
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .bill-banner.info {
+    background: var(--primary-light); border: 1px solid #C7D2FE;
+  }
+  .bill-banner.warn {
+    background: var(--critical-bg); border: 1px solid #FECACA;
+  }
+  .bill-banner.tomorrow {
+    background: #F0F9FF; border: 1px solid #BAE6FD;
+  }
+  .bill-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .bill-icon.info { background: var(--primary); color: white; }
+  .bill-icon.warn { background: var(--critical); color: white; }
+  .bill-icon.tomorrow { background: #0EA5E9; color: white; }
+  .bill-text { flex: 1; font-size: 13px; }
+  .bill-text strong { font-weight: 600; }
+  .bill-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .bill-btn {
+    padding: 6px 14px; border-radius: 6px; font-size: 12px;
+    font-weight: 500; cursor: pointer; border: none;
+    font-family: inherit; transition: all 0.15s;
+  }
+  .bill-btn-primary { background: var(--primary); color: white; }
+  .bill-btn-ghost { background: transparent; color: var(--primary); border: 1px solid #C7D2FE; }
+  .bill-btn-warn { background: var(--critical); color: white; }
+  .bill-btn-ghost-warn { background: transparent; color: var(--critical); border: 1px solid #FECACA; }
+  .bill-btn-sky { background: #0EA5E9; color: white; }
+  .bill-btn-ghost-sky { background: transparent; color: #0369A1; border: 1px solid #BAE6FD; }
+
+  /* ========================================
+     CARD DEDICADO — VENCIMENTOS DO MÊS
+     ======================================== */
+  .bills-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .bills-card-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .bch-left { display: flex; align-items: baseline; gap: 8px; }
+  .bch-title {
+    font-size: 13px; font-weight: 600;
+  }
+  .bch-subtitle {
+    font-size: 11px; color: var(--text-tertiary);
+  }
+
+  .bch-total-wrap {
+    text-align: right;
+  }
+  .bch-total-label {
+    font-size: 10px; color: var(--text-tertiary);
+    text-transform: uppercase; letter-spacing: 0.3px;
+  }
+  .bch-total-value {
+    font-size: 18px; font-weight: 700;
+  }
+  .bch-total-sub {
+    font-size: 10px; color: var(--text-tertiary);
+  }
+
+  .bills-progress {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .bp-bar { flex: 1; height: 5px; border-radius: 3px; background: var(--border); overflow: hidden; }
+  .bp-bar-fill {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--positive), #4ADE80);
+  }
+  .bp-label { font-size: 11px; color: var(--text-secondary); white-space: nowrap; }
+
+  .bill-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+  .bill-item:last-child { border-bottom: none; }
+  .bill-item:hover { background: var(--bg); }
+  .bill-item.overdue { background: #FEF2F2; }
+
+  .bi-status {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .bi-status.done { background: var(--positive); }
+  .bi-status.today { background: var(--primary); }
+  .bi-status.tomorrow { background: #0EA5E9; }
+  .bi-status.upcoming { background: var(--border-hover); }
+  .bi-status.overdue { background: var(--critical); }
+  .bi-status.auto { background: var(--positive); border: 2px solid var(--positive-bg); }
+
+  .bi-info { flex: 1; min-width: 0; }
+  .bi-name { font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+  .bi-detail { font-size: 11px; color: var(--text-tertiary); margin-top: 1px; }
+  .bi-tag {
+    font-size: 9px; font-weight: 600;
+    padding: 1px 6px; border-radius: 4px;
+    white-space: nowrap;
+  }
+  .tag-auto { background: #DBEAFE; color: #1E40AF; }
+  .tag-scheduled { background: #E0E7FF; color: #3730A3; }
+  .tag-card-rec { background: #F3E8FF; color: #6B21A8; }
+  .tag-variable { background: var(--attention-bg); color: var(--attention-text); }
+  .tag-overdue { background: var(--critical-bg); color: var(--critical-text); }
+
+  .bi-right { text-align: right; flex-shrink: 0; }
+  .bi-value { font-size: 13px; font-weight: 600; }
+  .bi-due { font-size: 10px; margin-top: 1px; }
+  .bi-due.today { color: var(--primary); font-weight: 600; }
+  .bi-due.tomorrow { color: #0369A1; font-weight: 500; }
+  .bi-due.upcoming { color: var(--text-tertiary); }
+  .bi-due.overdue { color: var(--critical); font-weight: 600; }
+  .bi-due.done { color: var(--positive-text); }
+
+  .bi-action {
+    width: 28px; height: 28px; border-radius: 6px;
+    border: 1px solid var(--border); background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; cursor: pointer; color: var(--text-secondary);
+    flex-shrink: 0; transition: all 0.15s;
+  }
+  .bi-action:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+  /* Bills footer with link */
+  .bills-footer {
+    padding: 10px 16px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--primary);
+    cursor: pointer;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .bills-footer:hover { background: var(--primary-light); }
+
+  /* ========================================
+     MOBILE
+     ======================================== */
+  .mobile-section {
+    max-width: 1300px;
+    margin: 0 auto 48px;
+    padding: 0 24px;
+    display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;
+  }
+  .mobile-frame {
+    width: 375px;
+    background: var(--bg);
+    border-radius: 32px;
+    border: 3px solid #1C1917;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  }
+  .mobile-notch {
+    width: 120px; height: 28px; background: #1C1917;
+    margin: 0 auto; border-radius: 0 0 16px 16px;
+  }
+  .mobile-body { padding: 8px 16px 0; min-height: 580px; }
+  .mobile-top {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0 10px;
+  }
+  .mobile-top h2 { font-size: 17px; font-weight: 700; }
+  .mobile-label {
+    padding: 6px 16px; font-size: 11px; color: var(--text-secondary);
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+
+  /* Mobile summary */
+  .m-summary {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px; margin-bottom: 10px;
+  }
+  .m-summary-title {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--text-tertiary); margin-bottom: 6px;
+  }
+  .m-summary-big { font-size: 22px; font-weight: 700; }
+  .m-summary-sub { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* Mobile banner */
+  .m-bill-banner {
+    border-radius: 8px; padding: 10px 12px;
+    margin-bottom: 10px; font-size: 12px;
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .m-bill-banner.info { background: var(--primary-light); border: 1px solid #C7D2FE; }
+  .m-bill-banner.warn { background: var(--critical-bg); border: 1px solid #FECACA; }
+  .m-bill-banner.tomorrow { background: #F0F9FF; border: 1px solid #BAE6FD; }
+  .m-bill-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .m-bill-text { flex: 1; }
+  .m-bill-text strong { font-weight: 600; }
+  .m-bill-actions { display: flex; gap: 6px; margin-top: 8px; }
+  .m-bill-btn {
+    flex: 1; padding: 8px; border-radius: 6px; text-align: center;
+    font-size: 11px; font-weight: 500; border: none; cursor: pointer;
+    font-family: inherit;
+  }
+
+  /* Mobile bills card */
+  .m-bills-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden; margin-bottom: 10px;
+  }
+  .m-bills-header {
+    padding: 12px 12px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .m-bh-top {
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .m-bh-title { font-size: 13px; font-weight: 600; }
+  .m-bh-total { font-size: 15px; font-weight: 700; }
+  .m-bh-sub { font-size: 10px; color: var(--text-tertiary); margin-top: 2px; }
+  .m-bh-progress {
+    margin-top: 8px; display: flex; align-items: center; gap: 8px;
+  }
+  .m-bp-bar { flex: 1; height: 4px; border-radius: 2px; background: var(--border); overflow: hidden; }
+  .m-bp-bar-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--positive), #4ADE80); }
+  .m-bp-label { font-size: 10px; color: var(--text-secondary); white-space: nowrap; }
+
+  .m-bill-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 12px; border-bottom: 1px solid var(--border);
+  }
+  .m-bill-item:last-child { border-bottom: none; }
+  .m-bill-item.overdue { background: #FEF2F2; }
+  .mbi-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .mbi-info { flex: 1; min-width: 0; }
+  .mbi-name { font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 4px; }
+  .mbi-sub { font-size: 10px; color: var(--text-tertiary); }
+  .mbi-right { text-align: right; flex-shrink: 0; }
+  .mbi-value { font-size: 12px; font-weight: 600; }
+  .mbi-due { font-size: 10px; }
+
+  .m-bi-tag {
+    font-size: 8px; font-weight: 600;
+    padding: 1px 4px; border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .m-bills-footer {
+    padding: 8px 12px; text-align: center;
+    font-size: 11px; color: var(--primary);
+    background: var(--bg); border-top: 1px solid var(--border);
+  }
+
+  /* Bottom nav */
+  .bottom-nav {
+    display: flex; background: var(--surface);
+    border-top: 1px solid var(--border); padding: 6px 0 14px;
+  }
+  .bn-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; gap: 2px; font-size: 10px;
+    color: var(--text-tertiary); cursor: pointer; padding: 4px 0;
+    position: relative;
+  }
+  .bn-item.active { color: var(--primary); font-weight: 500; }
+  .bn-icon { font-size: 18px; height: 22px; display: flex; align-items: center; position: relative; }
+  .fab {
+    width: 48px; height: 48px;
+    background: var(--primary); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 24px; font-weight: 300;
+    margin-top: -20px;
+    box-shadow: 0 2px 12px rgba(79, 70, 229, 0.3);
+  }
+  .bn-badge {
+    position: absolute; top: -2px; right: -6px;
+    min-width: 14px; height: 14px;
+    background: var(--critical); color: white;
+    font-size: 8px; font-weight: 700;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 3px;
+    border: 2px solid var(--surface);
+  }
+  .bn-dot {
+    position: absolute; top: 0; right: -3px;
+    width: 7px; height: 7px;
+    background: var(--primary); border-radius: 50%;
+    border: 1.5px solid var(--surface);
+  }
+
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .pulse { animation: pulse 2s ease-in-out infinite; }
+
+  /* Info card */
+  .info-card {
+    max-width: 1200px; margin: 0 auto 32px; padding: 0 24px;
+  }
+  .info-inner {
+    background: var(--primary-light); border: 1px solid #C7D2FE;
+    border-radius: 12px; padding: 20px 24px;
+    display: flex; gap: 16px; align-items: flex-start;
+  }
+  .info-icon-box {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--primary); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .info-inner h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .info-inner p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<div class="showcase-header">
+  <h1>Sinalização de Contas a Pagar — Versão Final</h1>
+  <p>Card dedicado com total pendente do mês (sempre visível) + banner de alerta 1 dia antes e no dia do vencimento. Tipos reais de conta: débito automático, agendado no banco, recorrente no cartão, variável (fatura).</p>
+</div>
+
+<!-- ================================================
+     CENÁRIO 1 — DIA NORMAL (10/MAR)
+     Sem vencimento hoje. Banner do dia seguinte.
+     ================================================ -->
+<div class="section-divider">
+  <h2>Cenário 1 — Dia 10 de março (véspera de vencimento)</h2>
+  <p>Sem vencimento hoje. O banner azul avisa que amanhã vence o Plano de Saúde. O card mostra o total pendente do mês.</p>
+</div>
+
+<div class="desktop-frame">
+  <div class="app-container" style="min-height: 640px;">
+    <div class="sidebar">
+      <div class="sidebar-logo">C</div>
+      <div class="sidebar-item active">◻</div>
+      <div class="sidebar-item">☰</div>
+      <div class="sidebar-item" style="position:relative;">✓<div class="si-dot"></div></div>
+      <div class="sidebar-item">→</div>
+      <div class="sidebar-item" style="margin-top:auto;">⚙</div>
+    </div>
+    <div class="main-content">
+      <div class="top-bar">
+        <h1>Dashboard — Março 2026</h1>
+        <span style="font-size:13px; color:var(--text-secondary);">10 de março · Olá, Vitor</span>
+      </div>
+
+      <!-- Banner véspera -->
+      <div class="bill-banner tomorrow">
+        <div class="bill-icon tomorrow">📅</div>
+        <div class="bill-text">
+          <strong>Amanhã</strong> vence <strong>Plano de Saúde — R$ 890</strong> (débito automático, Conta Itaú)
+        </div>
+        <div class="bill-actions">
+          <button class="bill-btn bill-btn-sky">Já paguei</button>
+          <button class="bill-btn bill-btn-ghost-sky">Lembrar amanhã</button>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="summary-card">
+        <div class="summary-title">Resumo do mês</div>
+        <div class="summary-line"><span class="summary-label">Saldo total contas</span><span class="summary-value">R$ 19.200</span></div>
+        <div class="summary-line"><span class="summary-label">− Contas a pagar</span><span class="summary-value negative">− R$ 8.400</span></div>
+        <div class="summary-line"><span class="summary-label">− Faturas cartão</span><span class="summary-value negative">− R$ 7.180</span></div>
+        <div class="summary-line"><span class="summary-label">− Orçamentos restantes</span><span class="summary-value negative">− R$ 3.300</span></div>
+        <div class="summary-divider"></div>
+        <div class="summary-result"><span>Disponível livre</span><span style="color:var(--positive);">R$ 320</span></div>
+      </div>
+
+      <div class="dash-grid">
+        <!-- CARD VENCIMENTOS com total -->
+        <div class="bills-card" style="grid-column: span 2;">
+          <div class="bills-card-header">
+            <div class="bch-left">
+              <div class="bch-title">Contas do mês</div>
+              <div class="bch-subtitle">14 contas · 10 confirmadas</div>
+            </div>
+            <div class="bch-total-wrap">
+              <div class="bch-total-label">Falta pagar</div>
+              <div class="bch-total-value" style="color: var(--critical);">R$ 4.268</div>
+              <div class="bch-total-sub">de R$ 16.758 total</div>
+            </div>
+          </div>
+          <div class="bills-progress">
+            <div class="bp-label" style="color:var(--positive-text);">R$ 12.490 pagos</div>
+            <div class="bp-bar"><div class="bp-bar-fill" style="width: 74%;"></div></div>
+            <div class="bp-label">74%</div>
+          </div>
+
+          <!-- Amanhã -->
+          <div class="bill-item" style="background: #F0F9FF;">
+            <div class="bi-status tomorrow"></div>
+            <div class="bi-info">
+              <div class="bi-name">Plano de Saúde <span class="bi-tag tag-auto">Débito automático</span></div>
+              <div class="bi-detail">Conta Itaú · Aguardando débito</div>
+            </div>
+            <div class="bi-right">
+              <div class="bi-value">R$ 890</div>
+              <div class="bi-due tomorrow">Amanhã</div>
+            </div>
+            <div class="bi-action">✓</div>
+          </div>
+          <!-- Fatura Latam -->
+          <div class="bill-item">
+            <div class="bi-status upcoming"></div>
+            <div class="bi-info">
+              <div class="bi-name">Fatura Latam Pass Visa <span class="bi-tag tag-variable">Variável</span></div>
+              <div class="bi-detail">Estimativa · Atualizar quando a fatura fechar</div>
+            </div>
+            <div class="bi-right">
+              <div class="bi-value">R$ 2.200</div>
+              <div class="bi-due upcoming">15/mar</div>
+            </div>
+          </div>
+          <!-- Fatura Pão de Açúcar -->
+          <div class="bill-item">
+            <div class="bi-status upcoming"></div>
+            <div class="bi-info">
+              <div class="bi-name">Fatura Pão de Açúcar <span class="bi-tag tag-variable">Variável</span></div>
+              <div class="bi-detail">Estimativa · Atualizar quando a fatura fechar</div>
+            </div>
+            <div class="bi-right">
+              <div class="bi-value">R$ 1.020</div>
+              <div class="bi-due upcoming">20/mar</div>
+            </div>
+          </div>
+          <!-- Confirmado recente -->
+          <div class="bill-item" style="opacity: 0.5;">
+            <div class="bi-status done"></div>
+            <div class="bi-info">
+              <div class="bi-name">Seguro do carro <span class="bi-tag tag-auto">Débito automático</span></div>
+              <div class="bi-detail">Conta Bradesco · Debitado em 10/mar ✓</div>
+            </div>
+            <div class="bi-right">
+              <div class="bi-value" style="color:var(--positive-text); text-decoration:line-through;">R$ 340</div>
+              <div class="bi-due done">✓ Confirmado</div>
+            </div>
+          </div>
+          <!-- Confirmado -->
+          <div class="bill-item" style="opacity: 0.5;">
+            <div class="bi-status done"></div>
+            <div class="bi-info">
+              <div class="bi-name">Internet Vivo <span class="bi-tag tag-auto">Débito automático</span></div>
+              <div class="bi-detail">Conta Bradesco · Debitado em 07/mar ✓</div>
+            </div>
+            <div class="bi-right">
+              <div class="bi-value" style="color:var(--positive-text); text-decoration:line-through;">R$ 158</div>
+              <div class="bi-due done">✓ Confirmado</div>
+            </div>
+          </div>
+
+          <div class="bills-footer">Ver todas as 14 contas do mês →</div>
+        </div>
+
+        <div class="dash-card">
+          <div class="dc-title">Regra de Ouro</div>
+          <div class="dc-value" style="color: var(--positive);">73%</div>
+          <div class="dc-sub">Comprometimento em cartões</div>
+        </div>
+        <div class="dash-card">
+          <div class="dc-title">Checklist</div>
+          <div class="dc-value">10<span style="font-size:14px;color:var(--text-tertiary);font-weight:400;">/14</span></div>
+          <div class="dc-sub">confirmadas este mês</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================
+     CENÁRIO 2 — DIA DO VENCIMENTO + ATRASADO (12/MAR)
+     ================================================ -->
+<div class="section-divider">
+  <h2>Cenário 2 — Dia 12 de março (vencimento hoje + atrasado)</h2>
+  <p>O Plano de Saúde vence hoje e o Vitor não confirmou o débito de ontem. Banner vermelho para atrasado + indigo para hoje.</p>
+</div>
+
+<div class="desktop-frame">
+  <div class="app-container" style="min-height: 700px;">
+    <div class="sidebar">
+      <div class="sidebar-logo">C</div>
+      <div class="sidebar-item active">◻</div>
+      <div class="sidebar-item">☰</div>
+      <div class="sidebar-item" style="position:relative;">✓<div class="si-badge">1</div></div>
+      <div class="sidebar-item">→</div>
+      <div class="sidebar-item" style="margin-top:auto;">⚙</div>
+    </div>
+    <div class="main-content">
+      <div class="top-bar">
+        <h1>Dashboard — Março 2026</h1>
+        <span style="font-size:13px; color:var(--text-secondary);">12 de março · Olá, Vitor</span>
+      </div>
+
+      <!-- Banner atrasado -->
+      <div class="bill-banner warn">
+        <div class="bill-icon warn" style="font-size:14px;">!</div>
+        <div class="bill-text">
+          <strong style="color:var(--critical-text);">Plano de Saúde — R$ 890</strong> venceu ontem. Confirme se o débito automático foi realizado.
+        </div>
+        <div class="bill-actions">
+          <button class="bill-btn bill-btn-warn">Foi debitado</button>
+          <button class="bill-btn bill-btn-ghost-warn">Não foi</button>
+        </div>
+      </div>
+
+      <!-- Banner vencimento hoje -->
+      <div class="bill-banner info">
+        <div class="bill-icon info">📅</div>
+        <div class="bill-text">
+          Hoje vence <strong>Fatura Latam Pass Visa — R$ 2.347</strong> (agendado no banco, Conta Itaú)
+        </div>
+        <div class="bill-actions">
+          <button class="bill-btn bill-btn-primary">Confirmar</button>
+          <button class="bill-btn bill-btn-ghost">Adiar</button>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="summary-card">
+        <div class="summary-title">Resumo do mês</div>
+        <div class="summary-line"><span class="summary-label">Saldo total contas</span><span class="summary-value">R$ 19.200</span></div>
+        <div class="summary-line"><span class="summary-label">− Contas a pagar</span><span class="summary-value negative">− R$ 8.400</span></div>
+        <div class="summary-line"><span class="summary-label">− Faturas cartão</span><span class="summary-value negative">− R$ 7.180</span></div>
+        <div class="summary-line"><span class="summary-label">− Orçamentos restantes</span><span class="summary-value negative">− R$ 3.300</span></div>
+        <div class="summary-divider"></div>
+        <div class="summary-result"><span>Disponível livre</span><span style="color:var(--positive);">R$ 320</span></div>
+      </div>
+
+      <div class="dash-grid">
+        <!-- CARD VENCIMENTOS -->
+        <div class="bills-card" style="grid-column: span 2;">
+          <div class="bills-card-header">
+            <div class="bch-left">
+              <div class="bch-title">Contas do mês</div>
+              <div class="bch-subtitle">14 contas · 10 confirmadas</div>
+            </div>
+            <div class="bch-total-wrap">
+              <div class="bch-total-label">Falta pagar</div>
+              <div class="bch-total-value" style="color: var(--critical);">R$ 4.257</div>
+              <div class="bch-total-sub">de R$ 16.747 total</div>
+            </div>
+          </div>
+          <div class="bills-progress">
+            <div class="bp-label" style="color:var(--positive-text);">R$ 12.490 pagos</div>
+            <div class="bp-bar"><div class="bp-bar-fill" style="width: 74%;"></div></div>
+            <div class="bp-label">74%</div>
+          </div>
+
+          <!-- Atrasado -->
+          <div class="bill-item overdue">
+            <div class="bi-status overdue pulse"></div>
+            <div class="bi-info">
+              <div class="bi-name" style="color:var(--critical-text);">Plano de Saúde <span class="bi-tag tag-overdue">Não confirmado</span></div>
+              <div class="bi-detail" style="color:var(--critical-text);opacity:0.8;">Débito automático · Conta Itaú · Verifique no app do banco</div>
+            </div>
+            <div class="bi-right">
+              <div class="bi-value" style="color:var(--critical);">R$ 890</div>
+              <div class="bi-due overdue">Venceu ontem</div>
+            </div>
+            <div class="bi-action" style="border-color:var(--critical);color:var(--critical);">✓</div>
+          </div>
+          <!-- Hoje -->
+          <div class="bill-item" style="background: var(--primary-light);">
+            <div class="bi-status today"></div>
+            <div class="bi-info">
+              <div class="bi-name">Fatura Latam Pass Visa <span class="bi-tag tag-scheduled">Agendado no banco</span></div>
+              <div class="bi-detail">Conta Itaú · Pagamento agendado</div>
+            </div>
+            <div class="bi-right">
+              <div class="bi-value">R$ 2.347</div>
+              <div class="bi-due today">Hoje</div>
+            </div>
+            <div class="bi-action">✓</div>
+          </div>
+          <!-- Próximo -->
+          <div class="bill-item">
+            <div class="bi-status upcoming"></div>
+            <div class="bi-info">
+              <div class="bi-name">Fatura Pão de Açúcar <span class="bi-tag tag-variable">Variável</span></div>
+              <div class="bi-detail">Estimativa · Atualizar quando a fatura fechar</div>
+            </div>
+            <div class="bi-right">
+              <div class="bi-value">R$ 1.020</div>
+              <div class="bi-due upcoming">20/mar</div>
+            </div>
+          </div>
+          <!-- Recorrentes no cartão — agrupados -->
+          <div class="bill-item" style="opacity: 0.5;">
+            <div class="bi-status" style="background: #C4B5FD;"></div>
+            <div class="bi-info">
+              <div class="bi-name">Recorrentes no cartão <span class="bi-tag tag-card-rec">Automático na fatura</span></div>
+              <div class="bi-detail">Netflix + Spotify + Disney · Cartão Latam Pass</div>
+            </div>
+            <div class="bi-right">
+              <div class="bi-value" style="color:var(--text-tertiary);">R$ 110</div>
+              <div class="bi-due" style="color:var(--text-tertiary);">Incluso na fatura</div>
+            </div>
+          </div>
+
+          <div class="bills-footer">Ver todas as 14 contas do mês →</div>
+        </div>
+
+        <div class="dash-card">
+          <div class="dc-title">Regra de Ouro</div>
+          <div class="dc-value" style="color: var(--positive);">73%</div>
+          <div class="dc-sub">Comprometimento em cartões</div>
+        </div>
+        <div class="dash-card">
+          <div class="dc-title">Checklist</div>
+          <div class="dc-value">10<span style="font-size:14px;color:var(--text-tertiary);font-weight:400;">/14</span></div>
+          <div class="dc-sub">confirmadas este mês</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================
+     CENÁRIO 3 — TUDO OK (25/MAR)
+     ================================================ -->
+<div class="section-divider">
+  <h2>Cenário 3 — Dia 25 de março (tudo em dia)</h2>
+  <p>Todas as contas confirmadas. Sem banner. Card mostra progresso 100% com total zerado.</p>
+</div>
+
+<div class="desktop-frame">
+  <div class="app-container" style="min-height: 420px;">
+    <div class="sidebar">
+      <div class="sidebar-logo">C</div>
+      <div class="sidebar-item active">◻</div>
+      <div class="sidebar-item">☰</div>
+      <div class="sidebar-item">✓</div>
+      <div class="sidebar-item">→</div>
+      <div class="sidebar-item" style="margin-top:auto;">⚙</div>
+    </div>
+    <div class="main-content">
+      <div class="top-bar">
+        <h1>Dashboard — Março 2026</h1>
+        <span style="font-size:13px; color:var(--text-secondary);">25 de março · Olá, Vitor</span>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-title">Resumo do mês</div>
+        <div class="summary-line"><span class="summary-label">Saldo total contas</span><span class="summary-value">R$ 19.200</span></div>
+        <div class="summary-line"><span class="summary-label">− Contas a pagar</span><span class="summary-value negative">− R$ 8.400</span></div>
+        <div class="summary-line"><span class="summary-label">− Faturas cartão</span><span class="summary-value negative">− R$ 7.180</span></div>
+        <div class="summary-line"><span class="summary-label">− Orçamentos restantes</span><span class="summary-value negative">− R$ 3.300</span></div>
+        <div class="summary-divider"></div>
+        <div class="summary-result"><span>Disponível livre</span><span style="color:var(--positive);">R$ 320</span></div>
+      </div>
+
+      <div class="dash-grid">
+        <!-- CARD — TUDO PAGO -->
+        <div class="bills-card" style="grid-column: span 2;">
+          <div class="bills-card-header">
+            <div class="bch-left">
+              <div class="bch-title">Contas do mês</div>
+              <div class="bch-subtitle">14 contas · 14 confirmadas</div>
+            </div>
+            <div class="bch-total-wrap">
+              <div class="bch-total-label">Falta pagar</div>
+              <div class="bch-total-value" style="color: var(--positive);">R$ 0</div>
+              <div class="bch-total-sub">✓ Tudo em dia</div>
+            </div>
+          </div>
+          <div class="bills-progress">
+            <div class="bp-label" style="color:var(--positive-text);">R$ 16.747 pagos</div>
+            <div class="bp-bar"><div class="bp-bar-fill" style="width: 100%;"></div></div>
+            <div class="bp-label" style="color:var(--positive-text);">100%</div>
+          </div>
+          <div class="bills-footer">Ver detalhamento das 14 contas →</div>
+        </div>
+
+        <div class="dash-card">
+          <div class="dc-title">Regra de Ouro</div>
+          <div class="dc-value" style="color: var(--positive);">73%</div>
+          <div class="dc-sub">Comprometimento em cartões</div>
+        </div>
+        <div class="dash-card">
+          <div class="dc-title">Checklist</div>
+          <div class="dc-value" style="color:var(--positive);">14<span style="font-size:14px;color:var(--text-tertiary);font-weight:400;">/14</span></div>
+          <div class="dc-sub">✓ Mês fechado</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================
+     MOBILE — OS 3 CENÁRIOS
+     ================================================ -->
+<div class="section-divider">
+  <h2>Mobile — Os 3 cenários no celular</h2>
+  <p>Banner de véspera/hoje + card com total pendente + navegação padrão</p>
+</div>
+
+<div class="mobile-section">
+  <!-- Mobile 1: Véspera -->
+  <div class="mobile-frame">
+    <div class="mobile-notch"></div>
+    <div class="mobile-body">
+      <div class="mobile-label"><strong>10/mar</strong> — Véspera de vencimento</div>
+      <div class="mobile-top">
+        <h2>Março 2026</h2>
+        <span style="font-size:12px;color:var(--text-secondary);">Olá, Vitor</span>
+      </div>
+
+      <!-- Banner amanhã -->
+      <div class="m-bill-banner tomorrow">
+        <span class="m-bill-icon">📅</span>
+        <div class="m-bill-text">
+          <strong>Amanhã</strong> vence <strong>Plano de Saúde — R$ 890</strong>
+          <div style="font-size:10px;color:#0369A1;margin-top:2px;">Débito automático · Conta Itaú</div>
+          <div class="m-bill-actions">
+            <button class="m-bill-btn" style="background:#0EA5E9;color:white;">Já paguei</button>
+            <button class="m-bill-btn" style="background:transparent;color:#0369A1;border:1px solid #BAE6FD;">Lembrar amanhã</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-summary">
+        <div class="m-summary-title">Disponível livre</div>
+        <div class="m-summary-big" style="color:var(--positive);">R$ 320</div>
+      </div>
+
+      <!-- Card vencimentos com total -->
+      <div class="m-bills-card">
+        <div class="m-bills-header">
+          <div class="m-bh-top">
+            <div class="m-bh-title">Contas do mês</div>
+            <div class="m-bh-total" style="color:var(--critical);">R$ 4.268</div>
+          </div>
+          <div class="m-bh-sub">faltam pagar · 10 de 14 confirmadas</div>
+          <div class="m-bh-progress">
+            <div class="m-bp-bar"><div class="m-bp-bar-fill" style="width:74%;"></div></div>
+            <div class="m-bp-label">74%</div>
+          </div>
+        </div>
+        <div class="m-bill-item" style="background:#F0F9FF;">
+          <div class="mbi-dot" style="background:#0EA5E9;"></div>
+          <div class="mbi-info">
+            <div class="mbi-name">Plano de Saúde <span class="m-bi-tag tag-auto">Débito auto.</span></div>
+            <div class="mbi-sub">Conta Itaú</div>
+          </div>
+          <div class="mbi-right">
+            <div class="mbi-value">R$ 890</div>
+            <div class="mbi-due" style="color:#0369A1;font-weight:500;">Amanhã</div>
+          </div>
+        </div>
+        <div class="m-bill-item">
+          <div class="mbi-dot" style="background:var(--border-hover);"></div>
+          <div class="mbi-info">
+            <div class="mbi-name">Fatura Latam Pass <span class="m-bi-tag tag-variable">Variável</span></div>
+            <div class="mbi-sub">Estimativa</div>
+          </div>
+          <div class="mbi-right">
+            <div class="mbi-value">R$ 2.200</div>
+            <div class="mbi-due" style="color:var(--text-tertiary);">15/mar</div>
+          </div>
+        </div>
+        <div class="m-bill-item">
+          <div class="mbi-dot" style="background:var(--border-hover);"></div>
+          <div class="mbi-info">
+            <div class="mbi-name">Fatura Pão de Açúcar <span class="m-bi-tag tag-variable">Variável</span></div>
+            <div class="mbi-sub">Estimativa</div>
+          </div>
+          <div class="mbi-right">
+            <div class="mbi-value">R$ 1.020</div>
+            <div class="mbi-due" style="color:var(--text-tertiary);">20/mar</div>
+          </div>
+        </div>
+        <div class="m-bills-footer">Ver todas as 14 contas →</div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="bn-item active"><span class="bn-icon">◻</span>Dashboard</div>
+      <div class="bn-item"><span class="bn-icon">☰</span>Orçamentos</div>
+      <div class="bn-item"><div class="fab">+</div><span style="margin-top:4px;">Registrar</span></div>
+      <div class="bn-item"><span class="bn-icon" style="position:relative;">✓<span class="bn-dot"></span></span>Checklist</div>
+      <div class="bn-item"><span class="bn-icon">→</span>Projeção</div>
+    </div>
+  </div>
+
+  <!-- Mobile 2: Atrasado + Hoje -->
+  <div class="mobile-frame">
+    <div class="mobile-notch"></div>
+    <div class="mobile-body">
+      <div class="mobile-label"><strong>12/mar</strong> — Atrasado + vencimento hoje</div>
+      <div class="mobile-top">
+        <h2>Março 2026</h2>
+        <span style="font-size:12px;color:var(--text-secondary);">Olá, Vitor</span>
+      </div>
+
+      <!-- Banner atrasado -->
+      <div class="m-bill-banner warn">
+        <span class="m-bill-icon" style="color:var(--critical);">⚠</span>
+        <div class="m-bill-text">
+          <strong style="color:var(--critical-text);">Plano de Saúde — R$ 890</strong>
+          <div style="font-size:10px;color:var(--critical-text);opacity:0.8;">Venceu ontem · Verifique se o débito foi realizado</div>
+          <div class="m-bill-actions">
+            <button class="m-bill-btn" style="background:var(--critical);color:white;">Foi debitado</button>
+            <button class="m-bill-btn" style="background:transparent;color:var(--critical);border:1px solid #FECACA;">Não foi</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Banner hoje -->
+      <div class="m-bill-banner info">
+        <span class="m-bill-icon">📅</span>
+        <div class="m-bill-text">
+          Hoje: <strong>Fatura Latam Pass — R$ 2.347</strong>
+          <div style="font-size:10px;color:var(--primary);opacity:0.8;">Agendado no banco · Conta Itaú</div>
+          <div class="m-bill-actions">
+            <button class="m-bill-btn" style="background:var(--primary);color:white;">Confirmar</button>
+            <button class="m-bill-btn" style="background:transparent;color:var(--primary);border:1px solid #C7D2FE;">Adiar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-summary">
+        <div class="m-summary-title">Disponível livre</div>
+        <div class="m-summary-big" style="color:var(--positive);">R$ 320</div>
+      </div>
+
+      <!-- Card com total -->
+      <div class="m-bills-card">
+        <div class="m-bills-header">
+          <div class="m-bh-top">
+            <div class="m-bh-title">Contas do mês</div>
+            <div class="m-bh-total" style="color:var(--critical);">R$ 4.257</div>
+          </div>
+          <div class="m-bh-sub">faltam pagar · <span style="color:var(--critical);">1 atrasado</span></div>
+          <div class="m-bh-progress">
+            <div class="m-bp-bar"><div class="m-bp-bar-fill" style="width:74%;"></div></div>
+            <div class="m-bp-label">74%</div>
+          </div>
+        </div>
+        <div class="m-bills-footer">Ver detalhamento →</div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="bn-item active"><span class="bn-icon">◻</span>Dashboard</div>
+      <div class="bn-item"><span class="bn-icon">☰</span>Orçamentos</div>
+      <div class="bn-item"><div class="fab">+</div><span style="margin-top:4px;">Registrar</span></div>
+      <div class="bn-item"><span class="bn-icon" style="position:relative;">✓<span class="bn-badge">1</span></span>Checklist</div>
+      <div class="bn-item"><span class="bn-icon">→</span>Projeção</div>
+    </div>
+  </div>
+
+  <!-- Mobile 3: Tudo ok -->
+  <div class="mobile-frame">
+    <div class="mobile-notch"></div>
+    <div class="mobile-body">
+      <div class="mobile-label"><strong>25/mar</strong> — Tudo em dia</div>
+      <div class="mobile-top">
+        <h2>Março 2026</h2>
+        <span style="font-size:12px;color:var(--text-secondary);">Olá, Vitor</span>
+      </div>
+
+      <div class="m-summary">
+        <div class="m-summary-title">Disponível livre</div>
+        <div class="m-summary-big" style="color:var(--positive);">R$ 320</div>
+      </div>
+
+      <!-- Card — tudo pago -->
+      <div class="m-bills-card">
+        <div class="m-bills-header">
+          <div class="m-bh-top">
+            <div class="m-bh-title">Contas do mês</div>
+            <div class="m-bh-total" style="color:var(--positive);">R$ 0</div>
+          </div>
+          <div class="m-bh-sub">✓ Tudo em dia · 14 de 14 confirmadas</div>
+          <div class="m-bh-progress">
+            <div class="m-bp-bar"><div class="m-bp-bar-fill" style="width:100%;"></div></div>
+            <div class="m-bp-label" style="color:var(--positive-text);">100%</div>
+          </div>
+        </div>
+        <div class="m-bills-footer">Ver detalhamento →</div>
+      </div>
+
+      <!-- Espaço extra para orçamentos etc. -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;">
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-tertiary);margin-bottom:8px;">Orçamentos</div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;">
+          <span style="color:var(--text-secondary);">Supermercado</span>
+          <span style="font-weight:500;">R$ 2.530 / R$ 3.000</span>
+        </div>
+        <div style="height:4px;border-radius:2px;background:var(--border);overflow:hidden;margin:4px 0 8px;">
+          <div style="height:100%;width:84%;border-radius:2px;background:var(--positive);"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;">
+          <span style="color:var(--text-secondary);">Gasolina</span>
+          <span style="font-weight:500;">R$ 420 / R$ 600</span>
+        </div>
+        <div style="height:4px;border-radius:2px;background:var(--border);overflow:hidden;margin:4px 0;">
+          <div style="height:100%;width:70%;border-radius:2px;background:var(--positive);"></div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="bn-item active"><span class="bn-icon">◻</span>Dashboard</div>
+      <div class="bn-item"><span class="bn-icon">☰</span>Orçamentos</div>
+      <div class="bn-item"><div class="fab">+</div><span style="margin-top:4px;">Registrar</span></div>
+      <div class="bn-item"><span class="bn-icon">✓</span>Checklist</div>
+      <div class="bn-item"><span class="bn-icon">→</span>Projeção</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================
+     REGRAS DE COMPORTAMENTO
+     ================================================ -->
+<div class="info-card">
+  <div class="info-inner">
+    <div class="info-icon-box">📋</div>
+    <div>
+      <h3>Regras de comportamento</h3>
+      <p>
+        <strong>Banner de véspera (azul):</strong> aparece 1 dia antes do vencimento. Ação: "Já paguei" ou "Lembrar amanhã".<br>
+        <strong>Banner do dia (indigo):</strong> aparece no dia do vencimento. Ação: "Confirmar" ou "Adiar".<br>
+        <strong>Banner de atrasado (vermelho):</strong> aparece quando a conta passou do vencimento sem confirmação. Ação: "Foi debitado" ou "Não foi".<br>
+        <strong>Card "Contas do mês":</strong> sempre visível no dashboard. Mostra total pendente, progresso, e os próximos vencimentos. Quando tudo está pago, exibe "R$ 0 — Tudo em dia".<br>
+        <strong>Sem banner quando tudo está ok:</strong> o card sozinho basta. Zero interrupção visual quando não precisa de ação.<br>
+        <strong>Recorrentes no cartão</strong> (Netflix, Spotify): aparecem agrupados e com opacidade reduzida — entram automaticamente na fatura, não precisam de ação.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:48px 24px;font-size:12px;color:var(--text-tertiary);">
+  Caderninho · Sinalização de Contas a Pagar<br>
+  Card dedicado com total + Banner 1 dia antes + Tipos reais de conta
+</div>
+
+</body>
+</html>

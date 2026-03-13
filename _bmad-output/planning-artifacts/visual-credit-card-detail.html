@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caderninho — Detalhe do Cartão de Crédito</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #FAFAF9;
+    --surface: #FFFFFF;
+    --border: #E7E5E4;
+    --border-hover: #D6D3D1;
+    --text-primary: #1C1917;
+    --text-secondary: #78716C;
+    --text-tertiary: #A8A29E;
+    --primary: #4F46E5;
+    --primary-hover: #4338CA;
+    --primary-light: #EEF2FF;
+    --positive: #22C55E;
+    --positive-bg: #DCFCE7;
+    --positive-text: #166534;
+    --attention: #EAB308;
+    --attention-bg: #FEF9C3;
+    --attention-text: #854D0E;
+    --alert: #F97316;
+    --alert-bg: #FFF7ED;
+    --alert-text: #9A3412;
+    --critical: #DC2626;
+    --critical-bg: #FEE2E2;
+    --critical-text: #991B1B;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #D6D3D1;
+    color: var(--text-primary);
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ========================================
+     SHOWCASE HEADER
+     ======================================== */
+  .showcase-header {
+    text-align: center;
+    padding: 40px 24px 32px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .showcase-header h1 { font-size: 24px; font-weight: 700; }
+  .showcase-header p {
+    font-size: 14px; color: var(--text-secondary);
+    margin-top: 6px; max-width: 700px;
+    margin-left: auto; margin-right: auto;
+  }
+
+  .section-divider {
+    text-align: center;
+    padding: 48px 24px 24px;
+  }
+  .section-divider h2 { font-size: 18px; font-weight: 600; }
+  .section-divider p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+  /* ========================================
+     DESKTOP FRAME
+     ======================================== */
+  .desktop-frame {
+    max-width: 1200px;
+    margin: 0 auto 48px;
+    padding: 0 24px;
+  }
+
+  .app-container {
+    display: flex;
+    background: var(--bg);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    min-height: 820px;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 16px 0;
+    flex-shrink: 0;
+  }
+  .sidebar-logo {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 16px; margin-bottom: 24px;
+  }
+  .sidebar-logo-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 14px;
+  }
+  .sidebar-logo-text { font-size: 15px; font-weight: 600; }
+
+  .sidebar-section { padding: 0 8px; margin-bottom: 8px; }
+  .sidebar-section-label {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--text-tertiary);
+    padding: 8px 12px 4px;
+  }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; border-radius: 8px;
+    font-size: 13px; font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .sidebar-item:hover { background: var(--bg); color: var(--text-primary); }
+  .sidebar-item.active {
+    background: var(--primary-light); color: var(--primary); font-weight: 600;
+  }
+  .sidebar-item .si-icon { font-size: 16px; width: 20px; text-align: center; }
+
+  .sidebar-divider { height: 1px; background: var(--border); margin: 12px 16px; }
+
+  .sidebar-user {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 16px; margin-top: auto;
+  }
+  .sidebar-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--primary-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; color: var(--primary);
+  }
+  .sidebar-username { font-size: 12px; color: var(--text-secondary); }
+
+  /* Main content */
+  .main-content {
+    flex: 1;
+    padding: 24px 28px;
+    overflow-y: auto;
+  }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+  .page-title { font-size: 20px; font-weight: 700; }
+  .page-subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* ========================================
+     CARD HERO SECTION
+     ======================================== */
+  .card-hero {
+    background: linear-gradient(135deg, #312E81 0%, #4F46E5 50%, #6366F1 100%);
+    border-radius: 14px;
+    padding: 24px 28px;
+    color: white;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-hero::after {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 180px; height: 180px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
+  }
+  .card-hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  .card-hero-name { font-size: 16px; font-weight: 600; }
+  .card-hero-flag { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+  .card-hero-closing {
+    font-size: 11px;
+    background: rgba(255,255,255,0.15);
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+
+  .card-hero-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .chm-item {}
+  .chm-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.7;
+    margin-bottom: 2px;
+  }
+  .chm-value { font-size: 18px; font-weight: 700; }
+  .chm-value.highlight { color: #A5B4FC; }
+  .chm-sub { font-size: 10px; opacity: 0.6; margin-top: 1px; }
+
+  /* Limit bar */
+  .limit-bar-wrap {
+    margin-top: 20px;
+  }
+  .limit-bar-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    opacity: 0.7;
+    margin-bottom: 6px;
+  }
+  .limit-bar {
+    height: 8px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .limit-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+  .limit-bar-fill.ok { background: #A5B4FC; }
+  .limit-bar-fill.warn { background: #FBBF24; }
+  .limit-bar-fill.danger { background: #F87171; }
+
+  /* ========================================
+     FATURA SECTION
+     ======================================== */
+  .fatura-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .fatura-header {
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .fatura-title { font-size: 14px; font-weight: 600; }
+  .fatura-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 6px;
+  }
+  .fatura-status.estimated {
+    background: var(--attention-bg);
+    color: var(--attention-text);
+  }
+  .fatura-status.confirmed {
+    background: var(--positive-bg);
+    color: var(--positive-text);
+  }
+  .fatura-status.reconciling {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+
+  .fatura-body { padding: 16px 20px; }
+
+  .fatura-amounts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .fa-item {}
+  .fa-label { font-size: 11px; color: var(--text-secondary); margin-bottom: 2px; }
+  .fa-value { font-size: 16px; font-weight: 700; }
+  .fa-value.estimated { color: var(--attention-text); }
+  .fa-value.confirmed { color: var(--positive-text); }
+  .fa-sub { font-size: 10px; color: var(--text-tertiary); margin-top: 1px; }
+
+  .fatura-progress {
+    margin-bottom: 16px;
+  }
+  .fp-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .fp-fill {
+    height: 100%;
+    border-radius: 3px;
+  }
+  .fp-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+  }
+
+  /* ========================================
+     PARCELAS SECTION
+     ======================================== */
+  .parcelas-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .parcelas-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .parcelas-title { font-size: 14px; font-weight: 600; }
+  .parcelas-total { font-size: 13px; color: var(--text-secondary); }
+
+  .parcela-item {
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .parcela-item:last-child { border-bottom: none; }
+
+  .parcela-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: var(--primary-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+  }
+  .parcela-info { flex: 1; }
+  .parcela-name { font-size: 13px; font-weight: 500; }
+  .parcela-detail { font-size: 11px; color: var(--text-secondary); }
+  .parcela-values { text-align: right; }
+  .parcela-amount { font-size: 13px; font-weight: 600; }
+  .parcela-remaining { font-size: 10px; color: var(--text-tertiary); }
+
+  .parcela-timeline {
+    display: flex;
+    gap: 3px;
+    margin-top: 4px;
+    justify-content: flex-end;
+  }
+  .pt-dot {
+    width: 8px; height: 8px;
+    border-radius: 2px;
+  }
+  .pt-dot.paid { background: var(--positive); }
+  .pt-dot.current { background: var(--primary); }
+  .pt-dot.future { background: var(--border); }
+
+  /* ========================================
+     TRANSACTIONS SECTION
+     ======================================== */
+  .transactions-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .transactions-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .transactions-title { font-size: 14px; font-weight: 600; }
+  .transactions-count { font-size: 12px; color: var(--text-secondary); }
+
+  .tx-group-label {
+    padding: 8px 20px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-tertiary);
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tx-item {
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .tx-item:hover { background: var(--bg); }
+  .tx-item:last-child { border-bottom: none; }
+
+  .tx-cat-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .tx-info { flex: 1; }
+  .tx-name { font-size: 13px; font-weight: 500; }
+  .tx-category { font-size: 11px; color: var(--text-secondary); }
+  .tx-amount { font-size: 13px; font-weight: 600; text-align: right; }
+  .tx-date { font-size: 10px; color: var(--text-tertiary); text-align: right; }
+
+  /* ========================================
+     RECONCILIATION SECTION
+     ======================================== */
+  .reconciliation-section {
+    background: var(--surface);
+    border: 2px solid var(--primary);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .reconciliation-header {
+    padding: 16px 20px;
+    background: var(--primary-light);
+    border-bottom: 1px solid #C7D2FE;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .reconciliation-title {
+    font-size: 14px; font-weight: 600; color: var(--primary);
+  }
+  .reconciliation-subtitle {
+    font-size: 11px; color: var(--text-secondary);
+  }
+
+  .recon-body { padding: 20px; }
+
+  .recon-comparison {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .recon-value-box {
+    text-align: center;
+    padding: 12px 16px;
+    border-radius: 10px;
+  }
+  .recon-value-box.estimated {
+    background: var(--attention-bg);
+    border: 1px solid #FDE68A;
+  }
+  .recon-value-box.real {
+    background: var(--primary-light);
+    border: 1px solid #C7D2FE;
+  }
+  .rvb-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .rvb-value { font-size: 20px; font-weight: 700; }
+  .recon-arrow {
+    font-size: 20px;
+    color: var(--text-tertiary);
+  }
+  .recon-diff {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--critical);
+    margin-top: 8px;
+  }
+  .recon-diff.match { color: var(--positive-text); }
+
+  .recon-tx-list {
+    margin-bottom: 16px;
+  }
+  .recon-tx-item {
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .recon-tx-item:last-child { border-bottom: none; }
+
+  .recon-check {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .recon-check.checked {
+    background: var(--positive);
+    border-color: var(--positive);
+    color: white;
+    font-size: 12px;
+  }
+  .recon-check.unchecked {
+    background: var(--critical-bg);
+    border-color: var(--critical);
+  }
+  .recon-tx-info { flex: 1; }
+  .recon-tx-name { font-size: 13px; font-weight: 500; }
+  .recon-tx-detail { font-size: 11px; color: var(--text-secondary); }
+  .recon-tx-amount { font-size: 13px; font-weight: 600; }
+  .recon-tx-moved {
+    font-size: 10px;
+    color: var(--alert-text);
+    background: var(--alert-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  .recon-summary {
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+  }
+  .recon-summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    padding: 3px 0;
+  }
+  .recon-summary-row.total {
+    font-weight: 700;
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+    margin-top: 6px;
+    padding-top: 8px;
+  }
+
+  .recon-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  /* Buttons */
+  .btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-primary);
+    transition: all 0.15s;
+  }
+  .btn:hover { border-color: var(--border-hover); }
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .btn-sm { padding: 5px 12px; font-size: 11px; }
+
+  /* Tags */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 500;
+  }
+  .tag-parcela {
+    background: #F3E8FF;
+    color: #7C3AED;
+  }
+  .tag-recorrente {
+    background: #DBEAFE;
+    color: #1E40AF;
+  }
+
+  /* ========================================
+     TWO COLUMN LAYOUT
+     ======================================== */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  /* ========================================
+     MOBILE FRAMES
+     ======================================== */
+  .mobile-showcase {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    padding: 0 24px 48px;
+  }
+
+  .mobile-frame {
+    width: 375px;
+    background: var(--bg);
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+
+  .mobile-status-bar {
+    height: 44px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mobile-body {
+    padding: 16px;
+    min-height: 620px;
+  }
+
+  .mobile-label {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 12px;
+    font-weight: 500;
+  }
+
+  /* Mobile card hero */
+  .m-card-hero {
+    background: linear-gradient(135deg, #312E81 0%, #4F46E5 50%, #6366F1 100%);
+    border-radius: 12px;
+    padding: 16px 18px;
+    color: white;
+    margin-bottom: 14px;
+  }
+  .m-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+  .m-card-name { font-size: 14px; font-weight: 600; }
+  .m-card-flag { font-size: 10px; opacity: 0.7; }
+  .m-card-closing {
+    font-size: 10px;
+    background: rgba(255,255,255,0.15);
+    padding: 3px 8px;
+    border-radius: 5px;
+  }
+  .m-card-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .m-chm-label { font-size: 9px; text-transform: uppercase; opacity: 0.6; }
+  .m-chm-value { font-size: 16px; font-weight: 700; }
+  .m-chm-value.small { font-size: 13px; }
+  .m-limit-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .m-limit-fill {
+    height: 100%;
+    background: #A5B4FC;
+    border-radius: 3px;
+  }
+  .m-limit-label {
+    font-size: 9px;
+    opacity: 0.6;
+    margin-top: 4px;
+  }
+
+  /* Mobile sections */
+  .m-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .m-section-header {
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .m-section-title { font-size: 13px; font-weight: 600; }
+  .m-section-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .m-item {
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .m-item:last-child { border-bottom: none; }
+
+  .m-item-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .m-item-info { flex: 1; }
+  .m-item-name { font-size: 12px; font-weight: 500; }
+  .m-item-detail { font-size: 10px; color: var(--text-secondary); }
+  .m-item-amount { font-size: 12px; font-weight: 600; }
+
+  /* Mobile recon */
+  .m-recon {
+    background: var(--surface);
+    border: 2px solid var(--primary);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .m-recon-header {
+    padding: 10px 14px;
+    background: var(--primary-light);
+    border-bottom: 1px solid #C7D2FE;
+  }
+  .m-recon-title { font-size: 13px; font-weight: 600; color: var(--primary); }
+  .m-recon-sub { font-size: 10px; color: var(--text-secondary); }
+
+  .m-recon-comparison {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .m-recon-box {
+    text-align: center;
+    padding: 8px 14px;
+    border-radius: 8px;
+    flex: 1;
+  }
+  .m-recon-box.est { background: var(--attention-bg); }
+  .m-recon-box.real { background: var(--primary-light); }
+  .m-recon-box-label { font-size: 9px; font-weight: 600; text-transform: uppercase; }
+  .m-recon-box-value { font-size: 16px; font-weight: 700; }
+  .m-recon-arrow { font-size: 16px; color: var(--text-tertiary); flex-shrink: 0; }
+  .m-recon-diff {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--critical);
+    padding: 6px;
+    background: var(--critical-bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .m-recon-item {
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .m-recon-check {
+    width: 20px; height: 20px;
+    border-radius: 5px;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 10px;
+  }
+  .m-recon-check.on { background: var(--positive); border-color: var(--positive); color: white; }
+  .m-recon-check.off { background: var(--critical-bg); border-color: var(--critical); }
+
+  .m-recon-footer {
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Bottom nav */
+  .bottom-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 56px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 0 8px;
+  }
+  .bn-item {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 2px;
+    font-size: 10px; color: var(--text-tertiary);
+    cursor: pointer; padding: 4px 8px;
+  }
+  .bn-item.active { color: var(--primary); }
+  .bn-icon { font-size: 18px; line-height: 1; }
+  .fab {
+    width: 44px; height: 44px;
+    background: var(--primary);
+    border-radius: 50%;
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    margin-top: -18px;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+  }
+
+  /* Info card */
+  .info-card {
+    max-width: 900px;
+    margin: 0 auto 48px;
+    padding: 0 24px;
+  }
+  .info-card-inner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+  }
+  .info-card-inner h3 { font-size: 15px; font-weight: 600; margin-bottom: 12px; }
+  .info-card-inner ul { padding-left: 20px; }
+  .info-card-inner li { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; }
+  .info-card-inner li strong { color: var(--text-primary); font-weight: 600; }
+
+  /* Annotation */
+  .annotation {
+    background: var(--attention-bg);
+    border: 1px solid #FDE68A;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 11px;
+    color: var(--attention-text);
+    margin: 12px 0;
+    line-height: 1.5;
+  }
+  .annotation strong { font-weight: 600; }
+
+  .annotation-blue {
+    background: var(--primary-light);
+    border: 1px solid #C7D2FE;
+    color: var(--primary);
+  }
+
+  /* Tap to trace indicator */
+  .tap-trace {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    color: var(--primary);
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--primary-light);
+  }
+
+  /* Future months preview */
+  .future-months {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .future-month {
+    text-align: center;
+    padding: 10px;
+    background: var(--bg);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .fm-month { font-size: 10px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; }
+  .fm-value { font-size: 14px; font-weight: 700; margin-top: 2px; }
+  .fm-detail { font-size: 9px; color: var(--text-tertiary); margin-top: 1px; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     SHOWCASE HEADER
+     ============================================================ -->
+<div class="showcase-header">
+  <h1>Detalhe do Cartao de Credito</h1>
+  <p>Controle automatizado do cartao: limite, fatura estimada por mes de referencia, parcelas com timeline visual, e fluxo completo de reconciliacao quando a fatura chega.</p>
+</div>
+
+<!-- ============================================================
+     CENARIO 1: VISAO GERAL (durante o mes)
+     ============================================================ -->
+<div class="section-divider">
+  <h2>Cenario 1 — Visao Geral (durante o mes, antes da fatura)</h2>
+  <p>O app calcula tudo automaticamente baseado nos registros e na data de fechamento</p>
+</div>
+
+<div class="desktop-frame">
+  <div class="app-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">C</div>
+        <div class="sidebar-logo-text">Caderninho</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Navegacao</div>
+        <div class="sidebar-item"><span class="si-icon">◻</span> Dashboard</div>
+        <div class="sidebar-item"><span class="si-icon">☰</span> Orcamentos</div>
+        <div class="sidebar-item"><span class="si-icon">✓</span> Checklist</div>
+        <div class="sidebar-item"><span class="si-icon">→</span> Projecao</div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Cartoes</div>
+        <div class="sidebar-item active"><span class="si-icon">◇</span> Pao de Acucar</div>
+        <div class="sidebar-item"><span class="si-icon">◇</span> Nubank</div>
+        <div class="sidebar-item"><span class="si-icon">◇</span> Inter</div>
+        <div class="sidebar-item"><span class="si-icon">◇</span> Caixa</div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">V</div>
+        <div class="sidebar-username">Vitor</div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Pao de Acucar Master</div>
+          <div class="page-subtitle">Mastercard · Final 4829 · Fechamento dia 15</div>
+        </div>
+        <button class="btn btn-sm">Configurar</button>
+      </div>
+
+      <!-- Card Hero -->
+      <div class="card-hero">
+        <div class="card-hero-top">
+          <div>
+            <div class="card-hero-name">Pao de Acucar Master</div>
+            <div class="card-hero-flag">Mastercard · Final 4829</div>
+          </div>
+          <div class="card-hero-closing">Fecha dia 15 · Vence dia 22</div>
+        </div>
+
+        <div class="card-hero-metrics">
+          <div class="chm-item">
+            <div class="chm-label">Limite</div>
+            <div class="chm-value">R$75.000</div>
+          </div>
+          <div class="chm-item">
+            <div class="chm-label">Disponivel</div>
+            <div class="chm-value highlight">R$62.534</div>
+            <div class="chm-sub">83% livre</div>
+          </div>
+          <div class="chm-item">
+            <div class="chm-label">Utilizado</div>
+            <div class="chm-value">R$12.466</div>
+            <div class="chm-sub">Inclui parcelas futuras</div>
+          </div>
+          <div class="chm-item">
+            <div class="chm-label">Fatura Atual (est.)</div>
+            <div class="chm-value">R$11.038</div>
+            <div class="chm-sub">Ciclo 16/fev a 15/mar</div>
+          </div>
+        </div>
+
+        <div class="limit-bar-wrap">
+          <div class="limit-bar-labels">
+            <span>Utilizado: 17%</span>
+            <span>Limite: R$75.000</span>
+          </div>
+          <div class="limit-bar">
+            <div class="limit-bar-fill ok" style="width: 17%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <!-- LEFT COLUMN: Fatura + Parcelas -->
+        <div>
+          <!-- Fatura Section -->
+          <div class="fatura-section">
+            <div class="fatura-header">
+              <div>
+                <div class="fatura-title">Fatura Março (estimativa)</div>
+                <div style="font-size: 11px; color: var(--text-secondary);">Ciclo 16/fev a 15/mar · 47 transacoes</div>
+              </div>
+              <div class="fatura-status estimated">⊘ Estimativa</div>
+            </div>
+            <div class="fatura-body">
+              <div class="fatura-amounts">
+                <div class="fa-item">
+                  <div class="fa-label">Estimativa</div>
+                  <div class="fa-value estimated">R$11.037,62</div>
+                  <div class="fa-sub">Baseado em 47 registros</div>
+                </div>
+                <div class="fa-item">
+                  <div class="fa-label">Parcelas neste ciclo</div>
+                  <div class="fa-value">R$1.428,30</div>
+                  <div class="fa-sub">3 parcelas ativas</div>
+                </div>
+                <div class="fa-item">
+                  <div class="fa-label">Compras avulsas</div>
+                  <div class="fa-value">R$9.609,32</div>
+                  <div class="fa-sub">44 transacoes</div>
+                </div>
+              </div>
+              <div class="annotation">
+                <strong>Nota:</strong> Essa é uma estimativa baseada nas transações registradas. O valor pode variar se alguma compra tiver processamento atrasado ou se entrar em outro ciclo. Quando a fatura chegar, compare aqui.
+              </div>
+            </div>
+          </div>
+
+          <!-- Parcelas Section -->
+          <div class="parcelas-section">
+            <div class="parcelas-header">
+              <div class="parcelas-title">Parcelas ativas</div>
+              <div class="parcelas-total">3 parcelas · R$7.341,10 restante</div>
+            </div>
+
+            <div class="parcela-item">
+              <div class="parcela-icon">🛒</div>
+              <div class="parcela-info">
+                <div class="parcela-name">Material de construcao</div>
+                <div class="parcela-detail">6x R$1.085,50 · Compra em out/25</div>
+              </div>
+              <div class="parcela-values">
+                <div class="parcela-amount">R$1.085,50 <span class="tag tag-parcela">5/6</span></div>
+                <div class="parcela-remaining">Faltam R$1.085,50 (1 parcela)</div>
+                <div class="parcela-timeline">
+                  <div class="pt-dot paid"></div>
+                  <div class="pt-dot paid"></div>
+                  <div class="pt-dot paid"></div>
+                  <div class="pt-dot paid"></div>
+                  <div class="pt-dot current"></div>
+                  <div class="pt-dot future"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="parcela-item">
+              <div class="parcela-icon">📸</div>
+              <div class="parcela-info">
+                <div class="parcela-name">Estudio de fotos</div>
+                <div class="parcela-detail">4x R$342,80 · Compra em dez/25</div>
+              </div>
+              <div class="parcela-values">
+                <div class="parcela-amount">R$342,80 <span class="tag tag-parcela">3/4</span></div>
+                <div class="parcela-remaining">Faltam R$685,60 (2 parcelas)</div>
+                <div class="parcela-timeline">
+                  <div class="pt-dot paid"></div>
+                  <div class="pt-dot paid"></div>
+                  <div class="pt-dot current"></div>
+                  <div class="pt-dot future"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="parcela-item">
+              <div class="parcela-icon">💻</div>
+              <div class="parcela-info">
+                <div class="parcela-name">Notebook Tamires</div>
+                <div class="parcela-detail">12x R$456,00 · Compra em jan/26</div>
+              </div>
+              <div class="parcela-values">
+                <div class="parcela-amount">R$456,00 <span class="tag tag-parcela">2/12</span></div>
+                <div class="parcela-remaining">Faltam R$4.560,00 (10 parcelas)</div>
+                <div class="parcela-timeline">
+                  <div class="pt-dot paid"></div>
+                  <div class="pt-dot current"></div>
+                  <div class="pt-dot future"></div>
+                  <div class="pt-dot future"></div>
+                  <div class="pt-dot future"></div>
+                  <div class="pt-dot future"></div>
+                  <div class="pt-dot future"></div>
+                  <div class="pt-dot future"></div>
+                  <div class="pt-dot future"></div>
+                  <div class="pt-dot future"></div>
+                  <div class="pt-dot future"></div>
+                  <div class="pt-dot future"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Futuras faturas -->
+            <div style="padding: 16px 20px;">
+              <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px;">Parcelas nos proximos meses</div>
+              <div class="future-months">
+                <div class="future-month">
+                  <div class="fm-month">Abril</div>
+                  <div class="fm-value">R$798,80</div>
+                  <div class="fm-detail">Fotos + Notebook</div>
+                </div>
+                <div class="future-month">
+                  <div class="fm-month">Maio</div>
+                  <div class="fm-value">R$456,00</div>
+                  <div class="fm-detail">Notebook</div>
+                </div>
+                <div class="future-month">
+                  <div class="fm-month">Jun–Dez</div>
+                  <div class="fm-value">R$456,00/mes</div>
+                  <div class="fm-detail">Notebook</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Transactions -->
+        <div>
+          <div class="transactions-section">
+            <div class="transactions-header">
+              <div class="transactions-title">Transacoes do ciclo atual</div>
+              <div class="transactions-count">47 transacoes · R$11.037,62</div>
+            </div>
+
+            <div class="tx-group-label">Recorrentes no cartao</div>
+            <div class="tx-item">
+              <div class="tx-cat-dot" style="background: #3B82F6;"></div>
+              <div class="tx-info">
+                <div class="tx-name">Netflix <span class="tag tag-recorrente">↻ Recorrente</span></div>
+                <div class="tx-category">Streaming · Entretenimento</div>
+              </div>
+              <div>
+                <div class="tx-amount">R$55,90</div>
+                <div class="tx-date">03/mar</div>
+              </div>
+            </div>
+            <div class="tx-item">
+              <div class="tx-cat-dot" style="background: #3B82F6;"></div>
+              <div class="tx-info">
+                <div class="tx-name">Spotify <span class="tag tag-recorrente">↻ Recorrente</span></div>
+                <div class="tx-category">Streaming · Entretenimento</div>
+              </div>
+              <div>
+                <div class="tx-amount">R$34,90</div>
+                <div class="tx-date">05/mar</div>
+              </div>
+            </div>
+            <div class="tx-item">
+              <div class="tx-cat-dot" style="background: #3B82F6;"></div>
+              <div class="tx-info">
+                <div class="tx-name">iCloud 200GB <span class="tag tag-recorrente">↻ Recorrente</span></div>
+                <div class="tx-category">Cloud · Tecnologia</div>
+              </div>
+              <div>
+                <div class="tx-amount">R$14,90</div>
+                <div class="tx-date">07/mar</div>
+              </div>
+            </div>
+
+            <div class="tx-group-label">Parcelas</div>
+            <div class="tx-item">
+              <div class="tx-cat-dot" style="background: #7C3AED;"></div>
+              <div class="tx-info">
+                <div class="tx-name">Material de construcao <span class="tag tag-parcela">5/6</span></div>
+                <div class="tx-category">Reforma · Moradia</div>
+              </div>
+              <div>
+                <div class="tx-amount">R$1.085,50</div>
+                <div class="tx-date">Parcela auto</div>
+              </div>
+            </div>
+            <div class="tx-item">
+              <div class="tx-cat-dot" style="background: #7C3AED;"></div>
+              <div class="tx-info">
+                <div class="tx-name">Estudio de fotos <span class="tag tag-parcela">3/4</span></div>
+                <div class="tx-category">Fotos · Pessoal</div>
+              </div>
+              <div>
+                <div class="tx-amount">R$342,80</div>
+                <div class="tx-date">Parcela auto</div>
+              </div>
+            </div>
+            <div class="tx-item">
+              <div class="tx-cat-dot" style="background: #7C3AED;"></div>
+              <div class="tx-info">
+                <div class="tx-name">Notebook Tamires <span class="tag tag-parcela">2/12</span></div>
+                <div class="tx-category">Equipamento · Tecnologia</div>
+              </div>
+              <div>
+                <div class="tx-amount">R$456,00</div>
+                <div class="tx-date">Parcela auto</div>
+              </div>
+            </div>
+
+            <div class="tx-group-label">Compras avulsas (mostrando ultimas 5)</div>
+            <div class="tx-item">
+              <div class="tx-cat-dot" style="background: #22C55E;"></div>
+              <div class="tx-info">
+                <div class="tx-name">Pao de Acucar</div>
+                <div class="tx-category">Supermercado · Alimentacao</div>
+              </div>
+              <div>
+                <div class="tx-amount">R$847,32</div>
+                <div class="tx-date">11/mar</div>
+              </div>
+            </div>
+            <div class="tx-item">
+              <div class="tx-cat-dot" style="background: #22C55E;"></div>
+              <div class="tx-info">
+                <div class="tx-name">Atacadao</div>
+                <div class="tx-category">Supermercado · Alimentacao</div>
+              </div>
+              <div>
+                <div class="tx-amount">R$523,18</div>
+                <div class="tx-date">09/mar</div>
+              </div>
+            </div>
+            <div class="tx-item">
+              <div class="tx-cat-dot" style="background: #EAB308;"></div>
+              <div class="tx-info">
+                <div class="tx-name">Shell</div>
+                <div class="tx-category">Combustivel · Transporte</div>
+              </div>
+              <div>
+                <div class="tx-amount">R$380,00</div>
+                <div class="tx-date">08/mar</div>
+              </div>
+            </div>
+            <div class="tx-item">
+              <div class="tx-cat-dot" style="background: #F97316;"></div>
+              <div class="tx-info">
+                <div class="tx-name">iFood</div>
+                <div class="tx-category">Delivery · Alimentacao</div>
+              </div>
+              <div>
+                <div class="tx-amount">R$127,40</div>
+                <div class="tx-date">07/mar</div>
+              </div>
+            </div>
+            <div class="tx-item">
+              <div class="tx-cat-dot" style="background: #22C55E;"></div>
+              <div class="tx-info">
+                <div class="tx-name">Droga Raia</div>
+                <div class="tx-category">Farmacia · Saude</div>
+              </div>
+              <div>
+                <div class="tx-amount">R$89,50</div>
+                <div class="tx-date">05/mar</div>
+              </div>
+            </div>
+
+            <div style="padding: 12px 20px; text-align: center;">
+              <span style="font-size: 12px; color: var(--primary); cursor: pointer; font-weight: 500;">Ver todas as 47 transacoes →</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     CENARIO 2: RECONCILIACAO DA FATURA
+     ============================================================ -->
+<div class="section-divider">
+  <h2>Cenario 2 — Fatura chegou: Reconciliacao</h2>
+  <p>A fatura real veio R$212,38 diferente da estimativa. O usuario verifica quais transacoes entraram ou nao.</p>
+</div>
+
+<div class="desktop-frame">
+  <div class="app-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">C</div>
+        <div class="sidebar-logo-text">Caderninho</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Navegacao</div>
+        <div class="sidebar-item"><span class="si-icon">◻</span> Dashboard</div>
+        <div class="sidebar-item"><span class="si-icon">☰</span> Orcamentos</div>
+        <div class="sidebar-item"><span class="si-icon">✓</span> Checklist</div>
+        <div class="sidebar-item"><span class="si-icon">→</span> Projecao</div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Cartoes</div>
+        <div class="sidebar-item active"><span class="si-icon">◇</span> Pao de Acucar</div>
+        <div class="sidebar-item"><span class="si-icon">◇</span> Nubank</div>
+        <div class="sidebar-item"><span class="si-icon">◇</span> Inter</div>
+        <div class="sidebar-item"><span class="si-icon">◇</span> Caixa</div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">V</div>
+        <div class="sidebar-username">Vitor</div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Pao de Acucar Master</div>
+          <div class="page-subtitle">Mastercard · Final 4829 · Fechamento dia 15</div>
+        </div>
+        <div class="fatura-status reconciling" style="font-size: 12px; padding: 6px 14px;">⟳ Reconciliando fatura</div>
+      </div>
+
+      <!-- Reconciliation Section -->
+      <div class="reconciliation-section">
+        <div class="reconciliation-header">
+          <div>
+            <div class="reconciliation-title">Reconciliacao — Fatura Marco</div>
+            <div class="reconciliation-subtitle">Compare a estimativa com o valor real e ajuste as transacoes</div>
+          </div>
+          <span class="tap-trace">? Como funciona</span>
+        </div>
+
+        <div class="recon-body">
+          <!-- Comparison -->
+          <div class="recon-comparison">
+            <div class="recon-value-box estimated">
+              <div class="rvb-label" style="color: var(--attention-text);">Estimativa (app)</div>
+              <div class="rvb-value" style="color: var(--attention-text);">R$11.037,62</div>
+            </div>
+            <div class="recon-arrow">→</div>
+            <div class="recon-value-box real">
+              <div class="rvb-label" style="color: var(--primary);">Fatura real</div>
+              <div class="rvb-value" style="color: var(--primary);">R$11.250,00</div>
+            </div>
+          </div>
+          <div class="recon-diff">Diferenca: +R$212,38 (fatura maior que estimativa)</div>
+
+          <div class="annotation-blue annotation" style="margin: 16px 0;">
+            <strong>O que fazer:</strong> Transacoes ja marcadas como ✓ estao confirmadas na fatura. Desmarque as que NAO apareceram (serao movidas para o proximo ciclo). Se a fatura tem cobranças nao registradas, adicione-as no botao abaixo.
+          </div>
+
+          <!-- Transaction list for reconciliation -->
+          <div style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">Transacoes do ciclo (16/fev a 15/mar)</div>
+
+          <div class="recon-tx-list">
+            <div class="recon-tx-item">
+              <div class="recon-check checked">✓</div>
+              <div class="recon-tx-info">
+                <div class="recon-tx-name">Netflix</div>
+                <div class="recon-tx-detail">03/mar · Streaming</div>
+              </div>
+              <div class="recon-tx-amount">R$55,90</div>
+            </div>
+            <div class="recon-tx-item">
+              <div class="recon-check checked">✓</div>
+              <div class="recon-tx-info">
+                <div class="recon-tx-name">Spotify</div>
+                <div class="recon-tx-detail">05/mar · Streaming</div>
+              </div>
+              <div class="recon-tx-amount">R$34,90</div>
+            </div>
+            <div class="recon-tx-item">
+              <div class="recon-check checked">✓</div>
+              <div class="recon-tx-info">
+                <div class="recon-tx-name">Material de construcao</div>
+                <div class="recon-tx-detail">Parcela 5/6 · Reforma</div>
+              </div>
+              <div class="recon-tx-amount">R$1.085,50</div>
+            </div>
+            <div class="recon-tx-item">
+              <div class="recon-check checked">✓</div>
+              <div class="recon-tx-info">
+                <div class="recon-tx-name">Pao de Acucar</div>
+                <div class="recon-tx-detail">11/mar · Supermercado</div>
+              </div>
+              <div class="recon-tx-amount">R$847,32</div>
+            </div>
+            <div class="recon-tx-item">
+              <div class="recon-check unchecked">✗</div>
+              <div class="recon-tx-info">
+                <div class="recon-tx-name">Shell <span class="recon-tx-moved">→ Movida p/ Abril</span></div>
+                <div class="recon-tx-detail">14/mar · Combustivel — Processamento atrasado</div>
+              </div>
+              <div class="recon-tx-amount" style="text-decoration: line-through; color: var(--text-tertiary);">R$380,00</div>
+            </div>
+            <div class="recon-tx-item" style="background: var(--positive-bg);">
+              <div class="recon-check checked">✓</div>
+              <div class="recon-tx-info">
+                <div class="recon-tx-name">Uber <span style="font-size: 10px; color: var(--positive-text); background: var(--positive-bg); padding: 1px 6px; border-radius: 4px; border: 1px solid var(--positive);">+ Adicionada</span></div>
+                <div class="recon-tx-detail">12/mar · Transporte — Nao estava registrada</div>
+              </div>
+              <div class="recon-tx-amount" style="color: var(--positive-text);">R$47,80</div>
+            </div>
+            <div style="text-align: center; padding: 8px 0;">
+              <span style="font-size: 11px; color: var(--text-tertiary);">... mais 41 transacoes confirmadas ✓</span>
+            </div>
+          </div>
+
+          <!-- Summary -->
+          <div class="recon-summary">
+            <div class="recon-summary-row">
+              <span>Transacoes confirmadas (46)</span>
+              <span>R$10.609,32</span>
+            </div>
+            <div class="recon-summary-row">
+              <span>Parcelas do ciclo (3)</span>
+              <span>R$1.884,30</span>
+            </div>
+            <div class="recon-summary-row" style="color: var(--critical);">
+              <span>Removida do ciclo (1)</span>
+              <span>−R$380,00</span>
+            </div>
+            <div class="recon-summary-row" style="color: var(--positive-text);">
+              <span>Adicionada (1)</span>
+              <span>+R$47,80</span>
+            </div>
+            <div class="recon-summary-row total">
+              <span>Total reconciliado</span>
+              <span style="color: var(--primary);">R$11.250,00 ✓</span>
+            </div>
+            <div class="recon-summary-row" style="color: var(--positive-text);">
+              <span>Diferenca</span>
+              <span>R$0,00 — Bateu!</span>
+            </div>
+          </div>
+
+          <div class="recon-actions">
+            <button class="btn" style="margin-right: auto;">+ Adicionar transacao</button>
+            <button class="btn">Cancelar</button>
+            <button class="btn btn-primary">Confirmar fatura R$11.250,00</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- What changes after confirmation -->
+      <div class="annotation" style="margin-bottom: 20px;">
+        <strong>Ao confirmar:</strong> A fatura de R$11.250,00 vira uma conta a pagar no Checklist (vencimento dia 22/mar). A transacao Shell de R$380 sera movida para o ciclo de Abril. O Utilizado Liquido sera recalculado. Tudo automatico.
+      </div>
+
+      <!-- After confirmation: Updated card state -->
+      <div class="fatura-section">
+        <div class="fatura-header">
+          <div>
+            <div class="fatura-title">Fatura Marco (confirmada)</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">Ciclo 16/fev a 15/mar · 47 transacoes</div>
+          </div>
+          <div class="fatura-status confirmed">✓ Confirmada</div>
+        </div>
+        <div class="fatura-body">
+          <div class="fatura-amounts">
+            <div class="fa-item">
+              <div class="fa-label">Valor da fatura</div>
+              <div class="fa-value confirmed">R$11.250,00</div>
+              <div class="fa-sub">Confirmada em 16/mar</div>
+            </div>
+            <div class="fa-item">
+              <div class="fa-label">Vencimento</div>
+              <div class="fa-value">22/mar</div>
+              <div class="fa-sub">Agendado no banco</div>
+            </div>
+            <div class="fa-item">
+              <div class="fa-label">Status</div>
+              <div class="fa-value" style="color: var(--attention-text);">Pendente</div>
+              <div class="fa-sub">Aguardando pagamento</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     CENARIO 3: APOS PAGAMENTO — Projecao de meses futuros
+     ============================================================ -->
+<div class="section-divider">
+  <h2>Cenario 3 — Fatura paga + Projecao de parcelas futuras</h2>
+  <p>Apos confirmar pagamento no checklist, o cartao atualiza automaticamente. Utilizado e Fatura do proximo mes se igualam.</p>
+</div>
+
+<div class="desktop-frame">
+  <div class="app-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">C</div>
+        <div class="sidebar-logo-text">Caderninho</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Navegacao</div>
+        <div class="sidebar-item"><span class="si-icon">◻</span> Dashboard</div>
+        <div class="sidebar-item"><span class="si-icon">☰</span> Orcamentos</div>
+        <div class="sidebar-item"><span class="si-icon">✓</span> Checklist</div>
+        <div class="sidebar-item"><span class="si-icon">→</span> Projecao</div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Cartoes</div>
+        <div class="sidebar-item active"><span class="si-icon">◇</span> Pao de Acucar</div>
+        <div class="sidebar-item"><span class="si-icon">◇</span> Nubank</div>
+        <div class="sidebar-item"><span class="si-icon">◇</span> Inter</div>
+        <div class="sidebar-item"><span class="si-icon">◇</span> Caixa</div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">V</div>
+        <div class="sidebar-username">Vitor</div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Pao de Acucar Master</div>
+          <div class="page-subtitle">Mastercard · Final 4829 · Fechamento dia 15</div>
+        </div>
+        <button class="btn btn-sm">Configurar</button>
+      </div>
+
+      <!-- Card Hero - After payment -->
+      <div class="card-hero">
+        <div class="card-hero-top">
+          <div>
+            <div class="card-hero-name">Pao de Acucar Master</div>
+            <div class="card-hero-flag">Mastercard · Final 4829</div>
+          </div>
+          <div class="card-hero-closing">Fecha dia 15 · Vence dia 22</div>
+        </div>
+
+        <div class="card-hero-metrics">
+          <div class="chm-item">
+            <div class="chm-label">Limite</div>
+            <div class="chm-value">R$75.000</div>
+          </div>
+          <div class="chm-item">
+            <div class="chm-label">Disponivel</div>
+            <div class="chm-value highlight">R$71.258</div>
+            <div class="chm-sub">95% livre</div>
+          </div>
+          <div class="chm-item">
+            <div class="chm-label">Utilizado</div>
+            <div class="chm-value">R$3.742</div>
+            <div class="chm-sub">Ciclo atual + parcelas</div>
+          </div>
+          <div class="chm-item">
+            <div class="chm-label">Fatura Abril (est.)</div>
+            <div class="chm-value">R$3.742,00</div>
+            <div class="chm-sub">Ciclo 16/mar a 15/abr</div>
+          </div>
+        </div>
+
+        <div class="limit-bar-wrap">
+          <div class="limit-bar-labels">
+            <span>Utilizado: 5%</span>
+            <span>Limite: R$75.000</span>
+          </div>
+          <div class="limit-bar">
+            <div class="limit-bar-fill ok" style="width: 5%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="annotation-blue annotation">
+        <strong>Fatura marco paga em 22/mar.</strong> O Utilizado e a Fatura Abril agora sao iguais (R$3.742) porque nao ha fatura anterior pendente. Isso e o mesmo que "Utilizado Liquido = Utilizado" da sua planilha — so que automatico.
+      </div>
+
+      <!-- Confirmed March invoice -->
+      <div class="fatura-section" style="opacity: 0.6;">
+        <div class="fatura-header">
+          <div>
+            <div class="fatura-title">Fatura Marco</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">Paga em 22/mar</div>
+          </div>
+          <div class="fatura-status confirmed">✓ Paga</div>
+        </div>
+        <div class="fatura-body" style="padding: 10px 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 14px; font-weight: 600;">R$11.250,00</span>
+            <span class="tap-trace">Tap to trace — ver composicao</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Current cycle April -->
+      <div class="fatura-section">
+        <div class="fatura-header">
+          <div>
+            <div class="fatura-title">Fatura Abril (estimativa)</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">Ciclo 16/mar a 15/abr · 12 transacoes ate agora</div>
+          </div>
+          <div class="fatura-status estimated">⊘ Estimativa</div>
+        </div>
+        <div class="fatura-body">
+          <div class="fatura-amounts">
+            <div class="fa-item">
+              <div class="fa-label">Estimativa</div>
+              <div class="fa-value estimated">R$3.742,00</div>
+              <div class="fa-sub">12 transacoes registradas</div>
+            </div>
+            <div class="fa-item">
+              <div class="fa-label">Parcelas neste ciclo</div>
+              <div class="fa-value">R$1.254,80</div>
+              <div class="fa-sub">Material (6/6) + Fotos (4/4) + Notebook (3/12) + Shell movida</div>
+            </div>
+            <div class="fa-item">
+              <div class="fa-label">Compras avulsas</div>
+              <div class="fa-value">R$2.487,20</div>
+              <div class="fa-sub">9 transacoes</div>
+            </div>
+          </div>
+
+          <div class="fatura-progress">
+            <div class="fp-bar">
+              <div class="fp-fill" style="width: 34%; background: linear-gradient(90deg, var(--primary), #818CF8);"></div>
+            </div>
+            <div class="fp-labels">
+              <span>Parcelas comprometidas: R$1.254,80 (34%)</span>
+              <span>Restante para compras: R$73.745</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MOBILE: VISAO GERAL
+     ============================================================ -->
+<div class="section-divider">
+  <h2>Mobile — Visao geral do cartao</h2>
+  <p>Consulta rapida no celular com as informacoes essenciais</p>
+</div>
+
+<div class="mobile-showcase">
+  <!-- Mobile 1: Overview -->
+  <div>
+    <div class="mobile-frame">
+      <div class="mobile-status-bar">Pao de Acucar Master</div>
+      <div class="mobile-body">
+        <!-- Mini card hero -->
+        <div class="m-card-hero">
+          <div class="m-card-top">
+            <div>
+              <div class="m-card-name">Pao de Acucar Master</div>
+              <div class="m-card-flag">Mastercard · Fecha dia 15</div>
+            </div>
+            <div class="m-card-closing">Vence 22</div>
+          </div>
+          <div class="m-card-metrics">
+            <div>
+              <div class="m-chm-label">Disponivel</div>
+              <div class="m-chm-value">R$62.534</div>
+            </div>
+            <div style="text-align: right;">
+              <div class="m-chm-label">Fatura atual (est.)</div>
+              <div class="m-chm-value">R$11.038</div>
+            </div>
+          </div>
+          <div class="m-limit-bar">
+            <div class="m-limit-fill" style="width: 17%;"></div>
+          </div>
+          <div class="m-limit-label">R$12.466 de R$75.000 utilizados (17%)</div>
+        </div>
+
+        <!-- Parcelas -->
+        <div class="m-section">
+          <div class="m-section-header">
+            <span class="m-section-title">Parcelas ativas</span>
+            <span class="m-section-badge" style="background: #F3E8FF; color: #7C3AED;">3</span>
+          </div>
+          <div class="m-item">
+            <div class="m-item-dot" style="background: #7C3AED;"></div>
+            <div class="m-item-info">
+              <div class="m-item-name">Material construcao</div>
+              <div class="m-item-detail">5/6 · Ultima em abr</div>
+            </div>
+            <div class="m-item-amount">R$1.085,50</div>
+          </div>
+          <div class="m-item">
+            <div class="m-item-dot" style="background: #7C3AED;"></div>
+            <div class="m-item-info">
+              <div class="m-item-name">Estudio de fotos</div>
+              <div class="m-item-detail">3/4 · Ultima em abr</div>
+            </div>
+            <div class="m-item-amount">R$342,80</div>
+          </div>
+          <div class="m-item">
+            <div class="m-item-dot" style="background: #7C3AED;"></div>
+            <div class="m-item-info">
+              <div class="m-item-name">Notebook Tamires</div>
+              <div class="m-item-detail">2/12 · Ultima em dez</div>
+            </div>
+            <div class="m-item-amount">R$456,00</div>
+          </div>
+        </div>
+
+        <!-- Last transactions -->
+        <div class="m-section">
+          <div class="m-section-header">
+            <span class="m-section-title">Ultimas transacoes</span>
+            <span style="font-size: 11px; color: var(--primary); cursor: pointer;">Ver todas →</span>
+          </div>
+          <div class="m-item">
+            <div class="m-item-dot" style="background: #22C55E;"></div>
+            <div class="m-item-info">
+              <div class="m-item-name">Pao de Acucar</div>
+              <div class="m-item-detail">11/mar · Supermercado</div>
+            </div>
+            <div class="m-item-amount">R$847,32</div>
+          </div>
+          <div class="m-item">
+            <div class="m-item-dot" style="background: #22C55E;"></div>
+            <div class="m-item-info">
+              <div class="m-item-name">Atacadao</div>
+              <div class="m-item-detail">09/mar · Supermercado</div>
+            </div>
+            <div class="m-item-amount">R$523,18</div>
+          </div>
+          <div class="m-item">
+            <div class="m-item-dot" style="background: #EAB308;"></div>
+            <div class="m-item-info">
+              <div class="m-item-name">Shell</div>
+              <div class="m-item-detail">08/mar · Combustivel</div>
+            </div>
+            <div class="m-item-amount">R$380,00</div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="bn-item"><span class="bn-icon">◻</span>Dashboard</div>
+        <div class="bn-item"><span class="bn-icon">☰</span>Orcamentos</div>
+        <div class="bn-item"><div class="fab">+</div><span style="margin-top: 4px;">Registrar</span></div>
+        <div class="bn-item"><span class="bn-icon">✓</span>Checklist</div>
+        <div class="bn-item"><span class="bn-icon">→</span>Projecao</div>
+      </div>
+    </div>
+    <div class="mobile-label">Visao geral — durante o mes</div>
+  </div>
+
+  <!-- Mobile 2: Reconciliation -->
+  <div>
+    <div class="mobile-frame">
+      <div class="mobile-status-bar">Reconciliar Fatura</div>
+      <div class="mobile-body">
+        <div class="m-recon">
+          <div class="m-recon-header">
+            <div class="m-recon-title">Fatura Marco — Reconciliacao</div>
+            <div class="m-recon-sub">Compare e ajuste as transacoes</div>
+          </div>
+          <div class="m-recon-comparison">
+            <div class="m-recon-box est">
+              <div class="m-recon-box-label" style="color: var(--attention-text);">Estimativa</div>
+              <div class="m-recon-box-value" style="color: var(--attention-text);">R$11.037</div>
+            </div>
+            <div class="m-recon-arrow">→</div>
+            <div class="m-recon-box real">
+              <div class="m-recon-box-label" style="color: var(--primary);">Fatura real</div>
+              <div class="m-recon-box-value" style="color: var(--primary);">R$11.250</div>
+            </div>
+          </div>
+          <div class="m-recon-diff">Diferenca: +R$212,38</div>
+
+          <div class="m-recon-item">
+            <div class="m-recon-check on">✓</div>
+            <div class="m-item-info">
+              <div class="m-item-name">Netflix</div>
+              <div class="m-item-detail">03/mar · R$55,90</div>
+            </div>
+          </div>
+          <div class="m-recon-item">
+            <div class="m-recon-check on">✓</div>
+            <div class="m-item-info">
+              <div class="m-item-name">Material construcao</div>
+              <div class="m-item-detail">Parcela 5/6 · R$1.085,50</div>
+            </div>
+          </div>
+          <div class="m-recon-item">
+            <div class="m-recon-check on">✓</div>
+            <div class="m-item-info">
+              <div class="m-item-name">Pao de Acucar</div>
+              <div class="m-item-detail">11/mar · R$847,32</div>
+            </div>
+          </div>
+          <div class="m-recon-item" style="background: var(--critical-bg);">
+            <div class="m-recon-check off">✗</div>
+            <div class="m-item-info">
+              <div class="m-item-name">Shell</div>
+              <div class="m-item-detail">14/mar · R$380,00 → Abril</div>
+            </div>
+          </div>
+          <div class="m-recon-item" style="background: var(--positive-bg);">
+            <div class="m-recon-check on">✓</div>
+            <div class="m-item-info">
+              <div class="m-item-name">Uber (adicionada)</div>
+              <div class="m-item-detail">12/mar · R$47,80</div>
+            </div>
+          </div>
+          <div style="text-align: center; padding: 6px; font-size: 10px; color: var(--text-tertiary); border-bottom: 1px solid var(--border);">
+            ... 41 transacoes confirmadas ✓
+          </div>
+
+          <div class="m-recon-footer">
+            <div>
+              <div style="font-size: 10px; color: var(--text-secondary);">Total reconciliado</div>
+              <div style="font-size: 14px; font-weight: 700; color: var(--positive-text);">R$11.250,00 ✓</div>
+            </div>
+            <button class="btn btn-primary btn-sm">Confirmar</button>
+          </div>
+        </div>
+
+        <div class="annotation" style="font-size: 10px;">
+          <strong>Dica:</strong> Swipe para esquerda em uma transacao para remove-la do ciclo. Toque em "+" para adicionar transacao nao registrada.
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="bn-item"><span class="bn-icon">◻</span>Dashboard</div>
+        <div class="bn-item"><span class="bn-icon">☰</span>Orcamentos</div>
+        <div class="bn-item"><div class="fab">+</div><span style="margin-top: 4px;">Registrar</span></div>
+        <div class="bn-item"><span class="bn-icon">✓</span>Checklist</div>
+        <div class="bn-item"><span class="bn-icon">→</span>Projecao</div>
+      </div>
+    </div>
+    <div class="mobile-label">Reconciliacao — fatura chegou</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     INFO: REGRAS DE COMPORTAMENTO
+     ============================================================ -->
+<div class="info-card">
+  <div class="info-card-inner">
+    <h3>Regras de comportamento do modelo de cartao</h3>
+    <ul>
+      <li><strong>Data de fechamento:</strong> Configurada uma vez por cartao. Define automaticamente o mes de referencia de cada transacao (transacao entre fechamento X e X+1 pertence ao ciclo seguinte)</li>
+      <li><strong>Parcelas:</strong> Na criacao, cada parcela recebe automaticamente seu mes de referencia. A timeline visual mostra pagas (verde), atual (indigo) e futuras (cinza)</li>
+      <li><strong>Fatura estimada:</strong> Calculada em tempo real somando transacoes cujo mes de referencia = ciclo atual. Label "Estimativa" ate a fatura real chegar</li>
+      <li><strong>Reconciliacao:</strong> Quando o usuario insere o valor real da fatura, o app compara com a estimativa. Se diferente, lista todas as transacoes do ciclo para o usuario confirmar/desconfirmar. Transacoes desmarcadas sao movidas para o proximo ciclo. Transacoes nao registradas podem ser adicionadas. Repete ate bater.</li>
+      <li><strong>Apos pagamento da fatura:</strong> Utilizado e Fatura Proximo Mes se igualam (mesmo conceito do "Utilizado Liquido" da planilha). O pagamento e confirmado via Checklist Mensal.</li>
+      <li><strong>Cartoes na sidebar:</strong> Cada cartao tem acesso direto pela sidebar no desktop. No mobile, acesso via menu ou tap em transacao que usa cartao.</li>
+      <li><strong>Recorrentes no cartao:</strong> Netflix, Spotify, etc. — sao transacoes com tag "Recorrente" que o app pre-registra automaticamente a cada ciclo (o usuario confirma no checklist)</li>
+      <li><strong>Limite disponivel:</strong> Calculado em tempo real: Limite - soma de todas transacoes nao liquidadas (incluindo parcelas futuras)</li>
+      <li><strong>Projecao de parcelas futuras:</strong> Card mostra valor comprometido por mes para os proximos meses, permitindo visualizar o impacto das parcelas no orcamento futuro</li>
+      <li><strong>Tap to trace:</strong> Qualquer valor (fatura, utilizado, disponivel) e tocavel e rastreavel ate as transacoes individuais que o compoem</li>
+    </ul>
+  </div>
+</div>
+
+</body>
+</html>

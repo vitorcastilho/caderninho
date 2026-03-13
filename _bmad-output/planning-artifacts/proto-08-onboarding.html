@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Protótipo 08 — Onboarding | Caderninho</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Design Tokens ── */
+    :root {
+      --bg: #FAFAF9;
+      --surface: #FFFFFF;
+      --border: #E7E5E4;
+      --border-hover: #D6D3D1;
+      --text-primary: #1C1917;
+      --text-secondary: #78716C;
+      --text-tertiary: #A8A29E;
+      --primary: #4F46E5;
+      --primary-hover: #4338CA;
+      --primary-light: #EEF2FF;
+      --positive: #22C55E;
+      --positive-bg: #DCFCE7;
+      --positive-text: #166534;
+      --radius-card: 12px;
+      --radius-input: 6px;
+      --radius-badge: 100px;
+      --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+      --shadow-card-lg: 0 2px 6px rgba(0,0,0,.06), 0 8px 32px rgba(0,0,0,.06);
+      --transition: 150ms ease;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-variant-numeric: tabular-nums;
+      background: var(--bg);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ── Page Header ── */
+    .page-header {
+      text-align: center;
+      padding: 48px 24px 40px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .page-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .page-header p {
+      font-size: 15px;
+      color: var(--text-secondary);
+    }
+
+    /* ── Section Headers ── */
+    .section-header {
+      text-align: center;
+      padding: 48px 24px 24px;
+    }
+    .section-header h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .section-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* ── Showcase Grid ── */
+    .showcase {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 32px;
+      padding: 24px 32px 56px;
+      flex-wrap: wrap;
+    }
+
+    .showcase-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .showcase-column-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 16px;
+    }
+
+    /* ── Phone Frame ── */
+    .phone-frame {
+      width: 320px;
+      min-height: 580px;
+      background: var(--surface);
+      border-radius: 24px;
+      border: 2px solid var(--border);
+      box-shadow: var(--shadow-card-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .phone-notch {
+      width: 120px;
+      height: 24px;
+      background: var(--text-primary);
+      border-radius: 0 0 16px 16px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .phone-notch::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #374151;
+      border-radius: 50%;
+      top: 7px;
+      right: 24px;
+    }
+
+    .phone-content {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    /* ── Desktop Frame ── */
+    .desktop-frame {
+      width: 800px;
+      max-width: 100%;
+      background: var(--surface);
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      box-shadow: var(--shadow-card-lg);
+      overflow: hidden;
+    }
+
+    .desktop-toolbar {
+      height: 36px;
+      background: #F5F5F4;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 6px;
+    }
+    .desktop-toolbar-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border-hover);
+    }
+    .desktop-toolbar-dot:nth-child(1) { background: #FCA5A5; }
+    .desktop-toolbar-dot:nth-child(2) { background: #FCD34D; }
+    .desktop-toolbar-dot:nth-child(3) { background: #86EFAC; }
+
+    .desktop-content {
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* ── Progress Dots ── */
+    .progress-dots {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 0;
+    }
+    .progress-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background var(--transition), transform var(--transition);
+    }
+    .progress-dot.active {
+      background: var(--primary);
+      transform: scale(1.25);
+    }
+    .progress-dot.completed {
+      background: var(--positive);
+    }
+
+    /* ── Buttons ── */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 12px 24px;
+      background: var(--primary);
+      color: #FFFFFF;
+      border: none;
+      border-radius: var(--radius-input);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 12px 24px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid transparent;
+      border-radius: var(--radius-input);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .btn-secondary:hover {
+      background: #E0E7FF;
+      border-color: var(--primary);
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 10px 16px;
+      background: transparent;
+      color: var(--text-secondary);
+      border: none;
+      border-radius: var(--radius-input);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color var(--transition), background var(--transition);
+    }
+    .btn-ghost:hover {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .btn-add {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 10px 16px;
+      background: transparent;
+      color: var(--primary);
+      border: 1px dashed var(--primary);
+      border-radius: var(--radius-input);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .btn-add:hover {
+      background: var(--primary-light);
+      border-style: solid;
+    }
+
+    /* ── Form Elements ── */
+    .form-group {
+      margin-bottom: 12px;
+    }
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--surface);
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+    }
+    .form-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+    .form-input::placeholder {
+      color: var(--text-tertiary);
+    }
+    .form-input-sm {
+      padding: 7px 10px;
+      font-size: 13px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 8px;
+    }
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--text-primary);
+      background: var(--surface);
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2378716C' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+      transition: border-color var(--transition);
+    }
+    .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+
+    /* ── Step Screen Title ── */
+    .step-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .step-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    /* ── Account / Card Items ── */
+    .item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .item-card {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      gap: 10px;
+      transition: border-color var(--transition);
+    }
+    .item-card:hover {
+      border-color: var(--border-hover);
+    }
+    .item-card-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--primary-light);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    /* ── Card Brand Icons ── */
+    .card-brand {
+      width: 40px;
+      height: 26px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-family: 'Inter', sans-serif;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .card-brand-visa {
+      background: #1A1F71;
+      color: #FFFFFF;
+      font-size: 10px;
+      font-style: italic;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+    .card-brand-master {
+      background: #252525;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-brand-master::before,
+    .card-brand-master::after {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .card-brand-master::before {
+      left: 5px;
+      background: #EB001B;
+    }
+    .card-brand-master::after {
+      right: 5px;
+      background: #F79E1B;
+    }
+    .card-brand-elo {
+      background: #000000;
+      color: #FFCB05;
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .card-brand-amex {
+      background: #006FCF;
+      color: #FFFFFF;
+      font-size: 7px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+    .card-brand-hiper {
+      background: #822124;
+      color: #FFFFFF;
+      font-size: 7px;
+      font-weight: 700;
+    }
+    .item-card-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .item-card-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .item-card-detail {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 1px;
+    }
+    .item-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .item-card-action {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 12px;
+      transition: background var(--transition);
+    }
+    .item-card-action.check {
+      color: var(--positive-text);
+      background: var(--positive-bg);
+    }
+    .item-card-action.remove {
+      color: var(--text-tertiary);
+    }
+    .item-card-action.remove:hover {
+      color: #EF4444;
+      background: #FEF2F2;
+    }
+
+    /* ── Category Items ── */
+    .category-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .category-item {
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      gap: 6px;
+      transition: border-color var(--transition);
+    }
+    .category-item:hover {
+      border-color: var(--border-hover);
+    }
+    .category-item-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .category-emoji {
+      font-size: 18px;
+      flex-shrink: 0;
+      width: 24px;
+      text-align: center;
+    }
+    .category-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      flex: 1;
+      min-width: 0;
+    }
+    .category-budget {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .category-budget-prefix {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .category-budget-input {
+      width: 60px;
+      padding: 4px 6px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      text-align: right;
+      outline: none;
+      background: var(--surface);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .category-budget-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.12);
+    }
+    .category-budget-suffix {
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    .category-payment {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding-left: 32px;
+    }
+    .category-payment-label {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      white-space: nowrap;
+    }
+
+    /* ── Classification Groups ── */
+    .classification-group {
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .classification-header {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--primary);
+      padding: 6px 0 4px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 6px;
+    }
+
+    .desktop-classification-group {
+      margin-bottom: 20px;
+    }
+    .desktop-classification-header {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--primary);
+      padding: 8px 0 6px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 10px;
+      grid-column: 1 / -1;
+    }
+
+    /* ── Add Form (inline) ── */
+    .add-form {
+      padding: 12px;
+      background: var(--primary-light);
+      border: 1px solid #C7D2FE;
+      border-radius: var(--radius-input);
+      margin-bottom: 12px;
+    }
+    .add-form-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    /* ── Welcome Screen ── */
+    .welcome-screen {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px 0;
+    }
+    .welcome-logo {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+    .welcome-logo-icon {
+      font-size: 20px;
+      margin-right: 2px;
+    }
+    .welcome-illustration {
+      width: 80px;
+      height: 80px;
+      background: var(--primary-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin: 24px 0;
+    }
+    .welcome-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .welcome-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 240px;
+    }
+
+    /* ── Done Screen ── */
+    .done-screen {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding-top: 16px;
+    }
+    .done-icon {
+      width: 64px;
+      height: 64px;
+      background: var(--positive-bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+    .done-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .done-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .summary-list {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 16px;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+    .summary-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+    .summary-item + .summary-item {
+      border-top: 1px solid var(--border);
+    }
+    .summary-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--primary-light);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .summary-value {
+      margin-left: auto;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .summary-total {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: var(--positive-bg);
+      border: 1px solid #BBF7D0;
+      border-radius: var(--radius-input);
+      margin-bottom: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--positive-text);
+    }
+    .summary-total-value {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    /* ── Bottom Actions (pinned) ── */
+    .bottom-actions {
+      padding: 12px 0 0;
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    /* ── Desktop Category Grid ── */
+    .desktop-card {
+      width: 100%;
+      max-width: 600px;
+    }
+    .desktop-step-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .desktop-step-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .desktop-category-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .desktop-category-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      gap: 12px;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .desktop-category-item:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-card);
+    }
+    .desktop-category-emoji {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .desktop-category-info {
+      flex: 1;
+    }
+    .desktop-category-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .desktop-category-budget-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .desktop-category-budget-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .desktop-budget-input {
+      width: 80px;
+      padding: 5px 8px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      text-align: right;
+      outline: none;
+      background: var(--surface);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .desktop-budget-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+    .desktop-category-budget-suffix {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+    .desktop-category-payment-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .desktop-category-payment-label {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      white-space: nowrap;
+    }
+    .desktop-select {
+      padding: 5px 8px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 12px;
+      color: var(--text-secondary);
+      background: var(--surface);
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%2378716C' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 6px center;
+      padding-right: 22px;
+      transition: border-color var(--transition);
+    }
+    .desktop-select:focus {
+      border-color: var(--primary);
+    }
+
+    .desktop-progress-dots {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 20px 0 12px;
+    }
+    .desktop-progress-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background var(--transition), transform var(--transition);
+    }
+    .desktop-progress-dot.active {
+      background: var(--primary);
+      transform: scale(1.3);
+    }
+    .desktop-progress-dot.completed {
+      background: var(--positive);
+    }
+    .desktop-bottom-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 8px;
+    }
+    .desktop-btn {
+      padding: 12px 32px;
+      border-radius: var(--radius-input);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
+      border: none;
+    }
+    .desktop-btn-primary {
+      background: var(--primary);
+      color: #FFFFFF;
+    }
+    .desktop-btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+    .desktop-btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+    }
+    .desktop-btn-ghost:hover {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    /* ── Divider ── */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 1400px) {
+      .showcase { gap: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Page Header -->
+  <header class="page-header">
+    <h1>Prototipo 08 — Onboarding</h1>
+    <p>Setup inicial progressivo — ~5 minutos</p>
+  </header>
+
+  <!-- Section: Mobile Steps -->
+  <div class="section-header">
+    <h2>Fluxo Mobile (5 etapas)</h2>
+    <p>Telas sequenciais do wizard de primeiro acesso</p>
+  </div>
+
+  <div class="showcase">
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- STEP 1 — Bem-vindo -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="showcase-column">
+      <div class="showcase-column-label">Etapa 1 de 5</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-content">
+          <div class="welcome-screen">
+            <div class="welcome-logo">
+              <span class="welcome-logo-icon">&#9998;</span> Caderninho
+            </div>
+            <div class="welcome-illustration">&#128202;</div>
+            <div class="welcome-title">Bem-vindo ao Caderninho!</div>
+            <div class="welcome-desc">
+              Vamos configurar o basico para voce comecar. Leva cerca de 5 minutos.
+            </div>
+          </div>
+
+          <div class="bottom-actions">
+            <div class="progress-dots">
+              <div class="progress-dot active"></div>
+              <div class="progress-dot"></div>
+              <div class="progress-dot"></div>
+              <div class="progress-dot"></div>
+              <div class="progress-dot"></div>
+            </div>
+            <button class="btn-primary">Comecar</button>
+            <button class="btn-ghost">Ja tenho um convite</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- STEP 2 — Contas Bancarias -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="showcase-column">
+      <div class="showcase-column-label">Etapa 2 de 5</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-content">
+          <div class="step-title">Suas contas bancarias</div>
+          <div class="step-subtitle">Adicione as contas que voce usa no dia a dia</div>
+
+          <div class="item-list">
+            <div class="item-card">
+              <div class="item-card-icon">Nu</div>
+              <div class="item-card-info">
+                <div class="item-card-name">Nubank</div>
+                <div class="item-card-detail">Saldo: R$ 8.500,00</div>
+              </div>
+              <div class="item-card-actions">
+                <button class="item-card-action check">&#10003;</button>
+                <button class="item-card-action remove">&#10005;</button>
+              </div>
+            </div>
+            <div class="item-card">
+              <div class="item-card-icon">It</div>
+              <div class="item-card-info">
+                <div class="item-card-name">Itau</div>
+                <div class="item-card-detail">Saldo: R$ 6.200,00</div>
+              </div>
+              <div class="item-card-actions">
+                <button class="item-card-action check">&#10003;</button>
+                <button class="item-card-action remove">&#10005;</button>
+              </div>
+            </div>
+            <div class="item-card">
+              <div class="item-card-icon">BB</div>
+              <div class="item-card-info">
+                <div class="item-card-name">BB</div>
+                <div class="item-card-detail">Saldo: R$ 4.500,00</div>
+              </div>
+              <div class="item-card-actions">
+                <button class="item-card-action check">&#10003;</button>
+                <button class="item-card-action remove">&#10005;</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add form -->
+          <div class="add-form">
+            <div class="add-form-title">Adicionar conta</div>
+            <div class="form-group">
+              <label class="form-label">Nome do banco</label>
+              <input type="text" class="form-input form-input-sm" placeholder="Ex: Bradesco" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Saldo atual</label>
+              <input type="text" class="form-input form-input-sm" placeholder="R$ 0,00" />
+            </div>
+          </div>
+
+          <button class="btn-add" onclick="this.previousElementSibling.style.display = this.previousElementSibling.style.display === 'none' ? 'block' : 'none'">
+            + Adicionar conta
+          </button>
+
+          <div class="bottom-actions">
+            <div class="progress-dots">
+              <div class="progress-dot completed"></div>
+              <div class="progress-dot active"></div>
+              <div class="progress-dot"></div>
+              <div class="progress-dot"></div>
+              <div class="progress-dot"></div>
+            </div>
+            <button class="btn-primary">Proximo</button>
+            <button class="btn-ghost">Pular</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- STEP 3 — Cartoes de Credito -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="showcase-column">
+      <div class="showcase-column-label">Etapa 3 de 5</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-content">
+          <div class="step-title">Seus cartoes de credito</div>
+          <div class="step-subtitle">Cadastre seus cartoes para controlar as faturas</div>
+
+          <div class="item-list">
+            <div class="item-card" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+              <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+                <div class="card-brand card-brand-visa">VISA</div>
+                <div class="item-card-info">
+                  <div class="item-card-name">Latam Pass Visa</div>
+                  <div class="item-card-detail">Limite: R$ 10.000 &middot; Credito</div>
+                </div>
+                <div class="item-card-actions">
+                  <button class="item-card-action check">&#10003;</button>
+                  <button class="item-card-action remove">&#10005;</button>
+                </div>
+              </div>
+              <div style="font-size: 11px; color: var(--text-tertiary); padding-left: 50px;">
+                Fecha dia 7 &middot; Vence dia 15
+              </div>
+            </div>
+
+            <div class="item-card" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+              <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+                <div class="card-brand card-brand-master"></div>
+                <div class="item-card-info">
+                  <div class="item-card-name">Pao de Acucar</div>
+                  <div class="item-card-detail">Limite: R$ 5.000 &middot; Credito</div>
+                </div>
+                <div class="item-card-actions">
+                  <button class="item-card-action check">&#10003;</button>
+                  <button class="item-card-action remove">&#10005;</button>
+                </div>
+              </div>
+              <div style="font-size: 11px; color: var(--text-tertiary); padding-left: 50px;">
+                Fecha dia 3 &middot; Vence dia 10
+              </div>
+            </div>
+          </div>
+
+          <!-- Add form -->
+          <div class="add-form">
+            <div class="add-form-title">Adicionar cartao</div>
+            <div class="form-group">
+              <label class="form-label">Nome do cartao</label>
+              <input type="text" class="form-input form-input-sm" placeholder="Ex: Nubank Mastercard" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Bandeira</label>
+                <select class="form-select" style="font-size: 12px; padding: 6px 8px;">
+                  <option>Selecionar...</option>
+                  <option>Visa</option>
+                  <option>Mastercard</option>
+                  <option>Elo</option>
+                  <option>Amex</option>
+                  <option>Hipercard</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tipo</label>
+                <select class="form-select" style="font-size: 12px; padding: 6px 8px;">
+                  <option>Credito</option>
+                  <option>Debito</option>
+                  <option>Credito + Debito</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Limite (R$)</label>
+              <input type="text" class="form-input form-input-sm" placeholder="R$ 0,00" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Dia de fechamento</label>
+                <input type="number" class="form-input form-input-sm" placeholder="Ex: 7" min="1" max="31" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Dia de vencimento</label>
+                <input type="number" class="form-input form-input-sm" placeholder="Ex: 15" min="1" max="31" />
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-add">+ Adicionar cartao</button>
+
+          <div class="bottom-actions">
+            <div class="progress-dots">
+              <div class="progress-dot completed"></div>
+              <div class="progress-dot completed"></div>
+              <div class="progress-dot active"></div>
+              <div class="progress-dot"></div>
+              <div class="progress-dot"></div>
+            </div>
+            <button class="btn-primary">Proximo</button>
+            <button class="btn-ghost">Pular</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- STEP 4 — Categorias e Orcamentos -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="showcase-column">
+      <div class="showcase-column-label">Etapa 4 de 5</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-content">
+          <div class="step-title">Organize seus gastos</div>
+          <div class="step-subtitle">Sugerimos categorias com base nos mais comuns. Ajuste os valores.</div>
+
+          <div class="category-list">
+            <!-- Grupo: Essenciais -->
+            <div class="classification-group">
+              <div class="classification-header">Essenciais</div>
+
+              <div class="category-item">
+                <div class="category-item-top">
+                  <span class="category-emoji">&#128722;</span>
+                  <span class="category-name">Supermercado</span>
+                  <div class="category-budget">
+                    <span class="category-budget-prefix">R$</span>
+                    <input type="text" class="category-budget-input" value="3.000" />
+                    <span class="category-budget-suffix">/ mes</span>
+                  </div>
+                </div>
+                <div class="category-payment">
+                  <span class="category-payment-label">Método:</span>
+                  <select class="form-select" style="font-size: 11px; padding: 3px 22px 3px 6px; flex: 1;">
+                    <option>Selecionar...</option>
+                    <option selected>Latam Pass Visa</option>
+                    <option>Nubank Master</option>
+                    <option>Itau Debito</option>
+                    <option>PIX</option>
+                    <option>Dinheiro</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="category-item">
+                <div class="category-item-top">
+                  <span class="category-emoji">&#127968;</span>
+                  <span class="category-name">Moradia</span>
+                  <div class="category-budget">
+                    <span class="category-budget-prefix">R$</span>
+                    <input type="text" class="category-budget-input" value="2.200" />
+                    <span class="category-budget-suffix">/ mes</span>
+                  </div>
+                </div>
+                <div class="category-payment">
+                  <span class="category-payment-label">Método:</span>
+                  <select class="form-select" style="font-size: 11px; padding: 3px 22px 3px 6px; flex: 1;">
+                    <option>Selecionar...</option>
+                    <option>Latam Pass Visa</option>
+                    <option>Nubank Master</option>
+                    <option selected>Itau Debito</option>
+                    <option>PIX</option>
+                    <option>Dinheiro</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="category-item">
+                <div class="category-item-top">
+                  <span class="category-emoji">&#9981;</span>
+                  <span class="category-name">Gasolina</span>
+                  <div class="category-budget">
+                    <span class="category-budget-prefix">R$</span>
+                    <input type="text" class="category-budget-input" value="600" />
+                    <span class="category-budget-suffix">/ mes</span>
+                  </div>
+                </div>
+                <div class="category-payment">
+                  <span class="category-payment-label">Método:</span>
+                  <select class="form-select" style="font-size: 11px; padding: 3px 22px 3px 6px; flex: 1;">
+                    <option>Selecionar...</option>
+                    <option>Latam Pass Visa</option>
+                    <option>Nubank Master</option>
+                    <option selected>Itau Debito</option>
+                    <option>PIX</option>
+                    <option>Dinheiro</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="category-item">
+                <div class="category-item-top">
+                  <span class="category-emoji">&#128241;</span>
+                  <span class="category-name">Internet/Tel</span>
+                  <div class="category-budget">
+                    <span class="category-budget-prefix">R$</span>
+                    <input type="text" class="category-budget-input" value="158" />
+                    <span class="category-budget-suffix">/ mes</span>
+                  </div>
+                </div>
+                <div class="category-payment">
+                  <span class="category-payment-label">Método:</span>
+                  <select class="form-select" style="font-size: 11px; padding: 3px 22px 3px 6px; flex: 1;">
+                    <option>Selecionar...</option>
+                    <option selected>Latam Pass Visa</option>
+                    <option>Nubank Master</option>
+                    <option>Itau Debito</option>
+                    <option>PIX</option>
+                    <option>Dinheiro</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="category-item">
+                <div class="category-item-top">
+                  <span class="category-emoji">&#127891;</span>
+                  <span class="category-name">Educacao</span>
+                  <div class="category-budget">
+                    <span class="category-budget-prefix">R$</span>
+                    <input type="text" class="category-budget-input" value="2.800" />
+                    <span class="category-budget-suffix">/ mes</span>
+                  </div>
+                </div>
+                <div class="category-payment">
+                  <span class="category-payment-label">Método:</span>
+                  <select class="form-select" style="font-size: 11px; padding: 3px 22px 3px 6px; flex: 1;">
+                    <option>Selecionar...</option>
+                    <option selected>Latam Pass Visa</option>
+                    <option>Nubank Master</option>
+                    <option>Itau Debito</option>
+                    <option>PIX</option>
+                    <option>Dinheiro</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Grupo: Qualidade de Vida -->
+            <div class="classification-group">
+              <div class="classification-header">Qualidade de Vida</div>
+
+              <div class="category-item">
+                <div class="category-item-top">
+                  <span class="category-emoji">&#127869;</span>
+                  <span class="category-name">Restaurante</span>
+                  <div class="category-budget">
+                    <span class="category-budget-prefix">R$</span>
+                    <input type="text" class="category-budget-input" value="2.500" />
+                    <span class="category-budget-suffix">/ mes</span>
+                  </div>
+                </div>
+                <div class="category-payment">
+                  <span class="category-payment-label">Método:</span>
+                  <select class="form-select" style="font-size: 11px; padding: 3px 22px 3px 6px; flex: 1;">
+                    <option>Selecionar...</option>
+                    <option selected>Nubank Master</option>
+                    <option>Latam Pass Visa</option>
+                    <option>Itau Debito</option>
+                    <option>PIX</option>
+                    <option>Dinheiro</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-add">+ Adicionar categoria</button>
+
+          <div class="bottom-actions">
+            <div class="progress-dots">
+              <div class="progress-dot completed"></div>
+              <div class="progress-dot completed"></div>
+              <div class="progress-dot completed"></div>
+              <div class="progress-dot active"></div>
+              <div class="progress-dot"></div>
+            </div>
+            <button class="btn-primary">Proximo</button>
+            <button class="btn-ghost">Pular</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- STEP 5 — Pronto! -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="showcase-column">
+      <div class="showcase-column-label">Etapa 5 de 5</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-content">
+          <div class="done-screen">
+            <div class="done-icon">&#10003;</div>
+            <div class="done-title">Tudo configurado!</div>
+            <div class="done-desc">
+              Agora e so comecar a registrar.<br />Cada gasto leva ~5 segundos.
+            </div>
+
+            <div class="summary-list">
+              <div class="summary-item">
+                <div class="summary-icon">&#127974;</div>
+                <span>Contas bancarias</span>
+                <span class="summary-value">3</span>
+              </div>
+              <div class="summary-item">
+                <div class="summary-icon">&#128179;</div>
+                <span>Cartoes de credito</span>
+                <span class="summary-value">2</span>
+              </div>
+              <div class="summary-item">
+                <div class="summary-icon">&#128202;</div>
+                <span>Categorias com orcamento</span>
+                <span class="summary-value">6</span>
+              </div>
+            </div>
+
+            <div class="summary-total">
+              <span>Saldo total</span>
+              <span class="summary-total-value">R$ 19.200,00</span>
+            </div>
+          </div>
+
+          <div class="bottom-actions">
+            <div class="progress-dots">
+              <div class="progress-dot completed"></div>
+              <div class="progress-dot completed"></div>
+              <div class="progress-dot completed"></div>
+              <div class="progress-dot completed"></div>
+              <div class="progress-dot active"></div>
+            </div>
+            <button class="btn-primary">Ir para o Dashboard</button>
+            <button class="btn-secondary">Convidar alguem</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /showcase -->
+
+  <hr class="section-divider" />
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- DESKTOP VERSION — Step 4 -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="section-header">
+    <h2>Versao Desktop (Etapa 4)</h2>
+    <p>Categorias e orcamentos com layout mais espacoso</p>
+  </div>
+
+  <div class="showcase">
+    <div class="showcase-column">
+      <div class="showcase-column-label">Desktop &mdash; 800px</div>
+      <div class="desktop-frame">
+        <div class="desktop-toolbar">
+          <div class="desktop-toolbar-dot"></div>
+          <div class="desktop-toolbar-dot"></div>
+          <div class="desktop-toolbar-dot"></div>
+        </div>
+        <div class="desktop-content">
+          <div class="desktop-card">
+            <div class="desktop-step-title">Organize seus gastos</div>
+            <div class="desktop-step-subtitle">Sugerimos categorias com base nos mais comuns. Ajuste os valores conforme sua realidade.</div>
+
+            <div class="desktop-category-grid">
+
+              <!-- Grupo: Essenciais -->
+              <div class="desktop-classification-header">Essenciais</div>
+
+              <div class="desktop-category-item">
+                <span class="desktop-category-emoji">&#128722;</span>
+                <div class="desktop-category-info">
+                  <div class="desktop-category-name">Supermercado</div>
+                  <div class="desktop-category-budget-row">
+                    <span class="desktop-category-budget-label">R$</span>
+                    <input type="text" class="desktop-budget-input" value="3.000" />
+                    <span class="desktop-category-budget-suffix">/ mes</span>
+                  </div>
+                  <div class="desktop-category-payment-row">
+                    <span class="desktop-category-payment-label">Método:</span>
+                    <select class="desktop-select">
+                      <option>Selecionar...</option>
+                      <option selected>Latam Pass Visa</option>
+                      <option>Nubank Master</option>
+                      <option>Itau Debito</option>
+                      <option>PIX</option>
+                      <option>Dinheiro</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="desktop-category-item">
+                <span class="desktop-category-emoji">&#127968;</span>
+                <div class="desktop-category-info">
+                  <div class="desktop-category-name">Moradia</div>
+                  <div class="desktop-category-budget-row">
+                    <span class="desktop-category-budget-label">R$</span>
+                    <input type="text" class="desktop-budget-input" value="2.200" />
+                    <span class="desktop-category-budget-suffix">/ mes</span>
+                  </div>
+                  <div class="desktop-category-payment-row">
+                    <span class="desktop-category-payment-label">Método:</span>
+                    <select class="desktop-select">
+                      <option>Selecionar...</option>
+                      <option>Latam Pass Visa</option>
+                      <option>Nubank Master</option>
+                      <option selected>Itau Debito</option>
+                      <option>PIX</option>
+                      <option>Dinheiro</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="desktop-category-item">
+                <span class="desktop-category-emoji">&#9981;</span>
+                <div class="desktop-category-info">
+                  <div class="desktop-category-name">Gasolina</div>
+                  <div class="desktop-category-budget-row">
+                    <span class="desktop-category-budget-label">R$</span>
+                    <input type="text" class="desktop-budget-input" value="600" />
+                    <span class="desktop-category-budget-suffix">/ mes</span>
+                  </div>
+                  <div class="desktop-category-payment-row">
+                    <span class="desktop-category-payment-label">Método:</span>
+                    <select class="desktop-select">
+                      <option>Selecionar...</option>
+                      <option>Latam Pass Visa</option>
+                      <option>Nubank Master</option>
+                      <option selected>Itau Debito</option>
+                      <option>PIX</option>
+                      <option>Dinheiro</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="desktop-category-item">
+                <span class="desktop-category-emoji">&#128241;</span>
+                <div class="desktop-category-info">
+                  <div class="desktop-category-name">Internet/Tel</div>
+                  <div class="desktop-category-budget-row">
+                    <span class="desktop-category-budget-label">R$</span>
+                    <input type="text" class="desktop-budget-input" value="158" />
+                    <span class="desktop-category-budget-suffix">/ mes</span>
+                  </div>
+                  <div class="desktop-category-payment-row">
+                    <span class="desktop-category-payment-label">Método:</span>
+                    <select class="desktop-select">
+                      <option>Selecionar...</option>
+                      <option selected>Latam Pass Visa</option>
+                      <option>Nubank Master</option>
+                      <option>Itau Debito</option>
+                      <option>PIX</option>
+                      <option>Dinheiro</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="desktop-category-item">
+                <span class="desktop-category-emoji">&#127891;</span>
+                <div class="desktop-category-info">
+                  <div class="desktop-category-name">Educacao</div>
+                  <div class="desktop-category-budget-row">
+                    <span class="desktop-category-budget-label">R$</span>
+                    <input type="text" class="desktop-budget-input" value="2.800" />
+                    <span class="desktop-category-budget-suffix">/ mes</span>
+                  </div>
+                  <div class="desktop-category-payment-row">
+                    <span class="desktop-category-payment-label">Método:</span>
+                    <select class="desktop-select">
+                      <option>Selecionar...</option>
+                      <option selected>Latam Pass Visa</option>
+                      <option>Nubank Master</option>
+                      <option>Itau Debito</option>
+                      <option>PIX</option>
+                      <option>Dinheiro</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Grupo: Qualidade de Vida -->
+              <div class="desktop-classification-header">Qualidade de Vida</div>
+
+              <div class="desktop-category-item">
+                <span class="desktop-category-emoji">&#127869;</span>
+                <div class="desktop-category-info">
+                  <div class="desktop-category-name">Restaurante</div>
+                  <div class="desktop-category-budget-row">
+                    <span class="desktop-category-budget-label">R$</span>
+                    <input type="text" class="desktop-budget-input" value="2.500" />
+                    <span class="desktop-category-budget-suffix">/ mes</span>
+                  </div>
+                  <div class="desktop-category-payment-row">
+                    <span class="desktop-category-payment-label">Método:</span>
+                    <select class="desktop-select">
+                      <option>Selecionar...</option>
+                      <option selected>Nubank Master</option>
+                      <option>Latam Pass Visa</option>
+                      <option>Itau Debito</option>
+                      <option>PIX</option>
+                      <option>Dinheiro</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+            </div><!-- /grid -->
+
+            <button class="btn-add" style="max-width: 280px;">+ Adicionar categoria</button>
+
+            <div class="desktop-progress-dots">
+              <div class="desktop-progress-dot completed"></div>
+              <div class="desktop-progress-dot completed"></div>
+              <div class="desktop-progress-dot completed"></div>
+              <div class="desktop-progress-dot active"></div>
+              <div class="desktop-progress-dot"></div>
+            </div>
+
+            <div class="desktop-bottom-actions">
+              <button class="desktop-btn desktop-btn-ghost">Pular</button>
+              <button class="desktop-btn desktop-btn-primary">Proximo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
