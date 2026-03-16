@@ -58,6 +58,16 @@ So that I can start building features on a solid architectural foundation.
   - [x] 8.3 `npm test` roda e passa
   - [x] 8.4 Path aliases resolvem corretamente
 
+### Review Follow-ups (AI)
+
+- [x] [AI-Review][HIGH] Instalar `@vitest/coverage-v8` como devDependency — script `test:coverage` falha com MISSING DEPENDENCY [package.json:12]
+- [x] [AI-Review][MEDIUM] Alterar `<html lang="en">` para `<html lang="pt-BR">` — app pt-BR com lang incorreto [src/app/layout.tsx:27]
+- [x] [AI-Review][MEDIUM] Atualizar metadata genérica do create-next-app para refletir o projeto Caderninho [src/app/layout.tsx:15-17]
+- [x] [AI-Review][MEDIUM] Investigar e commitar mudanças pendentes no `package-lock.json` (unstaged após commit da story)
+- [x] [AI-Review][LOW] Remover imports redundantes de vitest no teste — `globals: true` já injeta `describe/it/expect` [src/shared/types/result.test.ts:1]
+- [x] [AI-Review][LOW] Remover `next-env.d.ts` da File List da story — arquivo é gitignored e auto-gerado pelo Next.js
+- [x] [AI-Review][LOW] Considerar fixar TypeScript `"5.9.3"` ao invés de `"^5"` no package.json conforme project-context [package.json:27]
+
 ## Dev Notes
 
 ### Versões Exatas do Stack (pesquisadas em 2026-03-16)
@@ -353,30 +363,39 @@ Claude Opus 4.6 (claude-opus-4-6)
 - .env.example com todas as variáveis documentadas
 - .gitignore seguro (`.env`, `.env.local`, `.env*.local`)
 - Validação final: dev OK, build OK, test OK (3/3 passed), lint OK, tsc OK
+- ✅ Resolved review finding [HIGH]: Instalado @vitest/coverage-v8 — test:coverage funciona corretamente
+- ✅ Resolved review finding [MEDIUM]: html lang="pt-BR" configurado em layout.tsx
+- ✅ Resolved review finding [MEDIUM]: Metadata atualizada para título "Caderninho" e descrição do projeto
+- ✅ Resolved review finding [MEDIUM]: package-lock.json com mudanças incluídas para commit
+- ✅ Resolved review finding [LOW]: Imports redundantes de vitest removidos do teste + vitest-env.d.ts criado para tipos globais
+- ✅ Resolved review finding [LOW]: next-env.d.ts removido da File List (gitignored, auto-gerado)
+- ✅ Resolved review finding [LOW]: TypeScript fixado em "5.9.3" ao invés de "^5" no package.json
 
 ### Change Log
 
 - 2026-03-16: Story 1.1 implementada — fundação estrutural do projeto Caderninho
+- 2026-03-16: Code review adversarial — 7 issues encontrados (1 HIGH, 3 MEDIUM, 3 LOW). Action items criados. Status → in-progress
+- 2026-03-16: Addressed code review findings — 7/7 items resolved (1 HIGH, 3 MEDIUM, 3 LOW). Todas as issues de review corrigidas
 
 ### File List
 
-- package.json (novo)
-- package-lock.json (novo)
+- package.json (novo, modificado: +@vitest/coverage-v8, TypeScript fixado em 5.9.3)
+- package-lock.json (novo, modificado)
 - tsconfig.json (novo, modificado com path aliases)
 - next.config.ts (novo)
-- next-env.d.ts (novo)
 - eslint.config.mjs (novo)
 - postcss.config.mjs (novo)
 - vitest.config.ts (novo)
+- vitest-env.d.ts (novo — tipos globais do Vitest para tsc)
 - .gitignore (novo, ajustado)
 - .env.example (novo)
 - src/app/globals.css (novo)
-- src/app/layout.tsx (novo)
+- src/app/layout.tsx (novo, modificado: lang="pt-BR", metadata Caderninho)
 - src/app/page.tsx (novo)
 - src/app/favicon.ico (novo)
 - src/shared/types/result.ts (novo)
 - src/shared/types/index.ts (novo)
-- src/shared/types/result.test.ts (novo)
+- src/shared/types/result.test.ts (novo, modificado: removido import redundante vitest)
 - src/shared/schemas/.gitkeep (novo)
 - src/shared/constants/.gitkeep (novo)
 - src/server/domain/.gitkeep (novo)
