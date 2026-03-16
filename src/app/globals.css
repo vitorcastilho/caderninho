@@ -1,26 +1,238 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
+/* ============================================
+   @theme inline — Maps CSS variables to Tailwind utilities
+   References :root CSS custom properties (shadcn/ui + next/font)
+   ============================================ */
 @theme inline {
+  /* Font — Inter loaded via next/font/google */
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-mono);
+
+  /* shadcn/ui core color tokens */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* shadcn/ui sidebar tokens */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* shadcn/ui chart tokens */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* shadcn/ui radius tokens */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ============================================
+   @theme — Static Caderninho design tokens
+   Generates Tailwind utilities: bg-positive, text-attention, etc.
+   ============================================ */
+@theme {
+  /* Status semantic colors */
+  --color-positive: #22C55E;
+  --color-positive-bg: #DCFCE7;
+  --color-positive-text: #166534;
+
+  --color-attention: #EAB308;
+  --color-attention-bg: #FEF9C3;
+  --color-attention-text: #854D0E;
+
+  --color-alert: #F97316;
+  --color-alert-bg: #FFF7ED;
+
+  --color-critical: #DC2626;
+  --color-critical-bg: #FEE2E2;
+  --color-critical-text: #991B1B;
+
+  /* Extended palette tokens */
+  --color-primary-hover: #4338CA;
+  --color-primary-light: #EEF2FF;
+  --color-border-hover: #D6D3D1;
+  --color-text-secondary: #78716C;
+  --color-text-tertiary: #A8A29E;
+
+  /* Border-radius tokens */
+  --radius-button: 6px;
+  --radius-card-inner: 8px;
+  --radius-card: 10px;
+  --radius-card-lg: 12px;
+  --radius-badge: 100px;
+  --radius-mobile-frame: 24px;
+
+  /* Spacing base 4px */
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-7: 28px;
+  --spacing-8: 32px;
+}
+
+/* ============================================
+   :root — CSS Custom Property values
+   Stone & Indigo palette (light mode)
+   ============================================ */
+:root {
+  /* shadcn/ui core tokens — Stone & Indigo */
+  --background: #FAFAF9;
+  --foreground: #1C1917;
+  --card: #FFFFFF;
+  --card-foreground: #1C1917;
+  --popover: #FFFFFF;
+  --popover-foreground: #1C1917;
+  --primary: #4F46E5;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F5F5F4;
+  --secondary-foreground: #1C1917;
+  --muted: #F5F5F4;
+  --muted-foreground: #78716C;
+  --accent: #F5F5F4;
+  --accent-foreground: #1C1917;
+  --destructive: #DC2626;
+  --border: #E7E5E4;
+  --input: #E7E5E4;
+  --ring: #4F46E5;
+  --radius: 0.625rem;
+
+  /* shadcn/ui chart tokens — Indigo scale */
+  --chart-1: #4F46E5;
+  --chart-2: #6366F1;
+  --chart-3: #818CF8;
+  --chart-4: #A5B4FC;
+  --chart-5: #C7D2FE;
+
+  /* shadcn/ui sidebar tokens */
+  --sidebar: #FAFAF9;
+  --sidebar-foreground: #1C1917;
+  --sidebar-primary: #4F46E5;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F5F5F4;
+  --sidebar-accent-foreground: #1C1917;
+  --sidebar-border: #E7E5E4;
+  --sidebar-ring: #4F46E5;
+
+  /* Monospace font fallback */
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* Density — default: spacious */
+  --density-card-padding: 20px;
+  --density-gap: 16px;
+  --density-line-padding: 10px;
+  --density-bar-height: 8px;
+}
+
+/* Dark mode (structured for future, not active) */
+.dark {
+  --background: #1C1917;
+  --foreground: #FAFAF9;
+  --card: #292524;
+  --card-foreground: #FAFAF9;
+  --popover: #292524;
+  --popover-foreground: #FAFAF9;
+  --primary: #818CF8;
+  --primary-foreground: #1C1917;
+  --secondary: #44403C;
+  --secondary-foreground: #FAFAF9;
+  --muted: #44403C;
+  --muted-foreground: #A8A29E;
+  --accent: #44403C;
+  --accent-foreground: #FAFAF9;
+  --destructive: #EF4444;
+  --border: #44403C;
+  --input: #44403C;
+  --ring: #818CF8;
+  --chart-1: #818CF8;
+  --chart-2: #6366F1;
+  --chart-3: #4F46E5;
+  --chart-4: #4338CA;
+  --chart-5: #3730A3;
+  --sidebar: #1C1917;
+  --sidebar-foreground: #FAFAF9;
+  --sidebar-primary: #818CF8;
+  --sidebar-primary-foreground: #1C1917;
+  --sidebar-accent: #44403C;
+  --sidebar-accent-foreground: #FAFAF9;
+  --sidebar-border: #44403C;
+  --sidebar-ring: #818CF8;
+}
+
+/* Density modes */
+[data-density="compact"] {
+  --density-card-padding: 12px;
+  --density-gap: 8px;
+  --density-line-padding: 4px;
+  --density-bar-height: 4px;
+}
+
+[data-density="spacious"] {
+  --density-card-padding: 20px;
+  --density-gap: 16px;
+  --density-line-padding: 10px;
+  --density-bar-height: 8px;
+}
+
+/* ============================================
+   Base layer — Global styles
+   ============================================ */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
