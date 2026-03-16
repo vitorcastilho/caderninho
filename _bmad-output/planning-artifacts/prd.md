@@ -437,6 +437,7 @@ Como projeto pessoal/familiar, o sucesso não é comercial mas sim de **qualidad
 - FR16: O usuário pode excluir transações registradas
 - FR17: O sistema recalcula todos os totalizadores, saldos e orçamentos ao registrar, editar ou excluir transações (< 500ms conforme NFR P3)
 - FR58: O usuário pode registrar transferências entre contas próprias (ex: Itaú → Inter) e entre membros (ex: Tamires → Vitor). Transferências não são contabilizadas como receita nem despesa — são movimentações internas que afetam apenas os saldos das contas envolvidas
+- FR71: O usuário pode configurar um método de pagamento padrão por categoria. Ao selecionar uma categoria no registro de transação, o método de pagamento configurado é pré-selecionado automaticamente — o usuário só confirma ou altera quando for exceção
 
 ### Gastos Recorrentes
 

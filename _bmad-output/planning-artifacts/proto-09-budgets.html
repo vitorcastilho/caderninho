@@ -467,7 +467,7 @@
     .mob-treemap-area {
       position: relative;
       width: 100%;
-      min-height: 360px;
+      min-height: 480px;
       border-radius: 6px;
       overflow: hidden;
       background: var(--bg);
@@ -684,7 +684,7 @@
 
     .treemap-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 12px;
     }
     .treemap-card {
@@ -692,7 +692,7 @@
       border: 1px solid var(--border);
       border-radius: var(--radius-card);
       padding: 16px;
-      min-height: 140px;
+      min-height: 160px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -704,12 +704,6 @@
     .treemap-card:hover {
       border-color: var(--border-hover);
       box-shadow: var(--shadow-card);
-    }
-    .treemap-card.span-2 {
-      grid-column: span 2;
-    }
-    .treemap-card.tall {
-      grid-row: span 2;
     }
     .treemap-card-header {
       display: flex;
@@ -1403,7 +1397,7 @@
         <div class="treemap-group-header">Essenciais</div>
 
         <!-- Supermercado — large -->
-        <div class="treemap-card span-2" style="min-height: 180px;">
+        <div class="treemap-card">
           <div>
             <div class="treemap-card-header">
               <div class="treemap-card-icon-name">
@@ -1430,7 +1424,7 @@
         </div>
 
         <!-- Escola — large -->
-        <div class="treemap-card span-2" style="min-height: 180px;">
+        <div class="treemap-card">
           <div>
             <div class="treemap-card-header">
               <div class="treemap-card-icon-name">
@@ -1457,7 +1451,7 @@
         </div>
 
         <!-- Moradia — medium -->
-        <div class="treemap-card span-2" style="min-height: 160px;">
+        <div class="treemap-card">
           <div>
             <div class="treemap-card-header">
               <div class="treemap-card-icon-name">
@@ -1494,8 +1488,8 @@
               <span class="treemap-card-badge badge-ok">Ok</span>
             </div>
             <div class="treemap-card-amounts">
-              <span class="treemap-card-spent" style="font-size: 18px;">R$420</span>
-              <span class="treemap-card-total" style="font-size: 13px;">/ R$600</span>
+              <span class="treemap-card-spent">R$420</span>
+              <span class="treemap-card-total">/ R$600</span>
             </div>
             <div class="treemap-card-method"><span class="method-brand method-brand-visa">VISA</span> Itaú Débito</div>
           </div>
@@ -1521,8 +1515,8 @@
               <span class="treemap-card-badge badge-ok">Ok</span>
             </div>
             <div class="treemap-card-amounts">
-              <span class="treemap-card-spent" style="font-size: 18px;">R$380</span>
-              <span class="treemap-card-total" style="font-size: 13px;">/ R$500</span>
+              <span class="treemap-card-spent">R$380</span>
+              <span class="treemap-card-total">/ R$500</span>
             </div>
             <div class="treemap-card-method"><span class="method-brand method-brand-visa">VISA</span> Itaú Débito</div>
           </div>
@@ -1538,7 +1532,7 @@
         </div>
 
         <!-- Internet — small/fixed -->
-        <div class="treemap-card" style="min-height: 140px;">
+        <div class="treemap-card">
           <div>
             <div class="treemap-card-header">
               <div class="treemap-card-icon-name">
@@ -1548,8 +1542,8 @@
               <span class="treemap-card-badge badge-fixed">Fixo</span>
             </div>
             <div class="treemap-card-amounts">
-              <span class="treemap-card-spent" style="font-size: 18px;">R$158</span>
-              <span class="treemap-card-total" style="font-size: 13px;">/ R$158</span>
+              <span class="treemap-card-spent">R$158</span>
+              <span class="treemap-card-total">/ R$158</span>
             </div>
             <div class="treemap-card-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
           </div>
@@ -1568,7 +1562,7 @@
         <div class="treemap-group-header">Qualidade de Vida</div>
 
         <!-- Restaurante — medium -->
-        <div class="treemap-card span-2" style="min-height: 160px;">
+        <div class="treemap-card">
           <div>
             <div class="treemap-card-header">
               <div class="treemap-card-icon-name">
@@ -1595,7 +1589,7 @@
         </div>
 
         <!-- Outros — medium -->
-        <div class="treemap-card span-2" style="min-height: 150px;">
+        <div class="treemap-card">
           <div>
             <div class="treemap-card-header">
               <div class="treemap-card-icon-name">

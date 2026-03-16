@@ -220,6 +220,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      margin: 0 auto;
       box-shadow: 0 8px 32px rgba(79, 70, 229, 0.35), 0 2px 8px rgba(0,0,0,0.1);
     }
 
@@ -292,10 +293,18 @@
     }
 
     .cc-flag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 26px;
+      border-radius: 4px;
+      background: #1A1F71;
+      color: #FFFFFF;
       font-size: 11px;
-      font-weight: 600;
+      font-style: italic;
+      font-weight: 800;
       letter-spacing: 0.04em;
-      opacity: 0.8;
     }
 
     /* ── Metrics Row ── */
@@ -907,9 +916,18 @@
     }
 
     .m-cc-flag {
-      font-size: 10px;
-      font-weight: 600;
-      opacity: 0.8;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 22px;
+      border-radius: 4px;
+      background: #1A1F71;
+      color: #FFFFFF;
+      font-size: 9px;
+      font-style: italic;
+      font-weight: 800;
+      letter-spacing: 0.04em;
     }
 
     /* ── Mobile Metrics ── */
@@ -1198,8 +1216,8 @@
 
     <div class="sidebar-section-label">Cartoes</div>
     <ul class="sidebar-nav">
-      <li><a href="#" class="active"><span class="nav-icon">&#128179;</span> <span class="method-brand method-brand-visa">VISA</span>Latam Pass Visa</a></li>
-      <li><a href="#"><span class="nav-icon">&#128179;</span> <span class="method-brand method-brand-master"></span>Nubank Mastercard</a></li>
+      <li><a href="#" class="active"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</a></li>
+      <li><a href="#"><span class="method-brand method-brand-master"></span> Nubank Mastercard</a></li>
     </ul>
 
     <div class="sidebar-section-label">Outros</div>
@@ -1224,7 +1242,7 @@
     <section class="card-hero">
       <div class="credit-card-visual">
         <div class="cc-top">
-          <div class="cc-brand"><span class="method-brand method-brand-visa">VISA</span>Latam Pass Visa</div>
+          <div class="cc-brand">Latam Pass Visa</div>
           <div class="cc-chip"></div>
         </div>
         <div class="cc-number">**** &nbsp; **** &nbsp; **** &nbsp; 4532</div>
@@ -1603,7 +1621,7 @@
           <div class="m-card-hero">
             <div class="m-credit-card">
               <div class="m-cc-top">
-                <div class="m-cc-brand"><span class="method-brand method-brand-visa">VISA</span>Latam Pass Visa</div>
+                <div class="m-cc-brand">Latam Pass Visa</div>
                 <div class="m-cc-chip"></div>
               </div>
               <div class="m-cc-number">**** &nbsp; **** &nbsp; **** &nbsp; 4532</div>

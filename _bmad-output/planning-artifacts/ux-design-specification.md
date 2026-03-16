@@ -569,7 +569,8 @@ Usuario toca "Faturas cartao R$7.180":
 
 | Modo | Icone | Representacao | Melhor para |
 |---|---|---|---|
-| **Visual** | grid | Cards com barras de progresso, treemap, indicadores de status | Overview rapido, Tamires, celular |
+| **Cards** | grid | Cards uniformes em grid 2 colunas com barras de progresso e indicadores de status | Overview rapido, escaneabilidade |
+| **Mapa** | treemap | Treemap proporcional — blocos dimensionados pelo valor, cor por status | Distribuicao visual, "para onde vai o dinheiro" |
 | **Lista** | lista | Tabela ordenavel com valores, categorias, status, filtros | Gestao detalhada, reconciliacao, desktop |
 | **Timeline** | seta | Eixo temporal com parcelas, recorrentes, marcos financeiros | Projecao futura, planejamento |
 
@@ -581,21 +582,27 @@ Usuario toca "Faturas cartao R$7.180":
 
 **4. Exemplo — Gastos do mes por categoria nos 3 modos:**
 
-**Visual (treemap/cards):**
+**Visual (cards em grid uniforme 2 colunas):**
 ```
-┌──────────┬────────┬──────┐
-│          │        │Gasol.│
-│ Supermerc│ Escola │ ████░│
-│ ████████░│ ██████ │R$420 │
-│ R$2.122  │R$2.800 │/600  │
-│ /R$3.000 │/R$2.800│      │
-├──────────┼────────┼──────┤
-│ Moradia  │Internet│Outros│
-│ ██████░░ │██████  │██░░░░│
-│ R$1.800  │R$158   │R$450 │
-│ /R$2.200 │/R$158  │/2.000│
-└──────────┴────────┴──────┘
+┌─────────────────┬─────────────────┐
+│ 🛒 Supermercado │ 🎓 Escola       │
+│ ████████░░      │ ██████████      │
+│ R$2.122/R$3.000 │ R$2.800/R$2.800 │
+│ Resta R$878 70% │ Custo fixo 100% │
+├─────────────────┼─────────────────┤
+│ 🏠 Moradia      │ ⛽ Gasolina      │
+│ ██████░░░       │ ██████░░        │
+│ R$1.800/R$2.200 │ R$420/R$600     │
+│ Resta R$400 82% │ Resta R$180 70% │
+├─────────────────┼─────────────────┤
+│ 🚌 Transporte   │ 🌐 Internet     │
+│ ██████░░        │ ██████████      │
+│ R$380/R$500     │ R$158/R$158     │
+│ Resta R$120 76% │ Custo fixo 100% │
+└─────────────────┴─────────────────┘
 ```
+Todos os cards com tamanho uniforme, grid fixo de 2 colunas.
+A visualizacao proporcional (tamanho variavel) fica exclusiva do modo Mapa (treemap).
 
 **Lista:**
 ```
@@ -619,7 +626,9 @@ Mar         Abr         Mai         Jun
    R$750       R$920       R$920      R$1.091
 ```
 
-### Mecanica Detalhada — Timeline Kanban (Planejamento Futuro)
+### Mecanica Detalhada — Timeline Kanban (Fase 2 — Planejamento Futuro)
+
+> **Fase 2:** A mecanica de drag-and-drop para reorganizar gastos entre meses e planejada para Fase 2. O MVP exibe a timeline estatica com margem projetada por mes (FR62), sem interatividade de arrasto.
 
 A timeline de planejamento estende o modo Timeline com interatividade de drag-and-drop para gastos futuros nao realizados.
 
@@ -796,7 +805,7 @@ Combinação que une confiança visual (indigo), calor neutro (stone), precisão
 
 **Tipografia Inter:** Geométrica, com algarismos tabulares nativos — essencial para um app financeiro onde números precisam alinhar perfeitamente em colunas. Tom técnico e preciso, alinhado com a natureza instrumental do Caderninho.
 
-**Sidebar colapsável:** Resolve o dilema entre informação (sidebar com labels) e espaço (top nav). O Vitor pode expandir quando navega entre seções e recolher quando está focado em dados. No mobile, transforma-se naturalmente em bottom navigation com FAB central para registro rápido.
+**Sidebar colapsável:** Resolve o dilema entre informação (sidebar com labels) e espaço (top nav). O Vitor pode expandir quando navega entre seções e recolher quando está focado em dados. No mobile, transforma-se naturalmente em bottom navigation com FAB central para registro rápido. Na seção "Cartões", o ícone de cada item é o badge visual da bandeira (VISA, Mastercard) em vez do ícone genérico de cartão — identificação visual imediata.
 
 **Densidade configurável:** Dois modos — compacto (planilha evoluída, ideal para gestão no desktop) e espaçado (clareza visual, ideal para consulta e mobile). Alinha com o princípio "dois perfis, uma interface" — Vitor prefere denso, Tamires prefere espaçado.
 
@@ -808,8 +817,11 @@ Ajustes definidos durante a exploração visual:
 2. **Diferenciação visual entrada/saída:** Saldo em cor neutra (preto), saídas com sinal de menos em vermelho, resultado em verde — comunicação visual instantânea sem precisar ler labels
 3. **Parcelas como picker horizontal:** Seletor de parcelas tipo roller horizontal (scroll lateral) — evita conflito de scroll com o formulário vertical, gesto natural de polegar, compacto. Exibe resultado imediato ("2x de R$ 43,50 — Abr e Mai 2026")
 4. **PIX como método de pagamento:** Adicionado às opções de pagamento junto aos cartões de crédito e débito. Parcelas só aparecem quando cartão de crédito está selecionado
-5. **Timeline Kanban com linguagem visual:** Borda superior de cada mês indica status da margem (verde/vermelho). Gastos fixos em fundo neutro, arrastáveis em fundo indigo claro com borda tracejada. Margens em badges coloridos. Parcelas concluídas destacadas em verde
-6. **Tela de projeção ("Dá pra ir?"):** Mockup da projeção com origem concreta — mostra a meta, quanto economizar por mês, e DE ONDE cortar com percentuais por categoria e barras de progresso
+5. **Timeline Kanban com linguagem visual (Fase 2):** Borda superior de cada mês indica status da margem (verde/vermelho). Gastos fixos em fundo neutro, arrastáveis em fundo indigo claro com borda tracejada. Margens em badges coloridos. Parcelas concluídas destacadas em verde. **Nota: drag-and-drop e interatividade de arrasto sao Fase 2. O MVP exibe timeline estatica com margem projetada (FR62)**
+6. **Tela de projeção (MVP: timeline estática):** Mockup da projeção com margem projetada por mês (FR62) e indicadores de cor por status. **Fase 2: simulação de cenários ("Dá pra ir?") com origem concreta, metas e cortes por categoria**
+7. **Badges de bandeira de cartão — regra de uso:** O badge visual da bandeira (VISA azul escuro, Mastercard com círculos vermelho/laranja) aparece em dois contextos: (a) na sidebar/navegação como ícone identificador do cartão no lugar do ícone genérico 💳, e (b) no card hero visual do cartão de crédito, no canto inferior direito (como num cartão real). Nunca aparece duplicado ao lado do nome quando o nome já contém a bandeira (ex: "Latam Pass Visa" — o badge substitui o ícone, não acompanha o texto)
+8. **Cards de orçamento em grid uniforme:** Modo Cards exibe todas as categorias em grid fixo de 2 colunas com cards de tamanho idêntico. A visualização proporcional (tamanho variável por valor) fica exclusiva do modo Mapa (treemap)
+9. **Botões de ação universalmente reconhecíveis — só ícone:** Ações como "Editar" usam apenas o ícone (✏️) sem texto, com `title` para acessibilidade (tooltip no hover). O ícone do lápis é universalmente reconhecido e o texto é redundante
 
 ### Abordagem de Implementação
 
@@ -977,46 +989,30 @@ flowchart TD
 - Drill-down: 4 toques do dashboard até estabelecimento individual
 - Cada nível mostra percentuais + valores absolutos
 
-### Fluxo 4: Projeção e Decisão (Timeline Kanban + Simulação)
+### Fluxo 4: Projecao Financeira (Timeline Estatica)
 
-**Gatilho:** Tamires quer saber "dá pra viajar?" ou Vitor planeja o futuro.
-**Entry point:** Bottom nav/Sidebar > Projeção.
+**Gatilho:** Tamires quer saber "da pra viajar?" ou Vitor planeja o futuro.
+**Entry point:** Bottom nav/Sidebar > Projecao.
 
 ```mermaid
 flowchart TD
-    A[Abre Projeção] --> B[Timeline mostra próximos 12 meses]
+    A[Abre Projecao] --> B[Timeline mostra proximos 12 meses]
     B --> C[Gastos fixos mensais em cada coluna]
-    B --> D[Gastos não-mensais posicionados no mês previsto]
-    B --> E[Margem calculada por mês com indicador de cor]
-    E --> F{Margem negativa em algum mês?}
-    F -->|Sim| G[Mês em vermelho com detalhe da causa]
-    F -->|Não| H[Todos os meses em verde]
-    G --> I{Ação do usuário}
-    I -->|Drag-and-drop| J[Arrasta gasto planejado para outro mês]
-    J --> K[Preview: impacto nas margens de origem e destino ANTES de soltar]
-    K --> L{Solta?}
-    L -->|Sim| M[Recalcula todas as margens instantaneamente]
-    L -->|Não - cancela| N[Volta ao estado anterior]
-    M --> E
-    I -->|Simular meta| O[Toca Simular - cria cenário]
-    O --> P[Define: meta R$3.500, prazo junho]
-    P --> Q[App calcula quanto economizar por mês considerando todos os compromissos]
-    Q --> R{Viável?}
-    R -->|Sim sem ajustes| S[✅ Viável: guardar R$X/mês cobre a meta]
-    R -->|Sim com ajustes| T[✅ Viável com ajustes + mostra DE ONDE cortar]
-    R -->|Não| U[⚠️ Alternativas: cenários com valores diferentes]
-    T --> V[Lista categorias com potencial de corte]
-    V --> W[Restaurante: atual R$1.800, reduzir 30% = R$540]
-    V --> X[Delivery: atual R$900, reduzir 20% = R$180]
-    W --> Y[Total possível: R$945/mês - decisão informada]
-    X --> Y
+    B --> D[Gastos nao-mensais posicionados no mes previsto]
+    B --> E[Margem calculada por mes com indicador de cor FR62]
+    E --> F{Margem negativa em algum mes?}
+    F -->|Sim| G[Mes em vermelho com detalhe da causa]
+    F -->|Nao| H[Todos os meses em verde]
+    G --> I[Usuario identifica visualmente meses criticos]
+    I --> J[Tap to Trace no mes para ver composicao]
 ```
 
-**Critérios de sucesso:**
-- Timeline carrega com todos os compromissos previstos (mensais + não-mensais)
-- Drag-and-drop com preview de impacto antes de soltar
-- Projeção mostra DE ONDE economizar, não apenas quanto
-- Tamires consegue responder "dá pra ir?" sem o Vitor
+> **Fase 2:** Drag-and-drop para mover gastos entre meses e simulacao de cenarios ("da pra viajar?") serao adicionados na Fase 2. O MVP exibe a timeline estatica com margem projetada (FR62) e tap to trace para detalhamento.
+
+**Criterios de sucesso:**
+- Timeline carrega com todos os compromissos previstos (mensais + nao-mensais)
+- Margem projetada por mes com indicador de cor (FR62)
+- Tamires identifica visualmente meses criticos e entende a composicao via tap to trace
 
 ### Fluxo 5: Onboarding (Setup Inicial)
 
@@ -1192,7 +1188,7 @@ flowchart TD
 #### 9. CreditCardDetail
 
 - **Propósito:** Visão completa do cartão de crédito — substitui controle manual por planilha
-- **Conteúdo:** Card hero (limite, disponível, utilizado, fatura estimada), parcelas com timeline, transações do ciclo, projeção de meses futuros
+- **Conteúdo:** Card hero visual centralizado (nome do cartão sem badge de bandeira no topo — a bandeira aparece apenas no canto inferior direito como badge visual, reproduzindo um cartão real), seguido de métricas em grid 4 colunas abaixo (limite, disponível, utilizado, fatura estimada), parcelas com timeline, transações do ciclo, projeção de meses futuros
 - **Ações:** Ver transações, reconciliar fatura, tap to trace em qualquer valor
 - **Estados:** Normal (durante mês), reconciling (fatura chegou), confirmed (fatura confirmada), paid (fatura paga)
 - **Lógica de mês de referência:** Transações atribuídas ao ciclo baseado na data de fechamento. Parcelas recebem mês de referência automático na criação
@@ -1431,17 +1427,18 @@ O Caderninho tem 4 níveis de ação, sempre consistentes:
 
 - Banner vermelho no topo com "Sem conexão" ou "Erro ao salvar"
 - Botão "Tentar novamente"
-- Dados locais sempre disponíveis (offline-first para consulta)
-- Registro offline: salva local, sincroniza quando voltar
+- **(Fase futura)** Dados locais sempre disponíveis (offline-first para consulta)
+- **(Fase futura)** Registro offline: salva local, sincroniza quando voltar
 
 ### Padrões de Busca e Filtragem
 
-**Busca global (desktop):**
+**Busca global (desktop) — (Fase 2):**
 
 - Cmd+K (ou Ctrl+K) abre command palette
 - Busca em: transações, categorias, estabelecimentos, contas
 - Resultados agrupados por tipo com ícone
 - Enter no primeiro resultado navega direto
+- **Nota:** Command palette e busca global via Cmd+K sao planejados para Fase 2. O MVP usa filtros contextuais e busca em listas
 
 **Filtros contextuais:**
 
@@ -1552,24 +1549,24 @@ O Caderninho não adapta simplesmente o layout para caber — ele adapta a exper
 
 - Sidebar expandida (220px) com labels, badges, seção de cartões
 - Conteúdo em two-column quando aplicável (ex: fatura+parcelas | transações)
-- Summary cards em grid 4 colunas
+- Summary cards em grid 2 colunas (tamanho uniforme)
 - Popovers para tooltips e informações contextuais
-- Command palette (Cmd+K) para busca global
+- Command palette (Cmd+K) para busca global **(Fase 2)**
 - Hover states com informações adicionais
-- Drag-and-drop para reclassificação no timeline
+- Drag-and-drop para reclassificação no timeline **(Fase 2)**
 
 ### Adaptações por Componente
 
 | Componente | Mobile | Tablet | Desktop |
 |---|---|---|---|
 | **CascadeInput** | Full-screen, teclado numérico | Sheet lateral 400px | Sheet lateral 400px |
-| **SpendingTreemap** | 2 níveis, scroll vertical | 4 níveis, container único | 4 níveis, container amplo |
+| **SpendingTreemap** | 2 níveis, container min 480px altura | 4 níveis, container único | 4 níveis, container amplo |
 | **MonthChecklist** | Day view, today-first | Grupos expandidos, single col | Grupos expandidos + reconciliação lateral |
 | **CreditCardDetail** | Stack vertical compacto | Two-column com scroll | Two-column: fatura+parcelas / transações |
 | **FaturaReconciliation** | Swipe + scroll, footer fixo | Panel lateral | Panel full com comparação lado a lado |
 | **BillNotificationSystem** | Banner + card compacto | Banner + card médio | Banner + card com timeline |
 | **TapToTracePanel** | Bottom sheet full | Sheet lateral 400px | Sidebar dedicada ou inline |
-| **Dashboard** | Cards empilhados, scroll | Cards em grid 2 col | Cards em grid 3-4 col |
+| **Dashboard** | Cards empilhados, scroll | Cards em grid 2 col | Cards em grid 2 col (tamanho uniforme) |
 | **Navigation** | Bottom nav 56px + FAB | Sidebar 60px (collapsed) | Sidebar 220px (expanded) |
 
 ### Accessibility Strategy
@@ -1597,7 +1594,7 @@ O Caderninho não adapta simplesmente o layout para caber — ele adapta a exper
 - Enter/Space ativa botões e links
 - Escape fecha overlays (sheets, dialogs, popovers)
 - Arrow keys navegam dentro de listas, grids, e pickers
-- Cmd+K abre command palette (desktop)
+- Cmd+K abre command palette (desktop) **(Fase 2)**
 - Focus ring visível (2px indigo outline com 2px offset) em todo elemento focável
 
 **Screen reader:**
@@ -1686,5 +1683,5 @@ O Caderninho não adapta simplesmente o layout para caber — ele adapta a exper
 
 - Service Worker para cache de assets e dados de consulta
 - Manifest com ícones, theme-color (#4F46E5), display: standalone
-- Offline: consulta ao dashboard funciona, registro enfileira e sincroniza
 - "Adicionar à tela inicial" prompt após 2ª visita
+- **Nota:** Capacidades offline (consulta offline, registro com sincronizacao posterior) sao aspiracionais para fases futuras. O MVP foca em PWA basico: manifest, service worker para cache de assets e "Adicionar a tela inicial"

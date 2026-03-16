@@ -1,0 +1,124 @@
+# generated: 2026-03-16
+# project: finance
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog -> in-progress: Automatically when first story is created (via create-story)
+#   - in-progress -> done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-03-16
+project: finance
+project_key: NOKEY
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+
+development_status:
+  # Epic 1: Fundacao e Autenticacao
+  epic-1: in-progress
+  1-1-inicializacao-do-projeto-e-estrutura-base: ready-for-dev
+  1-2-design-system-e-layout-responsivo: backlog
+  1-3-banco-de-dados-e-supabase-local: backlog
+  1-4-registro-e-login-com-email-senha: backlog
+  1-5-login-social-google: backlog
+  1-6-auditoria-e-seguranca: backlog
+  1-7-validacao-logging-e-infraestrutura-compartilhada: backlog
+  1-8-ci-cd-pipeline-ambientes-e-readme: backlog
+  epic-1-retrospective: optional
+
+  # Epic 2: Estrutura Financeira e Categorizacao
+  epic-2: backlog
+  2-1-cadastro-e-gestao-de-contas-bancarias: backlog
+  2-2-cadastro-e-gestao-de-cartoes-de-credito-estrutura: backlog
+  2-3-cadastro-de-investimentos-e-fontes-de-receita: backlog
+  2-4-categorias-subcategorias-e-classificacoes-de-essencialidade: backlog
+  2-5-configuracao-de-metodo-de-pagamento-padrao-por-categoria: backlog
+  2-6-onboarding-setup-inicial-guiado: backlog
+  epic-2-retrospective: optional
+
+  # Epic 3: Registro e Gestao de Transacoes
+  epic-3: backlog
+  3-1-registro-de-gastos-cascade-input: backlog
+  3-2-registro-de-receitas-e-transferencias: backlog
+  3-3-edicao-e-exclusao-de-transacoes: backlog
+  3-4-listagem-e-historico-de-transacoes: backlog
+  3-5-reclassificacao-retroativa-de-categorias: backlog
+  3-6-acompanhamento-de-orcamento-por-categoria: backlog
+  epic-3-retrospective: optional
+
+  # Epic 4: Gastos Recorrentes e Checklist Mensal
+  epic-4: backlog
+  4-1-cadastro-de-gastos-recorrentes-mensais-3-tipos: backlog
+  4-2-gastos-recorrentes-nao-mensais: backlog
+  4-3-checklist-mensal-com-tipos-de-conta: backlog
+  4-4-confirmacao-de-pagamentos-e-marcacao: backlog
+  4-5-notificacoes-de-contas-a-pagar: backlog
+  epic-4-retrospective: optional
+
+  # Epic 5: Cartao de Credito e Reconciliacao de Fatura
+  epic-5: backlog
+  5-1-mes-de-referencia-automatico-e-fatura-estimada: backlog
+  5-2-gastos-parcelados-no-cartao-de-credito: backlog
+  5-3-reconciliacao-de-fatura-inicio-e-comparacao: backlog
+  5-4-reconciliacao-de-fatura-ajustes-e-confirmacao: backlog
+  5-5-pos-reconciliacao-e-recalculo-de-metricas: backlog
+  5-6-fechamento-de-mes-com-saldo-final: backlog
+  epic-5-retrospective: optional
+
+  # Epic 6: Dashboard, Analise e Transparencia
+  epic-6: backlog
+  6-1-dashboard-principal-com-widgets-configuraveis: backlog
+  6-2-drill-down-analitico-pela-hierarquia-completa: backlog
+  6-3-regra-de-ouro-cartoes-vs-saldo: backlog
+  6-4-tap-to-trace-rastreabilidade-de-qualquer-valor: backlog
+  6-5-atualizacoes-real-time-no-dashboard: backlog
+  6-6-tratamento-de-erros-com-retry-e-preservacao-de-dados: backlog
+  epic-6-retrospective: optional
+
+  # Epic 7: Projecao Futura e Timeline
+  epic-7: backlog
+  7-1-timeline-de-parcelas-ativas: backlog
+  7-2-gastos-recorrentes-nao-mensais-na-timeline: backlog
+  7-3-margem-disponivel-projetada-por-mes: backlog
+  epic-7-retrospective: optional
+
+  # Epic 8: Permissoes e Compartilhamento Familiar
+  epic-8: backlog
+  8-1-convite-de-membros-e-privacidade-como-padrao: backlog
+  8-2-concessao-de-permissoes-granulares: backlog
+  8-3-revogacao-de-permissoes: backlog
+  epic-8-retrospective: optional
+
+  # Epic 9: Administracao e Operacoes
+  epic-9: backlog
+  9-1-painel-de-usuarios-e-monitoramento: backlog
+  9-2-impersonation-em-ambientes-nao-producao: backlog
+  9-3-restauracao-de-base-de-dados-entre-ambientes: backlog
+  9-4-monitoramento-de-backups: backlog
+  epic-9-retrospective: optional
