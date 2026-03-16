@@ -1,6 +1,6 @@
 # Story 1.1: Inicialização do Projeto e Estrutura Base
 
-Status: review
+Status: done
 
 ## Story
 
@@ -67,6 +67,20 @@ So that I can start building features on a solid architectural foundation.
 - [x] [AI-Review][LOW] Remover imports redundantes de vitest no teste — `globals: true` já injeta `describe/it/expect` [src/shared/types/result.test.ts:1]
 - [x] [AI-Review][LOW] Remover `next-env.d.ts` da File List da story — arquivo é gitignored e auto-gerado pelo Next.js
 - [x] [AI-Review][LOW] Considerar fixar TypeScript `"5.9.3"` ao invés de `"^5"` no package.json conforme project-context [package.json:27]
+
+### Review Follow-ups Round 2 (AI)
+
+- [x] [AI-Review-2][MEDIUM] Adicionar `coverage/**` ao `globalIgnores` do ESLint — lint mostrava warning de arquivo gerado [eslint.config.mjs:9-15]
+- [x] [AI-Review-2][MEDIUM] Adicionar comentário de SYNC no `vitest.config.ts` — aliases duplicados com tsconfig.json precisam ser mantidos em sincronia [vitest.config.ts:10]
+- [x] [AI-Review-2][LOW] Teste `result.test.ts` importa de `./result` e não do barrel `./index.ts` — re-export do barrel não é testado [src/shared/types/result.test.ts:1]
+- [x] [AI-Review-2][LOW] `vitest.config.ts` usa `__dirname` (CJS) em contexto ESM — funciona via shim do Vite, mas o correto em ESM seria `import.meta.dirname` [vitest.config.ts:11]
+- [x] [AI-Review-2][LOW] Coverage report mostra 0% (apenas tipos exportados) — adicionado `coverage.exclude` no Vitest config para preparar coverage futuro [vitest.config.ts]
+
+### Review Follow-ups Round 3 (AI)
+
+- [x] [AI-Review-3][HIGH] Commitar Round 2 fixes — 3 source files e 2 BMAD files com mudanças unstaged, status "done" prematuro
+- [x] [AI-Review-3][MEDIUM] Alterar import do teste para `@/shared/types` — path aliases configurados mas nunca validados em uso real [src/shared/types/result.test.ts:1]
+- [x] [AI-Review-3][LOW] Comentário misleading no ESLint config — `globalIgnores()` adiciona patterns, não "Override" [eslint.config.mjs:8]
 
 ## Dev Notes
 
@@ -376,6 +390,8 @@ Claude Opus 4.6 (claude-opus-4-6)
 - 2026-03-16: Story 1.1 implementada — fundação estrutural do projeto Caderninho
 - 2026-03-16: Code review adversarial — 7 issues encontrados (1 HIGH, 3 MEDIUM, 3 LOW). Action items criados. Status → in-progress
 - 2026-03-16: Addressed code review findings — 7/7 items resolved (1 HIGH, 3 MEDIUM, 3 LOW). Todas as issues de review corrigidas
+- 2026-03-16: Code review round 2 — 5 issues (2 MEDIUM, 3 LOW). Todos 5/5 corrigidos automaticamente
+- 2026-03-16: Code review round 3 — 3 issues (1 HIGH, 1 MEDIUM, 1 LOW). Todos 3/3 corrigidos
 
 ### File List
 
@@ -383,9 +399,9 @@ Claude Opus 4.6 (claude-opus-4-6)
 - package-lock.json (novo, modificado)
 - tsconfig.json (novo, modificado com path aliases)
 - next.config.ts (novo)
-- eslint.config.mjs (novo)
+- eslint.config.mjs (novo, modificado: +coverage/** em globalIgnores)
 - postcss.config.mjs (novo)
-- vitest.config.ts (novo)
+- vitest.config.ts (novo, modificado: +comentário SYNC aliases)
 - vitest-env.d.ts (novo — tipos globais do Vitest para tsc)
 - .gitignore (novo, ajustado)
 - .env.example (novo)
@@ -395,7 +411,7 @@ Claude Opus 4.6 (claude-opus-4-6)
 - src/app/favicon.ico (novo)
 - src/shared/types/result.ts (novo)
 - src/shared/types/index.ts (novo)
-- src/shared/types/result.test.ts (novo, modificado: removido import redundante vitest)
+- src/shared/types/result.test.ts (novo, modificado: import via path alias @/shared/types)
 - src/shared/schemas/.gitkeep (novo)
 - src/shared/constants/.gitkeep (novo)
 - src/server/domain/.gitkeep (novo)
