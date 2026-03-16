@@ -42,7 +42,7 @@ story_location: _bmad-output/implementation-artifacts
 development_status:
   # Epic 1: Fundacao e Autenticacao
   epic-1: in-progress
-  1-1-inicializacao-do-projeto-e-estrutura-base: ready-for-dev
+  1-1-inicializacao-do-projeto-e-estrutura-base: review
   1-2-design-system-e-layout-responsivo: backlog
   1-3-banco-de-dados-e-supabase-local: backlog
   1-4-registro-e-login-com-email-senha: backlog

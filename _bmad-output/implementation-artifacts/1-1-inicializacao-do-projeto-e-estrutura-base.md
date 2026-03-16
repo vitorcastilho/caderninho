@@ -1,6 +1,6 @@
 # Story 1.1: Inicialização do Projeto e Estrutura Base
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -20,43 +20,43 @@ So that I can start building features on a solid architectural foundation.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Executar create-next-app (AC: #1)
-  - [ ] 1.1 Executar `npx create-next-app@latest caderninho --typescript --tailwind --eslint --app --src-dir --turbopack`
-  - [ ] 1.2 Verificar que o projeto roda com `npm run dev`
-  - [ ] 1.3 Verificar que o build funciona com `npm run build`
-- [ ] Task 2: Configurar path aliases no tsconfig (AC: #2)
-  - [ ] 2.1 Adicionar aliases `@/server/*`, `@/client/*`, `@/shared/*`, `@/app/*` no `tsconfig.json`
-  - [ ] 2.2 Manter o alias `@/*` padrão do create-next-app apontando para `./src/*`
-- [ ] Task 3: Criar estrutura de pastas da arquitetura (AC: #3)
-  - [ ] 3.1 Criar `src/server/domain/` (vazio, com .gitkeep)
-  - [ ] 3.2 Criar `src/server/infrastructure/` (vazio, com .gitkeep)
-  - [ ] 3.3 Criar `src/server/actions/` (vazio, com .gitkeep)
-  - [ ] 3.4 Criar `src/client/components/ui/` (vazio, com .gitkeep)
-  - [ ] 3.5 Criar `src/client/hooks/` (vazio, com .gitkeep)
-  - [ ] 3.6 Criar `src/client/utils/` (vazio, com .gitkeep)
-  - [ ] 3.7 Criar `src/shared/types/`
-  - [ ] 3.8 Criar `src/shared/schemas/` (vazio, com .gitkeep)
-  - [ ] 3.9 Criar `src/shared/constants/` (vazio, com .gitkeep)
-  - [ ] 3.10 Criar `e2e/` na raiz (vazio, com .gitkeep)
-- [ ] Task 4: Implementar Result<T> (AC: #4)
-  - [ ] 4.1 Criar `src/shared/types/result.ts` com o tipo Result<T>
-  - [ ] 4.2 Criar `src/shared/types/index.ts` para re-export
-  - [ ] 4.3 Escrever teste para Result<T> ANTES da implementação (TDD)
-- [ ] Task 5: Configurar Vitest (AC: #5)
-  - [ ] 5.1 Instalar vitest como devDependency
-  - [ ] 5.2 Criar `vitest.config.ts` na raiz com path aliases resolvidos
-  - [ ] 5.3 Adicionar scripts `test`, `test:watch`, `test:coverage` no package.json
-  - [ ] 5.4 Executar o teste de Result<T> (deve passar — Green)
-- [ ] Task 6: Criar .env.example (AC: #6)
-  - [ ] 6.1 Criar `.env.example` com variáveis documentadas
-- [ ] Task 7: Configurar .gitignore (AC: #7)
-  - [ ] 7.1 Verificar/adicionar `.env.local`, `node_modules`, `.next` no `.gitignore`
-  - [ ] 7.2 Adicionar `.env` e `.env*.local` (padrão de segurança)
-- [ ] Task 8: Validação final
-  - [ ] 8.1 `npm run dev` funciona
-  - [ ] 8.2 `npm run build` funciona sem erros
-  - [ ] 8.3 `npm test` roda e passa
-  - [ ] 8.4 Path aliases resolvem corretamente
+- [x] Task 1: Executar create-next-app (AC: #1)
+  - [x] 1.1 Executar `npx create-next-app@latest caderninho --typescript --tailwind --eslint --app --src-dir --turbopack`
+  - [x] 1.2 Verificar que o projeto roda com `npm run dev`
+  - [x] 1.3 Verificar que o build funciona com `npm run build`
+- [x] Task 2: Configurar path aliases no tsconfig (AC: #2)
+  - [x] 2.1 Adicionar aliases `@/server/*`, `@/client/*`, `@/shared/*`, `@/app/*` no `tsconfig.json`
+  - [x] 2.2 Manter o alias `@/*` padrão do create-next-app apontando para `./src/*`
+- [x] Task 3: Criar estrutura de pastas da arquitetura (AC: #3)
+  - [x] 3.1 Criar `src/server/domain/` (vazio, com .gitkeep)
+  - [x] 3.2 Criar `src/server/infrastructure/` (vazio, com .gitkeep)
+  - [x] 3.3 Criar `src/server/actions/` (vazio, com .gitkeep)
+  - [x] 3.4 Criar `src/client/components/ui/` (vazio, com .gitkeep)
+  - [x] 3.5 Criar `src/client/hooks/` (vazio, com .gitkeep)
+  - [x] 3.6 Criar `src/client/utils/` (vazio, com .gitkeep)
+  - [x] 3.7 Criar `src/shared/types/`
+  - [x] 3.8 Criar `src/shared/schemas/` (vazio, com .gitkeep)
+  - [x] 3.9 Criar `src/shared/constants/` (vazio, com .gitkeep)
+  - [x] 3.10 Criar `e2e/` na raiz (vazio, com .gitkeep)
+- [x] Task 4: Implementar Result<T> (AC: #4)
+  - [x] 4.1 Criar `src/shared/types/result.ts` com o tipo Result<T>
+  - [x] 4.2 Criar `src/shared/types/index.ts` para re-export
+  - [x] 4.3 Escrever teste para Result<T> ANTES da implementação (TDD)
+- [x] Task 5: Configurar Vitest (AC: #5)
+  - [x] 5.1 Instalar vitest como devDependency
+  - [x] 5.2 Criar `vitest.config.ts` na raiz com path aliases resolvidos
+  - [x] 5.3 Adicionar scripts `test`, `test:watch`, `test:coverage` no package.json
+  - [x] 5.4 Executar o teste de Result<T> (deve passar — Green)
+- [x] Task 6: Criar .env.example (AC: #6)
+  - [x] 6.1 Criar `.env.example` com variáveis documentadas
+- [x] Task 7: Configurar .gitignore (AC: #7)
+  - [x] 7.1 Verificar/adicionar `.env.local`, `node_modules`, `.next` no `.gitignore`
+  - [x] 7.2 Adicionar `.env` e `.env*.local` (padrão de segurança)
+- [x] Task 8: Validação final
+  - [x] 8.1 `npm run dev` funciona
+  - [x] 8.2 `npm run build` funciona sem erros
+  - [x] 8.3 `npm test` roda e passa
+  - [x] 8.4 Path aliases resolvem corretamente
 
 ## Dev Notes
 
@@ -334,10 +334,62 @@ Esta story configura **apenas a fundação estrutural**:
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.6 (claude-opus-4-6)
 
 ### Debug Log References
 
+- create-next-app criado em /tmp e copiado via rsync para preservar repo git existente
+- .gitignore ajustado: `.env*` (padrão do create-next-app) substituído por `.env`, `.env.local`, `.env*.local` para permitir versionamento do `.env.example`
+- package.json nome corrigido de `caderninho-next` para `caderninho`
+
 ### Completion Notes List
 
+- Next.js 16.1.6 + TypeScript 5.9.3 + Tailwind CSS v4 + React 19.2.3 instalados e funcionando
+- Turbopack é o bundler padrão (confirmado)
+- Estrutura Clean Architecture + DDD criada com todas as pastas e .gitkeep
+- Path aliases configurados no tsconfig.json (@/*, @/server/*, @/client/*, @/shared/*, @/app/*)
+- Result<T> implementado seguindo TDD (3 testes: sucesso, erro, erro com details)
+- Vitest 4.1.0 configurado com globals e path aliases
+- .env.example com todas as variáveis documentadas
+- .gitignore seguro (`.env`, `.env.local`, `.env*.local`)
+- Validação final: dev OK, build OK, test OK (3/3 passed), lint OK, tsc OK
+
+### Change Log
+
+- 2026-03-16: Story 1.1 implementada — fundação estrutural do projeto Caderninho
+
 ### File List
+
+- package.json (novo)
+- package-lock.json (novo)
+- tsconfig.json (novo, modificado com path aliases)
+- next.config.ts (novo)
+- next-env.d.ts (novo)
+- eslint.config.mjs (novo)
+- postcss.config.mjs (novo)
+- vitest.config.ts (novo)
+- .gitignore (novo, ajustado)
+- .env.example (novo)
+- src/app/globals.css (novo)
+- src/app/layout.tsx (novo)
+- src/app/page.tsx (novo)
+- src/app/favicon.ico (novo)
+- src/shared/types/result.ts (novo)
+- src/shared/types/index.ts (novo)
+- src/shared/types/result.test.ts (novo)
+- src/shared/schemas/.gitkeep (novo)
+- src/shared/constants/.gitkeep (novo)
+- src/server/domain/.gitkeep (novo)
+- src/server/infrastructure/.gitkeep (novo)
+- src/server/actions/.gitkeep (novo)
+- src/client/components/ui/.gitkeep (novo)
+- src/client/hooks/.gitkeep (novo)
+- src/client/utils/.gitkeep (novo)
+- e2e/.gitkeep (novo)
+- public/file.svg (novo)
+- public/globe.svg (novo)
+- public/next.svg (novo)
+- public/vercel.svg (novo)
+- public/window.svg (novo)
+- _bmad-output/implementation-artifacts/sprint-status.yaml (modificado)
+- _bmad-output/implementation-artifacts/1-1-inicializacao-do-projeto-e-estrutura-base.md (modificado)
