@@ -1,4 +1,4 @@
-import type { Result } from './result';
+import type { Result } from '@/shared/types';
 
 describe('Result<T>', () => {
   it('deve representar sucesso com dados tipados', () => {
