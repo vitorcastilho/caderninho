@@ -43,8 +43,8 @@ development_status:
   # Epic 1: Fundacao e Autenticacao
   epic-1: in-progress
   1-1-inicializacao-do-projeto-e-estrutura-base: done
-  1-2-design-system-e-layout-responsivo: review
-  1-3-banco-de-dados-e-supabase-local: backlog
+  1-2-design-system-e-layout-responsivo: done
+  1-3-banco-de-dados-e-supabase-local: review
   1-4-registro-e-login-com-email-senha: backlog
   1-5-login-social-google: backlog
   1-6-auditoria-e-seguranca: backlog
