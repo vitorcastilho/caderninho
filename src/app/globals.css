@@ -95,16 +95,6 @@
   --radius-card-lg: 12px;
   --radius-badge: 100px;
   --radius-mobile-frame: 24px;
-
-  /* Spacing base 4px */
-  --spacing-1: 4px;
-  --spacing-2: 8px;
-  --spacing-3: 12px;
-  --spacing-4: 16px;
-  --spacing-5: 20px;
-  --spacing-6: 24px;
-  --spacing-7: 28px;
-  --spacing-8: 32px;
 }
 
 /* ============================================
@@ -201,13 +191,6 @@
   --density-gap: 8px;
   --density-line-padding: 4px;
   --density-bar-height: 4px;
-}
-
-[data-density="spacious"] {
-  --density-card-padding: 20px;
-  --density-gap: 16px;
-  --density-line-padding: 10px;
-  --density-bar-height: 8px;
 }
 
 /* ============================================

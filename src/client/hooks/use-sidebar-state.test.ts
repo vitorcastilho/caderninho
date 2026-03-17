@@ -1,26 +1,7 @@
 // @vitest-environment jsdom
 import { renderHook, act } from "@testing-library/react";
 import { useSidebarState } from "@/client/hooks/use-sidebar-state";
-
-function createLocalStorageMock() {
-  let store: Record<string, string> = {};
-  return {
-    getItem: (key: string) => store[key] ?? null,
-    setItem: (key: string, value: string) => {
-      store[key] = value;
-    },
-    removeItem: (key: string) => {
-      delete store[key];
-    },
-    clear: () => {
-      store = {};
-    },
-    get length() {
-      return Object.keys(store).length;
-    },
-    key: (index: number) => Object.keys(store)[index] ?? null,
-  };
-}
+import { createLocalStorageMock } from "@/client/test-utils/local-storage-mock";
 
 describe("useSidebarState", () => {
   let storageMock: ReturnType<typeof createLocalStorageMock>;

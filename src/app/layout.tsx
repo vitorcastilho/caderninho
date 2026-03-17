@@ -20,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
-      <body className={`${inter.variable} antialiased`} data-density="spacious">
+    <html lang="pt-BR" className={inter.variable}>
+      <body className="antialiased" data-density="spacious">
         <DensityProvider>{children}</DensityProvider>
       </body>
     </html>

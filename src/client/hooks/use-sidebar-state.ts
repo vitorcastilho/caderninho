@@ -1,30 +1,27 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useSyncExternalStore, useCallback } from "react";
+import { createLocalStorageStore } from "@/client/utils/create-local-storage-store";
 
-const STORAGE_KEY = "sidebar-collapsed";
-
-function getStoredState(): boolean {
-  if (typeof window === "undefined") return false;
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored === null) return false;
-  return stored === "true";
-}
+const store = createLocalStorageStore(
+  "sidebar-collapsed",
+  false,
+  (stored) => stored === "true",
+);
 
 export function useSidebarState() {
-  const [collapsed, setCollapsedState] = useState<boolean>(getStoredState);
+  const collapsed = useSyncExternalStore(
+    store.subscribe,
+    store.getSnapshot,
+    store.getServerSnapshot,
+  );
 
   const setCollapsed = useCallback((value: boolean) => {
-    setCollapsedState(value);
-    localStorage.setItem(STORAGE_KEY, String(value));
+    store.setValue(value);
   }, []);
 
   const toggle = useCallback(() => {
-    setCollapsedState((prev) => {
-      const next = !prev;
-      localStorage.setItem(STORAGE_KEY, String(next));
-      return next;
-    });
+    store.setValue(!store.getSnapshot());
   }, []);
 
   return { collapsed, setCollapsed, toggle };

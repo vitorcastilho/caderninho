@@ -3,30 +3,19 @@ import { renderHook, act } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import { DensityProvider, useDensity } from "./DensityProvider";
 import type { ReactNode } from "react";
-
-function createLocalStorageMock() {
-  let store: Record<string, string> = {};
-  return {
-    getItem: (key: string) => store[key] ?? null,
-    setItem: (key: string, value: string) => {
-      store[key] = value;
-    },
-    removeItem: (key: string) => {
-      delete store[key];
-    },
-    clear: () => {
-      store = {};
-    },
-    get length() {
-      return Object.keys(store).length;
-    },
-    key: (index: number) => Object.keys(store)[index] ?? null,
-  };
-}
+import { createLocalStorageMock } from "@/client/test-utils/local-storage-mock";
 
 function wrapper({ children }: { children: ReactNode }) {
   return <DensityProvider>{children}</DensityProvider>;
 }
+
+describe("useDensity fora do Provider", () => {
+  it("deve lancar erro quando usado fora do DensityProvider", () => {
+    expect(() => renderHook(() => useDensity())).toThrow(
+      "useDensity deve ser usado dentro de um DensityProvider"
+    );
+  });
+});
 
 describe("DensityProvider", () => {
   let storageMock: ReturnType<typeof createLocalStorageMock>;
@@ -86,5 +75,24 @@ describe("DensityProvider", () => {
       result.current.toggleDensity();
     });
     expect(result.current.density).toBe("spacious");
+  });
+
+  it("deve atualizar data-density no document.body ao mudar modo", () => {
+    const { result } = renderHook(() => useDensity(), { wrapper });
+
+    // Default spacious
+    expect(document.body.getAttribute("data-density")).toBe("spacious");
+
+    act(() => {
+      result.current.setDensity("compact");
+    });
+
+    expect(document.body.getAttribute("data-density")).toBe("compact");
+
+    act(() => {
+      result.current.setDensity("spacious");
+    });
+
+    expect(document.body.getAttribute("data-density")).toBe("spacious");
   });
 });

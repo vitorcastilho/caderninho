@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
-import { BottomNavigation } from "./BottomNavigation";
+import { BottomNavigation, navItems } from "./BottomNavigation";
 
 // Mock next/navigation
 const mockPathname = vi.fn<() => string>().mockReturnValue("/dashboard");
@@ -47,5 +47,29 @@ describe("BottomNavigation", () => {
     render(<BottomNavigation />);
 
     expect(screen.getByRole("navigation", { name: /navegação inferior/i })).toBeInTheDocument();
+  });
+
+  it("deve exibir badge quando badge > 0", () => {
+    const original = navItems[0].badge;
+    navItems[0].badge = 5;
+    try {
+      render(<BottomNavigation />);
+      expect(screen.getByText("5")).toBeInTheDocument();
+      expect(screen.getByLabelText("5 notificações")).toBeInTheDocument();
+    } finally {
+      navItems[0].badge = original;
+    }
+  });
+
+  it("deve exibir 99+ quando badge > 99", () => {
+    const original = navItems[0].badge;
+    navItems[0].badge = 150;
+    try {
+      render(<BottomNavigation />);
+      expect(screen.getByText("99+")).toBeInTheDocument();
+      expect(screen.getByLabelText("150 notificações")).toBeInTheDocument();
+    } finally {
+      navItems[0].badge = original;
+    }
   });
 });

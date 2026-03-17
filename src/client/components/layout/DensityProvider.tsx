@@ -1,6 +1,13 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useCallback,
+  useEffect,
+  useSyncExternalStore,
+} from "react";
+import { createLocalStorageStore } from "@/client/utils/create-local-storage-store";
 
 type DensityMode = "compact" | "spacious";
 
@@ -10,36 +17,32 @@ interface DensityContextValue {
   toggleDensity: () => void;
 }
 
-const STORAGE_KEY = "density-mode";
-const DEFAULT_DENSITY: DensityMode = "spacious";
-
 const DensityContext = createContext<DensityContextValue | null>(null);
 
-function getStoredDensity(): DensityMode {
-  if (typeof window === "undefined") return DEFAULT_DENSITY;
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored === "compact" || stored === "spacious") return stored;
-  return DEFAULT_DENSITY;
-}
+const store = createLocalStorageStore<DensityMode>(
+  "density-mode",
+  "spacious",
+  (stored) => (stored === "compact" || stored === "spacious" ? stored : "spacious"),
+);
 
 export function DensityProvider({ children }: { children: React.ReactNode }) {
-  const [density, setDensityState] = useState<DensityMode>(getStoredDensity);
+  const density = useSyncExternalStore(
+    store.subscribe,
+    store.getSnapshot,
+    store.getServerSnapshot,
+  );
 
   useEffect(() => {
     document.body.setAttribute("data-density", density);
   }, [density]);
 
   const setDensity = useCallback((mode: DensityMode) => {
-    setDensityState(mode);
-    localStorage.setItem(STORAGE_KEY, mode);
+    store.setValue(mode);
   }, []);
 
   const toggleDensity = useCallback(() => {
-    setDensityState((prev) => {
-      const next = prev === "compact" ? "spacious" : "compact";
-      localStorage.setItem(STORAGE_KEY, next);
-      return next;
-    });
+    const current = store.getSnapshot();
+    store.setValue(current === "compact" ? "spacious" : "compact");
   }, []);
 
   return (

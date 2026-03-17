@@ -16,9 +16,10 @@ interface NavItem {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   isFab?: boolean;
+  badge?: number;
 }
 
-const navItems: NavItem[] = [
+export const navItems: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/orcamentos", label: "Orçamentos", icon: PiggyBank },
   { href: "/registrar", label: "Registrar", icon: Plus, isFab: true },
@@ -31,7 +32,6 @@ export function BottomNavigation() {
 
   return (
     <nav
-      role="navigation"
       aria-label="Navegação inferior"
       className="fixed bottom-0 left-0 right-0 z-50 flex md:hidden h-14 bg-card border-t border-border"
     >
@@ -47,11 +47,16 @@ export function BottomNavigation() {
                   href={item.href}
                   aria-current={isActive ? "page" : undefined}
                   aria-label={item.label}
-                  className="flex items-center justify-center size-12 rounded-full bg-primary text-primary-foreground shadow-lg transition-transform duration-150 ease-in-out active:scale-95"
+                  className="flex items-center justify-center size-12 rounded-full bg-primary text-primary-foreground shadow-lg transition-transform duration-150 ease-in-out active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
                   <Icon className="size-6" />
                 </Link>
-                <span className="mt-0.5 text-[10px] font-medium text-primary">
+                <span
+                  className={cn(
+                    "mt-0.5 text-[10px] font-medium",
+                    isActive ? "text-primary" : "text-muted-foreground"
+                  )}
+                >
                   {item.label}
                 </span>
               </li>
@@ -64,13 +69,23 @@ export function BottomNavigation() {
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "flex flex-col items-center justify-center gap-0.5 py-1.5 min-w-[75px] min-h-[44px] transition-colors duration-150 ease-in-out",
+                  "flex flex-col items-center justify-center gap-0.5 py-1.5 min-w-[75px] min-h-[44px] transition-colors duration-150 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2",
                   isActive
                     ? "text-primary"
                     : "text-muted-foreground"
                 )}
               >
-                <Icon className="size-5" />
+                <span className="relative">
+                  <Icon className="size-5" />
+                  {item.badge != null && item.badge > 0 && (
+                    <span
+                      aria-label={`${item.badge} notificações`}
+                      className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full bg-critical text-white text-[10px] font-semibold leading-none"
+                    >
+                      {item.badge > 99 ? "99+" : item.badge}
+                    </span>
+                  )}
+                </span>
                 <span className="text-[10px] font-medium">{item.label}</span>
               </Link>
             </li>

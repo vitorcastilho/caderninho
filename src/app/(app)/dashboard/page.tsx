@@ -9,7 +9,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Placeholder cards for layout validation */}
-      <div className="rounded-radius-card bg-card p-[var(--density-card-padding)] border border-border">
+      <div className="rounded-card bg-card p-[var(--density-card-padding)] border border-border">
         <p className="text-xs font-medium uppercase tracking-wider text-text-tertiary">
           Saldo Total
         </p>
@@ -18,7 +18,7 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      <div className="rounded-radius-card bg-card p-[var(--density-card-padding)] border border-border">
+      <div className="rounded-card bg-card p-[var(--density-card-padding)] border border-border">
         <p className="text-xs font-medium uppercase tracking-wider text-text-tertiary">
           Gastos do Mês
         </p>
@@ -27,7 +27,7 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      <div className="rounded-radius-card bg-card p-[var(--density-card-padding)] border border-border">
+      <div className="rounded-card bg-card p-[var(--density-card-padding)] border border-border">
         <p className="text-xs font-medium uppercase tracking-wider text-text-tertiary">
           Receita do Mês
         </p>
