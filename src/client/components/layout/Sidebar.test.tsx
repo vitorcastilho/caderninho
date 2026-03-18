@@ -5,8 +5,17 @@ import { Sidebar } from "./Sidebar";
 
 // Mock next/navigation
 const mockPathname = vi.fn<() => string>().mockReturnValue("/dashboard");
+const mockPush = vi.fn();
 vi.mock("next/navigation", () => ({
   usePathname: () => mockPathname(),
+  useRouter: () => ({ push: mockPush }),
+}));
+
+// Mock auth client
+vi.mock("@/client/utils/auth-client", () => ({
+  authClient: {
+    signOut: vi.fn().mockResolvedValue({}),
+  },
 }));
 
 // Mock useSidebarState

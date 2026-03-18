@@ -5,8 +5,17 @@ import { BottomNavigation, navItems } from "./BottomNavigation";
 
 // Mock next/navigation
 const mockPathname = vi.fn<() => string>().mockReturnValue("/dashboard");
+const mockPush = vi.fn();
 vi.mock("next/navigation", () => ({
   usePathname: () => mockPathname(),
+  useRouter: () => ({ push: mockPush }),
+}));
+
+// Mock auth client
+vi.mock("@/client/utils/auth-client", () => ({
+  authClient: {
+    signOut: vi.fn().mockResolvedValue({}),
+  },
 }));
 
 describe("BottomNavigation", () => {
@@ -59,6 +68,12 @@ describe("BottomNavigation", () => {
     } finally {
       navItems[0].badge = original;
     }
+  });
+
+  it("deve exibir botao de logout", () => {
+    render(<BottomNavigation />);
+
+    expect(screen.getByText("Sair")).toBeInTheDocument();
   });
 
   it("deve exibir 99+ quando badge > 99", () => {

@@ -1,11 +1,20 @@
+import { redirect } from "next/navigation";
+
 import { Sidebar } from "@/client/components/layout/Sidebar";
 import { BottomNavigation } from "@/client/components/layout/BottomNavigation";
+import { getAuthSession } from "@/server/infrastructure/auth/get-session";
 
-export default function AppLayout({
+export default async function AppLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getAuthSession();
+
+  if (!session) {
+    redirect("/login");
+  }
+
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       <a
