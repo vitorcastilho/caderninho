@@ -1,6 +1,6 @@
 # Story 1.4: Registro e Login com Email/Senha
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -450,6 +450,7 @@ Claude Opus 4.6
 - 2026-03-17: Implemented Story 1.4 — Registration and Login with Email/Password
 - 2026-03-18: Code Review R1 — 3 HIGH, 1 MEDIUM, 2 LOW findings. 4 action items criados (3 HIGH + 1 MEDIUM). LOWs aceitos como backlog.
 - 2026-03-18: Addressed code review R1 findings — 4 items resolved (3 HIGH + 1 MEDIUM)
+- 2026-03-18: Code Review R2 — All 4 R1 fixes validated and approved. Status → done.
 
 ### File List
 
