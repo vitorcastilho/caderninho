@@ -119,6 +119,10 @@ So that I can access my financial data with confidence.
 - [x] [AI-Review][HIGH] Adicionar testes de fluxo de logout — Task 4.4 marcada [x] mas nenhum teste verifica click no botao Sair → `authClient.signOut()` chamado → `router.push("/login")`. Adicionar em Sidebar.test.tsx e BottomNavigation.test.tsx. [src/client/components/layout/Sidebar.test.tsx, src/client/components/layout/BottomNavigation.test.tsx]
 - [x] [AI-Review][MEDIUM] Remover `'unsafe-eval'` do CSP `script-src` — Next.js 16 App Router nao precisa de `unsafe-eval` em producao. Se quebrar dev (Turbopack), condicionar CSP por ambiente. [next.config.ts:23]
 
+### Action Items — Teste Manual
+
+- [x] [Manual-Test][HIGH] Drizzle Adapter nao encontra model "users" no schema — `POST /api/auth/sign-up/email` retorna 500 com erro `[BetterAuthError]: The model "users" was not found in the schema object. Please pass the schema directly to the adapter options.` Investigar se o schema importado em `src/server/infrastructure/auth/config.ts` esta exportando as tabelas corretamente (verificar imports de `@/server/infrastructure/database/schema`). [src/server/infrastructure/auth/config.ts]
+
 ## Dev Notes
 
 ### Versoes Exatas do Stack (Story 1.4)
@@ -444,6 +448,7 @@ Claude Opus 4.6
 - ✅ Resolved review finding [HIGH]: Middleware matcher corrigido — exclusion pattern com PUBLIC_PATHS para /login, /register, /api/auth
 - ✅ Resolved review finding [HIGH]: Testes de logout adicionados em Sidebar.test.tsx e BottomNavigation.test.tsx
 - ✅ Resolved review finding [MEDIUM]: unsafe-eval removido do CSP em producao, mantido apenas em dev (Turbopack)
+- ✅ Resolved manual test finding [HIGH]: Drizzle adapter schema mapping — com `usePlural: true`, Better Auth busca chaves plural (`users`, `sessions`...) mas o schema era passado com chaves singular (`user`, `session`...). Fix: passar `schema` diretamente (star import) em vez de mapeamento explícito.
 
 ### Change Log
 
@@ -451,6 +456,7 @@ Claude Opus 4.6
 - 2026-03-18: Code Review R1 — 3 HIGH, 1 MEDIUM, 2 LOW findings. 4 action items criados (3 HIGH + 1 MEDIUM). LOWs aceitos como backlog.
 - 2026-03-18: Addressed code review R1 findings — 4 items resolved (3 HIGH + 1 MEDIUM)
 - 2026-03-18: Code Review R2 — All 4 R1 fixes validated and approved. Status → done.
+- 2026-03-18: Fixed manual test finding — Drizzle adapter schema mapping com `usePlural: true` passava chaves singular, trocado para star import direto.
 
 ### File List
 

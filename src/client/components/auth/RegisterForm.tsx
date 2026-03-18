@@ -25,7 +25,7 @@ export function RegisterForm() {
     formState: { errors, isSubmitting },
   } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
-    mode: "onBlur",
+    mode: "onChange",
   });
 
   const password = watch("password", "");
@@ -36,7 +36,25 @@ export function RegisterForm() {
     number: /[0-9]/.test(password),
   };
 
-  const strengthScore = Object.values(passwordChecks).filter(Boolean).length;
+  const extraChecks = {
+    special: /[^A-Za-z0-9]/.test(password),
+    longPassword: password.length >= 12,
+  };
+
+  const baseScore = Object.values(passwordChecks).filter(Boolean).length;
+  const extraScore = Object.values(extraChecks).filter(Boolean).length;
+
+  // 1-2 base = Fraca, 3 base (minimum met) = Média, 3 base + extras = Forte
+  const strengthScore =
+    baseScore < 3
+      ? baseScore === 0
+        ? 0
+        : baseScore <= 2
+          ? 1
+          : 2
+      : extraScore >= 1
+        ? 3
+        : 2;
 
   const strengthLabel =
     strengthScore === 0
