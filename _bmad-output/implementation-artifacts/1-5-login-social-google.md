@@ -1,6 +1,6 @@
 # Story 1.5: Login Social (Google)
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -324,6 +324,7 @@ Claude Opus 4.6
 - 2026-03-18: Implementacao completa da Story 1.5 — Login Social (Google)
 - 2026-03-18: Code Review R1 — 1 CRITICAL, 1 HIGH, 1 MEDIUM, 2 LOW. 3 action items criados, 2 LOWs para backlog
 - 2026-03-18: Addressed code review R1 findings — 3 items resolved (1 CRITICAL, 1 HIGH, 1 MEDIUM). 129 testes, build OK, lint OK
+- 2026-03-18: Code Review R2 — APROVADO. Todos os 3 fixes do R1 validados corretamente, 0 regressões, 0 discrepâncias git vs File List. Story marcada como done
 
 ### File List
 
