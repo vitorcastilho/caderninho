@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Sidebar } from "@/client/components/layout/Sidebar";
 import { BottomNavigation } from "@/client/components/layout/BottomNavigation";
 import { getAuthSession } from "@/server/infrastructure/auth/get-session";
+import { ensureUserHasOrganization } from "@/server/infrastructure/auth/ensure-organization";
 
 export default async function AppLayout({
   children,
@@ -14,6 +15,8 @@ export default async function AppLayout({
   if (!session) {
     redirect("/login");
   }
+
+  await ensureUserHasOrganization(session.user.id, session.user.name);
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">

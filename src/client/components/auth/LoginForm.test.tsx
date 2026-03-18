@@ -9,16 +9,22 @@ import { createLocalStorageMock } from "@/client/test-utils/local-storage-mock";
 vi.stubGlobal("localStorage", createLocalStorageMock());
 
 const mockPush = vi.fn();
+const mockSearchParams = vi.fn().mockReturnValue(null);
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
+  useSearchParams: () => ({
+    get: (...args: unknown[]) => mockSearchParams(...args),
+  }),
 }));
 
 const mockSignIn = vi.fn();
+const mockSignInSocial = vi.fn();
 
 vi.mock("@/client/utils/auth-client", () => ({
   authClient: {
     signIn: {
       email: (...args: unknown[]) => mockSignIn(...args),
+      social: (...args: unknown[]) => mockSignInSocial(...args),
     },
   },
 }));
@@ -29,6 +35,7 @@ describe("LoginForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockSignIn.mockResolvedValue({ data: {}, error: null });
+    mockSearchParams.mockReturnValue(null);
   });
 
   it("deve renderizar campos de email e senha", () => {
@@ -53,11 +60,35 @@ describe("LoginForm", () => {
     expect(registerLink).toHaveAttribute("href", "/register");
   });
 
-  it("deve exibir botao Google desabilitado", () => {
+  it("deve exibir botao Google habilitado", () => {
     render(<LoginForm />);
 
     const googleBtn = screen.getByRole("button", { name: /Entrar com Google/i });
-    expect(googleBtn).toBeDisabled();
+    expect(googleBtn).toBeEnabled();
+  });
+
+  it("deve chamar signIn.social ao clicar no botao Google", async () => {
+    const user = userEvent.setup();
+    render(<LoginForm />);
+
+    await user.click(screen.getByRole("button", { name: /Entrar com Google/i }));
+
+    expect(mockSignInSocial).toHaveBeenCalledWith({
+      provider: "google",
+      callbackURL: "/dashboard",
+      errorCallbackURL: "/login?error=google",
+    });
+  });
+
+  it("deve exibir erro quando query param error=google esta presente", () => {
+    mockPush.mockClear();
+    // Mock useSearchParams to return error=google
+    vi.mocked(mockSearchParams).mockReturnValue("google");
+    render(<LoginForm />);
+
+    expect(
+      screen.getByText("Login com Google cancelado. Tente novamente.")
+    ).toBeInTheDocument();
   });
 
   it("deve exibir erros de validacao ao enviar formulario vazio", async () => {
@@ -107,6 +138,20 @@ describe("LoginForm", () => {
     });
 
     expect(mockPush).toHaveBeenCalledWith("/dashboard");
+  });
+
+  it("deve resetar loading do botao Google quando signIn.social falha", async () => {
+    mockSignInSocial.mockRejectedValue(new Error("Network error"));
+
+    const user = userEvent.setup();
+    render(<LoginForm />);
+
+    const googleBtn = screen.getByRole("button", { name: /Entrar com Google/i });
+    await user.click(googleBtn);
+
+    await waitFor(() => {
+      expect(googleBtn).toBeEnabled();
+    });
   });
 
   it("deve alternar visibilidade da senha", async () => {

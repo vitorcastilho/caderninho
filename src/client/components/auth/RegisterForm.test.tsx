@@ -9,17 +9,25 @@ import { createLocalStorageMock } from "@/client/test-utils/local-storage-mock";
 vi.stubGlobal("localStorage", createLocalStorageMock());
 
 const mockPush = vi.fn();
+const mockSearchParams = vi.fn().mockReturnValue(null);
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
+  useSearchParams: () => ({
+    get: (...args: unknown[]) => mockSearchParams(...args),
+  }),
 }));
 
 const mockSignUp = vi.fn();
 const mockOrgCreate = vi.fn();
+const mockSignInSocial = vi.fn();
 
 vi.mock("@/client/utils/auth-client", () => ({
   authClient: {
     signUp: {
       email: (...args: unknown[]) => mockSignUp(...args),
+    },
+    signIn: {
+      social: (...args: unknown[]) => mockSignInSocial(...args),
     },
     organization: {
       create: (...args: unknown[]) => mockOrgCreate(...args),
@@ -35,6 +43,7 @@ describe("RegisterForm", () => {
     vi.clearAllMocks();
     mockSignUp.mockResolvedValue({ data: {}, error: null });
     mockOrgCreate.mockResolvedValue({ data: {}, error: null });
+    mockSearchParams.mockReturnValue(null);
   });
 
   it("deve renderizar todos os campos do formulario", () => {
@@ -160,6 +169,53 @@ describe("RegisterForm", () => {
     });
 
     expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  it("deve renderizar botao Cadastrar com Google habilitado", () => {
+    render(<RegisterForm />);
+
+    const googleBtn = screen.getByRole("button", {
+      name: /Cadastrar com Google/i,
+    });
+    expect(googleBtn).toBeEnabled();
+  });
+
+  it("deve exibir erro quando query param error=google esta presente", () => {
+    mockSearchParams.mockReturnValue("google");
+    render(<RegisterForm />);
+
+    expect(
+      screen.getByText("Cadastro com Google cancelado. Tente novamente.")
+    ).toBeInTheDocument();
+  });
+
+  it("deve chamar signIn.social ao clicar no botao Google", async () => {
+    const user = userEvent.setup();
+    render(<RegisterForm />);
+
+    await user.click(
+      screen.getByRole("button", { name: /Cadastrar com Google/i })
+    );
+
+    expect(mockSignInSocial).toHaveBeenCalledWith({
+      provider: "google",
+      callbackURL: "/dashboard",
+      errorCallbackURL: "/register?error=google",
+    });
+  });
+
+  it("deve resetar loading do botao Google quando signIn.social falha", async () => {
+    mockSignInSocial.mockRejectedValue(new Error("Network error"));
+
+    const user = userEvent.setup();
+    render(<RegisterForm />);
+
+    const googleBtn = screen.getByRole("button", { name: /Cadastrar com Google/i });
+    await user.click(googleBtn);
+
+    await waitFor(() => {
+      expect(googleBtn).toBeEnabled();
+    });
   });
 
   it("deve alternar visibilidade da senha", async () => {
