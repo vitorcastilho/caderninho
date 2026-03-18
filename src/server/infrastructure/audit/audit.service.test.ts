@@ -1,5 +1,7 @@
 import { logAudit } from './audit.service';
 
+const mockLoggerWarn = vi.fn();
+
 const mockInsertValues = vi.fn().mockResolvedValue(undefined);
 const mockInsert = vi.fn().mockReturnValue({ values: mockInsertValues });
 
@@ -11,6 +13,12 @@ vi.mock('@/server/infrastructure/database/client', () => ({
 
 vi.mock('@/server/infrastructure/database/schema/audit-logs', () => ({
   auditLogs: Symbol('auditLogs'),
+}));
+
+vi.mock('@/server/infrastructure/logging/logger', () => ({
+  logger: {
+    warn: (...args: unknown[]) => mockLoggerWarn(...args),
+  },
 }));
 
 describe('logAudit', () => {
@@ -69,7 +77,6 @@ describe('logAudit', () => {
 
   it('deve NAO propagar excecao quando insercao falha', async () => {
     mockInsertValues.mockRejectedValueOnce(new Error('DB connection failed'));
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
     await expect(
       logAudit({
@@ -81,13 +88,12 @@ describe('logAudit', () => {
       }),
     ).resolves.toBeUndefined();
 
-    expect(consoleSpy).toHaveBeenCalledTimes(1);
-    const logOutput = JSON.parse(consoleSpy.mock.calls[0][0] as string);
-    expect(logOutput.level).toBe('warn');
-    expect(logOutput.action).toBe('audit_log_failed');
-    expect(logOutput.error).toBe('DB connection failed');
-
-    consoleSpy.mockRestore();
+    expect(mockLoggerWarn).toHaveBeenCalledTimes(1);
+    expect(mockLoggerWarn).toHaveBeenCalledWith({
+      action: 'audit_log_failed',
+      data: { entityType: 'account', entityId: 'acc-1' },
+      error: 'DB connection failed',
+    });
   });
 
   it('deve chamar db.insert com valores corretos incluindo id gerado', async () => {

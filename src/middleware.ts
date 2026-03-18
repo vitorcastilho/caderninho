@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { rateLimit } from "@/server/infrastructure/security/rate-limiter";
+import { logger } from "@/server/infrastructure/logging/logger";
 
 const PUBLIC_PATHS = ["/login", "/register", "/api/auth"];
 const AUTH_PATHS = ["/api/auth"];
@@ -15,14 +16,10 @@ function getClientIp(request: NextRequest): string {
     request.headers.get("x-real-ip");
 
   if (!ip) {
-    console.log(
-      JSON.stringify({
-        level: "warn",
-        action: "missing_client_ip",
-        data: { pathname: request.nextUrl.pathname },
-        timestamp: new Date().toISOString(),
-      }),
-    );
+    logger.warn({
+      action: "missing_client_ip",
+      data: { pathname: request.nextUrl.pathname },
+    });
     return "unknown";
   }
 
