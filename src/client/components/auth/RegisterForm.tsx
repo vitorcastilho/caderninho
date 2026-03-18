@@ -95,10 +95,17 @@ export function RegisterForm() {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
 
-    await authClient.organization.create({
+    const orgResult = await authClient.organization.create({
       name: orgName,
       slug,
     });
+
+    if (orgResult.error) {
+      setServerError(
+        "Conta criada, mas houve um erro ao configurar seu espaço. Tente fazer login novamente.",
+      );
+      return;
+    }
 
     router.push("/dashboard");
   }

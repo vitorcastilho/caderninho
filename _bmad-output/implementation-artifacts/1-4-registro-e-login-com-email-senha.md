@@ -112,6 +112,13 @@ So that I can access my financial data with confidence.
   - [x]7.7 Verificar que Organization e criada automaticamente no registro
   - [x]7.8 Validacao UX: telas de login e registro conferidas contra prototipos por validacao visual
 
+### Review Follow-ups (AI) — Code Review R1
+
+- [x] [AI-Review][HIGH] Tratar erro de `authClient.organization.create()` em RegisterForm — se org creation falhar apos signup, usuario fica sem Organization quebrando multi-tenant. Verificar retorno, exibir erro e nao redirecionar se org nao foi criada. [src/client/components/auth/RegisterForm.tsx:98-103]
+- [x] [AI-Review][HIGH] Corrigir middleware matcher `/(app)/:path*` — route groups `(app)` sao removidos da URL pelo Next.js, entao o matcher nunca dispara para `/dashboard`, `/checklist`, etc. Trocar para exclusion pattern ou lista explicita de rotas protegidas. [src/middleware.ts:15-17]
+- [x] [AI-Review][HIGH] Adicionar testes de fluxo de logout — Task 4.4 marcada [x] mas nenhum teste verifica click no botao Sair → `authClient.signOut()` chamado → `router.push("/login")`. Adicionar em Sidebar.test.tsx e BottomNavigation.test.tsx. [src/client/components/layout/Sidebar.test.tsx, src/client/components/layout/BottomNavigation.test.tsx]
+- [x] [AI-Review][MEDIUM] Remover `'unsafe-eval'` do CSP `script-src` — Next.js 16 App Router nao precisa de `unsafe-eval` em producao. Se quebrar dev (Turbopack), condicionar CSP por ambiente. [next.config.ts:23]
+
 ## Dev Notes
 
 ### Versoes Exatas do Stack (Story 1.4)
@@ -430,13 +437,19 @@ Claude Opus 4.6
 - Server-side session validation in app layout via getAuthSession() helper
 - Security headers configured in next.config.ts (CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy)
 - Zod schemas for register (with password requirements) and login validation
-- All 107 tests pass (35 new tests added)
+- All 115 tests pass (43 new tests added)
 - Build compiles successfully
 - Lint passes (0 errors, 1 warning about RHF watch() + React Compiler)
+- ✅ Resolved review finding [HIGH]: Organization.create error handling — verifica retorno, exibe erro, nao redireciona se falhar
+- ✅ Resolved review finding [HIGH]: Middleware matcher corrigido — exclusion pattern com PUBLIC_PATHS para /login, /register, /api/auth
+- ✅ Resolved review finding [HIGH]: Testes de logout adicionados em Sidebar.test.tsx e BottomNavigation.test.tsx
+- ✅ Resolved review finding [MEDIUM]: unsafe-eval removido do CSP em producao, mantido apenas em dev (Turbopack)
 
 ### Change Log
 
 - 2026-03-17: Implemented Story 1.4 — Registration and Login with Email/Password
+- 2026-03-18: Code Review R1 — 3 HIGH, 1 MEDIUM, 2 LOW findings. 4 action items criados (3 HIGH + 1 MEDIUM). LOWs aceitos como backlog.
+- 2026-03-18: Addressed code review R1 findings — 4 items resolved (3 HIGH + 1 MEDIUM)
 
 ### File List
 

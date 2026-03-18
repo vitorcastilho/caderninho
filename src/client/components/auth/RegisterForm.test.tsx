@@ -139,6 +139,29 @@ describe("RegisterForm", () => {
     expect(mockPush).toHaveBeenCalledWith("/dashboard");
   });
 
+  it("deve exibir erro e nao redirecionar quando organization.create falha", async () => {
+    mockOrgCreate.mockResolvedValue({
+      data: null,
+      error: { code: "ORGANIZATION_CREATION_FAILED" },
+    });
+
+    const user = userEvent.setup();
+    render(<RegisterForm />);
+
+    await user.type(screen.getByLabelText("Nome completo"), "Vitor Castilho");
+    await user.type(screen.getByLabelText("E-mail"), "vitor@test.com");
+    await user.type(screen.getByLabelText("Senha"), "Senha123");
+    await user.type(screen.getByLabelText("Confirmar senha"), "Senha123");
+
+    await user.click(screen.getByRole("button", { name: "Criar conta" }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/erro ao configurar seu espaço/i)).toBeInTheDocument();
+    });
+
+    expect(mockPush).not.toHaveBeenCalled();
+  });
+
   it("deve alternar visibilidade da senha", async () => {
     const user = userEvent.setup();
     render(<RegisterForm />);
