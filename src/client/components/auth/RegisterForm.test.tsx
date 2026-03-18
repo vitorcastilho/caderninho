@@ -15,11 +15,15 @@ vi.mock("next/navigation", () => ({
 
 const mockSignUp = vi.fn();
 const mockOrgCreate = vi.fn();
+const mockSignInSocial = vi.fn();
 
 vi.mock("@/client/utils/auth-client", () => ({
   authClient: {
     signUp: {
       email: (...args: unknown[]) => mockSignUp(...args),
+    },
+    signIn: {
+      social: (...args: unknown[]) => mockSignInSocial(...args),
     },
     organization: {
       create: (...args: unknown[]) => mockOrgCreate(...args),
@@ -160,6 +164,30 @@ describe("RegisterForm", () => {
     });
 
     expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  it("deve renderizar botao Cadastrar com Google habilitado", () => {
+    render(<RegisterForm />);
+
+    const googleBtn = screen.getByRole("button", {
+      name: /Cadastrar com Google/i,
+    });
+    expect(googleBtn).toBeEnabled();
+  });
+
+  it("deve chamar signIn.social ao clicar no botao Google", async () => {
+    const user = userEvent.setup();
+    render(<RegisterForm />);
+
+    await user.click(
+      screen.getByRole("button", { name: /Cadastrar com Google/i })
+    );
+
+    expect(mockSignInSocial).toHaveBeenCalledWith({
+      provider: "google",
+      callbackURL: "/dashboard",
+      errorCallbackURL: "/register?error=google",
+    });
   });
 
   it("deve alternar visibilidade da senha", async () => {

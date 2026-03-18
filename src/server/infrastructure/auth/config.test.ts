@@ -18,6 +18,8 @@ beforeEach(() => {
   process.env.BETTER_AUTH_SECRET = 'test-secret-at-least-32-chars-long!!';
   process.env.BETTER_AUTH_URL = 'http://localhost:3000';
   process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
+  process.env.GOOGLE_CLIENT_ID = 'test-google-client-id';
+  process.env.GOOGLE_CLIENT_SECRET = 'test-google-client-secret';
 });
 
 describe('Auth Config', () => {
@@ -34,5 +36,12 @@ describe('Auth Config', () => {
 
     expect(auth.api.getSession).toBeDefined();
     expect(typeof auth.api.getSession).toBe('function');
+  }, 15000);
+
+  it('deve ter api.signInSocial disponivel para login social', async () => {
+    const { auth } = await import('./config');
+
+    expect(auth.api.signInSocial).toBeDefined();
+    expect(typeof auth.api.signInSocial).toBe('function');
   }, 15000);
 });
