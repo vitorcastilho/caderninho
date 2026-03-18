@@ -26,6 +26,21 @@ describe('Database Schemas', () => {
       expect(columns.updatedAt).toBeDefined();
     });
 
+    it('should enforce constraints on users table', () => {
+      const columns = getTableColumns(users);
+      expect(columns.id.primary).toBe(true);
+      expect(columns.name.notNull).toBe(true);
+      expect(columns.email.notNull).toBe(true);
+      expect(columns.email.isUnique).toBe(true);
+      expect(columns.emailVerified.notNull).toBe(true);
+      expect(columns.emailVerified.hasDefault).toBe(true);
+      expect(columns.image.notNull).toBe(false);
+      expect(columns.createdAt.notNull).toBe(true);
+      expect(columns.createdAt.hasDefault).toBe(true);
+      expect(columns.updatedAt.notNull).toBe(true);
+      expect(columns.updatedAt.hasDefault).toBe(true);
+    });
+
     it('should define sessions table with correct name and columns', () => {
       expect(getTableName(sessions)).toBe('sessions');
 
@@ -39,6 +54,20 @@ describe('Database Schemas', () => {
       expect(columns.activeOrganizationId).toBeDefined();
       expect(columns.createdAt).toBeDefined();
       expect(columns.updatedAt).toBeDefined();
+    });
+
+    it('should enforce constraints on sessions table', () => {
+      const columns = getTableColumns(sessions);
+      expect(columns.id.primary).toBe(true);
+      expect(columns.userId.notNull).toBe(true);
+      expect(columns.token.notNull).toBe(true);
+      expect(columns.token.isUnique).toBe(true);
+      expect(columns.expiresAt.notNull).toBe(true);
+      expect(columns.ipAddress.notNull).toBe(false);
+      expect(columns.userAgent.notNull).toBe(false);
+      expect(columns.activeOrganizationId.notNull).toBe(false);
+      expect(columns.createdAt.hasDefault).toBe(true);
+      expect(columns.updatedAt.hasDefault).toBe(true);
     });
 
     it('should define accounts table with correct name and columns', () => {
@@ -60,6 +89,19 @@ describe('Database Schemas', () => {
       expect(columns.updatedAt).toBeDefined();
     });
 
+    it('should enforce constraints on accounts table', () => {
+      const columns = getTableColumns(accounts);
+      expect(columns.id.primary).toBe(true);
+      expect(columns.userId.notNull).toBe(true);
+      expect(columns.accountId.notNull).toBe(true);
+      expect(columns.providerId.notNull).toBe(true);
+      expect(columns.accessToken.notNull).toBe(false);
+      expect(columns.refreshToken.notNull).toBe(false);
+      expect(columns.password.notNull).toBe(false);
+      expect(columns.createdAt.hasDefault).toBe(true);
+      expect(columns.updatedAt.hasDefault).toBe(true);
+    });
+
     it('should define verifications table with correct name and columns', () => {
       expect(getTableName(verifications)).toBe('verifications');
 
@@ -70,6 +112,16 @@ describe('Database Schemas', () => {
       expect(columns.expiresAt).toBeDefined();
       expect(columns.createdAt).toBeDefined();
       expect(columns.updatedAt).toBeDefined();
+    });
+
+    it('should enforce constraints on verifications table', () => {
+      const columns = getTableColumns(verifications);
+      expect(columns.id.primary).toBe(true);
+      expect(columns.identifier.notNull).toBe(true);
+      expect(columns.value.notNull).toBe(true);
+      expect(columns.expiresAt.notNull).toBe(true);
+      expect(columns.createdAt.hasDefault).toBe(true);
+      expect(columns.updatedAt.hasDefault).toBe(true);
     });
   });
 
@@ -86,6 +138,17 @@ describe('Database Schemas', () => {
       expect(columns.createdAt).toBeDefined();
     });
 
+    it('should enforce constraints on organizations table', () => {
+      const columns = getTableColumns(organizations);
+      expect(columns.id.primary).toBe(true);
+      expect(columns.name.notNull).toBe(true);
+      expect(columns.slug.isUnique).toBe(true);
+      expect(columns.slug.notNull).toBe(false);
+      expect(columns.logo.notNull).toBe(false);
+      expect(columns.metadata.notNull).toBe(false);
+      expect(columns.createdAt.hasDefault).toBe(true);
+    });
+
     it('should define members table with correct name and columns', () => {
       expect(getTableName(members)).toBe('members');
 
@@ -95,6 +158,16 @@ describe('Database Schemas', () => {
       expect(columns.organizationId).toBeDefined();
       expect(columns.role).toBeDefined();
       expect(columns.createdAt).toBeDefined();
+    });
+
+    it('should enforce constraints on members table', () => {
+      const columns = getTableColumns(members);
+      expect(columns.id.primary).toBe(true);
+      expect(columns.userId.notNull).toBe(true);
+      expect(columns.organizationId.notNull).toBe(true);
+      expect(columns.role.notNull).toBe(true);
+      expect(columns.role.hasDefault).toBe(true);
+      expect(columns.createdAt.hasDefault).toBe(true);
     });
 
     it('should define invitations table with correct name and columns', () => {
@@ -109,6 +182,20 @@ describe('Database Schemas', () => {
       expect(columns.status).toBeDefined();
       expect(columns.expiresAt).toBeDefined();
       expect(columns.createdAt).toBeDefined();
+    });
+
+    it('should enforce constraints on invitations table', () => {
+      const columns = getTableColumns(invitations);
+      expect(columns.id.primary).toBe(true);
+      expect(columns.email.notNull).toBe(true);
+      expect(columns.inviterId.notNull).toBe(true);
+      expect(columns.organizationId.notNull).toBe(true);
+      expect(columns.role.notNull).toBe(true);
+      expect(columns.role.hasDefault).toBe(true);
+      expect(columns.status.notNull).toBe(true);
+      expect(columns.status.hasDefault).toBe(true);
+      expect(columns.expiresAt.notNull).toBe(true);
+      expect(columns.createdAt.hasDefault).toBe(true);
     });
   });
 
@@ -128,6 +215,21 @@ describe('Database Schemas', () => {
       expect(columns.ipAddress).toBeDefined();
       expect(columns.userAgent).toBeDefined();
       expect(columns.createdAt).toBeDefined();
+    });
+
+    it('should enforce constraints on audit_logs table', () => {
+      const columns = getTableColumns(auditLogs);
+      expect(columns.id.primary).toBe(true);
+      expect(columns.userId.notNull).toBe(false);
+      expect(columns.organizationId.notNull).toBe(false);
+      expect(columns.action.notNull).toBe(true);
+      expect(columns.entityType.notNull).toBe(true);
+      expect(columns.entityId.notNull).toBe(true);
+      expect(columns.oldValue.notNull).toBe(false);
+      expect(columns.newValue.notNull).toBe(false);
+      expect(columns.ipAddress.notNull).toBe(false);
+      expect(columns.userAgent.notNull).toBe(false);
+      expect(columns.createdAt.hasDefault).toBe(true);
     });
   });
 

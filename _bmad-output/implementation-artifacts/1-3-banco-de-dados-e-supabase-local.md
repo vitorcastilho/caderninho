@@ -71,6 +71,16 @@ So that I can develop and test with a real PostgreSQL instance.
   - [x] 6.6 `npm run lint` sem erros
   - [x] 6.7 Verificar que `supabase/config.toml` esta no git e `.supabase/` esta no `.gitignore`
 
+### Review Follow-ups (AI)
+
+- [x] [AI-Review][HIGH] RLS policy `audit_logs_insert_service` excessivamente permissiva — `WITH CHECK (true)` permite qualquer role inserir. Restringir a service_role. [supabase/migrations/20260317000000_enable_rls.sql:79-80]
+- [x] [AI-Review][MEDIUM] `dotenv` como production dependency — mover para devDependencies (so usado em drizzle.config.ts). [package.json:25]
+- [x] [AI-Review][MEDIUM] Testes de schema verificam apenas existencia de colunas, nao constraints (notNull, unique, FK, defaults). [src/server/infrastructure/database/schema/schema.test.ts]
+- [x] [AI-Review][MEDIUM] `supabase/.gitignore` nao documentado no File List da story. [supabase/.gitignore]
+- [x] [AI-Review][MEDIUM] Risco de colisao de nome `accounts` (auth providers vs contas financeiras futuras) — resolver antes da Story de contas financeiras. [src/server/infrastructure/database/schema/auth.ts:27]
+- [x] [AI-Review][LOW] Sem FK constraint em `sessions.active_organization_id` → `organizations.id`. [src/server/infrastructure/database/schema/auth.ts:22]
+- [x] [AI-Review][LOW] Todas as FKs usam `ON DELETE no action` — avaliar CASCADE quando Better Auth for integrado (Story 1.4). [migrations/0000_odd_scarlet_witch.sql]
+
 ## Dev Notes
 
 ### Versoes Exatas do Stack (Story 1.3)
@@ -401,17 +411,28 @@ Claude Opus 4.6
 - RLS habilitado em todas as 8 tabelas com 10 policies base de isolamento
 - 12 testes novos (2 client + 10 schema) — total 64 testes passando, zero regressoes
 - Build, lint, dev — tudo passando sem erros
+- ✅ Resolved review finding [HIGH]: RLS policy audit_logs_insert_service restrita a service_role via nova migration
+- ✅ Resolved review finding [MEDIUM]: dotenv movido para devDependencies
+- ✅ Resolved review finding [MEDIUM]: Testes de schema expandidos com verificacao de constraints (notNull, unique, hasDefault, primaryKey) — 8 testes novos, total 72
+- ✅ Resolved review finding [MEDIUM]: supabase/.gitignore documentado no File List
+- ✅ Resolved review finding [MEDIUM]: Risco de colisao de nome accounts documentado com comentario no schema
+- ✅ Resolved review finding [LOW]: FK constraint sessions.active_organization_id → organizations.id adicionado via SQL migration
+- ✅ Resolved review finding [LOW]: ON DELETE cascade evaluation documentada como TODO para Story 1.4
 
 ### Change Log
 
 - 2026-03-17: Implementacao completa da Story 1.3 — Banco de Dados e Supabase Local
+- 2026-03-17: Code Review R1 — 7 findings (1 HIGH, 4 MEDIUM, 2 LOW). Action items criados em Review Follow-ups.
+- 2026-03-17: Addressed code review findings — 7/7 items resolved (1 HIGH, 4 MEDIUM, 2 LOW)
 
 ### File List
 
 **Novos arquivos:**
 - `drizzle.config.ts` — configuracao Drizzle Kit (raiz)
 - `supabase/config.toml` — configuracao Supabase CLI local
+- `supabase/.gitignore` — gitignore gerado pelo Supabase CLI (exclui .branches, .temp, .env files)
 - `supabase/migrations/20260317000000_enable_rls.sql` — migration RLS customizada
+- `supabase/migrations/20260317000001_fix_review_findings.sql` — fix RLS audit_logs (service_role only) + FK sessions.active_organization_id
 - `src/server/infrastructure/database/client.ts` — instancia Drizzle ORM
 - `src/server/infrastructure/database/client.test.ts` — 2 testes do client
 - `src/server/infrastructure/database/schema/auth.ts` — tabelas users, sessions, accounts, verifications
