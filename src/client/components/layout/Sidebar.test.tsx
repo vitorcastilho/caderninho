@@ -1,12 +1,23 @@
 // @vitest-environment jsdom
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/vitest";
 import { Sidebar } from "./Sidebar";
 
 // Mock next/navigation
 const mockPathname = vi.fn<() => string>().mockReturnValue("/dashboard");
+const mockPush = vi.fn();
 vi.mock("next/navigation", () => ({
   usePathname: () => mockPathname(),
+  useRouter: () => ({ push: mockPush }),
+}));
+
+// Mock auth client
+const mockSignOut = vi.fn().mockResolvedValue({});
+vi.mock("@/client/utils/auth-client", () => ({
+  authClient: {
+    signOut: (...args: unknown[]) => mockSignOut(...args),
+  },
 }));
 
 // Mock useSidebarState
@@ -22,9 +33,9 @@ vi.mock("@/client/hooks/use-sidebar-state", () => ({
 
 describe("Sidebar", () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     mockPathname.mockReturnValue("/dashboard");
     mockCollapsed.mockReturnValue(false);
-    mockToggle.mockClear();
   });
 
   it("deve renderizar os 4 itens de navegacao", () => {
@@ -110,5 +121,19 @@ describe("Sidebar", () => {
 
     const toggleBtn = screen.getByRole("button", { name: /recolher menu/i });
     expect(toggleBtn).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("deve chamar signOut e redirecionar para /login ao clicar em Sair", async () => {
+    const user = userEvent.setup();
+    render(<Sidebar />);
+
+    const logoutButton = screen.getByRole("button", { name: /sair/i });
+    await user.click(logoutButton);
+
+    await waitFor(() => {
+      expect(mockSignOut).toHaveBeenCalled();
+    });
+
+    expect(mockPush).toHaveBeenCalledWith("/login");
   });
 });

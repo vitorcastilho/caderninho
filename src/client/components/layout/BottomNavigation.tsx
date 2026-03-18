@@ -6,10 +6,12 @@ import {
   Plus,
   CheckSquare,
   TrendingUp,
+  LogOut,
 } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/client/utils/utils";
+import { authClient } from "@/client/utils/auth-client";
 
 interface NavItem {
   href: string;
@@ -29,6 +31,12 @@ export const navItems: NavItem[] = [
 
 export function BottomNavigation() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleLogout() {
+    await authClient.signOut();
+    router.push("/login");
+  }
 
   return (
     <nav
@@ -91,6 +99,17 @@ export function BottomNavigation() {
             </li>
           );
         })}
+
+        {/* Logout */}
+        <li className="flex-1">
+          <button
+            onClick={handleLogout}
+            className="flex flex-col items-center justify-center gap-0.5 py-1.5 w-full min-h-[44px] text-muted-foreground transition-colors duration-150 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            <LogOut className="size-5" />
+            <span className="text-[10px] font-medium">Sair</span>
+          </button>
+        </li>
       </ul>
     </nav>
   );
