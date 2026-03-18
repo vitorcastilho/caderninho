@@ -29,7 +29,14 @@ const securityHeaders = [
       "img-src 'self' data: blob:",
       "connect-src 'self'",
       "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "object-src 'none'",
     ].join("; "),
+  },
+  {
+    key: "Permissions-Policy",
+    value: "camera=(), microphone=(), geolocation=()",
   },
 ];
 

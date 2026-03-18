@@ -1,4 +1,5 @@
-import { pgTable, text, jsonb, timestamp } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import { pgTable, pgPolicy, text, jsonb, timestamp } from 'drizzle-orm/pg-core';
 
 export const auditLogs = pgTable('audit_logs', {
   id: text('id').primaryKey(),
@@ -12,4 +13,9 @@ export const auditLogs = pgTable('audit_logs', {
   ipAddress: text('ip_address'),
   userAgent: text('user_agent'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-});
+}, () => [
+  pgPolicy('audit_logs_insert_only', {
+    for: 'insert',
+    withCheck: sql`true`,
+  }),
+]);
