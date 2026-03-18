@@ -5,9 +5,9 @@ interface RateLimitEntry {
 
 const store = new Map<string, RateLimitEntry>();
 
-// Cleanup a cada 60s
+// Cleanup a cada 60s — .unref() permite graceful shutdown sem bloquear o process
 if (typeof setInterval !== 'undefined') {
-  setInterval(() => {
+  const cleanup = setInterval(() => {
     const now = Date.now();
     for (const [key, entry] of store) {
       if (now > entry.resetAt) {
@@ -15,6 +15,7 @@ if (typeof setInterval !== 'undefined') {
       }
     }
   }, 60_000);
+  cleanup.unref();
 }
 
 export function rateLimit(

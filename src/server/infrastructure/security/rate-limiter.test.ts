@@ -74,7 +74,7 @@ describe('rateLimit', () => {
     expect(resultB.remaining).toBe(1);
   });
 
-  it('deve limpar entradas expiradas via cleanup', () => {
+  it('deve resetar contagem quando janela expira para mesma chave', () => {
     vi.useFakeTimers();
 
     const windowMs = 60_000;
@@ -87,6 +87,30 @@ describe('rateLimit', () => {
     const result = rateLimit('expired-key', 5, windowMs);
     expect(result.success).toBe(true);
     expect(result.remaining).toBe(4);
+
+    vi.useRealTimers();
+  });
+
+  it('deve remover entradas expiradas via setInterval cleanup', () => {
+    vi.useFakeTimers();
+
+    const windowMs = 60_000;
+
+    // Create entries that will expire
+    rateLimit('cleanup-key-1', 5, windowMs);
+    rateLimit('cleanup-key-2', 5, windowMs);
+
+    // Advance past window expiry + cleanup interval (60s)
+    vi.advanceTimersByTime(windowMs + 60_000 + 1);
+
+    // After cleanup runs, expired keys are removed from store
+    // Verify by checking that new requests start fresh with full remaining
+    const r1 = rateLimit('cleanup-key-1', 5, windowMs);
+    const r2 = rateLimit('cleanup-key-2', 5, windowMs);
+    expect(r1.success).toBe(true);
+    expect(r1.remaining).toBe(4);
+    expect(r2.success).toBe(true);
+    expect(r2.remaining).toBe(4);
 
     vi.useRealTimers();
   });

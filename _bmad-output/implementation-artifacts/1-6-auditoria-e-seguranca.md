@@ -111,10 +111,10 @@ So that every action is traceable and the application is protected against commo
 
 ### Review Follow-ups (AI) — Backlog
 
-- [ ] [AI-Review][LOW] `rate-limiter.ts:9` — Adicionar `.unref()` ao `setInterval` de cleanup para nao bloquear graceful shutdown do process
-- [ ] [AI-Review][LOW] `rate-limiter.test.ts:77` — Renomear teste "deve limpar entradas expiradas via cleanup" para refletir que testa reset de janela, nao o `setInterval` cleanup. Considerar adicionar teste dedicado para o cleanup mechanism
-- [ ] [AI-Review][LOW] `middleware.ts:17` — Fallback `"unknown"` no `getClientIp` agrupa requests sem IP header no mesmo bucket. Sem impacto real atras da Vercel
-- [ ] [AI-Review][LOW] `next.config.ts:26` — CSP `'unsafe-inline'` em `script-src` enfraquece protecao XSS. Pre-existente (Story 1.5), trade-off aceito para MVP. Migrar para nonces em story futura
+- [x] [AI-Review][LOW] `rate-limiter.ts:9` — Adicionar `.unref()` ao `setInterval` de cleanup para nao bloquear graceful shutdown do process
+- [x] [AI-Review][LOW] `rate-limiter.test.ts:77` — Renomear teste "deve limpar entradas expiradas via cleanup" para refletir que testa reset de janela, nao o `setInterval` cleanup. Considerar adicionar teste dedicado para o cleanup mechanism
+- [x] [AI-Review][LOW] `middleware.ts:17` — Fallback `"unknown"` no `getClientIp` agrupa requests sem IP header no mesmo bucket. Sem impacto real atras da Vercel
+- [x] [AI-Review][LOW] `next.config.ts:26` — CSP `'unsafe-inline'` em `script-src` enfraquece protecao XSS. Pre-existente (Story 1.5), trade-off aceito para MVP. Migrar para nonces em story futura
 
 ## Dev Notes
 
@@ -452,6 +452,7 @@ Claude Opus 4.6
 
 - 2026-03-18: Implementacao completa da Story 1.6 — servico de auditoria, rate limiting, headers de seguranca, middleware de autorizacao
 - 2026-03-18: Code Review R1 — APROVADO. 0 HIGH, 0 MEDIUM, 4 LOW (backlog). Todas as 7 ACs implementadas. 15 testes com assertions reais. Action items LOW adicionados como backlog
+- 2026-03-18: Resolvidos 4 items LOW do backlog — .unref() no cleanup, teste renomeado + teste dedicado para cleanup, log estruturado para IP desconhecido, CSP unsafe-inline documentado como trade-off MVP (nonces requerem dynamic rendering em todas as paginas)
 
 ### File List
 

@@ -10,11 +10,23 @@ const DEFAULT_RATE_LIMIT = 30;
 const RATE_WINDOW_MS = 60_000;
 
 function getClientIp(request: NextRequest): string {
-  return (
+  const ip =
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    request.headers.get("x-real-ip") ||
-    "unknown"
-  );
+    request.headers.get("x-real-ip");
+
+  if (!ip) {
+    console.log(
+      JSON.stringify({
+        level: "warn",
+        action: "missing_client_ip",
+        data: { pathname: request.nextUrl.pathname },
+        timestamp: new Date().toISOString(),
+      }),
+    );
+    return "unknown";
+  }
+
+  return ip;
 }
 
 export function middleware(request: NextRequest) {
