@@ -1,6 +1,6 @@
 # Story 1.2: Design System e Layout Responsivo
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -555,7 +555,7 @@ Abordagem TDD (Red-Green-Refactor):
 - `src/client/utils/utils.ts` — utilitario cn() (tailwind-merge + clsx)
 - `src/client/utils/utils.test.ts` — 7 testes para cn()
 - `src/client/utils/create-local-storage-store.ts` — factory genérica para stores localStorage + useSyncExternalStore
-- `src/client/utils/create-local-storage-store.test.ts` — 9 testes para createLocalStorageStore (incl. filtro storage event por key)
+- `src/client/utils/create-local-storage-store.test.ts` — 11 testes para createLocalStorageStore (incl. filtro storage event por key e cache)
 - `src/client/test-utils/local-storage-mock.ts` — mock compartilhado de localStorage para testes
 - `src/client/hooks/use-sidebar-state.ts` — hook de estado sidebar com localStorage
 - `src/client/hooks/use-sidebar-state.test.ts` — 7 testes para useSidebarState
