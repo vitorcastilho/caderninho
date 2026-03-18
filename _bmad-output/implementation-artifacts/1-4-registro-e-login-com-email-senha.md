@@ -457,6 +457,7 @@ Claude Opus 4.6
 - 2026-03-18: Addressed code review R1 findings — 4 items resolved (3 HIGH + 1 MEDIUM)
 - 2026-03-18: Code Review R2 — All 4 R1 fixes validated and approved. Status → done.
 - 2026-03-18: Fixed manual test finding — Drizzle adapter schema mapping com `usePlural: true` passava chaves singular, trocado para star import direto.
+- 2026-03-18: Code Review R3 — Drizzle adapter fix validado. Todos os 4 fixes de R1 confirmados intactos. 115 testes passam. 0 findings novos. Status → done (mantido).
 
 ### File List
 
