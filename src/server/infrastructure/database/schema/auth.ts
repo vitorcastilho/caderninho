@@ -3,6 +3,12 @@ import { pgTable, text, boolean, timestamp } from 'drizzle-orm/pg-core';
 // NOTE: All FKs use ON DELETE NO ACTION (Drizzle default). Evaluate CASCADE
 // when Better Auth is integrated in Story 1.4 — Better Auth may manage its own
 // cascade behavior via application logic.
+//
+// NOTE: updatedAt columns use defaultNow() which only sets the value on INSERT.
+// They do NOT auto-update on UPDATE. Options to evaluate in Story 1.4:
+// - Drizzle .$onUpdate(() => new Date()) for application-level updates
+// - PostgreSQL trigger for database-level updates (covers all clients)
+// Better Auth may handle updatedAt updates via its own adapter logic.
 
 export const users = pgTable('users', {
   id: text('id').primaryKey(),

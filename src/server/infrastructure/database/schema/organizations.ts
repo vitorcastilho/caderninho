@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, unique } from 'drizzle-orm/pg-core';
 
 import { users } from './auth';
 
@@ -11,17 +11,21 @@ export const organizations = pgTable('organizations', {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
-export const members = pgTable('members', {
-  id: text('id').primaryKey(),
-  userId: text('user_id')
-    .notNull()
-    .references(() => users.id),
-  organizationId: text('organization_id')
-    .notNull()
-    .references(() => organizations.id),
-  role: text('role').notNull().default('member'),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-});
+export const members = pgTable(
+  'members',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id),
+    organizationId: text('organization_id')
+      .notNull()
+      .references(() => organizations.id),
+    role: text('role').notNull().default('member'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [unique('members_user_org_unique').on(t.userId, t.organizationId)],
+);
 
 export const invitations = pgTable('invitations', {
   id: text('id').primaryKey(),

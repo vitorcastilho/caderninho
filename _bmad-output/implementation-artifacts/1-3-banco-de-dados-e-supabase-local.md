@@ -81,6 +81,14 @@ So that I can develop and test with a real PostgreSQL instance.
 - [x] [AI-Review][LOW] Sem FK constraint em `sessions.active_organization_id` → `organizations.id`. [src/server/infrastructure/database/schema/auth.ts:22]
 - [x] [AI-Review][LOW] Todas as FKs usam `ON DELETE no action` — avaliar CASCADE quando Better Auth for integrado (Story 1.4). [migrations/0000_odd_scarlet_witch.sql]
 
+#### R2 Follow-ups
+
+- [x] [AI-Review-R2][HIGH] Migration ordering: Supabase RLS migrations (`supabase/migrations/`) dependem de tabelas criadas pelo Drizzle (`drizzle-kit migrate`). Em fresh setup, `supabase start` aplica RLS migrations antes das tabelas existirem — `ALTER TABLE users ENABLE ROW LEVEL SECURITY` falha com "relation does not exist". Mover RLS para Drizzle migrations ou criar script de setup ordenado. [supabase/migrations/20260317000000_enable_rls.sql + supabase/migrations/20260317000001_fix_review_findings.sql]
+- [x] [AI-Review-R2][MEDIUM] RLS policy `verifications_select_own` compara `auth.uid()::text` (UUID) com `identifier` (email/phone) — comparacao nunca sera verdadeira. Remover policy (RLS habilitado sem policy ja bloqueia SELECT, que e o comportamento desejado). [supabase/migrations/20260317000000_enable_rls.sql:44]
+- [x] [AI-Review-R2][MEDIUM] Tabela `members` sem unique constraint em `(user_id, organization_id)` — permite memberships duplicadas no banco. Adicionar `UNIQUE (user_id, organization_id)`. [src/server/infrastructure/database/schema/organizations.ts:14]
+- [x] [AI-Review-R2][LOW] RLS policies usam `auth.uid()` (Supabase Auth) mas projeto usa Better Auth — policies nao funcionais ate integracao JWT (Story 1.4+). Documentar dependencia explicitamente na migration. [supabase/migrations/20260317000000_enable_rls.sql:3-5]
+- [x] [AI-Review-R2][LOW] `updatedAt` com `defaultNow()` so seta valor no INSERT, nao auto-atualiza em UPDATE. Avaliar `.$onUpdate()` ou trigger PostgreSQL na Story 1.4. [src/server/infrastructure/database/schema/auth.ts:14]
+
 ## Dev Notes
 
 ### Versoes Exatas do Stack (Story 1.3)
@@ -418,12 +426,19 @@ Claude Opus 4.6
 - ✅ Resolved review finding [MEDIUM]: Risco de colisao de nome accounts documentado com comentario no schema
 - ✅ Resolved review finding [LOW]: FK constraint sessions.active_organization_id → organizations.id adicionado via SQL migration
 - ✅ Resolved review finding [LOW]: ON DELETE cascade evaluation documentada como TODO para Story 1.4
+- ✅ Resolved R2 finding [HIGH]: Migration ordering — RLS SQL consolidado em Drizzle migration 0001, deletadas migrations do Supabase que causavam falha em fresh setup
+- ✅ Resolved R2 finding [MEDIUM]: Policy verifications_select_own removida (comparava UUID com email, nunca matcharia). RLS habilitado sem policy ja bloqueia SELECT.
+- ✅ Resolved R2 finding [MEDIUM]: Unique constraint UNIQUE(user_id, organization_id) adicionado na tabela members via schema Drizzle + migration
+- ✅ Resolved R2 finding [LOW]: Dependencia auth.uid() documentada explicitamente na migration com explicacao sobre Better Auth vs Supabase Auth
+- ✅ Resolved R2 finding [LOW]: Comportamento updatedAt documentado em auth.ts com opcoes para Story 1.4 (.$onUpdate ou trigger PostgreSQL)
 
 ### Change Log
 
 - 2026-03-17: Implementacao completa da Story 1.3 — Banco de Dados e Supabase Local
 - 2026-03-17: Code Review R1 — 7 findings (1 HIGH, 4 MEDIUM, 2 LOW). Action items criados em Review Follow-ups.
 - 2026-03-17: Addressed code review findings — 7/7 items resolved (1 HIGH, 4 MEDIUM, 2 LOW)
+- 2026-03-17: Code Review R2 — 5 findings (1 HIGH, 2 MEDIUM, 2 LOW). Action items criados em R2 Follow-ups.
+- 2026-03-17: Addressed code review R2 findings — 5/5 items resolved (1 HIGH, 2 MEDIUM, 2 LOW)
 
 ### File List
 
@@ -431,8 +446,8 @@ Claude Opus 4.6
 - `drizzle.config.ts` — configuracao Drizzle Kit (raiz)
 - `supabase/config.toml` — configuracao Supabase CLI local
 - `supabase/.gitignore` — gitignore gerado pelo Supabase CLI (exclui .branches, .temp, .env files)
-- `supabase/migrations/20260317000000_enable_rls.sql` — migration RLS customizada
-- `supabase/migrations/20260317000001_fix_review_findings.sql` — fix RLS audit_logs (service_role only) + FK sessions.active_organization_id
+- `src/server/infrastructure/database/migrations/0001_freezing_meteorite.sql` — unique constraint members + RLS consolidado (movido de supabase/migrations/)
+- `src/server/infrastructure/database/migrations/meta/0001_snapshot.json` — snapshot Drizzle para migration 0001
 - `src/server/infrastructure/database/client.ts` — instancia Drizzle ORM
 - `src/server/infrastructure/database/client.test.ts` — 2 testes do client
 - `src/server/infrastructure/database/schema/auth.ts` — tabelas users, sessions, accounts, verifications
@@ -452,3 +467,10 @@ Claude Opus 4.6
 - `_bmad-output/implementation-artifacts/sprint-status.yaml` — story 1.2 done, 1.3 in-progress
 - `_bmad-output/implementation-artifacts/1-2-design-system-e-layout-responsivo.md` — status done
 - `_bmad-output/implementation-artifacts/1-3-banco-de-dados-e-supabase-local.md` — tasks completadas, status review
+- `src/server/infrastructure/database/schema/organizations.ts` — unique constraint em members(user_id, organization_id)
+- `src/server/infrastructure/database/schema/auth.ts` — documentacao updatedAt behavior
+- `src/server/infrastructure/database/schema/schema.test.ts` — teste do unique constraint
+
+**Arquivos deletados:**
+- `supabase/migrations/20260317000000_enable_rls.sql` — RLS movido para Drizzle migration 0001
+- `supabase/migrations/20260317000001_fix_review_findings.sql` — fixes movidos para Drizzle migration 0001

@@ -1,4 +1,5 @@
 import { getTableName, getTableColumns } from 'drizzle-orm';
+import { getTableConfig } from 'drizzle-orm/pg-core';
 
 import {
   users,
@@ -168,6 +169,16 @@ describe('Database Schemas', () => {
       expect(columns.role.notNull).toBe(true);
       expect(columns.role.hasDefault).toBe(true);
       expect(columns.createdAt.hasDefault).toBe(true);
+    });
+
+    it('should have unique constraint on members(user_id, organization_id)', () => {
+      const config = getTableConfig(members);
+      const uniqueConstraint = config.uniqueConstraints.find(
+        (uc) => uc.name === 'members_user_org_unique',
+      );
+      expect(uniqueConstraint).toBeDefined();
+      const columnNames = uniqueConstraint!.columns.map((c) => c.name);
+      expect(columnNames).toEqual(['user_id', 'organization_id']);
     });
 
     it('should define invitations table with correct name and columns', () => {

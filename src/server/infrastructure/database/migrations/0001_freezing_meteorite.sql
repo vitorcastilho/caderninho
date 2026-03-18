@@ -1,12 +1,39 @@
--- Enable Row Level Security on all tables
--- Story 1.3: Base RLS policies for tenant isolation
--- NOTE: Drizzle ORM connects as postgres (superuser) which bypasses RLS.
--- RLS protects against direct access via Supabase client (browser → Supabase Realtime).
--- Application-level authorization middleware is the second layer (Story 1.6).
+-- Story 1.3: Review R2 fixes — unique constraint + consolidated RLS setup
+-- Moved from supabase/migrations/ to Drizzle migrations to fix ordering issue:
+-- On fresh setup, supabase start applied RLS before tables existed (Drizzle creates tables).
+-- Now RLS runs after table creation as part of the same migration pipeline.
 
 -- ============================================
--- Enable RLS on all tables
+-- Schema constraint fix
 -- ============================================
+
+ALTER TABLE "members" ADD CONSTRAINT "members_user_org_unique" UNIQUE("user_id","organization_id");
+--> statement-breakpoint
+
+-- ============================================
+-- FK constraint: sessions.active_organization_id → organizations.id
+-- Cannot be declared in Drizzle schema due to circular dependency
+-- (auth.ts ↔ organizations.ts), so enforced at DB level via migration.
+-- ============================================
+
+ALTER TABLE sessions
+  ADD CONSTRAINT sessions_active_organization_id_fk
+  FOREIGN KEY (active_organization_id) REFERENCES organizations(id);
+--> statement-breakpoint
+
+-- ============================================
+-- Enable Row Level Security on all tables
+-- ============================================
+-- NOTE: Drizzle ORM connects as postgres (superuser) which bypasses RLS.
+-- RLS protects against direct access via Supabase client (browser -> Supabase Realtime).
+-- Application-level authorization middleware is the second layer (Story 1.6).
+--
+-- DEPENDENCY: RLS policies below use auth.uid() which is a Supabase Auth function.
+-- This project uses Better Auth (not Supabase Auth), so these policies are
+-- NON-FUNCTIONAL until JWT integration is configured in Story 1.4+.
+-- The function auth.uid() will need to be mapped to Better Auth's session token
+-- or replaced with a custom function. Until then, RLS is enabled (blocking all
+-- non-superuser access by default) which is the safe default behavior.
 
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE sessions ENABLE ROW LEVEL SECURITY;
@@ -16,6 +43,7 @@ ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE invitations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
+--> statement-breakpoint
 
 -- ============================================
 -- Auth tables: users can only access their own data
@@ -39,9 +67,12 @@ CREATE POLICY "sessions_delete_own" ON sessions
 CREATE POLICY "accounts_select_own" ON accounts
   FOR SELECT USING (auth.uid()::text = user_id);
 
--- Verifications: can only see their own verification tokens
-CREATE POLICY "verifications_select_own" ON verifications
-  FOR SELECT USING (auth.uid()::text = identifier);
+-- Verifications: RLS enabled without SELECT policy = all SELECT blocked for
+-- non-superuser connections. This is the desired behavior — verification tokens
+-- are managed server-side only. No policy needed.
+-- (Previous policy compared auth.uid()::text with identifier which is email/phone,
+-- not a UUID — comparison would never match.)
+--> statement-breakpoint
 
 -- ============================================
 -- Organization tables: isolation by membership
@@ -70,14 +101,14 @@ CREATE POLICY "invitations_select_member" ON invitations
         AND members.user_id = auth.uid()::text
     )
   );
+--> statement-breakpoint
 
 -- ============================================
--- Audit logs: INSERT only, no direct user access
+-- Audit logs: INSERT only for service_role, no direct user access
 -- ============================================
 
--- audit_logs: service role can insert, no user SELECT/UPDATE/DELETE
 CREATE POLICY "audit_logs_insert_service" ON audit_logs
-  FOR INSERT WITH CHECK (true);
+  FOR INSERT TO service_role WITH CHECK (true);
 
 -- NOTE: No SELECT policy for regular users.
 -- Admin access and granular permissions will be implemented in Epic 8.
