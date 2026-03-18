@@ -87,13 +87,23 @@ So that I can access the app without creating a separate password.
 - [x] Task 6: Validacao final (AC: #1-#7)
   - [x] 6.1 Nota: `npm run dev` com login Google completo depende de credenciais reais (Google Cloud Console)
   - [x] 6.2 `npm run build` compila sem erros
-  - [x] 6.3 `npm test` roda e passa — 124 testes (16 arquivos), 0 falhas
+  - [x] 6.3 `npm test` roda e passa — 129 testes (16 arquivos), 0 falhas
   - [x] 6.4 `npm run lint` sem erros (1 warning pre-existente)
   - [x] 6.5 Fluxo Google (usuario novo): implementado via signIn.social + ensure-organization no layout
   - [x] 6.6 Fluxo Google (usuario existente): account linking configurado com trustedProviders: ["google"]
   - [x] 6.7 Fluxo Google (login subsequente): sessao persistente 7 dias (mesma config do email/senha)
   - [x] 6.8 Fluxo cancelamento: errorCallbackURL redireciona para /login?error=google com mensagem
   - [x] 6.9 Validacao UX: botoes de login social nas telas de login e registro implementados
+
+### Review Follow-ups (AI) — R1
+
+- [x] [AI-Review][CRITICAL] RegisterForm não mostra erro do Google OAuth: envia `errorCallbackURL: "/register?error=google"` mas não importa `useSearchParams`, não lê query param `error`, não exibe mensagem. Adicionar tratamento igual ao LoginForm + `<Suspense>` na register/page.tsx [src/client/components/auth/RegisterForm.tsx:132-139, src/app/(auth)/register/page.tsx]
+- [x] [AI-Review][HIGH] `ensureUserHasOrganization` sem try/catch: se `listOrganizations` ou `createOrganization` falhar (DB down, slug duplicado), exceção propaga até layout.tsx e crasha o app, bloqueando o usuário. Adicionar tratamento de erro com fallback gracioso [src/server/infrastructure/auth/ensure-organization.ts, src/app/(app)/layout.tsx:19]
+- [x] [AI-Review][MEDIUM] Loading state do botão Google nunca reseta: `setIsGoogleLoading(true)` sem reset em caso de falha do `signIn.social()`. Se Promise rejeitar antes do redirect, botão fica permanentemente em loading [src/client/components/auth/LoginForm.tsx:61-68, src/client/components/auth/RegisterForm.tsx:132-139]
+
+**LOWs (backlog, não blocking):**
+- F4: Lógica de slug duplicada entre RegisterForm e ensure-organization (implementações diferentes)
+- F5: Env vars GOOGLE_CLIENT_ID/SECRET sem validação runtime (`as string` cast)
 
 ## Dev Notes
 
@@ -304,11 +314,16 @@ Claude Opus 4.6
 - Task 3: RegisterForm com botao "Cadastrar com Google", divider "ou", handler e testes
 - Task 4: Helper `ensureUserHasOrganization` criado server-side com `next/headers`, integrado no app layout
 - Task 5: Middleware e rotas publicas verificados — `/api/auth` cobre callback Google
-- Task 6: 124 testes passando, build OK, lint OK
+- Task 6: 129 testes passando, build OK, lint OK
+- ✅ Resolved review finding [CRITICAL]: RegisterForm agora lê query param `error=google` via `useSearchParams`, exibe mensagem de erro, e `register/page.tsx` tem `<Suspense>` boundary
+- ✅ Resolved review finding [HIGH]: `ensureUserHasOrganization` agora tem try/catch com retorno `null` em caso de falha — app não crasha se DB falhar
+- ✅ Resolved review finding [MEDIUM]: `handleGoogleSignIn` e `handleGoogleSignUp` agora têm try/catch que reseta `isGoogleLoading` e exibe mensagem de erro
 
 ### Change Log
 
 - 2026-03-18: Implementacao completa da Story 1.5 — Login Social (Google)
+- 2026-03-18: Code Review R1 — 1 CRITICAL, 1 HIGH, 1 MEDIUM, 2 LOW. 3 action items criados, 2 LOWs para backlog
+- 2026-03-18: Addressed code review R1 findings — 3 items resolved (1 CRITICAL, 1 HIGH, 1 MEDIUM). 129 testes, build OK, lint OK
 
 ### File List
 
@@ -319,11 +334,14 @@ Claude Opus 4.6
 **Modificados:**
 - `src/server/infrastructure/auth/config.ts` — socialProviders.google + account.accountLinking
 - `src/server/infrastructure/auth/config.test.ts` — teste signInSocial API + env vars Google
-- `src/client/components/auth/LoginForm.tsx` — botao Google habilitado, handler, useSearchParams, erro
-- `src/client/components/auth/LoginForm.test.tsx` — testes botao habilitado, click social, erro query param
-- `src/client/components/auth/RegisterForm.tsx` — botao "Cadastrar com Google", handler, divider
-- `src/client/components/auth/RegisterForm.test.tsx` — testes botao Google render + click
+- `src/client/components/auth/LoginForm.tsx` — botao Google habilitado, handler, useSearchParams, erro, try/catch loading reset
+- `src/client/components/auth/LoginForm.test.tsx` — testes botao habilitado, click social, erro query param, loading reset
+- `src/client/components/auth/RegisterForm.tsx` — botao "Cadastrar com Google", handler, divider, useSearchParams erro, try/catch loading reset
+- `src/client/components/auth/RegisterForm.test.tsx` — testes botao Google render + click, erro query param, loading reset
+- `src/server/infrastructure/auth/ensure-organization.ts` — try/catch com retorno null em caso de falha
+- `src/server/infrastructure/auth/ensure-organization.test.ts` — testes erro listOrganizations e createOrganization
 - `src/app/(app)/layout.tsx` — ensureUserHasOrganization no layout
 - `src/app/(auth)/login/page.tsx` — Suspense boundary para useSearchParams
+- `src/app/(auth)/register/page.tsx` — Suspense boundary para useSearchParams
 - `_bmad-output/implementation-artifacts/sprint-status.yaml` — status in-progress → review
 - `_bmad-output/implementation-artifacts/1-5-login-social-google.md` — story file atualizado

@@ -61,11 +61,16 @@ export function LoginForm() {
   async function handleGoogleSignIn() {
     setIsGoogleLoading(true);
     setServerError(null);
-    await authClient.signIn.social({
-      provider: "google",
-      callbackURL: "/dashboard",
-      errorCallbackURL: "/login?error=google",
-    });
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/dashboard",
+        errorCallbackURL: "/login?error=google",
+      });
+    } catch {
+      setIsGoogleLoading(false);
+      setServerError("Erro ao conectar com Google. Tente novamente.");
+    }
   }
 
   return (

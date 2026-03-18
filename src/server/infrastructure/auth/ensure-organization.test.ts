@@ -88,4 +88,21 @@ describe("ensureUserHasOrganization", () => {
       },
     });
   });
+
+  it("deve retornar null quando listOrganizations falha", async () => {
+    mockListOrganizations.mockRejectedValue(new Error("DB connection failed"));
+
+    const result = await ensureUserHasOrganization("user-1", "Vitor");
+
+    expect(result).toBeNull();
+  });
+
+  it("deve retornar null quando createOrganization falha", async () => {
+    mockListOrganizations.mockResolvedValue([]);
+    mockCreateOrganization.mockRejectedValue(new Error("Slug duplicate"));
+
+    const result = await ensureUserHasOrganization("user-1", "Vitor");
+
+    expect(result).toBeNull();
+  });
 });

@@ -140,6 +140,20 @@ describe("LoginForm", () => {
     expect(mockPush).toHaveBeenCalledWith("/dashboard");
   });
 
+  it("deve resetar loading do botao Google quando signIn.social falha", async () => {
+    mockSignInSocial.mockRejectedValue(new Error("Network error"));
+
+    const user = userEvent.setup();
+    render(<LoginForm />);
+
+    const googleBtn = screen.getByRole("button", { name: /Entrar com Google/i });
+    await user.click(googleBtn);
+
+    await waitFor(() => {
+      expect(googleBtn).toBeEnabled();
+    });
+  });
+
   it("deve alternar visibilidade da senha", async () => {
     const user = userEvent.setup();
     render(<LoginForm />);

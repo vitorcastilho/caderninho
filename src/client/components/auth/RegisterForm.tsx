@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Loader2, Check } from "lucide-react";
 import Link from "next/link";
 
@@ -14,10 +14,17 @@ import { Button } from "@/client/components/ui/button";
 
 export function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  const googleError = searchParams.get("error");
+  const googleErrorMessage =
+    googleError === "google"
+      ? "Cadastro com Google cancelado. Tente novamente."
+      : null;
 
   const {
     register,
@@ -132,11 +139,16 @@ export function RegisterForm() {
   async function handleGoogleSignUp() {
     setIsGoogleLoading(true);
     setServerError(null);
-    await authClient.signIn.social({
-      provider: "google",
-      callbackURL: "/dashboard",
-      errorCallbackURL: "/register?error=google",
-    });
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/dashboard",
+        errorCallbackURL: "/register?error=google",
+      });
+    } catch {
+      setIsGoogleLoading(false);
+      setServerError("Erro ao conectar com Google. Tente novamente.");
+    }
   }
 
   return (
@@ -147,9 +159,9 @@ export function RegisterForm() {
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-7 space-y-5">
-        {serverError && (
+        {(serverError || googleErrorMessage) && (
           <div className="rounded-card-inner border border-critical/30 bg-critical-bg p-3 text-sm text-critical-text">
-            {serverError}
+            {serverError || googleErrorMessage}
           </div>
         )}
 
