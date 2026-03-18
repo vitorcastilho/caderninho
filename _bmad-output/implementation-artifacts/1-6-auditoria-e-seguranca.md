@@ -1,6 +1,6 @@
 # Story 1.6: Auditoria e Seguranca
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -108,6 +108,13 @@ So that every action is traceable and the application is protected against commo
   - [x] 5.5 Trigger de imutabilidade ativo — UPDATE e DELETE em audit_logs retornam excecao
   - [x] 5.6 Rate limiting integrado no middleware — retorna 429 com header Retry-After quando limite excedido (testado via unit tests)
   - [x] 5.7 Headers de seguranca presentes na resposta HTTP — verificado via curl (CSP, HSTS, X-Frame-Options, Permissions-Policy, etc.)
+
+### Review Follow-ups (AI) — Backlog
+
+- [ ] [AI-Review][LOW] `rate-limiter.ts:9` — Adicionar `.unref()` ao `setInterval` de cleanup para nao bloquear graceful shutdown do process
+- [ ] [AI-Review][LOW] `rate-limiter.test.ts:77` — Renomear teste "deve limpar entradas expiradas via cleanup" para refletir que testa reset de janela, nao o `setInterval` cleanup. Considerar adicionar teste dedicado para o cleanup mechanism
+- [ ] [AI-Review][LOW] `middleware.ts:17` — Fallback `"unknown"` no `getClientIp` agrupa requests sem IP header no mesmo bucket. Sem impacto real atras da Vercel
+- [ ] [AI-Review][LOW] `next.config.ts:26` — CSP `'unsafe-inline'` em `script-src` enfraquece protecao XSS. Pre-existente (Story 1.5), trade-off aceito para MVP. Migrar para nonces em story futura
 
 ## Dev Notes
 
@@ -444,6 +451,7 @@ Claude Opus 4.6
 ### Change Log
 
 - 2026-03-18: Implementacao completa da Story 1.6 — servico de auditoria, rate limiting, headers de seguranca, middleware de autorizacao
+- 2026-03-18: Code Review R1 — APROVADO. 0 HIGH, 0 MEDIUM, 4 LOW (backlog). Todas as 7 ACs implementadas. 15 testes com assertions reais. Action items LOW adicionados como backlog
 
 ### File List
 
