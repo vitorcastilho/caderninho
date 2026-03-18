@@ -116,6 +116,14 @@ So that every action is traceable and the application is protected against commo
 - [x] [AI-Review][LOW] `middleware.ts:17` — Fallback `"unknown"` no `getClientIp` agrupa requests sem IP header no mesmo bucket. Sem impacto real atras da Vercel
 - [x] [AI-Review][LOW] `next.config.ts:26` — CSP `'unsafe-inline'` em `script-src` enfraquece protecao XSS. Pre-existente (Story 1.5), trade-off aceito para MVP. Migrar para nonces em story futura
 
+### Review Follow-ups R2 (AI) — Backlog
+
+- [ ] [AI-Review-R2][LOW] `require-session.ts` — Duplica `get-session.ts` (Story 1.5). Funcionalidade identica, `requireSession` nao e importado em nenhum lugar (dead code). `withAuth` chama `auth.api.getSession` direto. Consolidar em cleanup futuro
+- [ ] [AI-Review-R2][LOW] `audit.schema.ts` — `auditLogSchema` nao e usado pelo `audit.service.ts`. `logAudit()` aceita `action: string` em vez de `AuditAction`. Schema preparado para validacao futura em Server Actions
+- [ ] [AI-Review-R2][LOW] Story documenta "144 testes" mas count real e 145. Drift de documentacao menor
+- [ ] [AI-Review-R2][LOW] `with-auth.ts` sem `'use server'` diverge da "Configuracao Exata" da story, porem implementacao esta correta — `withAuth` e HOF, nao Server Action
+- [ ] [AI-Review-R2][LOW] Migration 0002 tem `ENABLE ROW LEVEL SECURITY` + `FORCE ROW LEVEL SECURITY` redundante (FORCE implica ENABLE). Sem impacto funcional
+
 ## Dev Notes
 
 ### Versoes Exatas do Stack (Story 1.6)
@@ -453,6 +461,7 @@ Claude Opus 4.6
 - 2026-03-18: Implementacao completa da Story 1.6 — servico de auditoria, rate limiting, headers de seguranca, middleware de autorizacao
 - 2026-03-18: Code Review R1 — APROVADO. 0 HIGH, 0 MEDIUM, 4 LOW (backlog). Todas as 7 ACs implementadas. 15 testes com assertions reais. Action items LOW adicionados como backlog
 - 2026-03-18: Resolvidos 4 items LOW do backlog — .unref() no cleanup, teste renomeado + teste dedicado para cleanup, log estruturado para IP desconhecido, CSP unsafe-inline documentado como trade-off MVP (nonces requerem dynamic rendering em todas as paginas)
+- 2026-03-18: Code Review R2 — APROVADO. 0 HIGH, 0 MEDIUM, 5 LOW (backlog). Todas as 7 ACs implementadas e verificadas. 145 testes passando. LOWs aceitos como backlog (requireSession dead code, auditLogSchema nao utilizado, doc drift, spec divergence, migration redundancia)
 
 ### File List
 
