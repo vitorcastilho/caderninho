@@ -7,6 +7,7 @@ const SENSITIVE_FIELDS = new Set([
   'cookie',
   'cpf',
   'ssn',
+  'email',
   'accesstoken',
   'refreshtoken',
   'sessiontoken',
@@ -14,7 +15,20 @@ const SENSITIVE_FIELDS = new Set([
 
 function isSensitiveKey(key: string): boolean {
   const lowerKey = key.toLowerCase();
-  return Array.from(SENSITIVE_FIELDS).some((field) => lowerKey.includes(field));
+  for (const field of SENSITIVE_FIELDS) {
+    if (lowerKey.includes(field)) return true;
+  }
+  return false;
+}
+
+function sanitizeValue(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeValue(item));
+  }
+  if (value && typeof value === 'object') {
+    return sanitizeData(value as Record<string, unknown>);
+  }
+  return value;
 }
 
 function sanitizeData(
@@ -24,10 +38,8 @@ function sanitizeData(
   for (const [key, value] of Object.entries(data)) {
     if (isSensitiveKey(key)) {
       sanitized[key] = '[REDACTED]';
-    } else if (value && typeof value === 'object' && !Array.isArray(value)) {
-      sanitized[key] = sanitizeData(value as Record<string, unknown>);
     } else {
-      sanitized[key] = value;
+      sanitized[key] = sanitizeValue(value);
     }
   }
   return sanitized;

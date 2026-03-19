@@ -104,6 +104,14 @@ So that the application has consistent error handling and input validation.
   - [x] 6.6 Result Pattern helpers `ok()` e `err()` funcionam com type narrowing
   - [x] 6.7 Schemas comuns validam corretamente valores financeiros em centavos
 
+### Review Follow-ups (AI) — Code Review R1
+
+- [x] [AI-Review][MEDIUM] `sanitizeData()` nao sanitiza arrays de objetos — campos sensiveis dentro de arrays escapam do filtro. Adicionar recursao em arrays no `sanitizeData`. [src/server/infrastructure/logging/logger.ts:27] + atualizar testes para cobrir cenario de array com campo sensivel
+- [x] [AI-Review][MEDIUM] `SENSITIVE_FIELDS` nao inclui `email` — AC #2 lista "email completo" como dado sensivel, mas nenhuma variante de email esta no Set. Adicionar `'email'` ao Set. [src/server/infrastructure/logging/logger.ts:1-13] + atualizar teste de sanitizacao
+- [x] [AI-Review][LOW] `isSensitiveKey()` aloca array desnecessariamente via `Array.from(SENSITIVE_FIELDS).some(...)` — usar `for...of` direto no Set [src/server/infrastructure/logging/logger.ts:17]
+- [x] [AI-Review][LOW] `middleware.test.ts` nao mocka o logger apos refatoracao — sem mock, console polui output de testes e nao ha assercao do log [src/middleware.test.ts]
+- [x] [AI-Review][LOW] Action name mudou de `rate_limit_ip_missing` para `missing_client_ip` sem documentar — nome melhor, mas diverge do spec original [src/middleware.ts:20]
+
 ## Dev Notes
 
 ### Versoes Exatas do Stack (Story 1.7)
@@ -476,10 +484,16 @@ Nenhum debug necessario — implementacao direta seguindo TDD.
 - Task 4: `validateInput()` integra Zod + Result Pattern — converte ZodError.issues em Record<string, string> para details, 5 testes incluindo nested objects e refinements
 - Task 5: Refatorado `audit.service.ts` e `middleware.ts` para usar `logger.warn()` em vez de `console.log(JSON.stringify(...))`, testes do audit service atualizados para mock de logger
 - Task 6: Validacao final — build OK, 187 testes passando (23 arquivos), lint sem erros novos, zero regressoes
+- ✅ Resolved review finding [MEDIUM]: sanitizeData() agora sanitiza arrays de objetos recursivamente via sanitizeValue()
+- ✅ Resolved review finding [MEDIUM]: 'email' adicionado ao SENSITIVE_FIELDS Set
+- ✅ Resolved review finding [LOW]: isSensitiveKey() usa for...of direto no Set em vez de Array.from().some()
+- ✅ Resolved review finding [LOW]: middleware.test.ts agora mocka o logger
+- ✅ Resolved review finding [LOW]: Action name missing_client_ip aceito — melhoria semantica sobre rate_limit_ip_missing
 
 ### Change Log
 
 - 2026-03-18: Implementacao completa da Story 1.7 — logger estruturado, Result Pattern helpers, schemas Zod comuns, utilitario de validacao server-side, refatoracao de logging existente. 42 novos testes adicionados, total 187 passando.
+- 2026-03-18: Addressed code review R1 findings — 5 items resolved (2 MEDIUM, 3 LOW): sanitizeData com recursao em arrays, email no SENSITIVE_FIELDS, isSensitiveKey otimizado com for...of, mock de logger no middleware.test.ts. Total 189 testes passando.
 
 ### File List
 

@@ -91,6 +91,40 @@ describe('logger', () => {
       expect(output.data.user.name).toBe('John');
       expect(output.data.user.credential).toBe('[REDACTED]');
     });
+
+    it('deve filtrar campos sensiveis dentro de arrays de objetos', () => {
+      logger.info({
+        action: 'array_test',
+        data: {
+          users: [
+            { name: 'Alice', password: 'pass123' },
+            { name: 'Bob', token: 'tok456' },
+          ],
+        },
+      });
+
+      const output = JSON.parse(consoleLogSpy.mock.calls[0][0] as string);
+      expect(output.data.users[0].name).toBe('Alice');
+      expect(output.data.users[0].password).toBe('[REDACTED]');
+      expect(output.data.users[1].name).toBe('Bob');
+      expect(output.data.users[1].token).toBe('[REDACTED]');
+    });
+
+    it('deve filtrar campo email como dado sensivel', () => {
+      logger.info({
+        action: 'email_test',
+        data: {
+          email: 'user@example.com',
+          userEmail: 'admin@example.com',
+          name: 'John',
+        },
+      });
+
+      const output = JSON.parse(consoleLogSpy.mock.calls[0][0] as string);
+      expect(output.data.email).toBe('[REDACTED]');
+      expect(output.data.userEmail).toBe('[REDACTED]');
+      expect(output.data.name).toBe('John');
+    });
   });
 
   describe('campos opcionais', () => {
