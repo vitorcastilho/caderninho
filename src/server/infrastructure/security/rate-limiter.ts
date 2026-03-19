@@ -5,7 +5,7 @@ interface RateLimitEntry {
 
 const store = new Map<string, RateLimitEntry>();
 
-// Cleanup a cada 60s — .unref() permite graceful shutdown sem bloquear o process
+// Cleanup a cada 60s — edge runtime retorna number, Node retorna Timer
 if (typeof setInterval !== 'undefined') {
   const cleanup = setInterval(() => {
     const now = Date.now();
@@ -15,7 +15,9 @@ if (typeof setInterval !== 'undefined') {
       }
     }
   }, 60_000);
-  cleanup.unref();
+  if (typeof cleanup === 'object' && 'unref' in cleanup) {
+    cleanup.unref();
+  }
 }
 
 export function rateLimit(

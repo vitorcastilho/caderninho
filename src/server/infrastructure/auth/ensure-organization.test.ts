@@ -7,6 +7,7 @@ vi.mock("next/headers", () => ({
 
 const mockListOrganizations = vi.fn();
 const mockCreateOrganization = vi.fn();
+const mockSetActiveOrganization = vi.fn();
 
 vi.mock("./config", () => ({
   auth: {
@@ -15,6 +16,8 @@ vi.mock("./config", () => ({
         mockListOrganizations(...args),
       createOrganization: (...args: unknown[]) =>
         mockCreateOrganization(...args),
+      setActiveOrganization: (...args: unknown[]) =>
+        mockSetActiveOrganization(...args),
     },
   },
 }));
@@ -30,7 +33,7 @@ describe("ensureUserHasOrganization", () => {
     const existingOrg = { id: "org-1", name: "Família Vitor", slug: "familia-vitor" };
     mockListOrganizations.mockResolvedValue([existingOrg]);
 
-    const result = await ensureUserHasOrganization("user-1", "Vitor Castilho");
+    const result = await ensureUserHasOrganization("user-1", "Vitor Castilho", null);
 
     expect(result).toEqual(existingOrg);
     expect(mockCreateOrganization).not.toHaveBeenCalled();
@@ -41,7 +44,7 @@ describe("ensureUserHasOrganization", () => {
     const createdOrg = { id: "org-2", name: "Família Vitor", slug: "familia-vitor" };
     mockCreateOrganization.mockResolvedValue(createdOrg);
 
-    const result = await ensureUserHasOrganization("user-1", "Vitor Castilho");
+    const result = await ensureUserHasOrganization("user-1", "Vitor Castilho", null);
 
     expect(mockCreateOrganization).toHaveBeenCalledWith({
       headers: mockHeaders,
@@ -59,7 +62,7 @@ describe("ensureUserHasOrganization", () => {
     const createdOrg = { id: "org-3", name: "Família", slug: "familia" };
     mockCreateOrganization.mockResolvedValue(createdOrg);
 
-    const result = await ensureUserHasOrganization("user-1", "");
+    const result = await ensureUserHasOrganization("user-1", "", null);
 
     expect(mockCreateOrganization).toHaveBeenCalledWith({
       headers: mockHeaders,
@@ -77,7 +80,7 @@ describe("ensureUserHasOrganization", () => {
     const createdOrg = { id: "org-4", name: "Família José", slug: "familia-jose" };
     mockCreateOrganization.mockResolvedValue(createdOrg);
 
-    await ensureUserHasOrganization("user-1", "José Silva");
+    await ensureUserHasOrganization("user-1", "José Silva", null);
 
     expect(mockCreateOrganization).toHaveBeenCalledWith({
       headers: mockHeaders,
@@ -92,7 +95,7 @@ describe("ensureUserHasOrganization", () => {
   it("deve retornar null quando listOrganizations falha", async () => {
     mockListOrganizations.mockRejectedValue(new Error("DB connection failed"));
 
-    const result = await ensureUserHasOrganization("user-1", "Vitor");
+    const result = await ensureUserHasOrganization("user-1", "Vitor", null);
 
     expect(result).toBeNull();
   });
@@ -101,7 +104,7 @@ describe("ensureUserHasOrganization", () => {
     mockListOrganizations.mockResolvedValue([]);
     mockCreateOrganization.mockRejectedValue(new Error("Slug duplicate"));
 
-    const result = await ensureUserHasOrganization("user-1", "Vitor");
+    const result = await ensureUserHasOrganization("user-1", "Vitor", null);
 
     expect(result).toBeNull();
   });

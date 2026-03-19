@@ -16,7 +16,7 @@ export default async function AppLayout({
     redirect("/login");
   }
 
-  await ensureUserHasOrganization(session.user.id, session.user.name);
+  await ensureUserHasOrganization(session.user.id, session.user.name, session.session.activeOrganizationId);
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">

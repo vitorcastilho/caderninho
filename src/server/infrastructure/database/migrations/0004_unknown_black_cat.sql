@@ -1,0 +1,2 @@
+ALTER TABLE "bank_accounts" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE POLICY "bank_accounts_org_isolation" ON "bank_accounts" AS PERMISSIVE FOR ALL TO public USING (organization_id = current_setting('app.organization_id', true));
