@@ -171,6 +171,13 @@ So that I can organize my card payments and track limits.
   - [x] 8.6 Valores monetários em centavos (integer) em todo o fluxo
   - [x] 8.7 Verificar UX: layout responsivo, limite com tabular-nums, toast de confirmação, dialog de arquivamento, dias de fechamento/vencimento visíveis
 
+### Review Follow-ups (AI) — R1 2026-03-19
+
+- [x] [AI-Review][MEDIUM] Extrair `centsToDisplayValue`/`displayValueToCents` para `src/client/utils/currency-input.ts` — duplicadas em BankAccountForm e CreditCardForm [CreditCardForm.tsx:25-34]
+- [x] [AI-Review][LOW] Corrigir import ordering em `credit-card.actions.ts`, `CreditCardForm.tsx` e `CreditCardList.tsx` para seguir padrão project-context (External → Shared → Server → Client)
+- [x] [AI-Review][LOW] Documentar `migrations/meta/0005_snapshot.json` e `migrations/meta/_journal.json` na File List da story
+- [x] [AI-Review][LOW] Utilizar `isPending` do `useTransition` em `CreditCardList.tsx` para feedback visual durante refresh/edit loading [CreditCardList.tsx:46]
+
 ## Dev Notes
 
 ### ALERTA CRITICO: Seguir Blueprint da Story 2.1
@@ -524,10 +531,13 @@ Claude Opus 4.6
 - Task 7: Link "Cartões" adicionado no Sidebar e BottomNavigation com ícone CreditCard
 - Task 8: 312 testes passando (0 falhas), build OK, lint sem erros novos
 - Todos os padrões da Story 2.1 seguidos fielmente (Clean Architecture, DI, Result Pattern, auditoria)
+- Review Follow-ups R1: Extraído currency-input.ts (12 testes), corrigido import ordering em 4 arquivos, documentado migration meta files, adicionado isPending feedback no CreditCardList
 
 ### Change Log
 
 - 2026-03-19: Implementação completa do CRUD de cartões de crédito (Story 2.2)
+- 2026-03-19: Code Review R1 — 0 HIGH, 1 MEDIUM, 3 LOW. Action items criados como backlog.
+- 2026-03-19: Addressed code review findings — 4 items resolved (1 MEDIUM, 3 LOW)
 
 ### File List
 
@@ -535,6 +545,10 @@ Claude Opus 4.6
 - src/server/infrastructure/database/schema/credit-cards.ts
 - src/server/infrastructure/database/schema/credit-cards.test.ts
 - src/server/infrastructure/database/migrations/0005_natural_zzzax.sql
+- src/server/infrastructure/database/migrations/meta/0005_snapshot.json
+- src/server/infrastructure/database/migrations/meta/_journal.json
+- src/client/utils/currency-input.ts
+- src/client/utils/currency-input.test.ts
 - src/server/domain/credit-cards/repositories/credit-card.repository.ts
 - src/server/infrastructure/database/repositories/credit-card.repository.impl.ts
 - src/server/infrastructure/database/repositories/credit-card.repository.impl.test.ts
@@ -566,5 +580,9 @@ Claude Opus 4.6
 - src/client/components/layout/Sidebar.tsx (adicionado link Cartões)
 - src/client/components/layout/BottomNavigation.tsx (adicionado link Cartões, removido Orçamentos do mobile)
 - src/client/components/layout/BottomNavigation.test.tsx (atualizado teste para novo nav item)
+- src/client/components/bank-accounts/BankAccountForm.tsx (importa centsToDisplayValue/displayValueToCents de currency-input.ts)
+- src/client/components/credit-cards/CreditCardForm.tsx (importa de currency-input.ts + import ordering corrigido)
+- src/client/components/credit-cards/CreditCardList.tsx (isPending feedback visual + import ordering corrigido)
+- src/server/actions/credit-card.actions.ts (import ordering corrigido)
 - _bmad-output/implementation-artifacts/sprint-status.yaml (status atualizado)
-- _bmad-output/implementation-artifacts/2-2-cadastro-e-gestao-de-cartoes-de-credito-estrutura.md (tasks marcadas, status review)
+- _bmad-output/implementation-artifacts/2-2-cadastro-e-gestao-de-cartoes-de-credito-estrutura.md (tasks marcadas, review follow-ups resolvidos)

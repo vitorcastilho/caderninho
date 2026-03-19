@@ -3,6 +3,7 @@
 import { useState, useTransition, useCallback } from 'react';
 import { toast } from 'sonner';
 
+import { listCreditCardsAction, getCreditCardAction } from '@/server/actions/credit-card.actions';
 import { Button } from '@/client/components/ui/button';
 import {
   Dialog,
@@ -12,7 +13,6 @@ import {
 } from '@/client/components/ui/dialog';
 import { CreditCardCard } from './CreditCardCard';
 import { CreditCardForm } from './CreditCardForm';
-import { listCreditCardsAction, getCreditCardAction } from '@/server/actions/credit-card.actions';
 
 interface CreditCard {
   id: string;
@@ -43,7 +43,7 @@ export function CreditCardList({ initialCards }: CreditCardListProps) {
     dueDay: number;
   } | null>(null);
   const [showArchived, setShowArchived] = useState(false);
-  const [, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
 
   const refreshCards = useCallback(() => {
     startTransition(async () => {
@@ -132,7 +132,7 @@ export function CreditCardList({ initialCards }: CreditCardListProps) {
           {activeCards.length === 0 ? (
             <p className="text-sm text-muted-foreground">Nenhum cartão ativo.</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 transition-opacity ${isPending ? 'opacity-50 pointer-events-none' : ''}`}>
               {activeCards.map((card) => (
                 <CreditCardCard
                   key={card.id}
