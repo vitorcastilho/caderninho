@@ -7,6 +7,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    exclude: ['e2e/**', 'node_modules/**'],
     coverage: {
       exclude: ['**/*.test.ts', '**/*.test.tsx', '**/*.config.*', 'e2e/**'],
     },
