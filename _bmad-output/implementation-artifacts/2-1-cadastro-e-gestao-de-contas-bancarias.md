@@ -1,6 +1,6 @@
 # Story 2.1: Cadastro e Gestão de Contas Bancárias
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -580,3 +580,4 @@ Claude Opus 4.6
 - 2026-03-19: Implementação completa da Story 2.1 — CRUD de contas bancárias com Clean Architecture (Server Action → Use Case → Repository), schemas Drizzle e Zod, auditoria, RLS, componentes UI com shadcn/ui v4, 250 testes passando.
 - 2026-03-19: Code Review R1 — 7 findings (1 CRITICAL, 3 HIGH, 1 MEDIUM, 2 LOW). Status revertido para in-progress. Action items adicionados em "Review Follow-ups (AI)".
 - 2026-03-19: Addressed code review findings — 7 items resolved. Fixes: .returning() no repository, AuditLogger interface no domain (DI), factory/composition root para Server Actions, includeArchived na listagem, loading.tsx, File List atualizado, displayValueToCents sem floating-point. 250 testes passando, build e lint OK.
+- 2026-03-19: Code Review R2 — Todos os 7 fixes de R1 validados e aprovados. 250 testes passando, zero regressões. Status → done.

@@ -54,7 +54,7 @@ development_status:
 
   # Epic 2: Estrutura Financeira e Categorizacao
   epic-2: in-progress
-  2-1-cadastro-e-gestao-de-contas-bancarias: review
+  2-1-cadastro-e-gestao-de-contas-bancarias: done
   2-2-cadastro-e-gestao-de-cartoes-de-credito-estrutura: backlog
   2-3-cadastro-de-investimentos-e-fontes-de-receita: backlog
   2-4-categorias-subcategorias-e-classificacoes-de-essencialidade: backlog
