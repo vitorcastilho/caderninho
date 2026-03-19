@@ -49,7 +49,7 @@ development_status:
   1-5-login-social-google: done
   1-6-auditoria-e-seguranca: done
   1-7-validacao-logging-e-infraestrutura-compartilhada: done
-  1-8-ci-cd-pipeline-ambientes-e-readme: review
+  1-8-ci-cd-pipeline-ambientes-e-readme: done
   epic-1-retrospective: optional
 
   # Epic 2: Estrutura Financeira e Categorizacao

@@ -1,6 +1,6 @@
 # Story 1.8: CI/CD Pipeline, Ambientes e README
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -503,6 +503,7 @@ Claude Opus 4.6
 
 ## Change Log
 
+- 2026-03-19: Code Review R2 — APROVADO. Todos os fixes de R1 validados (2 MEDIUMs + 1 LOW corrigidos, 2 LOWs aceitos como backlog). Story marcada como done.
 - 2026-03-19: Code Review R1 fixes — 2 MEDIUMs resolvidos (timeout-minutes no CI, acentuação no README), 1 LOW resolvido (assertion redundante no E2E), 2 LOWs aceitos como backlog. Validação: type-check OK, lint OK, 189 testes passando, build OK.
 - 2026-03-19: Code Review R1 — 0 HIGH, 2 MEDIUM, 3 LOW. Action items registrados.
 - 2026-03-19: Implementação completa da Story 1.8 — CI/CD pipeline (GitHub Actions), Playwright setup com smoke test, README operacional, documentação de staging. Validação: type-check OK, lint OK, 189 testes passando, build OK.
