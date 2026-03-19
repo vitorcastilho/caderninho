@@ -30,7 +30,7 @@ describe("BottomNavigation", () => {
     render(<BottomNavigation />);
 
     expect(screen.getByText("Dashboard")).toBeInTheDocument();
-    expect(screen.getByText("Orçamentos")).toBeInTheDocument();
+    expect(screen.getByText("Cartões")).toBeInTheDocument();
     expect(screen.getByText("Registrar")).toBeInTheDocument();
     expect(screen.getByText("Checklist")).toBeInTheDocument();
     expect(screen.getByText("Projeção")).toBeInTheDocument();

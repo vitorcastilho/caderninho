@@ -5,6 +5,7 @@ import {
   PiggyBank,
   CheckSquare,
   TrendingUp,
+  CreditCard,
   ChevronLeft,
   ChevronRight,
   LogOut,
@@ -23,6 +24,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/credit-cards", label: "Cartões", icon: CreditCard },
   { href: "/orcamentos", label: "Orçamentos", icon: PiggyBank },
   { href: "/checklist", label: "Checklist", icon: CheckSquare },
   { href: "/projecao", label: "Projeção", icon: TrendingUp },

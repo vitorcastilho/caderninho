@@ -3,10 +3,11 @@
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
+import { createBankAccountAction, updateBankAccountAction } from '@/server/actions/bank-account.actions';
+import { centsToDisplayValue, displayValueToCents } from '@/client/utils/currency-input';
 import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
-import { createBankAccountAction, updateBankAccountAction } from '@/server/actions/bank-account.actions';
 
 interface BankAccountFormProps {
   mode: 'create' | 'edit';
@@ -18,17 +19,6 @@ interface BankAccountFormProps {
   };
   onSuccess?: () => void;
   onCancel?: () => void;
-}
-
-function centsToDisplayValue(cents: number): string {
-  const integerPart = Math.floor(cents / 100);
-  const decimalPart = cents % 100;
-  return `${integerPart.toLocaleString('pt-BR')},${String(decimalPart).padStart(2, '0')}`;
-}
-
-function displayValueToCents(value: string): number {
-  const digits = value.replace(/\D/g, '');
-  return parseInt(digits || '0', 10);
 }
 
 export function BankAccountForm({ mode, defaultValues, onSuccess, onCancel }: BankAccountFormProps) {
