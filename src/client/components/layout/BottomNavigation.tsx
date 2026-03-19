@@ -2,10 +2,10 @@
 
 import {
   LayoutDashboard,
-  PiggyBank,
   Plus,
   CheckSquare,
   TrendingUp,
+  CreditCard,
   LogOut,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
@@ -23,7 +23,7 @@ interface NavItem {
 
 export const navItems: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/orcamentos", label: "Orçamentos", icon: PiggyBank },
+  { href: "/credit-cards", label: "Cartões", icon: CreditCard },
   { href: "/registrar", label: "Registrar", icon: Plus, isFab: true },
   { href: "/checklist", label: "Checklist", icon: CheckSquare },
   { href: "/projecao", label: "Projeção", icon: TrendingUp },
