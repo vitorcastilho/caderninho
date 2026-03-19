@@ -5,6 +5,7 @@ import { auth } from "./config";
 export async function ensureUserHasOrganization(
   userId: string,
   userName: string,
+  activeOrganizationId: string | null | undefined,
 ) {
   try {
     const reqHeaders = await headers();
@@ -14,29 +15,36 @@ export async function ensureUserHasOrganization(
       query: { userId },
     });
 
-    if (orgs.length > 0) {
-      return orgs[0];
+    let org = orgs.length > 0 ? orgs[0] : null;
+
+    if (!org) {
+      const firstName = userName.trim().split(" ")[0] || "";
+      const orgName = firstName ? `Família ${firstName}` : "Família";
+      const slug = orgName
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+
+      org = await auth.api.createOrganization({
+        headers: reqHeaders,
+        body: {
+          name: orgName,
+          slug,
+          userId,
+        },
+      });
     }
 
-    const firstName = userName.trim().split(" ")[0] || "";
-    const orgName = firstName ? `Família ${firstName}` : "Família";
-    const slug = orgName
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
+    if (org && !activeOrganizationId) {
+      await auth.api.setActiveOrganization({
+        headers: reqHeaders,
+        body: { organizationId: org.id },
+      });
+    }
 
-    const newOrg = await auth.api.createOrganization({
-      headers: reqHeaders,
-      body: {
-        name: orgName,
-        slug,
-        userId,
-      },
-    });
-
-    return newOrg;
+    return org;
   } catch {
     return null;
   }
