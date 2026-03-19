@@ -1,5 +1,6 @@
 import { db } from '@/server/infrastructure/database/client';
 import { auditLogs } from '@/server/infrastructure/database/schema/audit-logs';
+import { logger } from '@/server/infrastructure/logging/logger';
 
 interface AuditLogParams {
   userId: string | null;
@@ -21,12 +22,10 @@ export async function logAudit(params: AuditLogParams): Promise<void> {
     });
   } catch (error) {
     // Auditoria NUNCA bloqueia operacao principal
-    console.log(JSON.stringify({
-      level: 'warn',
+    logger.warn({
       action: 'audit_log_failed',
       data: { entityType: params.entityType, entityId: params.entityId },
       error: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString(),
-    }));
+    });
   }
 }

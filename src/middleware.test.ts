@@ -3,6 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { middleware } from "./middleware";
 
+// Mock logger to prevent console output in tests
+vi.mock("@/server/infrastructure/logging/logger", () => ({
+  logger: {
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+  },
+}));
+
 // Mock NextResponse methods
 vi.mock("next/server", async () => {
   const actual = await vi.importActual<typeof import("next/server")>(
