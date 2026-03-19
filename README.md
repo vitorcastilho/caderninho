@@ -1,6 +1,19 @@
 # Caderninho
 
-App de gestão financeira familiar. Permite registrar gastos, receitas, acompanhar orçamentos por categoria, reconciliar faturas de cartão de crédito e compartilhar dados financeiros entre membros da família com controle granular de permissões.
+[![CI](https://github.com/vitorcastilho/caderninho/actions/workflows/ci.yml/badge.svg)](https://github.com/vitorcastilho/caderninho/actions/workflows/ci.yml)
+
+App de gestão financeira familiar. Feito para famílias que querem ter controle real sobre o dinheiro — sem planilha, sem complexidade de app bancário.
+
+### O que o Caderninho faz
+
+- **Registro de gastos e receitas** — input rápido com categorização automática (Cascade Input)
+- **Orçamentos por categoria** — define limites mensais e acompanha em tempo real
+- **Cartão de crédito** — parcelas, fatura estimada e reconciliação com a fatura real
+- **Gastos recorrentes** — contas fixas, variáveis e parceladas com checklist mensal
+- **Compartilhamento familiar** — membros da família acessam os mesmos dados com permissões granulares (visualizar, editar, admin)
+- **Dashboard analítico** — visão consolidada com drill-down por categoria, período e método de pagamento
+- **Projeção futura** — timeline de parcelas ativas e margem disponível projetada
+- **Multi-tenant** — cada família é uma organização isolada (dados nunca se cruzam)
 
 ## Stack
 
@@ -9,7 +22,7 @@ App de gestão financeira familiar. Permite registrar gastos, receitas, acompanh
 | Next.js | 16.1.6 | Framework full-stack (App Router, Server Actions, Turbopack) |
 | TypeScript | 5.9.3 | Linguagem (strict mode) |
 | React | 19.2.3 | UI |
-| Tailwind CSS | 4.x | Estilização (config via CSS, sem tailwind.config.ts) |
+| Tailwind CSS | 4.x | Estilização (config via CSS, sem `tailwind.config.ts`) |
 | shadcn/ui | 4.x | Design system (componentes base) |
 | Supabase | — | PostgreSQL + Auth + Realtime (WebSocket direto browser) |
 | Drizzle ORM | 0.45.1 | ORM TypeScript-native com migrations versionadas |
@@ -22,7 +35,7 @@ App de gestão financeira familiar. Permite registrar gastos, receitas, acompanh
 ## Pré-requisitos
 
 - **Node.js** 22+ ([download](https://nodejs.org/))
-- **Docker** (para Supabase local) ([download](https://www.docker.com/products/docker-desktop/))
+- **Docker Desktop** rodando (para Supabase local) ([download](https://www.docker.com/products/docker-desktop/))
 - **Supabase CLI** (`npm install -g supabase`)
 - **Git**
 
@@ -38,10 +51,12 @@ npm install
 
 # 3. Configure as variáveis de ambiente
 cp .env.example .env.local
-# Preencha os valores em .env.local (veja seção "Variáveis de Ambiente")
+# Preencha os valores (veja seção "Variáveis de Ambiente" abaixo)
 
 # 4. Suba o Supabase local (PostgreSQL + Auth + Realtime via Docker)
 npm run db:start
+# Primeira vez demora ~2min (baixa imagens Docker)
+# Ao final, exibe as URLs e chaves — copie para o .env.local
 
 # 5. Rode as migrations do banco
 npm run db:migrate
@@ -56,71 +71,249 @@ Para parar o Supabase local: `npm run db:stop`.
 
 ## Variáveis de Ambiente
 
-Copie `.env.example` para `.env.local` e preencha os valores:
+Copie `.env.example` para `.env.local` e preencha os valores.
+
+**Obrigatórias** (app não funciona sem):
 
 | Variável | Descrição | Como obter |
 |---|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | URL da API do Supabase | `npm run db:status` (local) ou dashboard Supabase (staging/prod) |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Chave anônima do Supabase | `npm run db:status` (local) ou dashboard Supabase |
-| `SUPABASE_SERVICE_ROLE_KEY` | Chave de serviço do Supabase | `npm run db:status` (local) ou dashboard Supabase |
-| `DATABASE_URL` | Connection string do PostgreSQL | Padrão local: `postgresql://postgres:postgres@localhost:54322/postgres` |
-| `BETTER_AUTH_SECRET` | Secret para assinatura de sessões | Gerar com `openssl rand -base64 32` |
-| `BETTER_AUTH_URL` | URL base da aplicação | `http://localhost:3000` (local) |
-| `NEXT_PUBLIC_APP_URL` | URL pública da aplicação | `http://localhost:3000` (local) |
-| `GOOGLE_CLIENT_ID` | Client ID do Google OAuth | [Google Cloud Console](https://console.cloud.google.com/apis/credentials) |
-| `GOOGLE_CLIENT_SECRET` | Client Secret do Google OAuth | Google Cloud Console |
-| `NODE_ENV` | Ambiente Node.js | `development` (local), `test` (CI), `production` |
-| `ENVIRONMENT` | Ambiente da aplicação | `development`, `staging` ou `production` |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL da API do Supabase | Output de `npm run db:start` ou `npm run db:status` |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Chave anônima do Supabase | Output de `npm run db:start` ou `npm run db:status` |
+| `SUPABASE_SERVICE_ROLE_KEY` | Chave de serviço (acesso admin) | Output de `npm run db:start` ou `npm run db:status` |
+| `DATABASE_URL` | Connection string do PostgreSQL | Local: `postgresql://postgres:postgres@localhost:54322/postgres` |
+| `BETTER_AUTH_SECRET` | Secret para assinatura de sessões (32+ chars) | Gerar com `openssl rand -base64 32` |
+| `BETTER_AUTH_URL` | URL base da aplicação | `http://localhost:3000` |
+| `NEXT_PUBLIC_APP_URL` | URL pública da aplicação | `http://localhost:3000` |
+
+**Opcionais** (funcionalidade específica):
+
+| Variável | Descrição | Quando precisa |
+|---|---|---|
+| `GOOGLE_CLIENT_ID` | Client ID do Google OAuth | Só se quiser login com Google |
+| `GOOGLE_CLIENT_SECRET` | Client Secret do Google OAuth | Só se quiser login com Google |
+
+**Automáticas** (já têm valor padrão no `.env.example`):
+
+| Variável | Valor padrão | Descrição |
+|---|---|---|
+| `NODE_ENV` | `development` | Ambiente Node.js |
+| `ENVIRONMENT` | `development` | Ambiente da aplicação (`development`, `staging`, `production`) |
 
 ## Scripts
 
-| Script | Comando | Descrição |
-|---|---|---|
-| `dev` | `npm run dev` | Inicia o servidor de desenvolvimento (Turbopack) |
-| `build` | `npm run build` | Compila a aplicação para produção |
-| `start` | `npm run start` | Inicia o servidor de produção |
-| `lint` | `npm run lint` | Executa ESLint |
-| `type-check` | `npm run type-check` | Verifica tipos TypeScript (`tsc --noEmit`) |
-| `test` | `npm run test` | Roda testes unitários (Vitest) |
-| `test:watch` | `npm run test:watch` | Roda testes em modo watch |
-| `test:coverage` | `npm run test:coverage` | Roda testes com relatório de cobertura |
-| `test:e2e` | `npm run test:e2e` | Roda testes E2E (Playwright) |
-| `test:e2e:ui` | `npm run test:e2e:ui` | Roda testes E2E com interface visual |
-| `db:start` | `npm run db:start` | Inicia Supabase local (PostgreSQL + Auth + Realtime) |
-| `db:stop` | `npm run db:stop` | Para o Supabase local |
-| `db:status` | `npm run db:status` | Mostra status e URLs do Supabase local |
-| `db:generate` | `npm run db:generate` | Gera migration a partir das mudanças no schema |
-| `db:migrate` | `npm run db:migrate` | Aplica migrations pendentes |
-| `db:push` | `npm run db:push` | Sincroniza schema direto no banco (dev only) |
-| `db:studio` | `npm run db:studio` | Abre o Drizzle Studio (interface visual do banco) |
+| Script | Descrição |
+|---|---|
+| `npm run dev` | Servidor de desenvolvimento (Turbopack) |
+| `npm run build` | Compila para produção |
+| `npm run start` | Servidor de produção (requer `build` antes) |
+| `npm run lint` | ESLint |
+| `npm run type-check` | Verifica tipos TypeScript (`tsc --noEmit`) |
+| `npm run test` | Testes unitários (Vitest) |
+| `npm run test:watch` | Testes em modo watch (re-roda ao salvar) |
+| `npm run test:coverage` | Testes com relatório de cobertura |
+| `npm run test:e2e` | Testes E2E headless (Playwright) |
+| `npm run test:e2e:ui` | Testes E2E com interface visual |
+| `npm run db:start` | Sobe Supabase local (PostgreSQL + Auth + Realtime) |
+| `npm run db:stop` | Para o Supabase local |
+| `npm run db:status` | Mostra URLs e chaves do Supabase local |
+| `npm run db:generate` | Gera migration a partir de mudanças no schema Drizzle |
+| `npm run db:migrate` | Aplica migrations pendentes |
+| `npm run db:push` | Sincroniza schema direto no banco (dev only, sem migration) |
+| `npm run db:studio` | Abre Drizzle Studio (interface visual do banco) |
+
+## Banco de Dados
+
+O projeto usa **Drizzle ORM** com PostgreSQL (via Supabase). Schemas são definidos em TypeScript e migrations são versionadas.
+
+### Fluxo de trabalho com migrations
+
+```bash
+# 1. Edite o schema em src/server/infrastructure/db/schema/
+# 2. Gere a migration
+npm run db:generate
+# Cria arquivo SQL em supabase/migrations/
+
+# 3. Aplique a migration
+npm run db:migrate
+
+# 4. Verifique o resultado
+npm run db:studio
+# Abre interface visual em http://localhost:4983
+```
+
+### Comandos úteis
+
+```bash
+# Resetar banco local (destrói todos os dados)
+npm run db:stop && npm run db:start && npm run db:migrate
+
+# Ver dados no banco
+npm run db:studio
+
+# Sincronizar schema sem criar migration (dev rápido)
+npm run db:push
+
+# Ver status do Supabase (URLs, chaves, portas)
+npm run db:status
+```
+
+### Convenções de schema
+
+- Tabelas em **plural, snake_case**: `transactions`, `audit_logs`
+- Colunas em **snake_case**: `amount_cents`, `created_at`
+- Drizzle mapeia para **camelCase** no TypeScript: `amountCents: integer('amount_cents')`
 
 ## Testes
 
+O projeto segue **TDD** (Test-Driven Development): escreve o teste primeiro (Red), implementa o mínimo para passar (Green), refatora (Refactor).
+
 ### Testes Unitários (Vitest)
 
-O projeto segue **TDD** (Test-Driven Development): teste primeiro, implementa depois, refatora.
-
 ```bash
-npm run test           # Roda todos os testes
-npm run test:watch     # Modo watch (re-roda ao salvar)
-npm run test:coverage  # Gera relatório de cobertura
+npm run test                        # Roda todos
+npm run test:watch                  # Modo watch
+npm run test:coverage               # Com relatório de cobertura
+npx vitest run src/server/domain/   # Roda só um diretório
+npx vitest run create-account       # Roda por nome do arquivo
 ```
 
 **Convenções:**
 
-- Testes co-localizados com o arquivo testado: `create-account.test.ts` ao lado de `create-account.ts`
-- Globals habilitados: `describe`, `it`, `expect` disponíveis sem import
-- Environment: `node` (padrão) ou `jsdom` (para componentes React)
-- Pattern: `describe('Funcionalidade')` > `it('deve fazer X quando Y')`
+- Testes **co-localizados**: `create-account.test.ts` ao lado de `create-account.ts`
+- Globals habilitados: `describe`, `it`, `expect` sem import
+- Pattern: `describe('Funcionalidade')` → `it('deve fazer X quando Y')`
+- Mocks de repository via interfaces (Dependency Inversion) — nunca mock de Zod ou Result Pattern
 
 ### Testes E2E (Playwright)
 
 ```bash
-npm run test:e2e       # Roda testes E2E headless
-npm run test:e2e:ui    # Abre interface visual do Playwright
+npm run test:e2e       # Headless (CI-like)
+npm run test:e2e:ui    # Interface visual (debug)
 ```
 
-Testes E2E ficam na pasta `e2e/` na raiz do projeto.
+Testes E2E ficam em `e2e/` na raiz. Requerem o servidor rodando (`npm run dev`) — o Playwright sobe automaticamente se não estiver rodando.
+
+## Convenções de Código
+
+### Result Pattern (obrigatório)
+
+Todo Server Action e Use Case retorna `Result<T>` — nunca `throw` para erros de negócio:
+
+```typescript
+type Result<T> =
+  | { success: true; data: T }
+  | { success: false; error: { code: string; message: string; details?: Record<string, string> } };
+
+// code: UPPER_SNAKE_CASE em inglês (consumo programático)
+// message: português (exibição ao usuário)
+return err({ code: 'INSUFFICIENT_BALANCE', message: 'Saldo insuficiente na conta' });
+```
+
+### Valores financeiros em centavos (obrigatório)
+
+Zero floating point em operações financeiras:
+
+```typescript
+// R$ 149,99 → armazena como 14999 (integer cents)
+// Divisão por 100 APENAS na camada de apresentação (formatCurrency)
+const amountCents = 14999; // ✅
+const amount = 149.99;     // ❌ NUNCA
+```
+
+### Import ordering
+
+```typescript
+// 1. Bibliotecas externas
+import { z } from 'zod';
+// 2. Shared (tipos, schemas)
+import { type Result } from '@/shared/types/result';
+// 3. Server (domínio, infra)
+import { createAccount } from '@/server/domain/accounts/use-cases/create-account';
+// 4. Client (componentes, hooks)
+import { Button } from '@/client/components/ui/button';
+```
+
+### Naming
+
+| Elemento | Convenção | Exemplo |
+|---|---|---|
+| Variáveis/funções | camelCase | `amountCents`, `getUserById()` |
+| Tipos/interfaces | PascalCase | `Transaction`, `CreateAccountInput` |
+| Componentes React | PascalCase | `TransactionForm.tsx` |
+| Constantes | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
+| Arquivos (use case, test) | kebab-case | `create-account.ts`, `create-account.test.ts` |
+| Pastas | kebab-case | `use-cases/` |
+| Error codes | UPPER_SNAKE_CASE (inglês) | `INSUFFICIENT_BALANCE` |
+| Error messages | Português | `"Saldo insuficiente"` |
+
+### O que NÃO fazer
+
+```typescript
+// ❌ Lógica de negócio no frontend
+if (balance - amount < 0) showError("Sem saldo");
+
+// ❌ Server Action acessando banco direto (pulou use case)
+const result = await db.insert(transactions).values(data);
+
+// ❌ throw para erro de negócio
+throw new Error("Saldo insuficiente");
+
+// ❌ Domínio importando outro domínio
+import { getAccountById } from '../../accounts/use-cases/get-account-by-id';
+```
+
+## Arquitetura
+
+Clean Architecture + DDD com separação explícita entre backend e frontend:
+
+```
+src/
+  server/               # Backend — tudo que roda no servidor
+    domain/             # Núcleo DDD (entidades, use cases, repository interfaces)
+    infrastructure/     # Implementações concretas (DB, auth, logging)
+    actions/            # Server Actions (entry points para o frontend)
+  client/               # Frontend — tudo que roda no browser
+    components/         # Componentes por domínio + ui/ (shadcn)
+    hooks/              # Custom hooks
+    utils/              # Utilitários de formatação (formatCurrency, etc.)
+  shared/               # Compartilhado (front + back)
+    types/              # Result<T>, enums
+    schemas/            # Schemas Zod (validação compartilhada)
+    constants/          # Constantes
+  app/                  # Rotas Next.js (camada fina de orquestração)
+e2e/                    # Testes E2E (Playwright)
+```
+
+### Regras de dependência
+
+Quem pode importar de quem — violar essas regras quebra a arquitetura:
+
+```
+app/             → client/, server/actions/        (NUNCA server/domain/ ou infrastructure/)
+client/          → shared/                         (NUNCA server/)
+server/actions/  → server/domain/, shared/         (NUNCA server/infrastructure/)
+server/domain/   → shared/, interfaces próprias    (NUNCA infrastructure/, client/, app/)
+server/infra/    → server/domain/ (interfaces)     (implementa as interfaces do domínio)
+shared/          → nada                            (zero dependências)
+```
+
+### Data flow
+
+```
+Browser → page.tsx (app/) → Server Action (server/actions/)
+  → Use Case (server/domain/) → Repository Interface
+  → Repository Impl (server/infrastructure/) → PostgreSQL (filtrado por RLS)
+  → Use Case retorna Result<T> → Server Action retorna para browser
+```
+
+### Segurança — 2 camadas obrigatórias
+
+1. **RLS no PostgreSQL** — isolamento multi-tenant no nível do banco (dados de uma família nunca acessíveis por outra)
+2. **Middleware de autorização** — papéis e permissões na aplicação
+
+Nenhuma query ao banco pode existir sem ambas as camadas ativas. Toda mutação gera registro em `audit_logs` (somente INSERT, nunca UPDATE/DELETE).
+
+Para a documentação completa da arquitetura, veja `_bmad-output/planning-artifacts/architecture.md`.
 
 ## Fluxo de Trabalho
 
@@ -158,62 +351,103 @@ main (produção)
 
 ### Ambientes
 
-| Ambiente | Infraestrutura | Branch | URL |
+| Ambiente | Infraestrutura | Banco | URL |
 |---|---|---|---|
-| **Development** | Supabase CLI + Docker local | feature branches | `http://localhost:3000` |
-| **Staging** | Vercel preview + Supabase staging | PRs e branches | `*.vercel.app` (automático) |
-| **Production** | Vercel + Supabase produção | `main` | URL de produção |
+| **Development** | Docker local | Supabase CLI (container) | `http://localhost:3000` |
+| **Staging** | Vercel preview | Projeto Supabase separado (gratuito) | `*.vercel.app` |
+| **Production** | Vercel | Projeto Supabase de produção | URL de produção |
+
+Cada ambiente tem banco Supabase **completamente isolado** — dados nunca se cruzam entre ambientes.
 
 ### Vercel
 
-A Vercel está conectada ao repositório via integração nativa com GitHub:
+Conectada ao repositório via integração nativa com GitHub:
 
 - **Preview deploy**: automático em todo push para qualquer branch
 - **Deploy de produção**: automático ao fazer merge na `main`
 - **Bot comment**: URL do preview aparece automaticamente no PR
 
-### Staging Completo
+### Staging completo
 
 Para um ambiente de staging com banco próprio:
 
 1. Criar projeto Supabase separado (gratuito) no [Supabase Dashboard](https://supabase.com/dashboard)
 2. Na Vercel, configurar variáveis de ambiente para o ambiente **Preview**:
-   - `NEXT_PUBLIC_SUPABASE_URL` → URL do projeto Supabase de staging
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` → Chave anônima do staging
-   - `SUPABASE_SERVICE_ROLE_KEY` → Chave de serviço do staging
-   - `DATABASE_URL` → Connection string do staging
-   - `BETTER_AUTH_SECRET` → Secret diferente do de produção
+   - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `DATABASE_URL` → apontando para o Supabase de staging
+   - `BETTER_AUTH_SECRET` → secret diferente do de produção
    - `ENVIRONMENT` → `staging`
-3. Rodar migrations no banco de staging: configurar `DATABASE_URL` e executar `npm run db:migrate`
-4. Drizzle-kit roda migrations independentemente por ambiente
+3. Rodar migrations no banco de staging: `DATABASE_URL="..." npm run db:migrate`
 
-## Arquitetura
+Para o guia completo de deploy em produção (criação de contas, env vars, checklist), veja [`docs/deploy-producao.md`](docs/deploy-producao.md).
 
-O projeto segue **Clean Architecture + DDD** (Domain-Driven Design) com separação explícita entre backend e frontend:
+## Decisões Técnicas
+
+| Decisão | Escolha | Por quê |
+|---|---|---|
+| **ORM** | Drizzle (não Prisma) | TypeScript-native, SQL transparente, sem runtime pesado, migrations em SQL puro |
+| **Auth** | Better Auth (não NextAuth) | Suporte nativo a Organizations (multi-tenant), mais controle sobre sessões, melhor integração com Supabase |
+| **DB hosting** | Supabase (não Firebase/PlanetScale) | PostgreSQL (RLS nativo para multi-tenant), Realtime via WebSocket, tier gratuito generoso, dev local com Docker |
+| **Validação** | Zod (não Yup/Joi) | TypeScript-first, 14x mais rápido que v3, schemas compartilhados front/back |
+| **Estilização** | Tailwind v4 + shadcn/ui | Zero runtime CSS, config via CSS (`@theme {}`), componentes acessíveis prontos |
+| **Testes** | Vitest (não Jest) | Compatível com Vite/Turbopack, ESM nativo, 10-20x mais rápido |
+| **Valores financeiros** | Integer cents (não float) | Precisão absoluta — R$ 149,99 = `14999`. Zero erro de arredondamento |
+| **Erros de negócio** | Result Pattern (não throw) | Fluxo explícito, TypeScript força tratamento, sem try/catch espalhado |
+| **Comunicação client-server** | Server Actions (não REST) | Colocalizado com UI, type-safe end-to-end, sem boilerplate de API |
+
+## Troubleshooting
+
+### Docker não está rodando
 
 ```
-src/
-  server/           # Backend — regras de negócio, banco, auth
-    domain/         # Núcleo DDD (entidades, use cases, repositories)
-    infrastructure/ # Implementações concretas (DB, auth, logging)
-    actions/        # Server Actions (entry points)
-  client/           # Frontend — componentes visuais, hooks
-    components/     # Componentes por domínio + ui/ (shadcn)
-    hooks/          # Custom hooks
-    utils/          # Utilitários de formatação
-  shared/           # Compartilhado (front + back)
-    types/          # Result<T>, enums
-    schemas/        # Schemas Zod
-  app/              # Rotas Next.js (camada fina)
-e2e/                # Testes E2E (Playwright)
+Error: Cannot connect to the Docker daemon
 ```
 
-**Princípios:**
+Abra o Docker Desktop e espere ele inicializar completamente antes de rodar `npm run db:start`.
 
-- **Result Pattern** para erros de negócio (nunca `throw` para erros esperados)
-- **Server Actions** como padrão de comunicação cliente-servidor
-- **RLS + Middleware** — autorização em 2 camadas (defesa em profundidade)
-- **TDD** — teste primeiro, implementa depois
-- **Valores financeiros em centavos** (integer) — zero floating point
+### Porta 3000 ocupada
 
-Para a documentação completa da arquitetura, veja `_bmad-output/planning-artifacts/architecture.md`.
+```
+Error: Port 3000 is already in use
+```
+
+Mate o processo que está usando a porta:
+
+```bash
+lsof -ti:3000 | xargs kill -9
+```
+
+### Supabase não sobe / timeout
+
+```bash
+# Pare tudo e suba novamente
+npm run db:stop
+docker system prune -f  # limpa containers/images órfãos
+npm run db:start
+```
+
+Se persistir, verifique se o Docker tem pelo menos **4GB de RAM** alocados (Docker Desktop → Settings → Resources).
+
+### `npm run db:start` exibe chaves mas `.env.local` está vazio
+
+O comando `db:start` exibe as chaves no terminal. Copie manualmente para o `.env.local`:
+
+```bash
+# Veja as chaves a qualquer momento
+npm run db:status
+```
+
+### Testes falhando com erro de localStorage
+
+No Node.js 22+, `localStorage` existe nativamente e conflita com jsdom. Os testes já usam `vi.stubGlobal` para resolver. Se criar um teste novo com jsdom, siga o mesmo padrão dos existentes.
+
+### Build falha por variáveis de ambiente
+
+O `npm run build` precisa de todas as env vars definidas (mesmo que com valores dummy). Verifique se o `.env.local` está preenchido.
+
+### Migration falha com "relation already exists"
+
+O banco local está dessincronizado. Resete:
+
+```bash
+npm run db:stop && npm run db:start && npm run db:migrate
+```
