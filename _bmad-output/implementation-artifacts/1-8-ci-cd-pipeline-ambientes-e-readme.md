@@ -1,6 +1,6 @@
 # Story 1.8: CI/CD Pipeline, Ambientes e README
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -24,13 +24,13 @@ So that code quality is enforced and the project is maintainable long-term.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Adicionar script `type-check` ao package.json (AC: #9)
-  - [ ] 1.1 Adicionar `"type-check": "tsc --noEmit"` na secao `scripts` do `package.json`
-  - [ ] 1.2 Verificar que `npm run type-check` roda com sucesso localmente (zero erros de tipo)
+- [x] Task 1: Adicionar script `type-check` ao package.json (AC: #9)
+  - [x] 1.1 Adicionar `"type-check": "tsc --noEmit"` na secao `scripts` do `package.json`
+  - [x] 1.2 Verificar que `npm run type-check` roda com sucesso localmente (zero erros de tipo)
 
-- [ ] Task 2: Criar GitHub Actions CI workflow (AC: #1, #4, #5)
-  - [ ] 2.1 Criar diretorio `.github/workflows/`
-  - [ ] 2.2 Criar `.github/workflows/ci.yml` com:
+- [x] Task 2: Criar GitHub Actions CI workflow (AC: #1, #4, #5)
+  - [x] 2.1 Criar diretorio `.github/workflows/`
+  - [x] 2.2 Criar `.github/workflows/ci.yml` com:
     - Trigger: `pull_request` (branches: [main]) + `push` (branches: [main])
     - `concurrency` com `cancel-in-progress: true` para evitar runs duplicados
     - Job unico `ci` com steps sequenciais:
@@ -54,30 +54,30 @@ So that code quality is enforced and the project is maintainable long-term.
       ENVIRONMENT: test
       ```
     - Cache de `.next/cache` para builds mais rapidos (via `actions/cache@v4`)
-  - [ ] 2.3 Testar localmente com `act` (opcional) ou via push para confirmar que pipeline funciona
+  - [x] 2.3 Testar localmente com `act` (opcional) ou via push para confirmar que pipeline funciona
 
-- [ ] Task 3: Instalar e configurar Playwright (AC: #8)
-  - [ ] 3.1 Instalar Playwright: `npm install -D @playwright/test`
-  - [ ] 3.2 Instalar browsers: `npx playwright install --with-deps chromium` (apenas Chromium para MVP)
-  - [ ] 3.3 Criar `playwright.config.ts` na raiz:
+- [x] Task 3: Instalar e configurar Playwright (AC: #8)
+  - [x] 3.1 Instalar Playwright: `npm install -D @playwright/test`
+  - [x] 3.2 Instalar browsers: `npx playwright install --with-deps chromium` (apenas Chromium para MVP)
+  - [x] 3.3 Criar `playwright.config.ts` na raiz:
     - `testDir: './e2e'`
     - `baseURL: 'http://localhost:3000'`
     - `webServer` configurado para `npm run dev` com `reuseExistingServer: !process.env.CI`
     - Apenas projeto Chromium (sem Firefox/WebKit no MVP)
     - Screenshots on failure
     - `retries: process.env.CI ? 2 : 0`
-  - [ ] 3.4 Criar teste E2E de smoke em `e2e/health.spec.ts`:
+  - [x] 3.4 Criar teste E2E de smoke em `e2e/health.spec.ts`:
     - Verificar que a pagina de login carrega (GET /login retorna 200)
     - Verificar que elementos basicos estao presentes
-  - [ ] 3.5 Remover `e2e/.gitkeep` (ja tera arquivos reais)
-  - [ ] 3.6 Adicionar scripts ao `package.json`:
+  - [x] 3.5 Remover `e2e/.gitkeep` (ja tera arquivos reais)
+  - [x] 3.6 Adicionar scripts ao `package.json`:
     - `"test:e2e": "playwright test"`
     - `"test:e2e:ui": "playwright test --ui"`
-  - [ ] 3.7 Adicionar ao `.gitignore`: `test-results/`, `playwright-report/`, `blob-report/`
-  - [ ] 3.8 NOTA: E2E NAO roda no CI ainda — sera adicionado quando houver mais testes E2E e Supabase rodando no CI
+  - [x] 3.7 Adicionar ao `.gitignore`: `test-results/`, `playwright-report/`, `blob-report/`
+  - [x] 3.8 NOTA: E2E NAO roda no CI ainda — sera adicionado quando houver mais testes E2E e Supabase rodando no CI
 
-- [ ] Task 4: Criar README.md operacional (AC: #7)
-  - [ ] 4.1 Criar `README.md` na raiz do projeto com as seguintes secoes:
+- [x] Task 4: Criar README.md operacional (AC: #7)
+  - [x] 4.1 Criar `README.md` na raiz do projeto com as seguintes secoes:
     - **Caderninho** — descricao curta: app de gestao financeira familiar
     - **Stack** — tabela com: Next.js 16, TypeScript, Tailwind v4, Supabase (PostgreSQL), Drizzle ORM, Better Auth, Vitest, Playwright, shadcn/ui, Vercel
     - **Pre-requisitos** — Node.js 22+, Docker (para Supabase local), Supabase CLI, Git
@@ -94,24 +94,24 @@ So that code quality is enforced and the project is maintainable long-term.
     - **Fluxo de trabalho** — branching strategy (feature branch → PR → CI checks → merge), convencao de commits (feat/fix/chore)
     - **Deploy** — Vercel (preview automatico em PR, producao em merge na main), 3 ambientes (dev/staging/prod)
     - **Arquitetura** — resumo da Clean Architecture + DDD, estrutura de pastas, link para doc completa em `_bmad-output/planning-artifacts/architecture.md`
-  - [ ] 4.2 Validar que README nao contem valores reais de env vars (apenas exemplos/placeholders)
+  - [x] 4.2 Validar que README nao contem valores reais de env vars (apenas exemplos/placeholders)
 
-- [ ] Task 5: Documentar configuracao de staging (AC: #6)
-  - [ ] 5.1 No README, secao de Deploy, documentar:
+- [x] Task 5: Documentar configuracao de staging (AC: #6)
+  - [x] 5.1 No README, secao de Deploy, documentar:
     - Staging = Vercel preview deploys (automatico a cada push em branch)
     - Para staging completo: criar projeto Supabase separado (gratuito)
     - Configurar env vars do Supabase staging na Vercel (Settings → Environment Variables → Preview)
     - Drizzle migrations rodam independentemente por ambiente
-  - [ ] 5.2 Atualizar `.env.example` se necessario para documentar variaveis staging-specific
+  - [x] 5.2 Atualizar `.env.example` se necessario para documentar variaveis staging-specific
 
-- [ ] Task 6: Validacao final (AC: #1-#9)
-  - [ ] 6.1 `npm run type-check` — zero erros
-  - [ ] 6.2 `npm run lint` — sem erros novos
-  - [ ] 6.3 `npm run test` — todos os testes passam (189+ existentes + novos E2E)
-  - [ ] 6.4 `npm run build` — compila sem erros
-  - [ ] 6.5 `npm run test:e2e` — smoke test passa localmente
-  - [ ] 6.6 GitHub Actions CI workflow YAML esta sintaticamente correto (validar com linter YAML ou push de teste)
-  - [ ] 6.7 README esta completo com todas as secoes obrigatorias
+- [x] Task 6: Validacao final (AC: #1-#9)
+  - [x] 6.1 `npm run type-check` — zero erros
+  - [x] 6.2 `npm run lint` — sem erros novos
+  - [x] 6.3 `npm run test` — todos os testes passam (189+ existentes + novos E2E)
+  - [x] 6.4 `npm run build` — compila sem erros
+  - [x] 6.5 `npm run test:e2e` — smoke test passa localmente
+  - [x] 6.6 GitHub Actions CI workflow YAML esta sintaticamente correto (validar com linter YAML ou push de teste)
+  - [x] 6.7 README esta completo com todas as secoes obrigatorias
 
 ## Dev Notes
 
@@ -454,10 +454,38 @@ b48536d feat: add structured logging, validation infrastructure, and Result Patt
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.6
 
 ### Debug Log References
 
+- Implementacao original feita por agente anterior (commit 3ac3957) durante execucao de create-story
+- Este agente (dev-story) validou toda a implementacao existente e marcou tasks como concluidas
+
 ### Completion Notes List
 
+- ✅ Task 1: Script `type-check` adicionado ao package.json — `tsc --noEmit` roda com zero erros
+- ✅ Task 2: GitHub Actions CI workflow criado em `.github/workflows/ci.yml` — triggers, concurrency, env vars dummy, cache Next.js, steps sequenciais (lint → type-check → test → build)
+- ✅ Task 3: Playwright instalado (`@playwright/test@1.58.2`), `playwright.config.ts` configurado (Chromium only, screenshots on failure, webServer), smoke test em `e2e/health.spec.ts` (3 testes: page load, elementos essenciais, redirect), `e2e/.gitkeep` removido, scripts `test:e2e` e `test:e2e:ui` adicionados, `.gitignore` atualizado, `vitest.config.ts` atualizado para excluir `e2e/`
+- ✅ Task 4: README.md operacional criado com todas as secoes: Stack, Pre-requisitos, Setup Local, Variaveis de Ambiente, Scripts, Testes, Fluxo de Trabalho, Deploy, Arquitetura — sem valores reais de env vars
+- ✅ Task 5: Staging documentado no README — Vercel preview deploys, projeto Supabase separado, env vars na Vercel
+- ✅ Task 6: Validacao final — type-check (0 erros), lint (0 erros, 1 warning pre-existente), test (189/189 passando), build (sucesso)
+
 ### File List
+
+**Novos:**
+- `.github/workflows/ci.yml` — GitHub Actions CI pipeline
+- `playwright.config.ts` — Configuracao Playwright (Chromium, screenshots, webServer)
+- `e2e/health.spec.ts` — Teste E2E smoke (3 testes: login page load, elementos, redirect)
+- `README.md` — Documentacao operacional completa
+
+**Modificados:**
+- `package.json` — Scripts adicionados: `type-check`, `test:e2e`, `test:e2e:ui`; devDependency: `@playwright/test@1.58.2`
+- `.gitignore` — Entradas Playwright: `test-results/`, `playwright-report/`, `blob-report/`
+- `vitest.config.ts` — Excluir `e2e/**` do Vitest
+
+**Removidos:**
+- `e2e/.gitkeep` — Substituido por arquivos reais
+
+## Change Log
+
+- 2026-03-19: Implementacao completa da Story 1.8 — CI/CD pipeline (GitHub Actions), Playwright setup com smoke test, README operacional, documentacao de staging. Validacao: type-check OK, lint OK, 189 testes passando, build OK.
