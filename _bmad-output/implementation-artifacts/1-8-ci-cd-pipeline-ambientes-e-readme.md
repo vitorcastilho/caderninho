@@ -469,6 +469,10 @@ Claude Opus 4.6
 - ✅ Task 4: README.md operacional criado com todas as secoes: Stack, Pre-requisitos, Setup Local, Variaveis de Ambiente, Scripts, Testes, Fluxo de Trabalho, Deploy, Arquitetura — sem valores reais de env vars
 - ✅ Task 5: Staging documentado no README — Vercel preview deploys, projeto Supabase separado, env vars na Vercel
 - ✅ Task 6: Validacao final — type-check (0 erros), lint (0 erros, 1 warning pre-existente), test (189/189 passando), build (sucesso)
+- ✅ Resolved review finding [MEDIUM]: Adicionado `timeout-minutes: 15` ao job ci no GitHub Actions
+- ✅ Resolved review finding [MEDIUM]: README reescrito com acentuação correta em português BR (gestão, produção, orçamentos, etc.)
+- ✅ Resolved review finding [LOW]: Removida assertion redundante `expect(page.url()).toContain('/login')` do teste de redirect — `waitForURL` já garante o resultado
+- ℹ️ LOWs aceitos como backlog: trocar webServer.command quando E2E entrar no CI (futuro); considerar mover link de arquitetura para `docs/` (futuro)
 
 ### File List
 
@@ -486,6 +490,19 @@ Claude Opus 4.6
 **Removidos:**
 - `e2e/.gitkeep` — Substituido por arquivos reais
 
+### Review Follow-ups (AI)
+
+**MEDIUM:**
+- [x] [AI-Review][MEDIUM] Adicionar `timeout-minutes: 15` ao job `ci` no GitHub Actions para evitar desperdicio de CI minutes se algo travar (default é 6h) [`.github/workflows/ci.yml:14`]
+- [x] [AI-Review][MEDIUM] Adicionar acentuacao correta em todo o README — português BR requer diacriticos ("gestao" → "gestão", "producao" → "produção", etc.) [`README.md`]
+
+**LOW:**
+- [x] [AI-Review][LOW] Quando E2E for adicionado ao CI, trocar `webServer.command` de `npm run dev` para `npm run build && npm run start` [`playwright.config.ts:23`] — **Backlog**: aplica-se quando E2E for integrado ao CI (futuro)
+- [x] [AI-Review][LOW] Considerar mover link de arquitetura de `_bmad-output/planning-artifacts/architecture.md` para path mais convencional (ex: `docs/`) [`README.md:219`] — **Backlog**: consideração para futuro
+- [x] [AI-Review][LOW] Remover assertion redundante no teste de redirect — `waitForURL` ja garante o resultado [`e2e/health.spec.ts:18-19`]
+
 ## Change Log
 
-- 2026-03-19: Implementacao completa da Story 1.8 — CI/CD pipeline (GitHub Actions), Playwright setup com smoke test, README operacional, documentacao de staging. Validacao: type-check OK, lint OK, 189 testes passando, build OK.
+- 2026-03-19: Code Review R1 fixes — 2 MEDIUMs resolvidos (timeout-minutes no CI, acentuação no README), 1 LOW resolvido (assertion redundante no E2E), 2 LOWs aceitos como backlog. Validação: type-check OK, lint OK, 189 testes passando, build OK.
+- 2026-03-19: Code Review R1 — 0 HIGH, 2 MEDIUM, 3 LOW. Action items registrados.
+- 2026-03-19: Implementação completa da Story 1.8 — CI/CD pipeline (GitHub Actions), Playwright setup com smoke test, README operacional, documentação de staging. Validação: type-check OK, lint OK, 189 testes passando, build OK.

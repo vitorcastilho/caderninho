@@ -16,6 +16,5 @@ test.describe('Health Check', () => {
   test('unauthenticated user is redirected to login', async ({ page }) => {
     await page.goto('/dashboard');
     await page.waitForURL(/\/login/);
-    expect(page.url()).toContain('/login');
   });
 });
