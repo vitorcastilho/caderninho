@@ -1,6 +1,6 @@
 import { ok } from '@/shared/types/result';
 import type { Result } from '@/shared/types/result';
-import { logAudit } from '@/server/infrastructure/audit/audit.service';
+import type { AuditLogger } from '@/server/domain/shared/types/audit-logger';
 import type {
   BankAccount,
   BankAccountRepository,
@@ -15,12 +15,12 @@ interface CreateBankAccountParams {
 }
 
 export async function createBankAccount(
-  repository: BankAccountRepository,
+  deps: { repository: BankAccountRepository; auditLogger: AuditLogger },
   params: CreateBankAccountParams,
 ): Promise<Result<BankAccount>> {
   const id = crypto.randomUUID();
 
-  const account = await repository.create({
+  const account = await deps.repository.create({
     id,
     name: params.name,
     bank: params.bank,
@@ -28,7 +28,7 @@ export async function createBankAccount(
     organizationId: params.organizationId,
   });
 
-  await logAudit({
+  await deps.auditLogger({
     userId: params.userId,
     organizationId: params.organizationId,
     action: 'CREATE',

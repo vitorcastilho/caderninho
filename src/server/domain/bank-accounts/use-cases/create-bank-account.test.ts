@@ -2,12 +2,7 @@ import { vi } from 'vitest';
 
 import { createBankAccount } from './create-bank-account';
 import type { BankAccountRepository } from '../repositories/bank-account.repository';
-
-vi.mock('@/server/infrastructure/audit/audit.service', () => ({
-  logAudit: vi.fn(),
-}));
-
-import { logAudit } from '@/server/infrastructure/audit/audit.service';
+import type { AuditLogger } from '@/server/domain/shared/types/audit-logger';
 
 const mockRepository: BankAccountRepository = {
   create: vi.fn(),
@@ -16,6 +11,8 @@ const mockRepository: BankAccountRepository = {
   update: vi.fn(),
   updateStatus: vi.fn(),
 };
+
+const mockAuditLogger: AuditLogger = vi.fn();
 
 const sampleAccount = {
   id: expect.any(String),
@@ -35,13 +32,16 @@ describe('createBankAccount', () => {
   });
 
   it('should create account and return ok result', async () => {
-    const result = await createBankAccount(mockRepository, {
-      name: 'Conta Corrente',
-      bank: 'Nubank',
-      balanceCents: 14999,
-      organizationId: 'org-123',
-      userId: 'user-1',
-    });
+    const result = await createBankAccount(
+      { repository: mockRepository, auditLogger: mockAuditLogger },
+      {
+        name: 'Conta Corrente',
+        bank: 'Nubank',
+        balanceCents: 14999,
+        organizationId: 'org-123',
+        userId: 'user-1',
+      },
+    );
 
     expect(result.success).toBe(true);
     if (result.success) {
@@ -57,15 +57,18 @@ describe('createBankAccount', () => {
   });
 
   it('should register audit log on create', async () => {
-    await createBankAccount(mockRepository, {
-      name: 'Conta Corrente',
-      bank: 'Nubank',
-      balanceCents: 14999,
-      organizationId: 'org-123',
-      userId: 'user-1',
-    });
+    await createBankAccount(
+      { repository: mockRepository, auditLogger: mockAuditLogger },
+      {
+        name: 'Conta Corrente',
+        bank: 'Nubank',
+        balanceCents: 14999,
+        organizationId: 'org-123',
+        userId: 'user-1',
+      },
+    );
 
-    expect(logAudit).toHaveBeenCalledWith({
+    expect(mockAuditLogger).toHaveBeenCalledWith({
       userId: 'user-1',
       organizationId: 'org-123',
       action: 'CREATE',

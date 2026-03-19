@@ -2,12 +2,7 @@ import { vi } from 'vitest';
 
 import { updateBankAccount } from './update-bank-account';
 import type { BankAccountRepository } from '../repositories/bank-account.repository';
-
-vi.mock('@/server/infrastructure/audit/audit.service', () => ({
-  logAudit: vi.fn(),
-}));
-
-import { logAudit } from '@/server/infrastructure/audit/audit.service';
+import type { AuditLogger } from '@/server/domain/shared/types/audit-logger';
 
 const mockRepository: BankAccountRepository = {
   create: vi.fn(),
@@ -16,6 +11,8 @@ const mockRepository: BankAccountRepository = {
   update: vi.fn(),
   updateStatus: vi.fn(),
 };
+
+const mockAuditLogger: AuditLogger = vi.fn();
 
 const existingAccount = {
   id: '550e8400-e29b-41d4-a716-446655440000',
@@ -38,12 +35,15 @@ describe('updateBankAccount', () => {
     vi.mocked(mockRepository.findById).mockResolvedValue(existingAccount);
     vi.mocked(mockRepository.update).mockResolvedValue(updated);
 
-    const result = await updateBankAccount(mockRepository, {
-      id: existingAccount.id,
-      organizationId: 'org-123',
-      userId: 'user-1',
-      data: { name: 'Nova Conta' },
-    });
+    const result = await updateBankAccount(
+      { repository: mockRepository, auditLogger: mockAuditLogger },
+      {
+        id: existingAccount.id,
+        organizationId: 'org-123',
+        userId: 'user-1',
+        data: { name: 'Nova Conta' },
+      },
+    );
 
     expect(result.success).toBe(true);
     if (result.success) {
@@ -54,12 +54,15 @@ describe('updateBankAccount', () => {
   it('should return error when account not found', async () => {
     vi.mocked(mockRepository.findById).mockResolvedValue(null);
 
-    const result = await updateBankAccount(mockRepository, {
-      id: 'nonexistent',
-      organizationId: 'org-123',
-      userId: 'user-1',
-      data: { name: 'Nova Conta' },
-    });
+    const result = await updateBankAccount(
+      { repository: mockRepository, auditLogger: mockAuditLogger },
+      {
+        id: 'nonexistent',
+        organizationId: 'org-123',
+        userId: 'user-1',
+        data: { name: 'Nova Conta' },
+      },
+    );
 
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -72,14 +75,17 @@ describe('updateBankAccount', () => {
     vi.mocked(mockRepository.findById).mockResolvedValue(existingAccount);
     vi.mocked(mockRepository.update).mockResolvedValue(updated);
 
-    await updateBankAccount(mockRepository, {
-      id: existingAccount.id,
-      organizationId: 'org-123',
-      userId: 'user-1',
-      data: { name: 'Nova Conta' },
-    });
+    await updateBankAccount(
+      { repository: mockRepository, auditLogger: mockAuditLogger },
+      {
+        id: existingAccount.id,
+        organizationId: 'org-123',
+        userId: 'user-1',
+        data: { name: 'Nova Conta' },
+      },
+    );
 
-    expect(logAudit).toHaveBeenCalledWith({
+    expect(mockAuditLogger).toHaveBeenCalledWith({
       userId: 'user-1',
       organizationId: 'org-123',
       action: 'UPDATE',

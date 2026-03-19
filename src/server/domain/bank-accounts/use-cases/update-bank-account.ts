@@ -1,6 +1,6 @@
 import { ok, err } from '@/shared/types/result';
 import type { Result } from '@/shared/types/result';
-import { logAudit } from '@/server/infrastructure/audit/audit.service';
+import type { AuditLogger } from '@/server/domain/shared/types/audit-logger';
 import type {
   BankAccount,
   BankAccountRepository,
@@ -14,17 +14,17 @@ interface UpdateBankAccountParams {
 }
 
 export async function updateBankAccount(
-  repository: BankAccountRepository,
+  deps: { repository: BankAccountRepository; auditLogger: AuditLogger },
   params: UpdateBankAccountParams,
 ): Promise<Result<BankAccount>> {
-  const existing = await repository.findById(params.id, params.organizationId);
+  const existing = await deps.repository.findById(params.id, params.organizationId);
   if (!existing) {
     return err('BANK_ACCOUNT_NOT_FOUND', 'Conta bancária não encontrada.');
   }
 
-  const updated = await repository.update(params.id, params.organizationId, params.data);
+  const updated = await deps.repository.update(params.id, params.organizationId, params.data);
 
-  await logAudit({
+  await deps.auditLogger({
     userId: params.userId,
     organizationId: params.organizationId,
     action: 'UPDATE',

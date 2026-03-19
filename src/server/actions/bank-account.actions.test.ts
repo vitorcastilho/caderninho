@@ -50,16 +50,18 @@ vi.mock('@/server/infrastructure/database/client', () => ({
     }),
     update: vi.fn().mockReturnValue({
       set: vi.fn().mockReturnValue({
-        where: vi.fn().mockResolvedValue([{
-          id: 'uuid-1',
-          name: 'Conta Corrente',
-          bank: 'Nubank',
-          balanceCents: 0,
-          status: 'active',
-          organizationId: 'org-123',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }]),
+        where: vi.fn().mockReturnValue({
+          returning: vi.fn().mockResolvedValue([{
+            id: 'uuid-1',
+            name: 'Conta Corrente',
+            bank: 'Nubank',
+            balanceCents: 0,
+            status: 'active',
+            organizationId: 'org-123',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          }]),
+        }),
       }),
     }),
   },

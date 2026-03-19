@@ -50,7 +50,8 @@ export class DrizzleBankAccountRepository implements BankAccountRepository {
     const [account] = await db
       .update(bankAccounts)
       .set({ ...data, updatedAt: new Date() })
-      .where(and(eq(bankAccounts.id, id), eq(bankAccounts.organizationId, organizationId)));
+      .where(and(eq(bankAccounts.id, id), eq(bankAccounts.organizationId, organizationId)))
+      .returning();
     return account as BankAccount;
   }
 
@@ -62,7 +63,8 @@ export class DrizzleBankAccountRepository implements BankAccountRepository {
     const [account] = await db
       .update(bankAccounts)
       .set({ status, updatedAt: new Date() })
-      .where(and(eq(bankAccounts.id, id), eq(bankAccounts.organizationId, organizationId)));
+      .where(and(eq(bankAccounts.id, id), eq(bankAccounts.organizationId, organizationId)))
+      .returning();
     return account as BankAccount;
   }
 }

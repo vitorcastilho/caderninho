@@ -8,15 +8,13 @@ import {
   updateBankAccountSchema,
   bankAccountIdSchema,
 } from '@/shared/schemas/bank-account.schema';
-import { DrizzleBankAccountRepository } from '@/server/infrastructure/database/repositories/bank-account.repository.impl';
+import { bankAccountDeps } from '@/server/factories/bank-account';
 import { createBankAccount } from '@/server/domain/bank-accounts/use-cases/create-bank-account';
 import { updateBankAccount } from '@/server/domain/bank-accounts/use-cases/update-bank-account';
 import { archiveBankAccount } from '@/server/domain/bank-accounts/use-cases/archive-bank-account';
 import { reactivateBankAccount } from '@/server/domain/bank-accounts/use-cases/reactivate-bank-account';
 import { listBankAccounts } from '@/server/domain/bank-accounts/use-cases/list-bank-accounts';
 import { getBankAccount } from '@/server/domain/bank-accounts/use-cases/get-bank-account';
-
-const repository = new DrizzleBankAccountRepository();
 
 function getOrganizationId(session: { session: { activeOrganizationId?: string | null } }) {
   const organizationId = session.session.activeOrganizationId;
@@ -35,7 +33,7 @@ export const createBankAccountAction = withAuth(async (session, input: unknown) 
     return err('NO_ACTIVE_ORGANIZATION', 'Nenhuma organização ativa. Selecione uma organização.');
   }
 
-  return createBankAccount(repository, {
+  return createBankAccount(bankAccountDeps, {
     ...validation.data,
     organizationId,
     userId: session.user.id,
@@ -55,7 +53,7 @@ export const updateBankAccountAction = withAuth(
       return err('NO_ACTIVE_ORGANIZATION', 'Nenhuma organização ativa. Selecione uma organização.');
     }
 
-    return updateBankAccount(repository, {
+    return updateBankAccount(bankAccountDeps, {
       id: idValidation.data,
       organizationId,
       userId: session.user.id,
@@ -73,7 +71,7 @@ export const archiveBankAccountAction = withAuth(async (session, input: { id: un
     return err('NO_ACTIVE_ORGANIZATION', 'Nenhuma organização ativa. Selecione uma organização.');
   }
 
-  return archiveBankAccount(repository, {
+  return archiveBankAccount(bankAccountDeps, {
     id: idValidation.data,
     organizationId,
     userId: session.user.id,
@@ -89,7 +87,7 @@ export const reactivateBankAccountAction = withAuth(async (session, input: { id:
     return err('NO_ACTIVE_ORGANIZATION', 'Nenhuma organização ativa. Selecione uma organização.');
   }
 
-  return reactivateBankAccount(repository, {
+  return reactivateBankAccount(bankAccountDeps, {
     id: idValidation.data,
     organizationId,
     userId: session.user.id,
@@ -103,7 +101,7 @@ export const listBankAccountsAction = withAuth(async (session, _input: unknown) 
     return err('NO_ACTIVE_ORGANIZATION', 'Nenhuma organização ativa. Selecione uma organização.');
   }
 
-  return listBankAccounts(repository, { organizationId });
+  return listBankAccounts(bankAccountDeps.repository, { organizationId, includeArchived: true });
 });
 
 export const getBankAccountAction = withAuth(async (session, input: { id: unknown }) => {
@@ -115,7 +113,7 @@ export const getBankAccountAction = withAuth(async (session, input: { id: unknow
     return err('NO_ACTIVE_ORGANIZATION', 'Nenhuma organização ativa. Selecione uma organização.');
   }
 
-  return getBankAccount(repository, {
+  return getBankAccount(bankAccountDeps.repository, {
     id: idValidation.data,
     organizationId,
   });

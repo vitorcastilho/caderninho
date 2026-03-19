@@ -2,12 +2,7 @@ import { vi } from 'vitest';
 
 import { reactivateBankAccount } from './reactivate-bank-account';
 import type { BankAccountRepository } from '../repositories/bank-account.repository';
-
-vi.mock('@/server/infrastructure/audit/audit.service', () => ({
-  logAudit: vi.fn(),
-}));
-
-import { logAudit } from '@/server/infrastructure/audit/audit.service';
+import type { AuditLogger } from '@/server/domain/shared/types/audit-logger';
 
 const mockRepository: BankAccountRepository = {
   create: vi.fn(),
@@ -16,6 +11,8 @@ const mockRepository: BankAccountRepository = {
   update: vi.fn(),
   updateStatus: vi.fn(),
 };
+
+const mockAuditLogger: AuditLogger = vi.fn();
 
 const archivedAccount = {
   id: '550e8400-e29b-41d4-a716-446655440000',
@@ -38,11 +35,14 @@ describe('reactivateBankAccount', () => {
     vi.mocked(mockRepository.findById).mockResolvedValue(archivedAccount);
     vi.mocked(mockRepository.updateStatus).mockResolvedValue(reactivated);
 
-    const result = await reactivateBankAccount(mockRepository, {
-      id: archivedAccount.id,
-      organizationId: 'org-123',
-      userId: 'user-1',
-    });
+    const result = await reactivateBankAccount(
+      { repository: mockRepository, auditLogger: mockAuditLogger },
+      {
+        id: archivedAccount.id,
+        organizationId: 'org-123',
+        userId: 'user-1',
+      },
+    );
 
     expect(result.success).toBe(true);
     if (result.success) {
@@ -53,11 +53,14 @@ describe('reactivateBankAccount', () => {
   it('should return error when account not found', async () => {
     vi.mocked(mockRepository.findById).mockResolvedValue(null);
 
-    const result = await reactivateBankAccount(mockRepository, {
-      id: 'nonexistent',
-      organizationId: 'org-123',
-      userId: 'user-1',
-    });
+    const result = await reactivateBankAccount(
+      { repository: mockRepository, auditLogger: mockAuditLogger },
+      {
+        id: 'nonexistent',
+        organizationId: 'org-123',
+        userId: 'user-1',
+      },
+    );
 
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -69,11 +72,14 @@ describe('reactivateBankAccount', () => {
     const activeAccount = { ...archivedAccount, status: 'active' as const };
     vi.mocked(mockRepository.findById).mockResolvedValue(activeAccount);
 
-    const result = await reactivateBankAccount(mockRepository, {
-      id: activeAccount.id,
-      organizationId: 'org-123',
-      userId: 'user-1',
-    });
+    const result = await reactivateBankAccount(
+      { repository: mockRepository, auditLogger: mockAuditLogger },
+      {
+        id: activeAccount.id,
+        organizationId: 'org-123',
+        userId: 'user-1',
+      },
+    );
 
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -86,13 +92,16 @@ describe('reactivateBankAccount', () => {
     vi.mocked(mockRepository.findById).mockResolvedValue(archivedAccount);
     vi.mocked(mockRepository.updateStatus).mockResolvedValue(reactivated);
 
-    await reactivateBankAccount(mockRepository, {
-      id: archivedAccount.id,
-      organizationId: 'org-123',
-      userId: 'user-1',
-    });
+    await reactivateBankAccount(
+      { repository: mockRepository, auditLogger: mockAuditLogger },
+      {
+        id: archivedAccount.id,
+        organizationId: 'org-123',
+        userId: 'user-1',
+      },
+    );
 
-    expect(logAudit).toHaveBeenCalledWith({
+    expect(mockAuditLogger).toHaveBeenCalledWith({
       userId: 'user-1',
       organizationId: 'org-123',
       action: 'REACTIVATE',

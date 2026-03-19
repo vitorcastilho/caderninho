@@ -1,6 +1,6 @@
 import { ok, err } from '@/shared/types/result';
 import type { Result } from '@/shared/types/result';
-import { logAudit } from '@/server/infrastructure/audit/audit.service';
+import type { AuditLogger } from '@/server/domain/shared/types/audit-logger';
 import type {
   BankAccount,
   BankAccountRepository,
@@ -13,10 +13,10 @@ interface ArchiveBankAccountParams {
 }
 
 export async function archiveBankAccount(
-  repository: BankAccountRepository,
+  deps: { repository: BankAccountRepository; auditLogger: AuditLogger },
   params: ArchiveBankAccountParams,
 ): Promise<Result<BankAccount>> {
-  const existing = await repository.findById(params.id, params.organizationId);
+  const existing = await deps.repository.findById(params.id, params.organizationId);
   if (!existing) {
     return err('BANK_ACCOUNT_NOT_FOUND', 'Conta bancária não encontrada.');
   }
@@ -25,9 +25,9 @@ export async function archiveBankAccount(
     return err('BANK_ACCOUNT_ALREADY_ARCHIVED', 'Esta conta já está arquivada.');
   }
 
-  const archived = await repository.updateStatus(params.id, params.organizationId, 'archived');
+  const archived = await deps.repository.updateStatus(params.id, params.organizationId, 'archived');
 
-  await logAudit({
+  await deps.auditLogger({
     userId: params.userId,
     organizationId: params.organizationId,
     action: 'ARCHIVE',

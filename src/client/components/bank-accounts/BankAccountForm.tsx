@@ -25,10 +25,12 @@ function centsToDisplayValue(cents: number): string {
 }
 
 function displayValueToCents(value: string): number {
-  const cleaned = value.replace(/[^\d,]/g, '').replace(',', '.');
-  const parsed = parseFloat(cleaned);
-  if (isNaN(parsed)) return 0;
-  return Math.round(parsed * 100);
+  const cleaned = value.replace(/[^\d,]/g, '');
+  const parts = cleaned.split(',');
+  const integerPart = parseInt(parts[0] || '0', 10) || 0;
+  const decimalStr = (parts[1] || '00').padEnd(2, '0').substring(0, 2);
+  const decimalPart = parseInt(decimalStr, 10) || 0;
+  return integerPart * 100 + decimalPart;
 }
 
 export function BankAccountForm({ mode, defaultValues, onSuccess, onCancel }: BankAccountFormProps) {

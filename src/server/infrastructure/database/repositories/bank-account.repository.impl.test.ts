@@ -29,7 +29,8 @@ function mockSelectChain(returnValue: unknown[]) {
 }
 
 function mockUpdateChain(returnValue: unknown) {
-  const where = vi.fn().mockResolvedValue([returnValue]);
+  const returning = vi.fn().mockResolvedValue([returnValue]);
+  const where = vi.fn().mockReturnValue({ returning });
   const set = vi.fn().mockReturnValue({ where });
   mockDb.update.mockReturnValue({ set });
 }

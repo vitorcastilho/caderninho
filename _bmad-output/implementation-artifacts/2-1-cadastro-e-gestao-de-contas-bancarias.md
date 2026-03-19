@@ -179,6 +179,16 @@ So that I can track my balances and organize my financial structure.
   - [x] 8.6 Valores monetários em centavos (integer) em todo o fluxo
   - [x] 8.7 Verificar UX: layout responsivo, saldo com tabular-nums, toast de confirmação, dialog de arquivamento
 
+### Review Follow-ups (AI) — R1 2026-03-19
+
+- [x] [AI-Review][CRITICAL] Repository `update()` e `updateStatus()` sem `.returning()` — Drizzle UPDATE sem `.returning()` não retorna registros, causando crash em runtime. Adicionar `.returning()` nos dois métodos. [src/server/infrastructure/database/repositories/bank-account.repository.impl.ts:50-53,62-65]
+- [x] [AI-Review][HIGH] Domain use cases importam de `infrastructure/` (logAudit) — viola "server/domain/ nunca importa de infrastructure/". Injetar `logAudit` como dependência ou criar interface AuditService no domain. [create-bank-account.ts:3, update-bank-account.ts:3, archive-bank-account.ts:3, reactivate-bank-account.ts:3]
+- [x] [AI-Review][HIGH] Server Actions importam de `infrastructure/` (DrizzleBankAccountRepository) — viola "server/actions/ NUNCA importa de server/infrastructure/". Criar factory/composition root separado. [src/server/actions/bank-account.actions.ts:11]
+- [x] [AI-Review][HIGH] `listBankAccountsAction` nunca retorna contas arquivadas — BankAccountList filtra por `status === 'archived'` mas dados nunca chegam do servidor. AC #5 (reativar conta arquivada) quebrado. Passar `includeArchived: true` na listagem. [src/server/actions/bank-account.actions.ts:100-107]
+- [x] [AI-Review][MEDIUM] Sem `loading.tsx` para rota `/accounts` — viola "cada rota tem seu loading.tsx com skeleton". Criar `src/app/(app)/accounts/loading.tsx` com skeleton cards.
+- [x] [AI-Review][LOW] Migration meta files (0003_snapshot.json, 0004_snapshot.json, _journal.json) não documentados na File List da story.
+- [x] [AI-Review][LOW] `displayValueToCents` usa `Math.round(parseFloat(value) * 100)` — viola anti-pattern documentado no project-context. [src/client/components/bank-accounts/BankAccountForm.tsx:30]
+
 ## Dev Notes
 
 ### ALERTA CRITICO: Nome da Tabela — `bank_accounts`, NÃO `accounts`
@@ -512,6 +522,13 @@ Claude Opus 4.6
 - Task 6: Página /accounts (Server Component), BankAccountForm (create/edit com máscara de centavos), BankAccountCard (tabular-nums, dialog de arquivamento), BankAccountList (ativas/arquivadas com toggle). formatCurrency com 4 testes. Toaster adicionado ao root layout. Label componente adicionado via shadcn.
 - Task 7: RLS policy `bank_accounts_org_isolation` com `current_setting('app.organization_id', true)`. Migration 0004 gerada e aplicada.
 - Task 8: Build OK, 250 testes passando (zero regressões), lint sem erros novos.
+- ✅ Resolved review finding [CRITICAL]: Adicionado `.returning()` aos métodos `update()` e `updateStatus()` do DrizzleBankAccountRepository. Atualizado mock de teste correspondente.
+- ✅ Resolved review finding [HIGH]: Criada interface `AuditLogger` em `src/server/domain/shared/types/audit-logger.ts`. Todos os 4 use cases (create, update, archive, reactivate) agora recebem `auditLogger` via dependency injection em vez de importar diretamente de infrastructure.
+- ✅ Resolved review finding [HIGH]: Criado composition root `src/server/factories/bank-account.ts`. Server Actions agora importam de factory, sem dependência direta em infrastructure.
+- ✅ Resolved review finding [HIGH]: `listBankAccountsAction` agora passa `includeArchived: true` — contas arquivadas chegam ao BankAccountList para AC #5 (reativação).
+- ✅ Resolved review finding [MEDIUM]: Criado `src/app/(app)/accounts/loading.tsx` com skeleton cards seguindo padrão do dashboard.
+- ✅ Resolved review finding [LOW]: Migration meta files documentados no File List.
+- ✅ Resolved review finding [LOW]: `displayValueToCents` reescrito com parsing de inteiro/decimal separado — sem floating-point (`Math.round(parseFloat * 100)` removido).
 
 ### File List
 
@@ -538,6 +555,7 @@ Claude Opus 4.6
 - src/shared/schemas/bank-account.schema.ts
 - src/shared/schemas/bank-account.schema.test.ts
 - src/app/(app)/accounts/page.tsx
+- src/app/(app)/accounts/loading.tsx
 - src/client/components/bank-accounts/BankAccountForm.tsx
 - src/client/components/bank-accounts/BankAccountCard.tsx
 - src/client/components/bank-accounts/BankAccountList.tsx
@@ -546,6 +564,11 @@ Claude Opus 4.6
 - src/client/components/ui/label.tsx (gerado por shadcn)
 - src/server/infrastructure/database/migrations/0003_shiny_green_goblin.sql
 - src/server/infrastructure/database/migrations/0004_unknown_black_cat.sql
+- src/server/infrastructure/database/migrations/meta/0003_snapshot.json
+- src/server/infrastructure/database/migrations/meta/0004_snapshot.json
+- src/server/infrastructure/database/migrations/meta/_journal.json
+- src/server/domain/shared/types/audit-logger.ts
+- src/server/factories/bank-account.ts
 
 **Modificados:**
 - src/server/infrastructure/database/schema/index.ts (adicionado export de bankAccounts)
@@ -555,3 +578,5 @@ Claude Opus 4.6
 ## Change Log
 
 - 2026-03-19: Implementação completa da Story 2.1 — CRUD de contas bancárias com Clean Architecture (Server Action → Use Case → Repository), schemas Drizzle e Zod, auditoria, RLS, componentes UI com shadcn/ui v4, 250 testes passando.
+- 2026-03-19: Code Review R1 — 7 findings (1 CRITICAL, 3 HIGH, 1 MEDIUM, 2 LOW). Status revertido para in-progress. Action items adicionados em "Review Follow-ups (AI)".
+- 2026-03-19: Addressed code review findings — 7 items resolved. Fixes: .returning() no repository, AuditLogger interface no domain (DI), factory/composition root para Server Actions, includeArchived na listagem, loading.tsx, File List atualizado, displayValueToCents sem floating-point. 250 testes passando, build e lint OK.
