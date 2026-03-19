@@ -21,16 +21,14 @@ interface BankAccountFormProps {
 }
 
 function centsToDisplayValue(cents: number): string {
-  return (cents / 100).toFixed(2).replace('.', ',');
+  const integerPart = Math.floor(cents / 100);
+  const decimalPart = cents % 100;
+  return `${integerPart.toLocaleString('pt-BR')},${String(decimalPart).padStart(2, '0')}`;
 }
 
 function displayValueToCents(value: string): number {
-  const cleaned = value.replace(/[^\d,]/g, '');
-  const parts = cleaned.split(',');
-  const integerPart = parseInt(parts[0] || '0', 10) || 0;
-  const decimalStr = (parts[1] || '00').padEnd(2, '0').substring(0, 2);
-  const decimalPart = parseInt(decimalStr, 10) || 0;
-  return integerPart * 100 + decimalPart;
+  const digits = value.replace(/\D/g, '');
+  return parseInt(digits || '0', 10);
 }
 
 export function BankAccountForm({ mode, defaultValues, onSuccess, onCancel }: BankAccountFormProps) {
@@ -100,10 +98,14 @@ export function BankAccountForm({ mode, defaultValues, onSuccess, onCancel }: Ba
         <Label htmlFor="balance">Saldo inicial (R$)</Label>
         <Input
           id="balance"
-          value={balanceDisplay}
-          onChange={(e) => setBalanceDisplay(e.target.value)}
-          placeholder="0,00"
-          inputMode="decimal"
+          value={`R$ ${balanceDisplay}`}
+          onChange={(e) => {
+            const digits = e.target.value.replace(/\D/g, '');
+            const cents = parseInt(digits || '0', 10);
+            setBalanceDisplay(centsToDisplayValue(cents));
+          }}
+          placeholder="R$ 0,00"
+          inputMode="numeric"
           aria-invalid={!!errors.balanceCents}
         />
         {errors.balanceCents && <p className="text-xs text-destructive">{errors.balanceCents}</p>}
