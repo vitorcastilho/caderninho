@@ -1,4 +1,4 @@
-import { eq, and } from 'drizzle-orm';
+import { eq, and, asc } from 'drizzle-orm';
 
 import { db } from '@/server/infrastructure/database/client';
 import { creditCards } from '@/server/infrastructure/database/schema';
@@ -40,7 +40,7 @@ export class DrizzleCreditCardRepository implements CreditCardRepository {
       ? eq(creditCards.organizationId, organizationId)
       : and(eq(creditCards.organizationId, organizationId), eq(creditCards.status, 'active'));
 
-    const results = await db.select().from(creditCards).where(conditions);
+    const results = await db.select().from(creditCards).where(conditions).orderBy(asc(creditCards.createdAt));
     return results as CreditCard[];
   }
 

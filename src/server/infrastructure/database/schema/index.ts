@@ -3,3 +3,5 @@ export { organizations, members, invitations } from './organizations';
 export { auditLogs } from './audit-logs';
 export { bankAccounts } from './bank-accounts';
 export { creditCards } from './credit-cards';
+export { investments } from './investments';
+export { incomeSources } from './income-sources';

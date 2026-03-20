@@ -1,4 +1,4 @@
-import { eq, and } from 'drizzle-orm';
+import { eq, and, asc } from 'drizzle-orm';
 
 import { db } from '@/server/infrastructure/database/client';
 import { bankAccounts } from '@/server/infrastructure/database/schema';
@@ -38,7 +38,7 @@ export class DrizzleBankAccountRepository implements BankAccountRepository {
       ? eq(bankAccounts.organizationId, organizationId)
       : and(eq(bankAccounts.organizationId, organizationId), eq(bankAccounts.status, 'active'));
 
-    const results = await db.select().from(bankAccounts).where(conditions);
+    const results = await db.select().from(bankAccounts).where(conditions).orderBy(asc(bankAccounts.createdAt));
     return results as BankAccount[];
   }
 
