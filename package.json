@@ -17,7 +17,7 @@
     "db:stop": "supabase stop",
     "db:status": "supabase status",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
+    "db:migrate": "tsx scripts/migrate.ts",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio"
   },
@@ -58,6 +58,7 @@
     "jsdom": "^29.0.0",
     "supabase": "^2.81.2",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "5.9.3",
     "vitest": "^4.1.0"
   }
