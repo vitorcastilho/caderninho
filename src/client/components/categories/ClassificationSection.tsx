@@ -58,6 +58,16 @@ interface ClassificationSectionProps {
   onStatusChange: () => void;
 }
 
+const CLASSIFICATION_HINTS: Record<string, string> = {
+  'Essenciais': 'Ex: Moradia, Alimentação, Transporte, Saúde...',
+  'Qualidade de Vida': 'Ex: Restaurantes, Lazer, Assinaturas, Hobbies...',
+  'Investimentos': 'Ex: Aportes, Previdência...',
+  'Proteção': 'Ex: Seguros, Plano de Saúde...',
+  'Doações': 'Ex: Caridade, Contribuições...',
+  'Impostos e Obrigações': 'Ex: IRPF, IPTU, IPVA...',
+  'Dívidas': 'Ex: Empréstimos, Financiamentos...',
+};
+
 function computeBudgetTotal(categories: Category[]): string | null {
   let totalMin = 0;
   let totalMax = 0;
@@ -98,6 +108,7 @@ export function ClassificationSection({
   const [showArchivedCategories, setShowArchivedCategories] = useState(false);
 
   const budgetTotal = useMemo(() => computeBudgetTotal(categories), [categories]);
+  const hint = CLASSIFICATION_HINTS[classification.name];
 
   function handleArchive() {
     startTransition(async () => {
@@ -128,7 +139,7 @@ export function ClassificationSection({
     <div className="rounded-card bg-card border border-border">
       {/* Header */}
       <div
-        className="flex items-center gap-2 p-3 cursor-pointer"
+        className="flex items-center gap-2 p-3 cursor-pointer hover:bg-muted/30 transition-colors"
         onClick={() => setExpanded(!expanded)}
       >
         {expanded ? (
@@ -180,11 +191,13 @@ export function ClassificationSection({
           {showMenu && (
             <>
               <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
-              <div className="absolute right-0 top-full mt-1 z-50 min-w-[200px] rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 p-1">
+              <div className="absolute right-0 top-full mt-2 z-50 min-w-[200px] rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 p-1">
+                {/* Arrow pointing to gear */}
+                <div className="absolute -top-1.5 right-2.5 size-3 rotate-45 bg-popover ring-1 ring-foreground/10 [clip-path:polygon(0%_0%,100%_0%,0%_100%)]" />
                 {classification.status === 'active' ? (
                   <>
                     <button
-                      className="flex w-full items-center rounded-md px-2 py-1.5 text-sm hover:bg-accent"
+                      className="flex w-full items-center rounded-md px-3 py-1.5 text-sm hover:bg-accent"
                       onClick={() => {
                         setShowMenu(false);
                         onEditClassification(classification);
@@ -193,7 +206,7 @@ export function ClassificationSection({
                       Renomear
                     </button>
                     <button
-                      className="flex w-full items-center rounded-md px-2 py-1.5 text-sm hover:bg-accent"
+                      className="flex w-full items-center rounded-md px-3 py-1.5 text-sm hover:bg-accent"
                       onClick={() => {
                         setShowMenu(false);
                         onMergeClassification(classification);
@@ -203,7 +216,7 @@ export function ClassificationSection({
                     </button>
                     <div className="h-px bg-border my-1" />
                     <button
-                      className="flex w-full items-center rounded-md px-2 py-1.5 text-sm text-destructive hover:bg-accent"
+                      className="flex w-full items-center rounded-md px-3 py-1.5 text-sm text-destructive hover:bg-destructive/10"
                       onClick={() => {
                         setShowMenu(false);
                         setShowArchiveDialog(true);
@@ -214,7 +227,7 @@ export function ClassificationSection({
                   </>
                 ) : (
                   <button
-                    className="flex w-full items-center rounded-md px-2 py-1.5 text-sm hover:bg-accent"
+                    className="flex w-full items-center rounded-md px-3 py-1.5 text-sm hover:bg-accent"
                     onClick={() => {
                       setShowMenu(false);
                       handleReactivate();
@@ -253,8 +266,8 @@ export function ClassificationSection({
       {expanded && (
         <div className="px-3 pb-3">
           {activeCategories.length === 0 && archivedCategories.length === 0 ? (
-            <div className="flex flex-col items-center gap-2 py-4 text-muted-foreground">
-              <p className="text-xs">Nenhuma categoria ainda</p>
+            <div className="flex flex-col items-center gap-2 py-6 border border-dashed border-border rounded-lg">
+              <p className="text-xs text-muted-foreground">Nenhuma categoria ainda</p>
               {classification.status === 'active' && (
                 <Button
                   variant="secondary"
@@ -263,6 +276,9 @@ export function ClassificationSection({
                 >
                   + Adicionar categoria
                 </Button>
+              )}
+              {hint && (
+                <p className="text-xs text-muted-foreground">{hint}</p>
               )}
             </div>
           ) : (

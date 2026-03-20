@@ -121,22 +121,24 @@ export function CategoryCard({
   }
 
   return (
-    <div className="pl-6">
+    <div className="border border-border rounded-lg overflow-hidden">
       {/* Category row */}
-      <div className="flex items-center gap-2 py-1.5">
+      <div className="flex items-center gap-2 px-3 py-2.5 hover:bg-muted/30 transition-colors">
         <button
           onClick={onEdit}
-          className="flex items-center gap-2 text-left hover:text-primary transition-colors"
+          className="text-sm font-semibold text-foreground hover:text-primary transition-colors"
         >
-          <span className="text-sm font-medium text-foreground">
-            {category.name}
-          </span>
-          {budgetDisplay && (
-            <span className="text-xs text-muted-foreground tabular-nums">
-              <span className="opacity-60">Orçamento:</span> {budgetDisplay}
-            </span>
-          )}
+          {category.name}
         </button>
+
+        {budgetDisplay && (
+          <div className="flex items-center gap-1">
+            <span className="text-[11px] text-muted-foreground">Orçamento:</span>
+            <span className="text-xs text-muted-foreground tabular-nums bg-muted px-2 py-0.5 rounded">
+              {budgetDisplay}
+            </span>
+          </div>
+        )}
 
         <span className="flex-1" />
 
@@ -156,7 +158,7 @@ export function CategoryCard({
               <Button
                 variant="ghost"
                 size="xs"
-                className="text-destructive"
+                className="text-destructive hover:text-destructive"
                 onClick={() => setShowArchiveDialog(true)}
               >
                 Arquivar
@@ -197,16 +199,17 @@ export function CategoryCard({
 
       {/* Subcategories */}
       {activeSubcategories.length > 0 && (
-        <div className="pl-4 border-l border-border ml-1">
+        <div className="px-3 pb-2 pt-0 ml-5 border-t border-muted">
           {activeSubcategories.map((sub) => (
-            <div key={sub.id} className="flex items-center gap-2 py-1">
+            <div key={sub.id} className="flex items-center gap-1.5 py-1 group/sub">
+              <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
               <button
                 onClick={() => onEditSubcategory(sub)}
-                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                className="text-xs text-muted-foreground hover:text-primary transition-colors"
               >
                 {sub.name}
               </button>
-              <div className="flex gap-1">
+              <div className="flex gap-1 ml-auto opacity-0 group-hover/sub:opacity-100 transition-opacity">
                 <Button
                   variant="ghost"
                   size="xs"
@@ -231,7 +234,7 @@ export function CategoryCard({
       )}
 
       {archivedSubcategories.length > 0 && (
-        <div className="pl-4 ml-1">
+        <div className="px-3 pb-2 ml-5">
           <Button
             variant="ghost"
             size="sm"
@@ -243,14 +246,15 @@ export function CategoryCard({
               : `+${archivedSubcategories.length} arquivada${archivedSubcategories.length > 1 ? 's' : ''}`}
           </Button>
           {showArchivedSubs && (
-            <div className="border-l border-border opacity-60">
+            <div className="opacity-60">
               {archivedSubcategories.map((sub) => (
-                <div key={sub.id} className="flex items-center gap-2 py-1">
+                <div key={sub.id} className="flex items-center gap-1.5 py-1 group/sub">
+                  <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
                   <span className="text-xs text-muted-foreground">{sub.name}</span>
                   <Button
                     variant="ghost"
                     size="xs"
-                    className="h-5 text-xs px-1"
+                    className="h-5 text-xs px-1 ml-auto opacity-0 group-hover/sub:opacity-100 transition-opacity"
                     onClick={() => handleReactivateSubcategory(sub)}
                     disabled={isPending}
                   >
