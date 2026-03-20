@@ -1,6 +1,6 @@
 # Story 2.3: Cadastro de Investimentos e Fontes de Receita
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
