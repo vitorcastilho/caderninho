@@ -126,7 +126,7 @@ export function CategoryCard({
       <div className="flex items-center gap-2 px-3 py-2.5 hover:bg-muted/30 transition-colors">
         <button
           onClick={onEdit}
-          className="text-sm font-semibold text-foreground hover:text-primary transition-colors"
+          className="text-sm font-semibold text-foreground hover:text-primary transition-colors cursor-pointer"
         >
           {category.name}
         </button>
