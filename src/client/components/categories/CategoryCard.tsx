@@ -208,7 +208,7 @@ export function CategoryCard({
               >
                 {sub.name}
               </button>
-              <div className="flex gap-1 ml-auto opacity-0 group-hover/sub:opacity-100 transition-opacity">
+              <div className="flex gap-1 opacity-0 group-hover/sub:opacity-100 transition-opacity">
                 <Button
                   variant="ghost"
                   size="xs"
