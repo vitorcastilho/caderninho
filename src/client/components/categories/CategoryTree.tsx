@@ -2,6 +2,7 @@
 
 import { useState, useTransition, useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
+import { Info, X } from 'lucide-react';
 
 import { Button } from '@/client/components/ui/button';
 import {
@@ -115,14 +116,50 @@ export function CategoryTree({
   const activeClassifications = classifications.filter((c) => c.status === 'active');
   const archivedClassifications = classifications.filter((c) => c.status === 'archived');
 
+  const totalCategories = categories.filter((c) => c.status === 'active').length;
+  const [onboardingDismissed, setOnboardingDismissed] = useState(false);
+  const showOnboarding = totalCategories === 0 && !onboardingDismissed;
+
   return (
     <div className="col-span-full flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-foreground">Categorias</h1>
-        <Button onClick={() => setShowCreateClassification(true)}>
-          Nova Classificação
-        </Button>
+      <div>
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold text-foreground">Categorias</h1>
+          <Button onClick={() => setShowCreateClassification(true)}>
+            + Nova classificação
+          </Button>
+        </div>
+        <p className="text-sm text-muted-foreground mt-1">
+          Organize seus gastos em uma hierarquia: classificação &rarr; categoria &rarr; subcategoria
+        </p>
       </div>
+
+      {showOnboarding && (
+        <div className="flex gap-3 items-start rounded-card bg-blue-50 border border-blue-200 p-4 dark:bg-blue-950/30 dark:border-blue-900">
+          <Info className="size-5 shrink-0 text-blue-600 mt-0.5 dark:text-blue-400" />
+          <div className="flex-1 text-sm text-blue-900 dark:text-blue-200">
+            <p className="font-semibold mb-1">Como funciona?</p>
+            <p className="mb-2">
+              Seus gastos são organizados em 3 níveis para facilitar o controle do orçamento:
+            </p>
+            <div className="text-xs leading-relaxed">
+              <p><strong>Classificação</strong> &mdash; agrupa categorias por tipo de necessidade (ex: Essenciais, Qualidade de Vida)</p>
+              <p className="ml-3">&rarr; <strong>Categoria</strong> &mdash; define onde o dinheiro vai, com orçamento mensal (ex: Moradia, Alimentação)</p>
+              <p className="ml-6">&rarr; <strong>Subcategoria</strong> &mdash; detalha os gastos dentro da categoria (ex: Aluguel, Supermercado)</p>
+            </div>
+            <p className="mt-2">
+              Já criamos classificações padrão para você. Comece adicionando suas categorias de gasto dentro delas.
+            </p>
+          </div>
+          <button
+            onClick={() => setOnboardingDismissed(true)}
+            className="shrink-0 text-blue-400 hover:text-blue-600 transition-colors dark:text-blue-500 dark:hover:text-blue-300"
+            title="Fechar"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
+      )}
 
       {/* Create Classification Dialog */}
       <Dialog open={showCreateClassification} onOpenChange={setShowCreateClassification}>

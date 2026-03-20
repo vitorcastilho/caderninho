@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
-import { Plus } from 'lucide-react';
 
 import { Button } from '@/client/components/ui/button';
 import {
@@ -52,7 +51,7 @@ interface CategoryCardProps {
 function formatBudget(minCents: number | null, maxCents: number | null): string | null {
   if (minCents == null) return null;
   if (maxCents == null || maxCents === minCents) return formatCurrency(minCents);
-  return `${formatCurrency(minCents)} - ${formatCurrency(maxCents)}`;
+  return `${formatCurrency(minCents)} — ${formatCurrency(maxCents)}`;
 }
 
 export function CategoryCard({
@@ -124,37 +123,34 @@ export function CategoryCard({
   return (
     <div className="pl-6">
       {/* Category row */}
-      <div className="flex items-center gap-2 py-1.5 group">
+      <div className="flex items-center gap-2 py-1.5">
         <button
           onClick={onEdit}
-          className="flex-1 flex items-center gap-2 text-left hover:text-primary transition-colors"
+          className="flex items-center gap-2 text-left hover:text-primary transition-colors"
         >
-          <span className="text-sm font-medium text-foreground group-hover:text-primary">
+          <span className="text-sm font-medium text-foreground">
             {category.name}
           </span>
           {budgetDisplay && (
             <span className="text-xs text-muted-foreground tabular-nums">
-              {budgetDisplay}
+              <span className="opacity-60">Orçamento:</span> {budgetDisplay}
             </span>
           )}
         </button>
 
-        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <span className="flex-1" />
+
+        <div className="flex gap-1">
           {category.status === 'active' && (
             <>
               <Button
-                variant="ghost"
-                size="icon-xs"
-                onClick={onAddSubcategory}
-                title="Adicionar subcategoria"
-              >
-                <Plus className="size-3.5" />
-              </Button>
-              <Button
-                variant="ghost"
+                variant="secondary"
                 size="xs"
-                onClick={onEdit}
+                onClick={onAddSubcategory}
               >
+                + Subcategoria
+              </Button>
+              <Button variant="ghost" size="xs" onClick={onEdit}>
                 Editar
               </Button>
               <Button
@@ -203,14 +199,14 @@ export function CategoryCard({
       {activeSubcategories.length > 0 && (
         <div className="pl-4 border-l border-border ml-1">
           {activeSubcategories.map((sub) => (
-            <div key={sub.id} className="flex items-center gap-2 py-1 group/sub">
+            <div key={sub.id} className="flex items-center gap-2 py-1">
               <button
                 onClick={() => onEditSubcategory(sub)}
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
                 {sub.name}
               </button>
-              <div className="flex gap-1 opacity-0 group-hover/sub:opacity-100 transition-opacity">
+              <div className="flex gap-1">
                 <Button
                   variant="ghost"
                   size="xs"
@@ -249,12 +245,12 @@ export function CategoryCard({
           {showArchivedSubs && (
             <div className="border-l border-border opacity-60">
               {archivedSubcategories.map((sub) => (
-                <div key={sub.id} className="flex items-center gap-2 py-1 group/sub">
+                <div key={sub.id} className="flex items-center gap-2 py-1">
                   <span className="text-xs text-muted-foreground">{sub.name}</span>
                   <Button
                     variant="ghost"
                     size="xs"
-                    className="h-5 text-xs px-1 opacity-0 group-hover/sub:opacity-100 transition-opacity"
+                    className="h-5 text-xs px-1"
                     onClick={() => handleReactivateSubcategory(sub)}
                     disabled={isPending}
                   >
