@@ -156,9 +156,8 @@ export function CategoryCard({
                 Editar
               </Button>
               <Button
-                variant="ghost"
+                variant="destructive"
                 size="xs"
-                className="text-destructive hover:text-destructive"
                 onClick={() => setShowArchiveDialog(true)}
               >
                 Arquivar
@@ -219,9 +218,9 @@ export function CategoryCard({
                   Editar
                 </Button>
                 <Button
-                  variant="ghost"
+                  variant="destructive"
                   size="xs"
-                  className="h-5 text-xs px-1 text-destructive"
+                  className="h-5 text-xs px-1"
                   onClick={() => handleArchiveSubcategory(sub)}
                   disabled={isPending}
                 >
@@ -254,7 +253,7 @@ export function CategoryCard({
                   <Button
                     variant="ghost"
                     size="xs"
-                    className="h-5 text-xs px-1 ml-auto opacity-0 group-hover/sub:opacity-100 transition-opacity"
+                    className="h-5 text-xs px-1 opacity-0 group-hover/sub:opacity-100 transition-opacity"
                     onClick={() => handleReactivateSubcategory(sub)}
                     disabled={isPending}
                   >
