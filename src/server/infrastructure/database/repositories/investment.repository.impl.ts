@@ -1,4 +1,4 @@
-import { eq, and } from 'drizzle-orm';
+import { eq, and, asc } from 'drizzle-orm';
 
 import { db } from '@/server/infrastructure/database/client';
 import { investments } from '@/server/infrastructure/database/schema';
@@ -41,7 +41,7 @@ export class DrizzleInvestmentRepository implements InvestmentRepository {
       ? eq(investments.organizationId, organizationId)
       : and(eq(investments.organizationId, organizationId), eq(investments.status, 'active'));
 
-    const results = await db.select().from(investments).where(conditions);
+    const results = await db.select().from(investments).where(conditions).orderBy(asc(investments.createdAt));
     return results as Investment[];
   }
 

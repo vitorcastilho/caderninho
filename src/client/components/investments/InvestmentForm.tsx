@@ -171,18 +171,24 @@ export function InvestmentForm({ mode, defaultValues, onSuccess, onCancel }: Inv
         <>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="yield">Rendimento (% CDI)</Label>
-            <Input
-              id="yield"
-              value={`${yieldDisplay}%`}
-              onChange={(e) => {
-                const digits = e.target.value.replace(/\D/g, '');
-                const bp = parseInt(digits || '0', 10);
-                setYieldDisplay(basisPointsToDisplayValue(bp));
-              }}
-              placeholder="0,00%"
-              inputMode="numeric"
-              aria-invalid={!!errors.yieldRateBasisPoints}
-            />
+            <div className="relative">
+              <Input
+                id="yield"
+                value={yieldDisplay}
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/\D/g, '');
+                  const bp = parseInt(digits || '0', 10);
+                  setYieldDisplay(basisPointsToDisplayValue(bp));
+                }}
+                placeholder="0,00"
+                inputMode="numeric"
+                className="pr-8"
+                aria-invalid={!!errors.yieldRateBasisPoints}
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">
+                %
+              </span>
+            </div>
             {errors.yieldRateBasisPoints && (
               <p className="text-xs text-destructive">{errors.yieldRateBasisPoints}</p>
             )}

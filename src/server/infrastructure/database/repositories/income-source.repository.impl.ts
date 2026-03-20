@@ -1,4 +1,4 @@
-import { eq, and } from 'drizzle-orm';
+import { eq, and, asc } from 'drizzle-orm';
 
 import { db } from '@/server/infrastructure/database/client';
 import { incomeSources } from '@/server/infrastructure/database/schema';
@@ -40,7 +40,7 @@ export class DrizzleIncomeSourceRepository implements IncomeSourceRepository {
       ? eq(incomeSources.organizationId, organizationId)
       : and(eq(incomeSources.organizationId, organizationId), eq(incomeSources.status, 'active'));
 
-    const results = await db.select().from(incomeSources).where(conditions);
+    const results = await db.select().from(incomeSources).where(conditions).orderBy(asc(incomeSources.createdAt));
     return results as IncomeSource[];
   }
 
