@@ -204,7 +204,7 @@ export function CategoryCard({
               <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
               <button
                 onClick={() => onEditSubcategory(sub)}
-                className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                className="text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer"
               >
                 {sub.name}
               </button>
@@ -249,7 +249,7 @@ export function CategoryCard({
               {archivedSubcategories.map((sub) => (
                 <div key={sub.id} className="flex items-center gap-1.5 py-1 group/sub">
                   <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
-                  <span className="text-xs text-muted-foreground">{sub.name}</span>
+                  <span className="text-xs text-muted-foreground cursor-default">{sub.name}</span>
                   <Button
                     variant="ghost"
                     size="xs"
