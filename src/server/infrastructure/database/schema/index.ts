@@ -5,3 +5,6 @@ export { bankAccounts } from './bank-accounts';
 export { creditCards } from './credit-cards';
 export { investments } from './investments';
 export { incomeSources } from './income-sources';
+export { essentialityClassifications } from './essentiality-classifications';
+export { categories } from './categories';
+export { subcategories } from './subcategories';

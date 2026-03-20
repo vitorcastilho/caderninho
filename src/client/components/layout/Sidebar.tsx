@@ -11,6 +11,7 @@ import {
   LogOut,
   Landmark,
   Wallet,
+  Tags,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -29,6 +30,7 @@ const navItems: NavItem[] = [
   { href: "/credit-cards", label: "Cartões", icon: CreditCard },
   { href: "/investments", label: "Investimentos", icon: Landmark },
   { href: "/income-sources", label: "Receitas", icon: Wallet },
+  { href: "/categories", label: "Categorias", icon: Tags },
   { href: "/orcamentos", label: "Orçamentos", icon: PiggyBank },
   { href: "/checklist", label: "Checklist", icon: CheckSquare },
   { href: "/projecao", label: "Projeção", icon: TrendingUp },
