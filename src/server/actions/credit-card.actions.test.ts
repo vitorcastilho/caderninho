@@ -38,7 +38,7 @@ vi.mock('@/server/infrastructure/database/client', () => ({
     }),
     select: vi.fn().mockReturnValue({
       from: vi.fn().mockReturnValue({
-        where: vi.fn().mockResolvedValue([{
+        where: vi.fn().mockReturnValue(Object.assign(Promise.resolve([{
           id: 'uuid-1',
           name: 'Latam Pass Visa',
           brand: 'Visa',
@@ -49,7 +49,18 @@ vi.mock('@/server/infrastructure/database/client', () => ({
           organizationId: 'org-123',
           createdAt: new Date(),
           updatedAt: new Date(),
-        }]),
+        }]), { orderBy: vi.fn().mockResolvedValue([{
+          id: 'uuid-1',
+          name: 'Latam Pass Visa',
+          brand: 'Visa',
+          limitCents: 1000000,
+          closingDay: 10,
+          dueDay: 17,
+          status: 'active',
+          organizationId: 'org-123',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }]) })),
       }),
     }),
     update: vi.fn().mockReturnValue({

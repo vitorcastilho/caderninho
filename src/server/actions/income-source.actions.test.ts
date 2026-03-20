@@ -40,7 +40,7 @@ vi.mock('@/server/infrastructure/database/client', () => ({
     }),
     select: vi.fn().mockReturnValue({
       from: vi.fn().mockReturnValue({
-        where: vi.fn().mockResolvedValue([sampleIncomeSource]),
+        where: vi.fn().mockReturnValue(Object.assign(Promise.resolve([sampleIncomeSource]), { orderBy: vi.fn().mockResolvedValue([sampleIncomeSource]) })),
       }),
     }),
     update: vi.fn().mockReturnValue({

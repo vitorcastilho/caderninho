@@ -23,7 +23,8 @@ function mockInsertChain(returnValue: unknown) {
 }
 
 function mockSelectChain(returnValue: unknown[]) {
-  const where = vi.fn().mockResolvedValue(returnValue);
+  const orderBy = vi.fn().mockResolvedValue(returnValue);
+  const where = vi.fn().mockReturnValue(Object.assign(Promise.resolve(returnValue), { orderBy }));
   const from = vi.fn().mockReturnValue({ where });
   mockDb.select.mockReturnValue({ from });
 }
