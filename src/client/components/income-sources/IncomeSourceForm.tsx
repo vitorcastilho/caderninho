@@ -120,7 +120,7 @@ export function IncomeSourceForm({ mode, defaultValues, onSuccess, onCancel }: I
           onValueChange={(val) => setEmploymentType(val as EmploymentType)}
         >
           <SelectTrigger className="w-full" aria-invalid={!!errors.employmentType}>
-            <SelectValue />
+            <SelectValue>{EMPLOYMENT_TYPE_LABELS[employmentType]}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             {Object.entries(EMPLOYMENT_TYPE_LABELS).map(([value, label]) => (

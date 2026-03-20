@@ -137,7 +137,7 @@ export function InvestmentForm({ mode, defaultValues, onSuccess, onCancel }: Inv
           onValueChange={(val) => setType(val as InvestmentType)}
         >
           <SelectTrigger className="w-full" aria-invalid={!!errors.type}>
-            <SelectValue />
+            <SelectValue>{INVESTMENT_TYPE_LABELS[type]}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             {Object.entries(INVESTMENT_TYPE_LABELS).map(([value, label]) => (
@@ -170,7 +170,7 @@ export function InvestmentForm({ mode, defaultValues, onSuccess, onCancel }: Inv
       {showYieldAndMaturity(type) && (
         <>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="yield">Rendimento (%)</Label>
+            <Label htmlFor="yield">Rendimento (% CDI)</Label>
             <Input
               id="yield"
               value={`${yieldDisplay}%`}

@@ -120,7 +120,7 @@ export function InvestmentCard({ investment, onEdit, onStatusChange }: Investmen
         </p>
         {investment.yieldRateBasisPoints != null && (
           <p className="text-xs text-muted-foreground mt-0.5">
-            Rendimento: {basisPointsToDisplayValue(investment.yieldRateBasisPoints)}%
+            Rendimento: {basisPointsToDisplayValue(investment.yieldRateBasisPoints)}% CDI
           </p>
         )}
       </CardContent>
