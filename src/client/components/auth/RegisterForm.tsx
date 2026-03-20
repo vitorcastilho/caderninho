@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch, type Control } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Loader2, Check } from "lucide-react";
@@ -29,67 +29,12 @@ export function RegisterForm() {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
     mode: "onChange",
   });
-
-  const password = watch("password", "");
-
-  const passwordChecks = {
-    length: password.length >= 8,
-    uppercase: /[A-Z]/.test(password),
-    number: /[0-9]/.test(password),
-  };
-
-  const extraChecks = {
-    special: /[^A-Za-z0-9]/.test(password),
-    longPassword: password.length >= 12,
-  };
-
-  const baseScore = Object.values(passwordChecks).filter(Boolean).length;
-  const extraScore = Object.values(extraChecks).filter(Boolean).length;
-
-  // 1-2 base = Fraca, 3 base (minimum met) = Média, 3 base + extras = Forte
-  const strengthScore =
-    baseScore < 3
-      ? baseScore === 0
-        ? 0
-        : baseScore <= 2
-          ? 1
-          : 2
-      : extraScore >= 1
-        ? 3
-        : 2;
-
-  const strengthLabel =
-    strengthScore === 0
-      ? ""
-      : strengthScore === 1
-        ? "Fraca"
-        : strengthScore === 2
-          ? "Média"
-          : "Forte";
-
-  const strengthColor =
-    strengthScore === 1
-      ? "bg-critical"
-      : strengthScore === 2
-        ? "bg-attention"
-        : strengthScore === 3
-          ? "bg-positive"
-          : "bg-border";
-
-  const strengthTextColor =
-    strengthScore === 1
-      ? "text-critical"
-      : strengthScore === 2
-        ? "text-attention"
-        : strengthScore === 3
-          ? "text-positive"
-          : "text-text-tertiary";
 
   async function onSubmit(data: RegisterInput) {
     setServerError(null);
@@ -242,32 +187,7 @@ export function RegisterForm() {
             </button>
           </div>
 
-          {/* Strength bar */}
-          {password.length > 0 && (
-            <div className="mt-2">
-              <div className="flex gap-1">
-                <div
-                  className={`h-1 flex-1 rounded-full ${strengthScore >= 1 ? strengthColor : "bg-border"}`}
-                />
-                <div
-                  className={`h-1 flex-1 rounded-full ${strengthScore >= 2 ? strengthColor : "bg-border"}`}
-                />
-                <div
-                  className={`h-1 flex-1 rounded-full ${strengthScore >= 3 ? strengthColor : "bg-border"}`}
-                />
-              </div>
-              <span className={`mt-1.5 block text-xs font-medium ${strengthTextColor}`}>
-                {strengthLabel}
-              </span>
-            </div>
-          )}
-
-          {/* Password requirements checklist */}
-          <div className="mt-3 space-y-1">
-            <PasswordRequirement met={passwordChecks.length} label="Mínimo 8 caracteres" />
-            <PasswordRequirement met={passwordChecks.uppercase} label="Uma letra maiúscula" />
-            <PasswordRequirement met={passwordChecks.number} label="Um número" />
-          </div>
+          <PasswordStrengthIndicator control={control} />
         </div>
 
         {/* Confirmar senha */}
@@ -378,6 +298,91 @@ export function RegisterForm() {
         </Link>
       </div>
     </div>
+  );
+}
+
+function PasswordStrengthIndicator({ control }: { control: Control<RegisterInput> }) {
+  const password = useWatch({ control, name: "password", defaultValue: "" });
+
+  const passwordChecks = {
+    length: password.length >= 8,
+    uppercase: /[A-Z]/.test(password),
+    number: /[0-9]/.test(password),
+  };
+
+  const extraChecks = {
+    special: /[^A-Za-z0-9]/.test(password),
+    longPassword: password.length >= 12,
+  };
+
+  const baseScore = Object.values(passwordChecks).filter(Boolean).length;
+  const extraScore = Object.values(extraChecks).filter(Boolean).length;
+
+  const strengthScore =
+    baseScore < 3
+      ? baseScore === 0
+        ? 0
+        : baseScore <= 2
+          ? 1
+          : 2
+      : extraScore >= 1
+        ? 3
+        : 2;
+
+  const strengthLabel =
+    strengthScore === 0
+      ? ""
+      : strengthScore === 1
+        ? "Fraca"
+        : strengthScore === 2
+          ? "Média"
+          : "Forte";
+
+  const strengthColor =
+    strengthScore === 1
+      ? "bg-critical"
+      : strengthScore === 2
+        ? "bg-attention"
+        : strengthScore === 3
+          ? "bg-positive"
+          : "bg-border";
+
+  const strengthTextColor =
+    strengthScore === 1
+      ? "text-critical"
+      : strengthScore === 2
+        ? "text-attention"
+        : strengthScore === 3
+          ? "text-positive"
+          : "text-text-tertiary";
+
+  return (
+    <>
+      {password.length > 0 && (
+        <div className="mt-2">
+          <div className="flex gap-1">
+            <div
+              className={`h-1 flex-1 rounded-full ${strengthScore >= 1 ? strengthColor : "bg-border"}`}
+            />
+            <div
+              className={`h-1 flex-1 rounded-full ${strengthScore >= 2 ? strengthColor : "bg-border"}`}
+            />
+            <div
+              className={`h-1 flex-1 rounded-full ${strengthScore >= 3 ? strengthColor : "bg-border"}`}
+            />
+          </div>
+          <span className={`mt-1.5 block text-xs font-medium ${strengthTextColor}`}>
+            {strengthLabel}
+          </span>
+        </div>
+      )}
+
+      <div className="mt-3 space-y-1">
+        <PasswordRequirement met={passwordChecks.length} label="Mínimo 8 caracteres" />
+        <PasswordRequirement met={passwordChecks.uppercase} label="Uma letra maiúscula" />
+        <PasswordRequirement met={passwordChecks.number} label="Um número" />
+      </div>
+    </>
   );
 }
 
