@@ -43,6 +43,20 @@
       "when": 1773944505399,
       "tag": "0005_natural_zzzax",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1774010038912,
+      "tag": "0006_calm_firebird",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1774010527694,
+      "tag": "0007_remarkable_ironclad",
+      "breakpoints": true
     }
   ]
 }

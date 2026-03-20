@@ -9,6 +9,8 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
+  Landmark,
+  Wallet,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -25,6 +27,8 @@ interface NavItem {
 const navItems: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/credit-cards", label: "Cartões", icon: CreditCard },
+  { href: "/investments", label: "Investimentos", icon: Landmark },
+  { href: "/income-sources", label: "Receitas", icon: Wallet },
   { href: "/orcamentos", label: "Orçamentos", icon: PiggyBank },
   { href: "/checklist", label: "Checklist", icon: CheckSquare },
   { href: "/projecao", label: "Projeção", icon: TrendingUp },
