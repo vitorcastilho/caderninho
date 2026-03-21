@@ -1596,74 +1596,134 @@ function ChecklistSection() {
 
 /* ─── Coluna Mensal (Projeção) ─── */
 
-function MonthColumn({
-  month,
-  isCurrent = false,
-  items,
-  margin,
-  isPositive,
-  freedBadge,
-}: {
+/* ─── MonthColumn (proto-11 fiel) ─── */
+
+type MonthItemType = "fixed" | "variable" | "installment" | "planned"
+
+interface MonthItem {
+  name: string
+  value: string
+  type: MonthItemType
+  tag?: string        // ex: "8/10" para parcelas
+  approx?: boolean    // prefixo ~ para variáveis
+  finished?: boolean  // última parcela
+}
+
+interface MonthColumnProps {
   month: string
+  year?: string
   isCurrent?: boolean
-  items: { name: string; value: string; type: "fixed" | "variable" | "installment" | "planned" }[]
+  sections: { label: string; items: MonthItem[] }[]
   margin: string
   isPositive: boolean
   freedBadge?: string
-}) {
-  const typeStyles = {
-    fixed: "border-l-2 border-l-primary/40 bg-primary-light/30",
-    variable: "border-l-2 border-l-muted-foreground/30",
-    installment: "border-l-2 border-l-attention/40 bg-attention-bg/20",
-    planned: "border border-dashed border-primary/40 bg-primary-light/20",
-  }
+  marginExtra?: string
+}
 
+function MonthColumn({
+  month,
+  year,
+  isCurrent = false,
+  sections,
+  margin,
+  isPositive,
+  freedBadge,
+  marginExtra,
+}: MonthColumnProps) {
   return (
-    <div className={`flex min-w-[200px] flex-col rounded-[var(--radius-card)] border ${
-      isCurrent ? "border-primary/30 bg-primary-light/10" : "border-border bg-card"
-    }`}>
+    <div
+      className={`flex w-[192px] min-w-[192px] flex-col rounded-[var(--radius-md)] border bg-white shadow-sm transition-shadow hover:shadow-md ${
+        isCurrent
+          ? "border-2 border-positive"
+          : isPositive
+            ? "border-t-[3px] border-t-positive border-x border-b"
+            : "border-t-[3px] border-t-critical border-x border-b"
+      }`}
+    >
       {/* Header */}
-      <div className={`flex items-center gap-2 border-b px-4 py-3 ${
-        isCurrent ? "border-primary/20 bg-primary-light/30" : "border-border"
-      }`}>
-        <span className={`text-sm font-bold ${isCurrent ? "text-primary" : ""}`}>
-          {month}
-        </span>
-        {isCurrent && (
-          <Badge className="border-transparent bg-primary text-white text-[10px] font-semibold px-1.5 py-0">
-            Atual
-          </Badge>
-        )}
+      <div className="border-b px-3.5 pt-3 pb-2">
+        <div className="flex items-center gap-1.5">
+          <span className="text-[13px] font-bold">{month}</span>
+          {year && <span className="text-[11px] font-medium text-text-tertiary">{year}</span>}
+          {isCurrent && (
+            <span className="ml-1.5 rounded-[3px] bg-positive-bg px-1.5 py-px text-[10px] font-semibold uppercase tracking-[0.3px] text-positive-text">
+              Atual
+            </span>
+          )}
+        </div>
       </div>
 
-      {/* Items */}
-      <div className="flex-1 space-y-1.5 p-3">
-        {items.map((item, i) => (
-          <div
-            key={i}
-            className={`flex items-center justify-between rounded-md px-3 py-2 text-sm ${typeStyles[item.type]}`}
-          >
-            <span className="font-medium">{item.name}</span>
-            <span className="font-semibold tabular-nums">{item.value}</span>
+      {/* Body */}
+      <div className="flex flex-1 flex-col gap-1.5 p-2.5" style={{ minHeight: 120 }}>
+        {sections.map((section) => (
+          <div key={section.label}>
+            {/* Section label */}
+            <div className="mb-0.5 mt-1 text-[10px] font-semibold uppercase tracking-[0.5px] text-text-tertiary first:mt-0">
+              {section.label}
+            </div>
+            {/* Items */}
+            {section.items.map((item, i) => {
+              const baseStyles: Record<MonthItemType, string> = {
+                fixed: "border border-border bg-background",
+                variable: "border border-border bg-background",
+                installment: item.finished
+                  ? "border border-positive bg-positive-bg"
+                  : "border border-[#DDD6FE] bg-[#F5F3FF]",
+                planned: "border-[1.5px] border-dashed border-primary bg-primary-light cursor-grab hover:shadow-[0_2px_6px_rgba(79,70,229,0.15)] hover:-translate-y-px",
+              }
+              return (
+                <div
+                  key={i}
+                  className={`flex items-center justify-between rounded-[6px] px-2.5 py-2 text-[12px] ${baseStyles[item.type]}`}
+                >
+                  <div className="flex min-w-0 flex-1 items-center gap-1.5">
+                    {item.type === "planned" && (
+                      <span className="text-[12px] text-primary/60">≡</span>
+                    )}
+                    <span className="truncate font-medium">{item.name}</span>
+                    {item.tag && (
+                      <span className={`shrink-0 rounded-[2px] px-1 py-px text-[9px] font-semibold ${
+                        item.finished
+                          ? "bg-positive-bg text-positive-text"
+                          : "bg-[#E0E7FF] text-primary"
+                      }`}>
+                        {item.tag}
+                      </span>
+                    )}
+                  </div>
+                  <span className="shrink-0 text-[11px] font-semibold tabular-nums">
+                    {item.approx && <span className="text-text-tertiary">~</span>}
+                    {item.value}
+                  </span>
+                </div>
+              )
+            })}
           </div>
         ))}
+
+        {/* Freed badge */}
         {freedBadge && (
-          <div className="flex items-center justify-center rounded-md border border-dashed border-positive/40 bg-positive-bg/20 px-3 py-1.5 text-xs font-semibold text-positive-text">
+          <div className="mt-0.5 rounded-[6px] border border-positive bg-positive-bg px-2 py-1 text-center text-[10px] font-semibold text-positive-text">
             {freedBadge}
           </div>
         )}
       </div>
 
       {/* Footer — Margin */}
-      <div className="border-t border-border px-4 py-2.5">
-        <div className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${
+      <div className="border-t px-2.5 py-2">
+        <div className={`flex items-center justify-between rounded-[6px] px-2.5 py-1.5 text-[12px] font-semibold ${
           isPositive
             ? "bg-positive-bg text-positive-text"
             : "bg-critical-bg text-critical-text"
         }`}>
-          <span>Margem</span>
-          <span className="tabular-nums">{margin}</span>
+          <span className="text-[11px] font-medium">Margem</span>
+          <span className="font-bold tabular-nums">{margin}</span>
         </div>
+        {marginExtra && (
+          <p className="mt-0.5 text-right text-[10px] font-medium text-positive-text/80">
+            {marginExtra}
+          </p>
+        )}
       </div>
     </div>
   )
@@ -1674,89 +1734,114 @@ function ColunaMensalSection() {
     <Section id="coluna-mensal" title="Coluna Mensal (Projeção)">
       <div className="space-y-6">
         {/* Legenda */}
-        <div>
-          <h3 className="mb-3 text-sm font-medium">Legenda de tipos</h3>
-          <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <div className="h-3 w-3 rounded border-l-2 border-l-primary/40 bg-primary-light/30" />
-              <span>Fixo (não arrastável)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="h-3 w-3 rounded border border-dashed border-primary/40 bg-primary-light/20" />
-              <span>Planejado (arrastável)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="h-3 w-3 rounded bg-positive-bg" />
-              <span>Margem positiva</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="h-3 w-3 rounded bg-critical-bg" />
-              <span>Margem negativa</span>
-            </div>
-          </div>
+        <div className="flex flex-wrap items-center gap-5 rounded-[6px] border bg-white px-3.5 py-2.5 text-[12px] text-text-secondary">
+          <span className="flex items-center gap-1.5">
+            <span className="size-3.5 shrink-0 rounded-[3px] border bg-background" />
+            Fixo (não arrastável)
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="size-3.5 shrink-0 rounded-[3px] border-[1.5px] border-dashed border-primary bg-primary-light" />
+            Planejado (arrastável)
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="size-3.5 shrink-0 rounded-[3px] border border-positive bg-positive-bg" />
+            Margem positiva
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="size-3.5 shrink-0 rounded-[3px] border border-critical bg-critical-bg" />
+            Margem negativa
+          </span>
         </div>
 
         {/* Colunas */}
-        <div>
-          <h3 className="mb-3 text-sm font-medium">Colunas de meses (scroll horizontal)</h3>
-          <div className="flex gap-3 overflow-x-auto pb-2">
-            <MonthColumn
-              month="Mar 2026"
-              isCurrent={true}
-              items={[
-                { name: "Escola", value: "R$ 2.800", type: "fixed" },
-                { name: "Aluguel", value: "R$ 1.800", type: "fixed" },
-                { name: "Supermercado", value: "~R$ 3.000", type: "variable" },
-                { name: "Fotos 8/10", value: "R$ 171", type: "installment" },
-              ]}
-              margin="R$ 750"
-              isPositive={true}
-            />
-            <MonthColumn
-              month="Abr 2026"
-              items={[
-                { name: "Escola", value: "R$ 2.800", type: "fixed" },
-                { name: "Aluguel", value: "R$ 1.800", type: "fixed" },
-                { name: "Fotos 9/10", value: "R$ 171", type: "installment" },
-              ]}
-              margin="R$ 920"
-              isPositive={true}
-            />
-            <MonthColumn
-              month="Jun 2026"
-              items={[
-                { name: "Escola", value: "R$ 2.800", type: "fixed" },
-                { name: "Aluguel", value: "R$ 1.800", type: "fixed" },
-              ]}
-              margin="R$ 1.640"
-              isPositive={true}
-              freedBadge="Libera R$ 171/mês"
-            />
-            <MonthColumn
-              month="Set 2026"
-              items={[
-                { name: "Escola", value: "R$ 2.800", type: "fixed" },
-                { name: "Seguro Carro", value: "R$ 2.800", type: "planned" },
-                { name: "Troca Óleo", value: "R$ 500", type: "planned" },
-              ]}
-              margin="-R$ 1.600"
-              isPositive={false}
-            />
-          </div>
+        <div className="flex gap-3 overflow-x-auto pb-2">
+          <MonthColumn
+            month="Mar 2026"
+            isCurrent
+            sections={[
+              { label: "Fixos", items: [
+                { name: "Escola", value: "R$2.800", type: "fixed" },
+                { name: "Aluguel", value: "R$1.800", type: "fixed" },
+                { name: "Internet", value: "R$158", type: "fixed" },
+              ]},
+              { label: "Variáveis", items: [
+                { name: "Supermercado", value: "R$3.000", approx: true, type: "variable" },
+                { name: "Gasolina", value: "R$600", approx: true, type: "variable" },
+              ]},
+              { label: "Parcelas", items: [
+                { name: "Fotos", value: "R$171", type: "installment", tag: "8/10" },
+              ]},
+            ]}
+            margin="R$750"
+            isPositive
+          />
+          <MonthColumn
+            month="Mai 2026"
+            sections={[
+              { label: "Fixos", items: [
+                { name: "Escola", value: "R$2.800", type: "fixed" },
+                { name: "Aluguel", value: "R$1.800", type: "fixed" },
+                { name: "Internet", value: "R$158", type: "fixed" },
+              ]},
+              { label: "Variáveis", items: [
+                { name: "Supermercado", value: "R$3.000", approx: true, type: "variable" },
+                { name: "Gasolina", value: "R$600", approx: true, type: "variable" },
+              ]},
+              { label: "Parcelas", items: [
+                { name: "Fotos", value: "R$171", type: "installment", tag: "10/10", finished: true },
+              ]},
+            ]}
+            margin="R$920"
+            isPositive
+          />
+          <MonthColumn
+            month="Jun 2026"
+            sections={[
+              { label: "Fixos", items: [
+                { name: "Escola", value: "R$2.800", type: "fixed" },
+                { name: "Aluguel", value: "R$1.800", type: "fixed" },
+                { name: "Internet", value: "R$158", type: "fixed" },
+              ]},
+              { label: "Variáveis", items: [
+                { name: "Supermercado", value: "R$3.000", approx: true, type: "variable" },
+                { name: "Gasolina", value: "R$600", approx: true, type: "variable" },
+              ]},
+            ]}
+            margin="R$1.091"
+            isPositive
+            freedBadge="Libera R$171/mês"
+            marginExtra="+R$171 liberado"
+          />
+          <MonthColumn
+            month="Set 2026"
+            sections={[
+              { label: "Fixos", items: [
+                { name: "Escola", value: "R$2.800", type: "fixed" },
+                { name: "Aluguel", value: "R$1.800", type: "fixed" },
+                { name: "Internet", value: "R$158", type: "fixed" },
+              ]},
+              { label: "Planejado", items: [
+                { name: "Seguro Carro", value: "R$2.800", type: "planned" },
+                { name: "Troca Óleo", value: "R$500", type: "planned" },
+              ]},
+            ]}
+            margin="-R$1.600"
+            isPositive={false}
+          />
         </div>
 
         {/* Range selector */}
         <div>
           <h3 className="mb-3 text-sm font-medium">Seletor de período</h3>
-          <div className="inline-flex gap-0.5 rounded-[var(--radius-card)] border border-border bg-card p-[3px]">
-            <button type="button" className="cursor-pointer rounded-[9px] px-3.5 py-[7px] text-sm font-medium text-muted-foreground transition-all hover:bg-muted hover:text-foreground">6 meses</button>
-            <button type="button" className="cursor-pointer rounded-[9px] bg-primary px-3.5 py-[7px] text-sm font-semibold text-white">12 meses</button>
-            <button type="button" className="cursor-pointer rounded-[9px] px-3.5 py-[7px] text-sm font-medium text-muted-foreground transition-all hover:bg-muted hover:text-foreground">24 meses</button>
+          <div className="inline-flex overflow-hidden rounded-[6px] border bg-background">
+            <button type="button" className="cursor-pointer border-r px-3.5 py-1.5 text-[13px] font-medium text-text-secondary transition-colors hover:bg-white hover:text-foreground">6 meses</button>
+            <button type="button" className="cursor-pointer border-r bg-primary px-3.5 py-1.5 text-[13px] font-semibold text-white">12 meses</button>
+            <button type="button" className="cursor-pointer px-3.5 py-1.5 text-[13px] font-medium text-text-secondary transition-colors hover:bg-white hover:text-foreground">24 meses</button>
           </div>
         </div>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
-        Padrão Kanban do proto-11: uma coluna por mês com itens categorizados (fixo, variável, parcela, planejado). Margem no footer (verde positiva, vermelho negativa). Items planejados são arrastáveis (borda tracejada). Badge "Libera X/mês" quando parcelas terminam.
+        Padrão Kanban do proto-11: coluna 192px por mês. Seções: FIXOS, VARIÁVEIS, PARCELAS, PLANEJADO. Itens fixos: bg branco + borda. Parcelas: bg roxo claro + tag (8/10). Parcela final: bg verde + tag verde. Planejados: borda dashed + bg primary-light + cursor grab. Badge "Libera" quando parcela termina. Margem no footer: verde positiva, vermelho negativa. Border-top colorida (3px) por estado da margem. Mês atual: border 2px verde + badge "ATUAL".
       </p>
     </Section>
   )
@@ -1767,92 +1852,93 @@ function ColunaMensalSection() {
 function PainelSimulacaoSection() {
   return (
     <Section id="painel-simulacao" title="Painel de Simulação">
-      <div className="max-w-lg">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-lg">🎯</span>
-              Simular meta — "Dá pra ir?"
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Form */}
-            <div className="grid gap-3">
-              <div className="grid gap-1.5">
-                <Label>O que você quer?</Label>
-                <Input defaultValue="Viagem São Paulo" placeholder="Ex: Viagem, compra..." />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="grid gap-1.5">
-                  <Label>Quanto custa?</Label>
-                  <Input defaultValue="R$ 3.500" inputMode="numeric" />
-                </div>
-                <div className="grid gap-1.5">
-                  <Label>Quando?</Label>
-                  <Input defaultValue="Jun 2026" />
-                </div>
-              </div>
-              <Button className="w-full">
-                ⚡ Simular
-              </Button>
+      <Card className="max-w-2xl overflow-hidden">
+        {/* Header */}
+        <div className="border-b px-6 pt-5 pb-4">
+          <h3 className="flex items-center gap-2 text-base font-bold">
+            <span>🏆</span>
+            Simular meta — "Dá pra ir?"
+          </h3>
+        </div>
+
+        {/* Body — grid 2 colunas */}
+        <div className="grid grid-cols-[1fr_1.4fr]">
+          {/* Form */}
+          <div className="flex flex-col gap-3.5 border-r p-5">
+            <div className="grid gap-1">
+              <label className="text-[12px] font-semibold text-text-secondary">O que você quer?</label>
+              <Input defaultValue="Viagem São Paulo" />
+            </div>
+            <div className="grid gap-1">
+              <label className="text-[12px] font-semibold text-text-secondary">Quanto custa?</label>
+              <Input defaultValue="R$ 3.500" inputMode="numeric" />
+            </div>
+            <div className="grid gap-1">
+              <label className="text-[12px] font-semibold text-text-secondary">Quando?</label>
+              <Select defaultValue="jun">
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="jun">Jun 2026</SelectItem>
+                  <SelectItem value="jul">Jul 2026</SelectItem>
+                  <SelectItem value="ago">Ago 2026</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Button className="mt-1 w-full">
+              ⚡ Simular
+            </Button>
+          </div>
+
+          {/* Result */}
+          <div className="flex flex-col gap-4 p-5">
+            {/* Veredito */}
+            <div className="flex items-center gap-2 rounded-[6px] border border-positive bg-positive-bg px-3.5 py-2.5 text-sm font-semibold text-positive-text">
+              <span>✓</span>
+              Viável com ajustes
             </div>
 
-            {/* Result */}
-            <div className="space-y-3 rounded-[var(--radius-card)] border border-positive/20 bg-positive-bg/30 p-4">
-              <div className="text-sm font-bold text-positive-text">
-                ✓ Viável com ajustes
-              </div>
-              <p className="text-sm text-foreground">
-                Economize <strong>R$ 945/mês</strong> nos próximos <strong>4 meses</strong> para alcançar sua meta de <strong>R$ 3.500</strong> em Junho 2026.
-              </p>
+            <p className="text-[13px] leading-relaxed text-text-secondary">
+              Economize <strong className="text-foreground">R$ 945/mês</strong> nos próximos <strong className="text-foreground">4 meses</strong> para alcançar sua meta de <strong className="text-foreground">R$ 3.500</strong> em Junho 2026.
+            </p>
 
-              <div className="mt-2 text-xs font-semibold text-muted-foreground">De onde cortar:</div>
-              <div className="space-y-2">
-                <div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">Restaurante</span>
-                    <span className="font-semibold text-critical tabular-nums">-R$ 750/mês</span>
+            {/* Cortes */}
+            <div>
+              <p className="mb-1 text-[13px] font-bold">De onde cortar:</p>
+              <div className="space-y-2.5">
+                {[
+                  { name: "Restaurante", saving: "-R$ 750/mês", detail: "Atual R$ 2.500 → reduzir 30%", pct: 74, color: "bg-[#6366F1]" },
+                  { name: "Delivery", saving: "-R$ 180/mês", detail: "Atual R$ 900 → reduzir 20%", pct: 18, color: "bg-[#8B5CF6]" },
+                  { name: "Compras pessoais", saving: "-R$ 75/mês", detail: "Atual R$ 500 → reduzir 15%", pct: 8, color: "bg-[#A78BFA]" },
+                ].map((cut) => (
+                  <div key={cut.name} className="space-y-1">
+                    <div className="flex items-center justify-between text-[12px]">
+                      <span className="font-medium">{cut.name}</span>
+                      <span className="font-bold text-positive-text tabular-nums">{cut.saving}</span>
+                    </div>
+                    <p className="text-[11px] text-text-secondary">{cut.detail}</p>
+                    <div className="h-1.5 w-full overflow-hidden rounded-[3px] bg-background">
+                      <div className={`h-full rounded-[3px] ${cut.color}`} style={{ width: `${cut.pct}%` }} />
+                    </div>
                   </div>
-                  <p className="text-xs text-muted-foreground">Atual R$ 2.500 → reduzir 30%</p>
-                  <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-muted">
-                    <div className="h-full rounded-full bg-critical/60" style={{ width: "70%" }} />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">Delivery</span>
-                    <span className="font-semibold text-critical tabular-nums">-R$ 180/mês</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Atual R$ 900 → reduzir 20%</p>
-                  <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-muted">
-                    <div className="h-full rounded-full bg-alert/60" style={{ width: "80%" }} />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">Compras pessoais</span>
-                    <span className="font-semibold text-critical tabular-nums">-R$ 75/mês</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Atual R$ 500 → reduzir 15%</p>
-                  <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-muted">
-                    <div className="h-full rounded-full bg-attention/60" style={{ width: "85%" }} />
-                  </div>
-                </div>
+                ))}
               </div>
-
-              <div className="mt-3 flex items-center justify-between rounded-md bg-primary-light px-3 py-2 text-sm font-bold text-primary">
-                <span>Total possível</span>
-                <span className="tabular-nums">R$ 1.005/mês</span>
-              </div>
-              <p className="text-center text-xs text-muted-foreground">
-                R$ 60 acima do necessário — folga para imprevistos
-              </p>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+
+            {/* Total */}
+            <div className="flex items-center justify-between rounded-[6px] border border-[#C7D2FE] bg-primary-light px-3.5 py-2.5">
+              <span className="text-[13px] font-semibold text-primary">Total possível</span>
+              <span className="text-[15px] font-bold text-primary tabular-nums">R$ 1.005/mês</span>
+            </div>
+            <p className="text-right text-[11px] text-text-secondary">
+              R$ 60 acima do necessário — folga para imprevistos
+            </p>
+          </div>
+        </div>
+      </Card>
       <p className="mt-3 text-xs text-muted-foreground">
-        Padrão do proto-11: formulário de meta + resultado com veredito (viável/inviável) + recomendações de corte com barras visuais + total possível. Veredito verde = viável, vermelho = inviável.
+        Padrão do proto-11: grid 2 colunas (form 42% + resultado 58%). Veredito: bg-positive-bg + border-positive + text-positive-text. Barras de corte: cores em escala (indigo 6366F1→A78BFA). Total: bg-primary-light + border #C7D2FE. Nota de folga alinhada à direita.
       </p>
     </Section>
   )
