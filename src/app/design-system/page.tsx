@@ -116,9 +116,12 @@ export default function DesignSystemPage() {
       <ControleSegmentadoSection />
       <ListaTransacoesSection />
       <ChecklistSection />
+      <ParcelasAtivasSection />
+      <CardCartaoCreditoSection />
       <ListaColapsavelSection />
       <EmptyStatesSection />
       {/* Visualizações */}
+      <GraficoBarrasSection />
       <GradeTimelineSection />
       <TreemapSection />
       <TooltipDetalheSection />
@@ -1589,6 +1592,270 @@ function ChecklistSection() {
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
         Padrão do proto-10: 3 grupos (Recorrente no Cartão, Variável/Fatura, Manual). Checkbox customizado com animação. Card brand badges (VISA/Mastercard) inline. Ações "Editar"/"Detalhes" em texto no hover. Badge "Atualizar fatura" para estimativas.
+      </p>
+    </Section>
+  )
+}
+
+/* ─── Parcelas Ativas ─── */
+
+const parcelasData = [
+  { compra: "Fotos", total: "R$ 1.710,00", parcela: "8/10", restam: 2, mensal: "R$ 171,00", termino: "Mai 2026" },
+  { compra: "Amazon", total: "R$ 750,00", parcela: "2/3", restam: 1, mensal: "R$ 250,00", termino: "Abr 2026" },
+  { compra: "Oculos", total: "R$ 1.200,00", parcela: "4/12", restam: 8, mensal: "R$ 100,00", termino: "Nov 2026" },
+]
+
+const timelineItems = [
+  { name: "Fotos", month: "Mai", width: "25%", gradient: "from-[#6366F1] to-[#818CF8]", libera: "R$ 171,00/mês" },
+  { name: "Amazon", month: "Abr", width: "12%", gradient: "from-[#F59E0B] to-[#FBBF24]", libera: "R$ 250,00/mês" },
+  { name: "Oculos", month: "Nov", width: "90%", gradient: "from-[#14B8A6] to-[#2DD4BF]", libera: "R$ 100,00/mês" },
+]
+
+function ParcelasAtivasSection() {
+  return (
+    <Section id="parcelas-ativas" title="Parcelas Ativas">
+      <Card className="max-w-2xl overflow-hidden">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-sm">Parcelas Ativas</CardTitle>
+          <span className="text-xs text-muted-foreground">3 series</span>
+        </CardHeader>
+        <CardContent className="p-0">
+          {/* Tabela de parcelas */}
+          <table className="w-full text-[13px]">
+            <thead>
+              <tr className="border-b">
+                <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.04em] text-muted-foreground">Compra</th>
+                <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.04em] text-muted-foreground">Total</th>
+                <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.04em] text-muted-foreground">Parcela</th>
+                <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.04em] text-muted-foreground">Restam</th>
+                <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.04em] text-muted-foreground">Mensal</th>
+                <th className="px-4 py-2 text-right text-[11px] font-semibold uppercase tracking-[0.04em] text-muted-foreground">Termino</th>
+              </tr>
+            </thead>
+            <tbody>
+              {parcelasData.map((p) => (
+                <tr key={p.compra} className="border-b border-muted/50 transition-colors hover:bg-muted/30">
+                  <td className="px-4 py-2.5 font-medium">{p.compra}</td>
+                  <td className="px-4 py-2.5 font-medium tabular-nums">{p.total}</td>
+                  <td className="px-4 py-2.5 text-muted-foreground">{p.parcela}</td>
+                  <td className="px-4 py-2.5 text-muted-foreground">{p.restam}</td>
+                  <td className="px-4 py-2.5 font-semibold tabular-nums">{p.mensal}</td>
+                  <td className="px-4 py-2.5 text-right text-muted-foreground">{p.termino}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Timeline de parcelas */}
+          <div className="border-t px-4 pb-4 pt-3">
+            <p className="mb-3 text-xs font-semibold text-muted-foreground">Linha do tempo das parcelas</p>
+            <div className="space-y-2.5">
+              {timelineItems.map((t) => (
+                <div key={t.name} className="flex items-center gap-2.5">
+                  <span className="w-14 shrink-0 text-xs font-medium text-muted-foreground">{t.name}</span>
+                  <div className="relative h-5 flex-1 overflow-hidden rounded bg-muted/50">
+                    <div
+                      className={`flex h-full items-center justify-end rounded bg-gradient-to-r ${t.gradient} pr-2 text-[10px] font-semibold text-white transition-all duration-600`}
+                      style={{ width: t.width }}
+                    >
+                      {t.month}
+                    </div>
+                  </div>
+                  <span className="w-24 shrink-0 text-right text-[10px] font-medium text-muted-foreground/70">libera {t.libera}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Padrão do proto-12: tabela de parcelas ativas com colunas (Compra, Total, Parcela, Restam, Mensal, Termino). Contador "3 series" no header. Timeline abaixo: barras horizontais com gradientes por série, badge do mês de encerramento, texto "libera R$ X/mês". Cores: indigo (roxo), amber (amarelo), teal (verde-água).
+      </p>
+    </Section>
+  )
+}
+
+/* ─── Card Cartão de Crédito ─── */
+
+const creditCards = [
+  {
+    name: "Latam Pass Visa",
+    flag: "visa" as const,
+    fechaDia: 7,
+    venceDia: 15,
+    disponivel: "R$ 2.820,00",
+    limite: "R$ 10.000,00",
+    usoPct: 71.8,
+    usoStatus: "critical" as const,
+  },
+  {
+    name: "Pão de Açúcar Master",
+    flag: "master" as const,
+    fechaDia: 3,
+    venceDia: 10,
+    disponivel: "R$ 3.020,00",
+    limite: "R$ 5.000,00",
+    usoPct: 39.6,
+    usoStatus: "ok" as const,
+  },
+  {
+    name: "Uniclass Visa",
+    flag: "visa" as const,
+    fechaDia: 10,
+    venceDia: 20,
+    disponivel: "R$ 7.000,00",
+    limite: "R$ 8.000,00",
+    usoPct: 12.5,
+    usoStatus: "ok" as const,
+  },
+]
+
+function CCFlagIcon({ flag }: { flag: "visa" | "master" }) {
+  if (flag === "visa") {
+    return (
+      <div className="flex h-[24px] w-9 items-center justify-center rounded border border-black/5 bg-[#1A1F71] text-[8px] font-extrabold italic text-white">
+        VISA
+      </div>
+    )
+  }
+  return (
+    <div className="relative flex h-[24px] w-9 items-center justify-center overflow-hidden rounded border border-black/5 bg-[#252525]">
+      <div className="absolute left-[3px] top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-[#EB001B]" />
+      <div className="absolute right-[3px] top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-[#F79E1B]" />
+    </div>
+  )
+}
+
+function CardCartaoCreditoSection() {
+  return (
+    <Section id="card-cartao-credito" title="Card Cartão de Crédito">
+      <div className="grid max-w-3xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {creditCards.map((cc) => (
+          <Card key={cc.name}>
+            <CardContent className="p-5">
+              {/* Flag + nome */}
+              <div className="mb-4 flex items-center gap-3">
+                <CCFlagIcon flag={cc.flag} />
+                <span className="text-sm font-bold">{cc.name}</span>
+              </div>
+
+              {/* Datas */}
+              <div className="mb-3 flex gap-6">
+                <div>
+                  <p className="text-[11px] text-muted-foreground/60">Fecha dia</p>
+                  <p className="text-sm font-semibold">{cc.fechaDia}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] text-muted-foreground/60">Vence dia</p>
+                  <p className="text-sm font-semibold">{cc.venceDia}</p>
+                </div>
+              </div>
+
+              {/* Limite usado */}
+              <div className="mt-4">
+                <div className="mb-1.5 flex justify-between text-xs">
+                  <span className="text-muted-foreground">Disponível <span className="font-semibold text-foreground tabular-nums">{cc.disponivel}</span></span>
+                  <span className="text-muted-foreground">Limite <span className="font-medium tabular-nums">{cc.limite}</span></span>
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className={`h-full rounded-full transition-all ${
+                      cc.usoStatus === "critical" ? "bg-critical" : cc.usoPct > 30 ? "bg-attention" : "bg-primary"
+                    }`}
+                    style={{ width: `${cc.usoPct}%` }}
+                  />
+                </div>
+                <p className="mt-1 text-right text-[11px] font-medium tabular-nums text-muted-foreground">
+                  {cc.usoPct.toLocaleString("pt-BR", { minimumFractionDigits: 1 })}% usado
+                </p>
+              </div>
+
+              {/* Ações */}
+              <div className="mt-4 flex gap-2 border-t pt-3">
+                <Button variant="outline" size="sm" className="flex-1">Editar</Button>
+                <Button variant="destructive" size="sm" className="flex-1">Remover</Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Padrão do proto-14: card com flag (VISA azul #1A1F71, Mastercard com círculos EB001B/F79E1B), datas de fechamento/vencimento, barra de limite usado. Cores de uso: azul (ok &lt;30%), amber (atenção 30-70%), vermelho (crítico &gt;70%). Ações: Editar + Remover.
+      </p>
+    </Section>
+  )
+}
+
+/* ─── Gráfico de Barras ─── */
+
+const barChartData = [
+  { month: "Mar", value: 4200, type: "current" as const, note: "Fatura atual (estimativa)" },
+  { month: "Abr", value: 3800, type: "future" as const, note: "Amazon encerra (3/3)" },
+  { month: "Mai", value: 3600, type: "future" as const, note: "Fotos encerra (10/10)" },
+  { month: "Jun", value: 3430, type: "future" as const, note: "Sem parcelas encerrando" },
+  { month: "Jul", value: 3430, type: "future" as const, note: "Sem parcelas encerrando" },
+  { month: "Ago", value: 3430, type: "future" as const, note: "Sem parcelas encerrando" },
+]
+
+function GraficoBarrasSection() {
+  const maxVal = Math.max(...barChartData.map(d => d.value))
+  const [hoveredBar, setHoveredBar] = useState<string | null>(null)
+
+  return (
+    <Section id="grafico-barras" title="Gráfico de Barras">
+      <Card className="max-w-lg overflow-hidden">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-sm">Projeção de Faturas</CardTitle>
+          <span className="text-xs text-muted-foreground">Próximos 6 meses</span>
+        </CardHeader>
+        <CardContent>
+          {/* Barras */}
+          <div className="flex items-end gap-3" style={{ height: 180 }}>
+            {barChartData.map((d) => {
+              const heightPx = (d.value / maxVal) * 140
+              return (
+                <div
+                  key={d.month}
+                  className="relative flex flex-1 flex-col items-center justify-end"
+                  style={{ height: "100%" }}
+                  onMouseEnter={() => setHoveredBar(d.month)}
+                  onMouseLeave={() => setHoveredBar(null)}
+                >
+                  {/* Valor */}
+                  <span className="mb-1 text-[11px] font-semibold text-muted-foreground tabular-nums">
+                    R$ {d.value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                  </span>
+                  {/* Barra */}
+                  <div
+                    className={`w-full max-w-14 cursor-pointer rounded-t-md rounded-b-[2px] transition-opacity hover:opacity-85 ${
+                      d.type === "current"
+                        ? "bg-gradient-to-b from-[#EAB308] to-[#F59E0B]"
+                        : "bg-gradient-to-b from-[#6366F1] to-[#818CF8]"
+                    }`}
+                    style={{ height: `${heightPx}px` }}
+                  />
+                  {/* Label mês */}
+                  <span className="mt-2 text-xs font-medium text-muted-foreground">{d.month}</span>
+                  {/* Tooltip */}
+                  {hoveredBar === d.month && (
+                    <div className="absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-foreground px-2.5 py-1.5 text-[11px] font-semibold text-background shadow-lg">
+                      {d.note}
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-foreground" />
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Trend banner */}
+          <div className="mt-3.5 rounded-lg bg-positive-bg px-3 py-2 text-xs font-medium text-positive-text">
+            ↓ Tendência: fatura diminuindo à medida que parcelas terminam
+          </div>
+        </CardContent>
+      </Card>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Padrão do proto-12: barras verticais CSS puro. Mês atual: gradiente amber (#EAB308→#F59E0B). Futuros: gradiente indigo (#6366F1→#818CF8). Valor no topo, mês embaixo. Hover mostra tooltip escuro com nota. Banner de tendência em bg-positive-bg abaixo.
       </p>
     </Section>
   )

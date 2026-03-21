@@ -29,9 +29,12 @@ const sections = [
   { id: "controle-segmentado", label: "Controle Segmentado" },
   { id: "lista-transacoes", label: "Lista de Transações" },
   { id: "checklist", label: "Checklist" },
+  { id: "parcelas-ativas", label: "Parcelas Ativas" },
+  { id: "card-cartao-credito", label: "Card Cartão de Crédito" },
   { id: "lista-colapsavel", label: "Lista Colapsável" },
   { id: "empty-states", label: "Empty States" },
   // Visualizações
+  { id: "grafico-barras", label: "Gráfico de Barras" },
   { id: "grade-timeline", label: "Grade Timeline" },
   { id: "treemap", label: "Treemap / Mapa Visual" },
   { id: "tooltip-detalhe", label: "Tooltip de Detalhe" },
