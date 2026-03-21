@@ -649,6 +649,30 @@ function BannersSection() {
           </Button>
         </div>
 
+        {/* Critical banner — vencido */}
+        <div className="relative flex items-center gap-3 rounded-[var(--radius-card)] border border-critical/20 bg-critical-bg px-5 py-3.5">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-critical">
+            <AlertTriangle className="size-[18px] text-white" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-critical-text">
+              Condominio venceu ha 3 dias — R$ 580,00
+            </p>
+            <p className="text-xs text-critical-text/80">
+              Vencimento era 17/03. Verifique multa e juros.
+            </p>
+          </div>
+          <Button size="sm" className="shrink-0 bg-critical text-white hover:bg-critical/90">
+            Marcar como pago
+          </Button>
+          <button
+            type="button"
+            className="absolute top-2 right-2 rounded p-1 text-critical-text/50 transition-opacity hover:text-critical-text"
+          >
+            <X className="size-3.5" />
+          </button>
+        </div>
+
         {/* Positive banner */}
         <div className="flex items-center gap-3 rounded-[var(--radius-card)] border border-positive/20 bg-positive-bg px-5 py-3.5">
           <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-positive">
@@ -662,7 +686,7 @@ function BannersSection() {
         </div>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
-        Icone circular colorido + texto + CTA opcional + dismiss. Cores: info (azul), attention (amarelo), positive (verde).
+        Icone circular colorido + texto + CTA opcional + dismiss. Cores: info (azul), attention (amarelo), critical (vermelho/vencido), positive (verde).
       </p>
     </Section>
   )
