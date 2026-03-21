@@ -610,8 +610,8 @@ function BannersSection() {
   return (
     <Section id="banners" title="Banners">
       <div className="space-y-4 max-w-2xl">
-        {/* Info banner — padrão proto-10 checklist */}
-        <div className="relative flex items-center gap-3 rounded-[var(--radius-card)] border border-info/20 bg-info-bg px-5 py-3.5">
+        {/* Info banner */}
+        <div className="flex items-center gap-3 rounded-[var(--radius-card)] border border-info/20 bg-info-bg px-5 py-3.5">
           <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-info">
             <Clock className="size-[18px] text-white" />
           </div>
@@ -625,14 +625,14 @@ function BannersSection() {
           </Button>
           <button
             type="button"
-            className="absolute top-2 right-2 rounded p-1 text-info-text/50 transition-opacity hover:text-info-text"
+            className="shrink-0 cursor-pointer rounded p-1 text-info-text/50 transition-colors hover:text-info-text"
           >
-            <X className="size-3.5" />
+            <X className="size-4" />
           </button>
         </div>
 
         {/* Attention banner */}
-        <div className="relative flex items-center gap-3 rounded-[var(--radius-card)] border border-attention/20 bg-attention-bg px-5 py-3.5">
+        <div className="flex items-center gap-3 rounded-[var(--radius-card)] border border-attention/20 bg-attention-bg px-5 py-3.5">
           <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-attention">
             <AlertTriangle className="size-[18px] text-white" />
           </div>
@@ -647,10 +647,16 @@ function BannersSection() {
           <Button size="sm" className="shrink-0 bg-attention text-white hover:bg-attention/90">
             Atualizar faturas
           </Button>
+          <button
+            type="button"
+            className="shrink-0 cursor-pointer rounded p-1 text-attention-text/50 transition-colors hover:text-attention-text"
+          >
+            <X className="size-4" />
+          </button>
         </div>
 
         {/* Critical banner — vencido */}
-        <div className="relative flex items-center gap-3 rounded-[var(--radius-card)] border border-critical/20 bg-critical-bg px-5 py-3.5">
+        <div className="flex items-center gap-3 rounded-[var(--radius-card)] border border-critical/20 bg-critical-bg px-5 py-3.5">
           <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-critical">
             <AlertTriangle className="size-[18px] text-white" />
           </div>
@@ -667,9 +673,9 @@ function BannersSection() {
           </Button>
           <button
             type="button"
-            className="absolute top-2 right-2 rounded p-1 text-critical-text/50 transition-opacity hover:text-critical-text"
+            className="shrink-0 cursor-pointer rounded p-1 text-critical-text/50 transition-colors hover:text-critical-text"
           >
-            <X className="size-3.5" />
+            <X className="size-4" />
           </button>
         </div>
 
@@ -683,6 +689,12 @@ function BannersSection() {
               Todas as contas do mes estao pagas!
             </p>
           </div>
+          <button
+            type="button"
+            className="shrink-0 cursor-pointer rounded p-1 text-positive-text/50 transition-colors hover:text-positive-text"
+          >
+            <X className="size-4" />
+          </button>
         </div>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
@@ -702,14 +714,14 @@ function SummaryCardsSection() {
           <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
             Total do mes
           </p>
-          <p className="text-2xl font-bold tabular-nums">R$ 14.858</p>
+          <p className="text-2xl font-bold tabular-nums">R$ 14.858,00</p>
         </div>
         <div className="rounded-[var(--radius-card)] border border-border bg-card p-5 transition-shadow hover:shadow-sm">
           <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
             Confirmado
           </p>
           <p className="text-2xl font-bold tabular-nums text-positive-text">
-            R$ 5.044
+            R$ 5.044,00
           </p>
         </div>
         <div className="rounded-[var(--radius-card)] border border-border bg-card p-5 transition-shadow hover:shadow-sm">
@@ -717,7 +729,7 @@ function SummaryCardsSection() {
             Pendente
           </p>
           <p className="text-2xl font-bold tabular-nums text-attention-text">
-            R$ 9.814
+            R$ 9.814,00
           </p>
         </div>
       </div>
