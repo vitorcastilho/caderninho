@@ -40,7 +40,15 @@ import {
 } from "@/client/components/ui/table"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/client/components/ui/tabs"
 import { Skeleton } from "@/client/components/ui/skeleton"
-import { ChevronDown, ChevronLeft, ChevronRight, Plus, Pencil, Archive, Loader2, Clock, X, AlertTriangle, CheckCircle2, LayoutDashboard, CreditCard, Landmark, Wallet, PiggyBank, CheckSquare, TrendingUp, LogOut, ShoppingCart, GraduationCap, Home, Fuel, Bus, Globe, UtensilsCrossed, Package, MoreVertical, Settings, Building2, Users } from "lucide-react"
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/client/components/ui/sheet"
+import { ChevronDown, ChevronLeft, ChevronRight, Plus, Pencil, Archive, Loader2, Clock, X, AlertTriangle, CheckCircle2, LayoutDashboard, CreditCard, Landmark, Wallet, PiggyBank, CheckSquare, TrendingUp, LogOut, ShoppingCart, GraduationCap, Home, Fuel, Bus, Globe, UtensilsCrossed, Package, MoreVertical, Settings, Building2, Users, BarChart3, Eye, EyeOff, GripVertical } from "lucide-react"
 
 /* ─── helpers ─── */
 
@@ -78,15 +86,29 @@ function Swatch({ color, label }: { color: string; label: string }) {
 export default function DesignSystemPage() {
   return (
     <div className="flex flex-col gap-0">
+      {/* Fundamentos */}
       <CoresSection />
       <TipografiaSection />
+      <CursoresSection />
+      <EspacamentoSection />
+      {/* Componentes base */}
       <BotoesSection />
-      <CardsSection />
       <FormulariosSection />
       <BadgesSection />
-      <DialogsSection />
+      <CardsSection />
       <TabelasSection />
       <TabsSection />
+      <DialogsSection />
+      <SkeletonSection />
+      {/* Controles */}
+      <ToggleSwitchSection />
+      <ChipsSection />
+      <DividerTextoSection />
+      <BreadcrumbsSection />
+      <StepIndicatorSection />
+      {/* Composições */}
+      <BannersSection />
+      <SummaryCardsSection />
       <BarrasProgressoSection />
       <CardsOrcamentoSection />
       <BarraResumoSection />
@@ -94,16 +116,19 @@ export default function DesignSystemPage() {
       <ControleSegmentadoSection />
       <ListaTransacoesSection />
       <ChecklistSection />
+      <ListaColapsavelSection />
+      <EmptyStatesSection />
+      {/* Visualizações */}
+      <GradeTimelineSection />
+      <TreemapSection />
+      <TooltipDetalheSection />
+      <LegendaSection />
       <ColunaMensalSection />
       <PainelSimulacaoSection />
-      <BannersSection />
-      <SummaryCardsSection />
-      <EmptyStatesSection />
-      <ListaColapsavelSection />
+      {/* Layout & Navegação */}
       <MenuLateralSection />
-      <CursoresSection />
-      <EspacamentoSection />
-      <SkeletonSection />
+      <BottomNavigationSection />
+      <BottomSheetSection />
     </div>
   )
 }
@@ -496,33 +521,85 @@ function BadgesSection() {
   )
 }
 
-/* ─── 7. Dialogs ─── */
+/* ─── 7. Dialogs & Sheets ─── */
 
 function DialogsSection() {
   return (
-    <Section id="dialogs" title="Dialogs">
-      <Dialog>
-        <DialogTrigger
-          render={<Button variant="outline" />}
-        >
-          Abrir dialog de exemplo
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Arquivar categoria</DialogTitle>
-            <DialogDescription>
-              Tem certeza que deseja arquivar esta categoria? Os lançamentos
-              existentes serão mantidos.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="destructive">Arquivar</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      <p className="mt-3 text-xs text-muted-foreground">
-        Overlay: bg-black/25 + backdrop-blur-sm (25% opacidade + blur)
-      </p>
+    <Section id="dialogs" title="Dialogs & Sheets">
+      <div className="space-y-6">
+        {/* Overlay spec */}
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Overlay (Dialog + Sheet)</h3>
+          <div className="flex items-center gap-6">
+            <div className="relative flex size-40 items-center justify-center overflow-hidden rounded-[var(--radius-card)] border">
+              <div className="absolute inset-0 bg-black/25 backdrop-blur-sm" />
+              <div className="relative z-10 rounded-md bg-white px-4 py-3 shadow-lg">
+                <span className="text-xs font-medium">Conteúdo</span>
+              </div>
+            </div>
+            <div className="space-y-1 text-[13px]">
+              <p className="font-medium">Especificação do overlay</p>
+              <p className="text-muted-foreground"><code className="rounded bg-muted px-1.5 py-0.5 text-xs">bg-black/25</code> — 25% opacidade (preto)</p>
+              <p className="text-muted-foreground"><code className="rounded bg-muted px-1.5 py-0.5 text-xs">backdrop-blur-sm</code> — blur sutil no fundo</p>
+              <p className="text-muted-foreground">Aplicado automaticamente em Dialog e Sheet</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Dialog */}
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Dialog (modal centralizado)</h3>
+          <Dialog>
+            <DialogTrigger
+              render={<Button variant="outline" />}
+            >
+              Abrir dialog de exemplo
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Arquivar categoria</DialogTitle>
+                <DialogDescription>
+                  Tem certeza que deseja arquivar esta categoria? Os lançamentos
+                  existentes serão mantidos.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button variant="destructive">Arquivar</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {/* Sheet */}
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Sheet (painel lateral)</h3>
+          <Sheet>
+            <SheetTrigger
+              render={<Button variant="outline" />}
+            >
+              Abrir sheet de exemplo
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Detalhes da transação</SheetTitle>
+                <SheetDescription>
+                  Visualize e edite os detalhes desta transação.
+                </SheetDescription>
+              </SheetHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-1">
+                  <Label>Descrição</Label>
+                  <Input defaultValue="Supermercado Extra" />
+                </div>
+                <div className="space-y-1">
+                  <Label>Valor</Label>
+                  <Input defaultValue="R$ 234,56" />
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
     </Section>
   )
 }
@@ -2522,6 +2599,698 @@ function SkeletonSection() {
                 <Skeleton className="h-4 w-16" />
               </div>
             ))}
+          </div>
+        </div>
+      </div>
+    </Section>
+  )
+}
+
+/* ═══════════════════════════════════════════════
+   NOVAS SEÇÕES — Controles
+   ═══════════════════════════════════════════════ */
+
+/* ─── Toggle Switch ─── */
+
+function ToggleSwitchComp({
+  checked,
+  onChange,
+  disabled,
+}: {
+  checked: boolean
+  onChange: (v: boolean) => void
+  disabled?: boolean
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      disabled={disabled}
+      onClick={() => onChange(!checked)}
+      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+        checked ? "bg-primary" : "bg-input"
+      }`}
+    >
+      <span
+        className={`pointer-events-none block size-5 rounded-full bg-white shadow-sm ring-0 transition-transform ${
+          checked ? "translate-x-5" : "translate-x-0"
+        }`}
+      />
+    </button>
+  )
+}
+
+function ToggleSwitchSection() {
+  const [notif, setNotif] = useState(true)
+  const [sound, setSound] = useState(false)
+  const [dark, setDark] = useState(false)
+
+  return (
+    <Section id="toggle-switch" title="Toggle Switch">
+      <div className="max-w-sm space-y-4">
+        <div className="flex items-center justify-between rounded-[var(--radius-card)] border px-4 py-3">
+          <div>
+            <p className="text-sm font-medium">Notificações por email</p>
+            <p className="text-xs text-muted-foreground">Receba alertas de vencimento</p>
+          </div>
+          <ToggleSwitchComp checked={notif} onChange={setNotif} />
+        </div>
+        <div className="flex items-center justify-between rounded-[var(--radius-card)] border px-4 py-3">
+          <div>
+            <p className="text-sm font-medium">Sons</p>
+            <p className="text-xs text-muted-foreground">Feedback sonoro nas ações</p>
+          </div>
+          <ToggleSwitchComp checked={sound} onChange={setSound} />
+        </div>
+        <div className="flex items-center justify-between rounded-[var(--radius-card)] border px-4 py-3">
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">Modo escuro</p>
+            <p className="text-xs text-muted-foreground">Em breve</p>
+          </div>
+          <ToggleSwitchComp checked={dark} onChange={setDark} disabled />
+        </div>
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Padrão do proto-14: label + descrição à esquerda, toggle à direita. Ligado: bg-primary. Desligado: bg-input. 44×24px.
+      </p>
+    </Section>
+  )
+}
+
+/* ─── Chips / Seletor ─── */
+
+function ChipsSection() {
+  const [selected, setSelected] = useState<string[]>(["Alimentação", "Transporte"])
+  const options = ["Alimentação", "Transporte", "Moradia", "Saúde", "Educação", "Lazer", "Vestuário", "Assinaturas"]
+
+  const toggle = (opt: string) => {
+    setSelected((prev) =>
+      prev.includes(opt) ? prev.filter((o) => o !== opt) : [...prev, opt]
+    )
+  }
+
+  return (
+    <Section id="chips" title="Chips / Seletor">
+      <div className="space-y-4">
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Multi-seleção (categorias)</h3>
+          <div className="flex flex-wrap gap-2">
+            {options.map((opt) => {
+              const isSelected = selected.includes(opt)
+              return (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => toggle(opt)}
+                  className={`cursor-pointer rounded-badge px-3 py-1.5 text-[13px] font-medium transition-colors ${
+                    isSelected
+                      ? "bg-primary text-white"
+                      : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                  }`}
+                >
+                  {opt}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Chips compactos (filtros)</h3>
+          <div className="flex flex-wrap gap-1.5">
+            {["Essencial", "Qualidade de vida", "Supérfluo"].map((opt, i) => (
+              <span
+                key={opt}
+                className={`rounded-badge px-2.5 py-1 text-xs font-medium ${
+                  i === 0
+                    ? "bg-primary-light text-primary"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {opt}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Padrão do proto-07: grid de chips selecionáveis. Selecionado: bg-primary + text-white. Não selecionado: bg-muted. Border-radius pill.
+      </p>
+    </Section>
+  )
+}
+
+/* ─── Divider com Texto ─── */
+
+function DividerTextoSection() {
+  return (
+    <Section id="divider-texto" title="Divider com Texto">
+      <div className="max-w-sm space-y-6">
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-border" />
+          <span className="text-xs font-medium text-muted-foreground">ou</span>
+          <div className="h-px flex-1 bg-border" />
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-border" />
+          <span className="text-xs font-medium text-muted-foreground">continuar com</span>
+          <div className="h-px flex-1 bg-border" />
+        </div>
+        <div className="h-px w-full bg-border" />
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Padrão do proto-01: linha horizontal com texto centralizado. Usado entre form de login e botão OAuth.
+      </p>
+    </Section>
+  )
+}
+
+/* ─── Breadcrumbs ─── */
+
+function BreadcrumbsSection() {
+  return (
+    <Section id="breadcrumbs" title="Breadcrumbs">
+      <div className="space-y-4">
+        <div className="flex items-center gap-1.5 text-sm">
+          <a href="#breadcrumbs" className="text-primary hover:underline">Mar 2026</a>
+          <span className="text-muted-foreground">›</span>
+          <a href="#breadcrumbs" className="text-primary hover:underline">Essenciais</a>
+          <span className="text-muted-foreground">›</span>
+          <span className="font-medium text-foreground">Alimentação</span>
+        </div>
+        <div className="flex items-center gap-3 text-sm">
+          <div className="flex items-center gap-1.5">
+            <a href="#breadcrumbs" className="text-primary hover:underline">Mar 2026</a>
+            <span className="text-muted-foreground">›</span>
+            <span className="font-medium text-foreground">Essenciais</span>
+          </div>
+          <a href="#breadcrumbs" className="flex items-center gap-1 text-xs text-primary hover:underline">
+            <ChevronLeft className="size-3" />
+            Voltar
+          </a>
+        </div>
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 text-sm">
+            <a href="#breadcrumbs" className="text-primary hover:underline">Mar 2026</a>
+            <span className="text-muted-foreground">›</span>
+            <span className="font-medium text-foreground">Essenciais — R$ 7.680</span>
+          </div>
+          <p className="text-xs text-muted-foreground">83% do orçamento de R$ 9.258</p>
+        </div>
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Padrão do proto-09: navegação hierárquica. Separador ›. Item atual sem link + font-medium. Link "Voltar" opcional com chevron.
+      </p>
+    </Section>
+  )
+}
+
+/* ─── Step Indicator ─── */
+
+function StepIndicatorSection() {
+  return (
+    <Section id="step-indicator" title="Step Indicator">
+      <div className="space-y-6">
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Dots (proto-07, proto-08)</h3>
+          <div className="flex items-center justify-center gap-2">
+            {[1, 2, 3, 4].map((step) => (
+              <div
+                key={step}
+                className={`size-2.5 rounded-full transition-colors ${
+                  step <= 2 ? "bg-primary" : "bg-muted"
+                }`}
+              />
+            ))}
+          </div>
+          <p className="mt-2 text-center text-xs text-muted-foreground">Passo 2 de 4</p>
+        </div>
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Barra de progresso (onboarding)</h3>
+          <div className="mx-auto max-w-xs">
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+              <div className="h-full w-3/5 rounded-full bg-primary transition-all" />
+            </div>
+            <p className="mt-2 text-center text-xs text-muted-foreground">Passo 3 de 5</p>
+          </div>
+        </div>
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Steps numerados (cascade input)</h3>
+          <div className="flex items-center gap-0">
+            {["Valor", "Categoria", "Detalhes", "Confirmar"].map((label, i) => (
+              <div key={label} className="flex items-center">
+                <div className="flex flex-col items-center gap-1">
+                  <div
+                    className={`flex size-7 items-center justify-center rounded-full text-xs font-semibold ${
+                      i < 2
+                        ? "bg-primary text-white"
+                        : i === 2
+                          ? "border-2 border-primary text-primary"
+                          : "border-2 border-muted text-muted-foreground"
+                    }`}
+                  >
+                    {i < 2 ? "✓" : i + 1}
+                  </div>
+                  <span className={`text-[11px] ${i <= 2 ? "font-medium text-foreground" : "text-muted-foreground"}`}>
+                    {label}
+                  </span>
+                </div>
+                {i < 3 && (
+                  <div className={`mx-2 h-0.5 w-8 ${i < 2 ? "bg-primary" : "bg-muted"}`} />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        3 variantes: dots (simples), barra (onboarding), numerado (cascade). Ativo: bg-primary. Completo: ✓. Futuro: bg-muted.
+      </p>
+    </Section>
+  )
+}
+
+/* ═══════════════════════════════════════════════
+   NOVAS SEÇÕES — Visualizações
+   ═══════════════════════════════════════════════ */
+
+/* ─── Grade Timeline ─── */
+
+const timelineCategories = [
+  { name: "Escola", emoji: "🎓", values: [2800, 2800, 2800, 2800], budgets: [2800, 2800, 2800, 2800] },
+  { name: "Supermercado", emoji: "🛒", values: [2122, 2550, 2400, 2500], budgets: [3000, 2550, 2400, 2500] },
+  { name: "Moradia", emoji: "🏠", values: [1800, 1700, 1800, 1700], budgets: [2200, 1700, 1800, 1700] },
+  { name: "Gasolina", emoji: "⛽", values: [420, 450, 450, 500], budgets: [600, 450, 450, 500] },
+  { name: "Transporte", emoji: "🚌", values: [380, 400, 380, 380], budgets: [500, 400, 380, 380] },
+  { name: "Internet", emoji: "🌐", values: [158, 158, 158, 158], budgets: [158, 158, 158, 158] },
+]
+
+const timelineMonths = ["Mar 2026", "Abr 2026", "Mai 2026", "Jun 2026"]
+
+function GradeTimelineSection() {
+  return (
+    <Section id="grade-timeline" title="Grade Timeline">
+      <div className="overflow-x-auto">
+        <div className="min-w-[700px]">
+          {/* Header */}
+          <div className="grid grid-cols-[140px_repeat(4,1fr)] border-b pb-2">
+            <div className="text-xs font-semibold uppercase tracking-wider text-text-tertiary">Categoria</div>
+            {timelineMonths.map((month, i) => (
+              <div
+                key={month}
+                className={`text-center text-sm font-semibold ${i === 0 ? "text-primary" : "text-muted-foreground"}`}
+              >
+                {month}
+              </div>
+            ))}
+          </div>
+
+          {/* Classification header */}
+          <div className="mt-3 mb-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-primary">
+            Essenciais
+          </div>
+
+          {/* Rows */}
+          {timelineCategories.map((cat) => (
+            <div key={cat.name} className="grid grid-cols-[140px_repeat(4,1fr)] items-center border-b border-dashed py-2.5">
+              <div className="flex items-center gap-2 text-sm">
+                <span>{cat.emoji}</span>
+                <span className="font-medium">{cat.name}</span>
+              </div>
+              {cat.values.map((val, i) => {
+                const pct = Math.min((val / cat.budgets[i]) * 100, 100)
+                const isCurrentMonth = i === 0
+                const color = pct >= 100 ? "bg-primary" : pct >= 80 ? "bg-attention" : "bg-positive"
+                return (
+                  <div key={i} className="px-2">
+                    <div className="relative h-6 overflow-hidden rounded-md bg-muted">
+                      <div
+                        className={`absolute inset-y-0 left-0 rounded-md ${color} transition-all`}
+                        style={{ width: `${pct}%` }}
+                      />
+                      <span className="absolute inset-0 flex items-center justify-center text-[11px] font-semibold text-white mix-blend-difference">
+                        R${val.toLocaleString("pt-BR")}
+                      </span>
+                    </div>
+                    <p className="mt-0.5 text-center text-[10px] text-muted-foreground tabular-nums">
+                      {isCurrentMonth
+                        ? `R$${val.toLocaleString("pt-BR")} / R$${cat.budgets[i].toLocaleString("pt-BR")}`
+                        : `~R$${val.toLocaleString("pt-BR")}`}
+                    </p>
+                  </div>
+                )
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Padrão do proto-09 (view Timeline): grade categoria × mês. Barra inline com valor sobreposto. Mês atual: gasto/orçado. Futuros: ~estimativa. Verde (ok), amarelo (&gt;80%), roxo (fixo 100%).
+      </p>
+    </Section>
+  )
+}
+
+/* ─── Treemap / Mapa Visual ─── */
+
+const treemapData = [
+  { name: "ESCOLA", value: 2800, pct: 36, color: "bg-[#818CF8]", textColor: "text-white" },
+  { name: "SUPERMERCADO", value: 2122, pct: 28, color: "bg-[#86EFAC]", textColor: "text-foreground" },
+  { name: "MORADIA", value: 1800, pct: 23, color: "bg-[#FDE68A]", textColor: "text-foreground" },
+]
+
+const treemapSmall = [
+  { name: "GASOLINA", value: 420, color: "bg-[#86EFAC]" },
+  { name: "TRANSPORTE", value: 380, color: "bg-[#FDE68A]" },
+  { name: "INTERNET", value: 158, color: "bg-[#818CF8]" },
+]
+
+function TreemapSection() {
+  const [hovered, setHovered] = useState<string | null>(null)
+
+  return (
+    <Section id="treemap" title="Treemap / Mapa Visual">
+      <div className="space-y-4">
+        {/* Treemap grid */}
+        <div className="relative flex h-64 gap-1 overflow-hidden rounded-[var(--radius-card)]">
+          {treemapData.map((item) => (
+            <div
+              key={item.name}
+              className={`${item.color} relative cursor-pointer rounded-lg p-3 transition-opacity hover:opacity-90`}
+              style={{ width: `${item.pct}%` }}
+              onMouseEnter={() => setHovered(item.name)}
+              onMouseLeave={() => setHovered(null)}
+            >
+              <p className={`text-[11px] font-semibold uppercase tracking-wider ${item.textColor} opacity-80`}>
+                {item.name}
+              </p>
+              <p className={`text-xl font-bold ${item.textColor}`}>
+                R${item.value.toLocaleString("pt-BR")}
+              </p>
+              <p className={`text-xs ${item.textColor} opacity-70`}>
+                {item.pct}% do total
+              </p>
+              {/* Bottom info */}
+              <div className={`absolute inset-x-3 bottom-3 text-[10px] ${item.textColor} opacity-60`}>
+                <p>Orçam. R${item.value.toLocaleString("pt-BR")}</p>
+                <div className="mt-0.5 h-0.5 rounded-full bg-positive" />
+                <p className="mt-0.5">Latam Pass Visa</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Small blocks row */}
+        <div className="flex gap-1">
+          {treemapSmall.map((item) => (
+            <div
+              key={item.name}
+              className={`${item.color} flex-1 cursor-pointer rounded-lg p-2.5 transition-opacity hover:opacity-90`}
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-foreground/70">
+                {item.name}
+              </p>
+              <p className="text-sm font-bold text-foreground">
+                R${item.value.toLocaleString("pt-BR")}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Hover tooltip example */}
+        <div>
+          <h3 className="mb-2 text-sm font-medium">Tooltip hover (aparece ao passar o mouse)</h3>
+          <div className="inline-block rounded-lg bg-[#1C1917] px-4 py-3 text-white shadow-lg">
+            <p className="text-sm font-semibold">Supermercado</p>
+            <div className="mt-1.5 space-y-0.5 text-xs">
+              <div className="flex justify-between gap-6"><span className="text-white/60">Orçamento</span><span className="font-medium tabular-nums">R$3.000</span></div>
+              <div className="flex justify-between gap-6"><span className="text-white/60">Gasto</span><span className="font-medium tabular-nums">R$2.122</span></div>
+              <div className="flex justify-between gap-6"><span className="text-white/60">Resta</span><span className="font-medium tabular-nums">R$878</span></div>
+              <div className="flex justify-between gap-6"><span className="text-white/60">Uso</span><span className="font-medium tabular-nums">70%</span></div>
+            </div>
+            <p className="mt-2 text-[11px] text-white/50">Latam Pass Visa</p>
+          </div>
+        </div>
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Padrão do proto-09 (view Mapa): retângulos proporcionais ao gasto. Hover mostra tooltip escuro. Cores por classificação. Bottom de cada bloco: orçamento + barra + método de pagamento. Click faz drill-down por grupo via breadcrumbs.
+      </p>
+    </Section>
+  )
+}
+
+/* ─── Tooltip de Detalhe ─── */
+
+function TooltipDetalheSection() {
+  return (
+    <Section id="tooltip-detalhe" title="Tooltip de Detalhe">
+      <div className="flex flex-wrap gap-6">
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Escuro (treemap hover)</h3>
+          <div className="inline-block rounded-lg bg-[#1C1917] px-4 py-3 text-white shadow-lg">
+            <p className="text-sm font-semibold">Supermercado</p>
+            <div className="mt-1.5 space-y-0.5 text-xs">
+              <div className="flex justify-between gap-8"><span className="text-white/60">Orçamento</span><span className="font-medium tabular-nums">R$3.000</span></div>
+              <div className="flex justify-between gap-8"><span className="text-white/60">Gasto</span><span className="font-medium tabular-nums">R$2.122</span></div>
+              <div className="flex justify-between gap-8"><span className="text-white/60">Resta</span><span className="font-medium tabular-nums">R$878</span></div>
+              <div className="flex justify-between gap-8"><span className="text-white/60">Uso</span><span className="font-medium tabular-nums">70%</span></div>
+            </div>
+            <p className="mt-2 text-[11px] text-white/50">Latam Pass Visa</p>
+          </div>
+        </div>
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Claro (cell hover)</h3>
+          <div className="inline-block rounded-lg border bg-white px-4 py-3 shadow-md">
+            <p className="text-sm font-semibold text-foreground">Internet</p>
+            <div className="mt-1.5 space-y-0.5 text-xs">
+              <div className="flex justify-between gap-8"><span className="text-muted-foreground">Orçam.</span><span className="font-medium tabular-nums">R$158</span></div>
+              <div className="flex justify-between gap-8"><span className="text-muted-foreground">Gasto</span><span className="font-medium tabular-nums">R$158</span></div>
+              <div className="flex justify-between gap-8"><span className="text-muted-foreground">Status</span><span className="font-medium text-primary">Fixo</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        2 variantes: escuro (bg-foreground, treemap) e claro (bg-white border, tabelas). Labels opacity 60%, valores font-medium tabular-nums.
+      </p>
+    </Section>
+  )
+}
+
+/* ─── Legenda ─── */
+
+function LegendaSection() {
+  return (
+    <Section id="legenda" title="Legenda">
+      <div className="space-y-4">
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Dots coloridos (proto-09)</h3>
+          <div className="flex flex-wrap items-center gap-4 text-[13px]">
+            <span className="flex items-center gap-1.5">
+              <span className="size-2.5 rounded-full bg-positive" />
+              Dentro do orçamento
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="size-2.5 rounded-full bg-attention" />
+              Atenção (&gt;80%)
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="size-2.5 rounded-full bg-primary" />
+              Custo fixo (100%)
+            </span>
+          </div>
+        </div>
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Ícones (proto-11)</h3>
+          <div className="flex flex-wrap items-center gap-4 text-[13px]">
+            <span className="flex items-center gap-1.5">
+              <span className="size-3 rounded-sm border bg-white" />
+              Fixo (não arrastável)
+            </span>
+            <span className="flex items-center gap-1.5">
+              <GripVertical className="size-3 text-muted-foreground" />
+              Planejado (arrastável)
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="size-3 rounded-sm border-2 border-positive bg-positive-bg" />
+              Margem positiva
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="size-3 rounded-sm border-2 border-critical bg-critical-bg" />
+              Margem negativa
+            </span>
+          </div>
+        </div>
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Badges (classificações)</h3>
+          <div className="flex flex-wrap items-center gap-2 text-[13px]">
+            <Badge className="border-transparent bg-primary-light text-primary">Essencial</Badge>
+            <Badge className="border-transparent bg-attention-bg text-attention-text">Qualidade de vida</Badge>
+            <Badge className="border-transparent bg-alert-bg text-alert-text">Supérfluo</Badge>
+          </div>
+        </div>
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        3 variantes: dots (simples), ícones (proto-11), badges (classificações). Posicionada acima do conteúdo, gap-4, text-13px.
+      </p>
+    </Section>
+  )
+}
+
+/* ═══════════════════════════════════════════════
+   NOVAS SEÇÕES — Layout & Navegação
+   ═══════════════════════════════════════════════ */
+
+/* ─── Bottom Navigation ─── */
+
+function BottomNavigationSection() {
+  const [active, setActive] = useState("Dashboard")
+  const items = [
+    { icon: LayoutDashboard, label: "Dashboard" },
+    { icon: PiggyBank, label: "Orçamentos" },
+    { icon: Plus, label: "Novo", special: true },
+    { icon: CheckSquare, label: "Checklist" },
+    { icon: TrendingUp, label: "Projeção" },
+  ]
+
+  return (
+    <Section id="bottom-navigation" title="Bottom Navigation">
+      <div className="space-y-6">
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Mobile bottom bar (proto-06)</h3>
+          <div className="mx-auto w-[375px] overflow-hidden rounded-[24px] border-2 border-foreground/10 bg-background">
+            <div className="flex h-48 items-center justify-center bg-muted/30">
+              <span className="text-sm text-muted-foreground">Conteúdo da tela</span>
+            </div>
+            <div className="flex items-end justify-around border-t bg-white px-2 pb-5 pt-2">
+              {items.map((item) => {
+                const Icon = item.icon
+                const isActive = active === item.label
+                return (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={() => setActive(item.label)}
+                    className={`flex cursor-pointer flex-col items-center gap-0.5 ${
+                      item.special ? "" : "min-w-[56px]"
+                    }`}
+                  >
+                    {item.special ? (
+                      <div className="flex size-11 items-center justify-center rounded-full bg-primary text-white shadow-md">
+                        <Icon className="size-5" />
+                      </div>
+                    ) : (
+                      <>
+                        <Icon className={`size-5 ${isActive ? "text-primary" : "text-muted-foreground"}`} />
+                        <span className={`text-[10px] font-medium ${isActive ? "text-primary" : "text-muted-foreground"}`}>
+                          {item.label}
+                        </span>
+                      </>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4 text-[13px]">
+          <div className="space-y-1">
+            <p className="font-medium">Layout</p>
+            <p className="text-muted-foreground">5 itens, justify-around, border-top, pb safe-area (20px)</p>
+          </div>
+          <div className="space-y-1">
+            <p className="font-medium">Item ativo</p>
+            <p className="text-muted-foreground">text-primary, ícone + label coloridos</p>
+          </div>
+          <div className="space-y-1">
+            <p className="font-medium">Botão central (FAB)</p>
+            <p className="text-muted-foreground">44px circular, bg-primary, shadow-md, elevado</p>
+          </div>
+          <div className="space-y-1">
+            <p className="font-medium">Safe area</p>
+            <p className="text-muted-foreground">padding-bottom 20px para notch/home indicator</p>
+          </div>
+        </div>
+      </div>
+    </Section>
+  )
+}
+
+/* ─── Bottom Sheet ─── */
+
+function BottomSheetSection() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <Section id="bottom-sheet" title="Bottom Sheet">
+      <div className="space-y-6">
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Drawer inferior (proto-07)</h3>
+          <div className="relative mx-auto w-[375px] overflow-hidden rounded-[24px] border-2 border-foreground/10 bg-background">
+            <div className="flex h-72 flex-col items-center justify-center gap-3 bg-muted/30">
+              <span className="text-sm text-muted-foreground">Conteúdo atrás</span>
+              <Button size="sm" onClick={() => setOpen(!open)}>
+                {open ? "Fechar sheet" : "Abrir bottom sheet"}
+              </Button>
+            </div>
+
+            {/* Overlay */}
+            {open && (
+              <div
+                className="absolute inset-0 z-10 bg-black/25 backdrop-blur-sm transition-opacity"
+                onClick={() => setOpen(false)}
+              />
+            )}
+
+            {/* Bottom sheet */}
+            <div
+              className={`absolute inset-x-0 bottom-0 z-20 transform rounded-t-2xl bg-white shadow-[0_-4px_25px_rgba(0,0,0,0.1)] transition-transform duration-300 ${
+                open ? "translate-y-0" : "translate-y-full"
+              }`}
+            >
+              <div className="flex justify-center py-3">
+                <div className="h-1 w-10 rounded-full bg-muted-foreground/30" />
+              </div>
+              <div className="flex items-center justify-between border-b px-5 pb-3">
+                <h3 className="text-base font-semibold">Selecione a categoria</h3>
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="cursor-pointer rounded-full p-1 text-muted-foreground hover:bg-muted"
+                >
+                  <X className="size-5" />
+                </button>
+              </div>
+              <div className="space-y-1 p-4">
+                {["🍔 Alimentação", "🚗 Transporte", "🏠 Moradia", "💊 Saúde", "📚 Educação"].map((cat) => (
+                  <div
+                    key={cat}
+                    className="cursor-pointer rounded-button px-3 py-2.5 text-sm transition-colors hover:bg-muted"
+                  >
+                    {cat}
+                  </div>
+                ))}
+              </div>
+              <div className="h-5" />
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4 text-[13px]">
+          <div className="space-y-1">
+            <p className="font-medium">Handle</p>
+            <p className="text-muted-foreground">40×4px, rounded-full, bg-muted-foreground/30, centralizado</p>
+          </div>
+          <div className="space-y-1">
+            <p className="font-medium">Overlay</p>
+            <p className="text-muted-foreground">bg-black/25 + backdrop-blur-sm (mesmo do Dialog)</p>
+          </div>
+          <div className="space-y-1">
+            <p className="font-medium">Cantos</p>
+            <p className="text-muted-foreground">rounded-t-2xl (16px) — só topo arredondado</p>
+          </div>
+          <div className="space-y-1">
+            <p className="font-medium">Shadow</p>
+            <p className="text-muted-foreground">shadow para cima: 0 -4px 25px rgba(0,0,0,0.1)</p>
           </div>
         </div>
       </div>

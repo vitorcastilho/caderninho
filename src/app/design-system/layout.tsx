@@ -1,13 +1,27 @@
 const sections = [
+  // Fundamentos
   { id: "cores", label: "Cores / Tokens" },
   { id: "tipografia", label: "Tipografia" },
+  { id: "cursores", label: "Cursores" },
+  { id: "espacamento", label: "Espaçamento" },
+  // Componentes base
   { id: "botoes", label: "Botões" },
-  { id: "cards", label: "Cards" },
   { id: "formularios", label: "Formulários" },
   { id: "badges", label: "Badges" },
-  { id: "dialogs", label: "Dialogs" },
+  { id: "cards", label: "Cards" },
   { id: "tabelas", label: "Tabelas" },
   { id: "tabs", label: "Tabs" },
+  { id: "dialogs", label: "Dialogs & Sheets" },
+  { id: "skeleton", label: "Skeleton" },
+  // Controles
+  { id: "toggle-switch", label: "Toggle Switch" },
+  { id: "chips", label: "Chips / Seletor" },
+  { id: "divider-texto", label: "Divider com Texto" },
+  { id: "breadcrumbs", label: "Breadcrumbs" },
+  { id: "step-indicator", label: "Step Indicator" },
+  // Composições
+  { id: "banners", label: "Banners" },
+  { id: "summary-cards", label: "Summary Cards" },
   { id: "barras-progresso", label: "Barras de Progresso" },
   { id: "cards-orcamento", label: "Cards de Orçamento" },
   { id: "barra-resumo", label: "Barra de Resumo" },
@@ -15,16 +29,19 @@ const sections = [
   { id: "controle-segmentado", label: "Controle Segmentado" },
   { id: "lista-transacoes", label: "Lista de Transações" },
   { id: "checklist", label: "Checklist" },
+  { id: "lista-colapsavel", label: "Lista Colapsável" },
+  { id: "empty-states", label: "Empty States" },
+  // Visualizações
+  { id: "grade-timeline", label: "Grade Timeline" },
+  { id: "treemap", label: "Treemap / Mapa Visual" },
+  { id: "tooltip-detalhe", label: "Tooltip de Detalhe" },
+  { id: "legenda", label: "Legenda" },
   { id: "coluna-mensal", label: "Coluna Mensal" },
   { id: "painel-simulacao", label: "Painel de Simulação" },
-  { id: "banners", label: "Banners" },
-  { id: "summary-cards", label: "Summary Cards" },
-  { id: "empty-states", label: "Empty States" },
-  { id: "lista-colapsavel", label: "Lista Colapsável" },
+  // Layout & Navegação
   { id: "menu-lateral", label: "Menu Lateral" },
-  { id: "cursores", label: "Cursores" },
-  { id: "espacamento", label: "Espaçamento" },
-  { id: "skeleton", label: "Skeleton" },
+  { id: "bottom-navigation", label: "Bottom Navigation" },
+  { id: "bottom-sheet", label: "Bottom Sheet" },
 ]
 
 export default function DesignSystemLayout({
