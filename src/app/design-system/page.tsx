@@ -350,17 +350,23 @@ function PercentInput() {
     }
     const num = parseInt(raw, 10)
     const formatted = (num / 100).toFixed(2).replace(".", ",")
-    setValue(`${formatted}%`)
+    setValue(formatted)
   }
 
   return (
-    <Input
-      id="demo-percent"
-      inputMode="numeric"
-      placeholder="0,00%"
-      value={value}
-      onChange={handleChange}
-    />
+    <div className="relative">
+      <Input
+        id="demo-percent"
+        inputMode="numeric"
+        placeholder="0,00"
+        className="pr-8"
+        value={value}
+        onChange={handleChange}
+      />
+      <span className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-sm text-muted-foreground">
+        %
+      </span>
+    </div>
   )
 }
 
