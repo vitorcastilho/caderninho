@@ -627,81 +627,161 @@ function EmptyStatesSection() {
 
 /* ─── 11. Lista Colapsavel ─── */
 
-function ListaColapsavelSection() {
-  const [expanded, setExpanded] = useState(true)
-
-  const subcategorias = [
-    { nome: "Aluguel", essencialidade: "Fixa" },
-    { nome: "Condominio", essencialidade: "Fixa" },
-    { nome: "IPTU", essencialidade: "Fixa" },
-  ]
+function CollapseGroup({
+  title,
+  count,
+  defaultExpanded = true,
+  children,
+}: {
+  title: string
+  count: string
+  defaultExpanded?: boolean
+  children: React.ReactNode
+}) {
+  const [expanded, setExpanded] = useState(defaultExpanded)
 
   return (
-    <Section id="lista-colapsavel" title="Lista Colapsavel">
-      <Card className="max-w-lg">
-        <CardContent>
-          {/* Header colapsavel */}
-          <button
-            type="button"
-            onClick={() => setExpanded(!expanded)}
-            className="flex w-full cursor-pointer items-center gap-2 py-1 text-left"
-          >
-            <ChevronDown
-              className={`size-4 text-muted-foreground transition-transform ${
-                expanded ? "" : "-rotate-90"
-              }`}
-            />
-            <span className="text-sm font-medium">Moradia</span>
-            <span className="flex-1" />
-            <Badge variant="secondary">{subcategorias.length}</Badge>
-            <div className="flex gap-1">
-              <Button
-                variant="ghost"
-                size="icon-xs"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Pencil />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon-xs"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Archive />
-              </Button>
-            </div>
-          </button>
+    <div className="mb-4">
+      {/* Group header */}
+      <button
+        type="button"
+        onClick={() => setExpanded(!expanded)}
+        className={`flex w-full cursor-pointer items-center gap-2.5 border border-border bg-card px-4 py-3 text-left transition-colors hover:bg-muted/50 ${
+          expanded
+            ? "rounded-t-[var(--radius-card)]"
+            : "rounded-[var(--radius-card)]"
+        }`}
+      >
+        <ChevronDown
+          className={`size-[18px] shrink-0 text-muted-foreground transition-transform duration-150 ${
+            expanded ? "" : "-rotate-90"
+          }`}
+        />
+        <span className="flex-1 text-sm font-semibold">{title}</span>
+        <span className="text-xs font-medium text-muted-foreground">
+          {count}
+        </span>
+      </button>
 
-          {/* Itens */}
-          {expanded && (
-            <div className="ml-5 mt-1 space-y-1">
-              {subcategorias.map((sub) => (
-                <div
-                  key={sub.nome}
-                  className="group flex items-center gap-2 rounded-md px-2 py-1 hover:bg-muted"
-                >
-                  <div className="size-1 rounded-full bg-muted-foreground" />
-                  <span className="text-sm">{sub.nome}</span>
-                  <span className="flex-1" />
-                  <Badge variant="outline" className="text-xs">
-                    {sub.essencialidade}
-                  </Badge>
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100">
-                    <Button variant="ghost" size="icon-xs">
-                      <Pencil />
-                    </Button>
-                    <Button variant="ghost" size="icon-xs">
-                      <Archive />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* Group items */}
+      {expanded && (
+        <div className="overflow-hidden rounded-b-[var(--radius-card)] border border-t-0 border-border">
+          {children}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function CollapseItem({
+  name,
+  value,
+  meta,
+  status,
+  statusVariant = "secondary",
+}: {
+  name: string
+  value: string
+  meta: string
+  status: string
+  statusVariant?: "paid" | "pending" | "estimate" | "secondary"
+}) {
+  const statusStyles = {
+    paid: "bg-positive-bg text-positive-text",
+    pending: "bg-muted text-muted-foreground border border-border",
+    estimate: "bg-attention-bg text-attention-text",
+    secondary: "bg-secondary text-secondary-foreground",
+  }
+
+  return (
+    <div className="group flex items-center gap-3.5 border-b border-border bg-card px-4 py-3.5 transition-colors last:border-b-0 hover:bg-muted/30">
+      <div className="flex min-w-0 flex-1 items-center gap-3 flex-wrap">
+        <span className="min-w-[120px] text-sm font-medium">{name}</span>
+        <span className="min-w-[90px] text-sm font-semibold tabular-nums">
+          {value}
+        </span>
+        <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          {meta}
+        </span>
+      </div>
+      <Badge
+        className={`shrink-0 border-transparent text-[11px] font-semibold ${statusStyles[statusVariant]}`}
+      >
+        {status}
+      </Badge>
+      <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+        <Button variant="ghost" size="icon-xs">
+          <Pencil />
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+function ListaColapsavelSection() {
+  return (
+    <Section id="lista-colapsavel" title="Lista Colapsavel">
+      <div className="max-w-2xl">
+        {/* Grupo expandido */}
+        <CollapseGroup title="Debito Automatico" count="3 itens">
+          <CollapseItem
+            name="Aluguel"
+            value="R$ 1.800"
+            meta="Pago em 01/03 · Conta Itau"
+            status="Pago"
+            statusVariant="paid"
+          />
+          <CollapseItem
+            name="Energia"
+            value="R$ 320"
+            meta="Pago em 05/03 · Conta Nubank"
+            status="Pago"
+            statusVariant="paid"
+          />
+          <CollapseItem
+            name="Streaming"
+            value="R$ 45"
+            meta="Pago em 01/03 · Conta Nubank"
+            status="Pago"
+            statusVariant="paid"
+          />
+        </CollapseGroup>
+
+        {/* Grupo colapsado */}
+        <CollapseGroup
+          title="Manual"
+          count="4 itens"
+          defaultExpanded={false}
+        >
+          <CollapseItem
+            name="Faxineira"
+            value="R$ 250"
+            meta="Vence 20/03 · PIX"
+            status="Pendente"
+            statusVariant="pending"
+          />
+        </CollapseGroup>
+
+        {/* Grupo com estimativas */}
+        <CollapseGroup title="Variavel (Fatura)" count="2 itens">
+          <CollapseItem
+            name="Fatura Latam Pass"
+            value="~R$ 4.200"
+            meta="Vence 15/03 · Estimativa"
+            status="Estimativa"
+            statusVariant="estimate"
+          />
+          <CollapseItem
+            name="Fatura Pao de Acucar"
+            value="~R$ 1.980"
+            meta="Vence 10/03 · Estimativa"
+            status="Estimativa"
+            statusVariant="estimate"
+          />
+        </CollapseGroup>
+      </div>
       <p className="mt-3 text-xs text-muted-foreground">
-        Chevron anima entre expandido (baixo) e colapsado (esquerda). Acoes aparecem no hover.
+        Header com borda conecta aos itens. Colapsado = cantos arredondados completos. Acoes aparecem no hover.
       </p>
     </Section>
   )
