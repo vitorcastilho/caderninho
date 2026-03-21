@@ -1,9 +1,9 @@
 const sections = [
   { id: "cores", label: "Cores / Tokens" },
   { id: "tipografia", label: "Tipografia" },
-  { id: "botoes", label: "Botoes" },
+  { id: "botoes", label: "Botões" },
   { id: "cards", label: "Cards" },
-  { id: "formularios", label: "Formularios" },
+  { id: "formularios", label: "Formulários" },
   { id: "badges", label: "Badges" },
   { id: "dialogs", label: "Dialogs" },
   { id: "tabelas", label: "Tabelas" },
@@ -11,9 +11,9 @@ const sections = [
   { id: "banners", label: "Banners" },
   { id: "summary-cards", label: "Summary Cards" },
   { id: "empty-states", label: "Empty States" },
-  { id: "lista-colapsavel", label: "Lista Colapsavel" },
+  { id: "lista-colapsavel", label: "Lista Colapsável" },
   { id: "cursores", label: "Cursores" },
-  { id: "espacamento", label: "Espacamento" },
+  { id: "espacamento", label: "Espaçamento" },
   { id: "skeleton", label: "Skeleton" },
 ]
 
@@ -44,7 +44,7 @@ export default function DesignSystemLayout({
           ))}
         </ul>
       </nav>
-      <main className="ml-56 max-w-5xl flex-1 p-6">{children}</main>
+      <main className="ml-56 max-w-5xl flex-1 cursor-default p-6">{children}</main>
     </div>
   )
 }

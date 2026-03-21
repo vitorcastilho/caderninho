@@ -117,7 +117,7 @@ function CoresSection() {
         </div>
 
         <div>
-          <h3 className="mb-3 text-sm font-medium">Primaria (Indigo)</h3>
+          <h3 className="mb-3 text-sm font-medium">Primária (Indigo)</h3>
           <div className="flex flex-wrap gap-3">
             <Swatch color="#EEF2FF" label="primary-light" />
             <Swatch color="#4F46E5" label="primary" />
@@ -158,11 +158,11 @@ function TipografiaSection() {
       <div className="space-y-4">
         <div>
           <span className="text-xs text-muted-foreground">H1 — text-2xl font-bold</span>
-          <p className="text-2xl font-bold">Resumo financeiro de marco</p>
+          <p className="text-2xl font-bold">Resumo financeiro de março</p>
         </div>
         <div>
           <span className="text-xs text-muted-foreground">H2 — text-xl font-semibold</span>
-          <p className="text-xl font-semibold">Contas bancarias</p>
+          <p className="text-xl font-semibold">Contas bancárias</p>
         </div>
         <div>
           <span className="text-xs text-muted-foreground">H3 — text-lg font-semibold</span>
@@ -170,12 +170,12 @@ function TipografiaSection() {
         </div>
         <div>
           <span className="text-xs text-muted-foreground">H4 — text-base font-medium</span>
-          <p className="text-base font-medium">Detalhes da transacao</p>
+          <p className="text-base font-medium">Detalhes da transação</p>
         </div>
         <div>
           <span className="text-xs text-muted-foreground">Body — text-sm</span>
           <p className="text-sm">
-            O saldo atual da conta corrente Nubank e de R$ 4.532,18 com 23 transacoes no periodo.
+            O saldo atual da conta corrente Nubank é de R$ 4.532,18 com 23 transações no período.
           </p>
         </div>
         <div>
@@ -201,7 +201,7 @@ function TipografiaSection() {
 
 function BotoesSection() {
   return (
-    <Section id="botoes" title="Botoes">
+    <Section id="botoes" title="Botões">
       <div className="space-y-6">
         {/* Variants */}
         <div>
@@ -263,7 +263,7 @@ function BotoesSection() {
 
         {/* With icons */}
         <div>
-          <h3 className="mb-3 text-sm font-medium">Com icones</h3>
+          <h3 className="mb-3 text-sm font-medium">Com ícones</h3>
           <div className="flex flex-wrap items-center gap-3">
             <Button>
               <Plus data-icon="inline-start" />
@@ -294,11 +294,11 @@ function CardsSection() {
         <Card>
           <CardHeader>
             <CardTitle>Card simples</CardTitle>
-            <CardDescription>Apenas titulo e descricao</CardDescription>
+            <CardDescription>Apenas título e descrição</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              Conteudo do card com informacoes relevantes.
+              Conteúdo do card com informações relevantes.
             </p>
           </CardContent>
         </Card>
@@ -337,7 +337,32 @@ function CardsSection() {
   )
 }
 
-/* ─── 5. Formularios ─── */
+/* ─── 5. Formulários ─── */
+
+function PercentInput() {
+  const [value, setValue] = useState("")
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const raw = e.target.value.replace(/\D/g, "")
+    if (raw === "") {
+      setValue("")
+      return
+    }
+    const num = parseInt(raw, 10)
+    const formatted = (num / 100).toFixed(2).replace(".", ",")
+    setValue(`${formatted}%`)
+  }
+
+  return (
+    <Input
+      id="demo-percent"
+      inputMode="numeric"
+      placeholder="0,00%"
+      value={value}
+      onChange={handleChange}
+    />
+  )
+}
 
 function FormulariosSection() {
   const [moneyValue, setMoneyValue] = useState("")
@@ -354,17 +379,17 @@ function FormulariosSection() {
   }
 
   return (
-    <Section id="formularios" title="Formularios">
+    <Section id="formularios" title="Formulários">
       <div className="grid max-w-md gap-6">
         {/* Default */}
         <div className="grid gap-2">
           <Label htmlFor="demo-name">Nome da conta</Label>
-          <Input id="demo-name" placeholder="Ex: Nubank, Itau..." />
+          <Input id="demo-name" placeholder="Ex: Nubank, Itaú..." />
         </div>
 
         {/* Monetario */}
         <div className="grid gap-2">
-          <Label htmlFor="demo-money">Valor (padrao bancario)</Label>
+          <Label htmlFor="demo-money">Valor (padrão bancário)</Label>
           <Input
             id="demo-money"
             inputMode="numeric"
@@ -373,7 +398,16 @@ function FormulariosSection() {
             onChange={handleMoneyInput}
           />
           <p className="text-xs text-muted-foreground">
-            Digite apenas numeros. Ex: 1978 = R$ 19,78
+            Digite apenas números. Ex: 1978 = R$ 19,78
+          </p>
+        </div>
+
+        {/* Percentual */}
+        <div className="grid gap-2">
+          <Label htmlFor="demo-percent">Taxa de juros (padrão bancário)</Label>
+          <PercentInput />
+          <p className="text-xs text-muted-foreground">
+            Digite apenas números. Ex.: 2503 = 25,03%
           </p>
         </div>
 
@@ -381,7 +415,7 @@ function FormulariosSection() {
         <div className="grid gap-2">
           <Label htmlFor="demo-error">Campo com erro</Label>
           <Input id="demo-error" aria-invalid="true" defaultValue="abc" />
-          <p className="text-xs text-destructive">Valor invalido</p>
+          <p className="text-xs text-destructive">Valor inválido</p>
         </div>
 
         {/* Disabled */}
@@ -399,7 +433,7 @@ function FormulariosSection() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="corrente">Conta corrente</SelectItem>
-              <SelectItem value="poupanca">Poupanca</SelectItem>
+              <SelectItem value="poupanca">Poupança</SelectItem>
               <SelectItem value="investimento">Investimento</SelectItem>
             </SelectContent>
           </Select>
@@ -461,8 +495,8 @@ function DialogsSection() {
           <DialogHeader>
             <DialogTitle>Arquivar categoria</DialogTitle>
             <DialogDescription>
-              Tem certeza que deseja arquivar esta categoria? Os lancamentos
-              existentes serao mantidos.
+              Tem certeza que deseja arquivar esta categoria? Os lançamentos
+              existentes serão mantidos.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -488,7 +522,7 @@ function TabelasSection() {
             <TableHeader>
               <TableRow>
                 <TableHead>Data</TableHead>
-                <TableHead>Descricao</TableHead>
+                <TableHead>Descrição</TableHead>
                 <TableHead>Categoria</TableHead>
                 <TableHead className="text-right">Valor</TableHead>
               </TableRow>
@@ -498,7 +532,7 @@ function TabelasSection() {
                 <TableCell className="tabular-nums">20/03/2026</TableCell>
                 <TableCell>Supermercado Extra</TableCell>
                 <TableCell>
-                  <Badge variant="secondary">Alimentacao</Badge>
+                  <Badge variant="secondary">Alimentação</Badge>
                 </TableCell>
                 <TableCell className="text-right tabular-nums text-critical">
                   - R$ 234,56
@@ -506,7 +540,7 @@ function TabelasSection() {
               </TableRow>
               <TableRow>
                 <TableCell className="tabular-nums">19/03/2026</TableCell>
-                <TableCell>Salario</TableCell>
+                <TableCell>Salário</TableCell>
                 <TableCell>
                   <Badge variant="secondary">Renda</Badge>
                 </TableCell>
@@ -552,23 +586,23 @@ function TabsSection() {
           <h3 className="mb-3 text-sm font-medium">Default (pill)</h3>
           <Tabs defaultValue="visao-geral">
             <TabsList>
-              <TabsTrigger value="visao-geral">Visao geral</TabsTrigger>
-              <TabsTrigger value="transacoes">Transacoes</TabsTrigger>
-              <TabsTrigger value="orcamento">Orcamento</TabsTrigger>
+              <TabsTrigger value="visao-geral">Visão geral</TabsTrigger>
+              <TabsTrigger value="transacoes">Transações</TabsTrigger>
+              <TabsTrigger value="orcamento">Orçamento</TabsTrigger>
             </TabsList>
             <TabsContent value="visao-geral">
               <p className="py-4 text-sm text-muted-foreground">
-                Conteudo da aba Visao geral.
+                Conteúdo da aba Visão geral.
               </p>
             </TabsContent>
             <TabsContent value="transacoes">
               <p className="py-4 text-sm text-muted-foreground">
-                Conteudo da aba Transacoes.
+                Conteúdo da aba Transações.
               </p>
             </TabsContent>
             <TabsContent value="orcamento">
               <p className="py-4 text-sm text-muted-foreground">
-                Conteudo da aba Orcamento.
+                Conteúdo da aba Orçamento.
               </p>
             </TabsContent>
           </Tabs>
@@ -580,21 +614,21 @@ function TabsSection() {
             <TabsList variant="line">
               <TabsTrigger value="mensal">Mensal</TabsTrigger>
               <TabsTrigger value="semanal">Semanal</TabsTrigger>
-              <TabsTrigger value="diario">Diario</TabsTrigger>
+              <TabsTrigger value="diario">Diário</TabsTrigger>
             </TabsList>
             <TabsContent value="mensal">
               <p className="py-4 text-sm text-muted-foreground">
-                Conteudo da aba Mensal.
+                Conteúdo da aba Mensal.
               </p>
             </TabsContent>
             <TabsContent value="semanal">
               <p className="py-4 text-sm text-muted-foreground">
-                Conteudo da aba Semanal.
+                Conteúdo da aba Semanal.
               </p>
             </TabsContent>
             <TabsContent value="diario">
               <p className="py-4 text-sm text-muted-foreground">
-                Conteudo da aba Diario.
+                Conteúdo da aba Diário.
               </p>
             </TabsContent>
           </Tabs>
@@ -617,7 +651,7 @@ function BannersSection() {
           </div>
           <div className="flex-1">
             <p className="text-sm font-semibold text-info-text">
-              Amanha vence: Internet R$ 158,00
+              Amanhã vence: Internet R$ 158,00
             </p>
           </div>
           <Button size="sm" className="shrink-0 bg-info text-white hover:bg-info/90">
@@ -641,7 +675,7 @@ function BannersSection() {
               2 faturas precisam ser atualizadas
             </p>
             <p className="text-xs text-attention-text/80">
-              Latam Pass e Pao de Acucar estao com valores estimados.
+              Latam Pass e Pão de Açúcar estão com valores estimados.
             </p>
           </div>
           <Button size="sm" className="shrink-0 bg-attention text-white hover:bg-attention/90">
@@ -662,7 +696,7 @@ function BannersSection() {
           </div>
           <div className="flex-1">
             <p className="text-sm font-semibold text-critical-text">
-              Condominio venceu ha 3 dias — R$ 580,00
+              Condomínio venceu há 3 dias — R$ 580,00
             </p>
             <p className="text-xs text-critical-text/80">
               Vencimento era 17/03. Verifique multa e juros.
@@ -686,7 +720,7 @@ function BannersSection() {
           </div>
           <div className="flex-1">
             <p className="text-sm font-semibold text-positive-text">
-              Todas as contas do mes estao pagas!
+              Todas as contas do mês estão pagas!
             </p>
           </div>
           <button
@@ -698,7 +732,7 @@ function BannersSection() {
         </div>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
-        Icone circular colorido + texto + CTA opcional + dismiss. Cores: info (azul), attention (amarelo), critical (vermelho/vencido), positive (verde).
+        Ícone circular colorido + texto + CTA opcional + dismiss. Cores: info (azul), attention (amarelo), critical (vermelho/vencido), positive (verde).
       </p>
     </Section>
   )
@@ -712,7 +746,7 @@ function SummaryCardsSection() {
       <div className="grid max-w-2xl grid-cols-3 gap-4">
         <div className="rounded-[var(--radius-card)] border border-border bg-card p-5 transition-shadow hover:shadow-sm">
           <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Total do mes
+            Total do mês
           </p>
           <p className="text-2xl font-bold tabular-nums">R$ 14.858,00</p>
         </div>
@@ -734,7 +768,7 @@ function SummaryCardsSection() {
         </div>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
-        Grid 3 colunas, label uppercase + valor grande. Cores semanticas para status.
+        Grid 3 colunas, label uppercase + valor grande. Cores semânticas para status.
       </p>
     </Section>
   )
@@ -755,7 +789,7 @@ function EmptyStatesSection() {
             Adicionar categoria
           </Button>
           <p className="text-xs text-muted-foreground">
-            Ex: Moradia, Alimentacao, Transporte...
+            Ex.: Moradia, Alimentação, Transporte...
           </p>
         </div>
       </div>
@@ -763,65 +797,94 @@ function EmptyStatesSection() {
   )
 }
 
-/* ─── 11. Lista Colapsavel ─── */
+/* ─── 13. Lista Colapsavel ─── */
 
-function CollapseGroup({
+function CollapseHeader({
+  level,
   title,
   count,
+  badge,
   defaultExpanded = true,
   children,
 }: {
+  level: 1 | 2
   title: string
-  count: string
+  count?: string
+  badge?: React.ReactNode
   defaultExpanded?: boolean
   children: React.ReactNode
 }) {
   const [expanded, setExpanded] = useState(defaultExpanded)
 
+  if (level === 1) {
+    return (
+      <div className="mb-4">
+        <button
+          type="button"
+          onClick={() => setExpanded(!expanded)}
+          className={`flex w-full cursor-pointer items-center gap-2.5 border border-border bg-card px-4 py-3 text-left transition-colors hover:bg-muted/50 ${
+            expanded
+              ? "rounded-t-[var(--radius-card)]"
+              : "rounded-[var(--radius-card)]"
+          }`}
+        >
+          <ChevronDown
+            className={`size-[18px] shrink-0 text-muted-foreground transition-transform duration-150 ${
+              expanded ? "" : "-rotate-90"
+            }`}
+          />
+          <span className="flex-1 text-sm font-semibold">{title}</span>
+          {badge}
+          {count && (
+            <span className="text-xs font-medium text-muted-foreground">
+              {count}
+            </span>
+          )}
+        </button>
+        {expanded && (
+          <div className="overflow-hidden rounded-b-[var(--radius-card)] border border-t-0 border-border">
+            {children}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // Level 2 — sub-group dentro do container do level 1
   return (
-    <div className="mb-4">
-      {/* Group header */}
+    <div className="border-b border-border last:border-b-0">
       <button
         type="button"
         onClick={() => setExpanded(!expanded)}
-        className={`flex w-full cursor-pointer items-center gap-2.5 border border-border bg-card px-4 py-3 text-left transition-colors hover:bg-muted/50 ${
-          expanded
-            ? "rounded-t-[var(--radius-card)]"
-            : "rounded-[var(--radius-card)]"
-        }`}
+        className="flex w-full cursor-pointer items-center gap-2 bg-muted/30 px-4 py-2.5 pl-10 text-left transition-colors hover:bg-muted/60"
       >
         <ChevronDown
-          className={`size-[18px] shrink-0 text-muted-foreground transition-transform duration-150 ${
+          className={`size-4 shrink-0 text-muted-foreground transition-transform duration-150 ${
             expanded ? "" : "-rotate-90"
           }`}
         />
-        <span className="flex-1 text-sm font-semibold">{title}</span>
-        <span className="text-xs font-medium text-muted-foreground">
-          {count}
-        </span>
+        <span className="flex-1 text-sm font-medium">{title}</span>
+        {badge}
+        {count && (
+          <span className="text-xs text-muted-foreground">{count}</span>
+        )}
       </button>
-
-      {/* Group items */}
-      {expanded && (
-        <div className="overflow-hidden rounded-b-[var(--radius-card)] border border-t-0 border-border">
-          {children}
-        </div>
-      )}
+      {expanded && <div>{children}</div>}
     </div>
   )
 }
 
 function CollapseItem({
   name,
+  detail,
   value,
-  meta,
   status,
   statusVariant = "secondary",
 }: {
   name: string
-  value: string
-  meta: string
-  status: string
+  detail?: string
+  value?: string
+  status?: string
   statusVariant?: "paid" | "pending" | "estimate" | "secondary"
 }) {
   const statusStyles = {
@@ -832,21 +895,22 @@ function CollapseItem({
   }
 
   return (
-    <div className="group flex items-center gap-3.5 border-b border-border bg-card px-4 py-3.5 transition-colors last:border-b-0 hover:bg-muted/30">
-      <div className="flex min-w-0 flex-1 items-center gap-3 flex-wrap">
-        <span className="min-w-[120px] text-sm font-medium">{name}</span>
-        <span className="min-w-[90px] text-sm font-semibold tabular-nums">
-          {value}
-        </span>
-        <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          {meta}
-        </span>
-      </div>
-      <Badge
-        className={`shrink-0 border-transparent text-[11px] font-semibold ${statusStyles[statusVariant]}`}
-      >
-        {status}
-      </Badge>
+    <div className="group flex items-center gap-3 border-b border-border bg-card py-3 pr-4 pl-16 transition-colors last:border-b-0 hover:bg-muted/30">
+      <div className="size-1 shrink-0 rounded-full bg-muted-foreground/60" />
+      <span className="flex-1 text-sm">{name}</span>
+      {detail && (
+        <span className="text-xs text-muted-foreground">{detail}</span>
+      )}
+      {value && (
+        <span className="text-sm font-semibold tabular-nums">{value}</span>
+      )}
+      {status && (
+        <Badge
+          className={`shrink-0 border-transparent text-[11px] font-semibold ${statusStyles[statusVariant]}`}
+        >
+          {status}
+        </Badge>
+      )}
       <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
         <Button variant="ghost" size="icon-xs">
           <Pencil />
@@ -858,68 +922,100 @@ function CollapseItem({
 
 function ListaColapsavelSection() {
   return (
-    <Section id="lista-colapsavel" title="Lista Colapsavel">
+    <Section id="lista-colapsavel" title="Lista Colapsável">
       <div className="max-w-2xl">
-        {/* Grupo expandido */}
-        <CollapseGroup title="Debito Automatico" count="3 itens">
-          <CollapseItem
-            name="Aluguel"
-            value="R$ 1.800"
-            meta="Pago em 01/03 · Conta Itau"
-            status="Pago"
-            statusVariant="paid"
-          />
-          <CollapseItem
-            name="Energia"
-            value="R$ 320"
-            meta="Pago em 05/03 · Conta Nubank"
-            status="Pago"
-            statusVariant="paid"
-          />
-          <CollapseItem
-            name="Streaming"
-            value="R$ 45"
-            meta="Pago em 01/03 · Conta Nubank"
-            status="Pago"
-            statusVariant="paid"
-          />
-        </CollapseGroup>
-
-        {/* Grupo colapsado */}
-        <CollapseGroup
-          title="Manual"
-          count="4 itens"
-          defaultExpanded={false}
+        {/* Nivel 1 → Nivel 2 → Nivel 3 (itens) */}
+        <CollapseHeader
+          level={1}
+          title="Despesas Fixas"
+          count="7 itens"
+          badge={
+            <Badge className="border-transparent bg-positive-bg text-positive-text text-[11px] font-semibold">
+              5 pagos
+            </Badge>
+          }
         >
-          <CollapseItem
-            name="Faxineira"
-            value="R$ 250"
-            meta="Vence 20/03 · PIX"
-            status="Pendente"
-            statusVariant="pending"
-          />
-        </CollapseGroup>
+          <CollapseHeader level={2} title="Moradia" count="4 itens">
+            <CollapseItem
+              name="Aluguel"
+              value="R$ 1.800,00"
+              detail="Pago em 01/03 · Itaú"
+              status="Pago"
+              statusVariant="paid"
+            />
+            <CollapseItem
+              name="Condomínio"
+              value="R$ 580,00"
+              detail="Vence 15/03 · Boleto"
+              status="Pendente"
+              statusVariant="pending"
+            />
+            <CollapseItem
+              name="Energia"
+              value="R$ 320,00"
+              detail="Pago em 05/03 · Nubank"
+              status="Pago"
+              statusVariant="paid"
+            />
+            <CollapseItem
+              name="IPTU"
+              value="R$ 195,00"
+              detail="Pago em 10/03 · Boleto"
+              status="Pago"
+              statusVariant="paid"
+            />
+          </CollapseHeader>
 
-        {/* Grupo com estimativas */}
-        <CollapseGroup title="Variavel (Fatura)" count="2 itens">
-          <CollapseItem
-            name="Fatura Latam Pass"
-            value="~R$ 4.200"
-            meta="Vence 15/03 · Estimativa"
-            status="Estimativa"
-            statusVariant="estimate"
-          />
-          <CollapseItem
-            name="Fatura Pao de Acucar"
-            value="~R$ 1.980"
-            meta="Vence 10/03 · Estimativa"
-            status="Estimativa"
-            statusVariant="estimate"
-          />
-        </CollapseGroup>
+          <CollapseHeader level={2} title="Transporte" count="2 itens">
+            <CollapseItem
+              name="Seguro carro"
+              value="R$ 230,00"
+              detail="Vence 25/03 · Débito"
+              status="Pendente"
+              statusVariant="pending"
+            />
+            <CollapseItem
+              name="Combustível"
+              value="~R$ 400,00"
+              detail="Estimativa mensal"
+              status="Estimativa"
+              statusVariant="estimate"
+            />
+          </CollapseHeader>
+
+          <CollapseHeader
+            level={2}
+            title="Saúde"
+            count="1 item"
+            defaultExpanded={false}
+          >
+            <CollapseItem
+              name="Plano saúde"
+              value="R$ 815,00"
+              detail="Vence 28/03 · Boleto"
+              status="Pendente"
+              statusVariant="pending"
+            />
+          </CollapseHeader>
+        </CollapseHeader>
+
+        {/* Nivel 1 colapsado */}
+        <CollapseHeader
+          level={1}
+          title="Despesas Variáveis"
+          count="5 itens"
+          defaultExpanded={false}
+          badge={
+            <Badge className="border-transparent bg-attention-bg text-attention-text text-[11px] font-semibold">
+              2 estimativas
+            </Badge>
+          }
+        >
+          <CollapseItem name="Placeholder" />
+        </CollapseHeader>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
-        Header com borda conecta aos itens. Colapsado = cantos arredondados completos. Acoes aparecem no hover.
+        3 níveis: grupo (nível 1) → sub-grupo (nível 2, indentado, fundo sutil) → itens (nível 3, bullet + indentação maior). Cada nível colapsa independentemente. Ações no hover.
       </p>
     </Section>
   )
@@ -969,7 +1065,7 @@ function EspacamentoSection() {
   const isCompact = density === "compact"
 
   return (
-    <Section id="espacamento" title="Espacamento / Density">
+    <Section id="espacamento" title="Espaçamento / Density">
       <div className="mb-4 flex gap-2">
         <Button
           variant={density === "spacious" ? "default" : "outline"}
