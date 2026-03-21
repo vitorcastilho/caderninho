@@ -804,8 +804,8 @@ function BarrasProgressoSection() {
           <div className="space-y-4">
             <div>
               <div className="mb-1 flex justify-between text-sm">
-                <span>Ok — 45%</span>
-                <span className="font-semibold text-positive-text">45%</span>
+                <span>Ok — 45,00%</span>
+                <span className="font-semibold text-positive-text">45,00%</span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div className="h-full rounded-full bg-positive transition-all" style={{ width: "45%" }} />
@@ -813,8 +813,8 @@ function BarrasProgressoSection() {
             </div>
             <div>
               <div className="mb-1 flex justify-between text-sm">
-                <span>Atenção — 78%</span>
-                <span className="font-semibold text-attention-text">78%</span>
+                <span>Atenção — 78,00%</span>
+                <span className="font-semibold text-attention-text">78,00%</span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div className="h-full rounded-full bg-attention transition-all" style={{ width: "78%" }} />
@@ -822,8 +822,8 @@ function BarrasProgressoSection() {
             </div>
             <div>
               <div className="mb-1 flex justify-between text-sm">
-                <span>Alerta — 92%</span>
-                <span className="font-semibold text-alert-text">92%</span>
+                <span>Alerta — 92,00%</span>
+                <span className="font-semibold text-alert-text">92,00%</span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div className="h-full rounded-full bg-alert transition-all" style={{ width: "92%" }} />
@@ -831,8 +831,8 @@ function BarrasProgressoSection() {
             </div>
             <div>
               <div className="mb-1 flex justify-between text-sm">
-                <span>Crítico — 110%</span>
-                <span className="font-semibold text-critical-text">110%</span>
+                <span>Crítico — 110,00%</span>
+                <span className="font-semibold text-critical-text">110,00%</span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div className="h-full rounded-full bg-critical transition-all" style={{ width: "100%" }} />
@@ -840,8 +840,8 @@ function BarrasProgressoSection() {
             </div>
             <div>
               <div className="mb-1 flex justify-between text-sm">
-                <span>Fixo — 100%</span>
-                <span className="font-semibold text-primary">100%</span>
+                <span>Fixo — 100,00%</span>
+                <span className="font-semibold text-primary">100,00%</span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div className="h-full rounded-full bg-primary transition-all" style={{ width: "100%" }} />
@@ -882,7 +882,7 @@ function BarrasProgressoSection() {
             <div className="h-1.5 w-20 overflow-hidden rounded-full bg-muted">
               <div className="h-full rounded-full bg-positive" style={{ width: "70%" }} />
             </div>
-            <span className="text-sm font-semibold text-positive-text">70%</span>
+            <span className="text-sm font-semibold text-positive-text">70,00%</span>
           </div>
         </div>
       </div>
@@ -1110,7 +1110,7 @@ function BarraResumoSection() {
           <div className="min-w-[200px] flex-1">
             <div className="mb-1.5 flex items-center justify-between">
               <span className="text-sm font-medium text-muted-foreground">Total utilizado</span>
-              <span className="text-sm font-bold tabular-nums">67%</span>
+              <span className="text-sm font-bold tabular-nums">67,00%</span>
             </div>
             <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
               <div className="h-full rounded-full bg-positive transition-all" style={{ width: "67%" }} />
@@ -1462,7 +1462,7 @@ function ChecklistSection() {
         <ChecklistGroup title="Recorrente no Cartão" count="3 itens">
           <CLItem
             name="Spotify"
-            value="R$ 22"
+            value="R$ 22,00"
             brand="visa"
             meta="Latam Pass · Ciclo Mar"
             status="Pago"
@@ -1471,7 +1471,7 @@ function ChecklistSection() {
           />
           <CLItem
             name="Netflix"
-            value="R$ 45"
+            value="R$ 45,00"
             brand="visa"
             meta="Latam Pass · Ciclo Mar"
             status="Pago"
@@ -1480,7 +1480,7 @@ function ChecklistSection() {
           />
           <CLItem
             name="iCloud"
-            value="R$ 12"
+            value="R$ 12,00"
             meta="PDA · Ciclo Mar"
             status="Pago"
             statusVariant="paid"
@@ -1492,7 +1492,7 @@ function ChecklistSection() {
         <ChecklistGroup title="Variável (Fatura)" count="2 itens">
           <CLItem
             name="Fatura Latam Pass"
-            value="~R$ 4.200"
+            value="~R$ 4.200,00"
             brand="visa"
             meta="Vence 15/03 · Estimativa"
             status="Estimativa"
@@ -1501,7 +1501,7 @@ function ChecklistSection() {
           />
           <CLItem
             name="Fatura Pão de Açúcar"
-            value="~R$ 1.980"
+            value="~R$ 1.980,00"
             brand="master"
             meta="Vence 10/03 · Estimativa"
             status="Estimativa"
@@ -1514,7 +1514,7 @@ function ChecklistSection() {
         <ChecklistGroup title="Manual" count="4 itens">
           <CLItem
             name="Faxineira"
-            value="R$ 250"
+            value="R$ 250,00"
             meta="Vence 20/03 · PIX"
             status="Pendente"
             statusVariant="pending"
@@ -1522,7 +1522,7 @@ function ChecklistSection() {
           />
           <CLItem
             name="Condomínio"
-            value="R$ 580"
+            value="R$ 580,00"
             meta="Vence 15/03 · Boleto"
             status="Pendente"
             statusVariant="pending"
@@ -1530,7 +1530,7 @@ function ChecklistSection() {
           />
           <CLItem
             name="Seguro carro"
-            value="R$ 230"
+            value="R$ 230,00"
             meta="Vence 25/03 · Débito"
             status="Pendente"
             statusVariant="pending"
@@ -1538,7 +1538,7 @@ function ChecklistSection() {
           />
           <CLItem
             name="Plano saúde"
-            value="R$ 815"
+            value="R$ 815,00"
             meta="Vence 28/03 · Boleto"
             status="Pendente"
             statusVariant="pending"
@@ -1760,72 +1760,72 @@ function ColunaMensalSection() {
             isCurrent
             sections={[
               { label: "Fixos", items: [
-                { name: "Escola", value: "R$2.800", type: "fixed" },
-                { name: "Aluguel", value: "R$1.800", type: "fixed" },
-                { name: "Internet", value: "R$158", type: "fixed" },
+                { name: "Escola", value: "R$ 2.800,00", type: "fixed" },
+                { name: "Aluguel", value: "R$ 1.800,00", type: "fixed" },
+                { name: "Internet", value: "R$ 158,00", type: "fixed" },
               ]},
               { label: "Variáveis", items: [
-                { name: "Supermercado", value: "R$3.000", approx: true, type: "variable" },
-                { name: "Gasolina", value: "R$600", approx: true, type: "variable" },
+                { name: "Supermercado", value: "R$ 3.000,00", approx: true, type: "variable" },
+                { name: "Gasolina", value: "R$ 600,00", approx: true, type: "variable" },
               ]},
               { label: "Parcelas", items: [
-                { name: "Fotos", value: "R$171", type: "installment", tag: "8/10" },
+                { name: "Fotos", value: "R$ 171,00", type: "installment", tag: "8/10" },
               ]},
             ]}
-            margin="R$750"
+            margin="R$ 750,00"
             isPositive
           />
           <MonthColumn
             month="Mai 2026"
             sections={[
               { label: "Fixos", items: [
-                { name: "Escola", value: "R$2.800", type: "fixed" },
-                { name: "Aluguel", value: "R$1.800", type: "fixed" },
-                { name: "Internet", value: "R$158", type: "fixed" },
+                { name: "Escola", value: "R$ 2.800,00", type: "fixed" },
+                { name: "Aluguel", value: "R$ 1.800,00", type: "fixed" },
+                { name: "Internet", value: "R$ 158,00", type: "fixed" },
               ]},
               { label: "Variáveis", items: [
-                { name: "Supermercado", value: "R$3.000", approx: true, type: "variable" },
-                { name: "Gasolina", value: "R$600", approx: true, type: "variable" },
+                { name: "Supermercado", value: "R$ 3.000,00", approx: true, type: "variable" },
+                { name: "Gasolina", value: "R$ 600,00", approx: true, type: "variable" },
               ]},
               { label: "Parcelas", items: [
-                { name: "Fotos", value: "R$171", type: "installment", tag: "10/10", finished: true },
+                { name: "Fotos", value: "R$ 171,00", type: "installment", tag: "10/10", finished: true },
               ]},
             ]}
-            margin="R$920"
+            margin="R$ 920,00"
             isPositive
           />
           <MonthColumn
             month="Jun 2026"
             sections={[
               { label: "Fixos", items: [
-                { name: "Escola", value: "R$2.800", type: "fixed" },
-                { name: "Aluguel", value: "R$1.800", type: "fixed" },
-                { name: "Internet", value: "R$158", type: "fixed" },
+                { name: "Escola", value: "R$ 2.800,00", type: "fixed" },
+                { name: "Aluguel", value: "R$ 1.800,00", type: "fixed" },
+                { name: "Internet", value: "R$ 158,00", type: "fixed" },
               ]},
               { label: "Variáveis", items: [
-                { name: "Supermercado", value: "R$3.000", approx: true, type: "variable" },
-                { name: "Gasolina", value: "R$600", approx: true, type: "variable" },
+                { name: "Supermercado", value: "R$ 3.000,00", approx: true, type: "variable" },
+                { name: "Gasolina", value: "R$ 600,00", approx: true, type: "variable" },
               ]},
             ]}
-            margin="R$1.091"
+            margin="R$ 1.091,00"
             isPositive
-            freedBadge="Libera R$171/mês"
-            marginExtra="+R$171 liberado"
+            freedBadge="Libera R$ 171,00/mês"
+            marginExtra="+R$ 171,00 liberado"
           />
           <MonthColumn
             month="Set 2026"
             sections={[
               { label: "Fixos", items: [
-                { name: "Escola", value: "R$2.800", type: "fixed" },
-                { name: "Aluguel", value: "R$1.800", type: "fixed" },
-                { name: "Internet", value: "R$158", type: "fixed" },
+                { name: "Escola", value: "R$ 2.800,00", type: "fixed" },
+                { name: "Aluguel", value: "R$ 1.800,00", type: "fixed" },
+                { name: "Internet", value: "R$ 158,00", type: "fixed" },
               ]},
               { label: "Planejado", items: [
-                { name: "Seguro Carro", value: "R$2.800", type: "planned" },
-                { name: "Troca Óleo", value: "R$500", type: "planned" },
+                { name: "Seguro Carro", value: "R$ 2.800,00", type: "planned" },
+                { name: "Troca Óleo", value: "R$ 500,00", type: "planned" },
               ]},
             ]}
-            margin="-R$1.600"
+            margin="-R$ 1.600,00"
             isPositive={false}
           />
         </div>
@@ -1871,7 +1871,7 @@ function PainelSimulacaoSection() {
             </div>
             <div className="grid gap-1">
               <label className="text-[12px] font-semibold text-text-secondary">Quanto custa?</label>
-              <Input defaultValue="R$ 3.500" inputMode="numeric" />
+              <Input defaultValue="R$ 3.500,00" inputMode="numeric" />
             </div>
             <div className="grid gap-1">
               <label className="text-[12px] font-semibold text-text-secondary">Quando?</label>
@@ -1900,7 +1900,7 @@ function PainelSimulacaoSection() {
             </div>
 
             <p className="text-[13px] leading-relaxed text-text-secondary">
-              Economize <strong className="text-foreground">R$ 945/mês</strong> nos próximos <strong className="text-foreground">4 meses</strong> para alcançar sua meta de <strong className="text-foreground">R$ 3.500</strong> em Junho 2026.
+              Economize <strong className="text-foreground">R$ 945,00/mês</strong> nos próximos <strong className="text-foreground">4 meses</strong> para alcançar sua meta de <strong className="text-foreground">R$ 3.500,00</strong> em Junho 2026.
             </p>
 
             {/* Cortes */}
@@ -1908,9 +1908,9 @@ function PainelSimulacaoSection() {
               <p className="mb-1 text-[13px] font-bold">De onde cortar:</p>
               <div className="space-y-2.5">
                 {[
-                  { name: "Restaurante", saving: "-R$ 750/mês", detail: "Atual R$ 2.500 → reduzir 30%", pct: 74, color: "bg-[#6366F1]" },
-                  { name: "Delivery", saving: "-R$ 180/mês", detail: "Atual R$ 900 → reduzir 20%", pct: 18, color: "bg-[#8B5CF6]" },
-                  { name: "Compras pessoais", saving: "-R$ 75/mês", detail: "Atual R$ 500 → reduzir 15%", pct: 8, color: "bg-[#A78BFA]" },
+                  { name: "Restaurante", saving: "-R$ 750,00/mês", detail: "Atual R$ 2.500,00 → reduzir 30%", pct: 74, color: "bg-[#6366F1]" },
+                  { name: "Delivery", saving: "-R$ 180,00/mês", detail: "Atual R$ 900,00 → reduzir 20%", pct: 18, color: "bg-[#8B5CF6]" },
+                  { name: "Compras pessoais", saving: "-R$ 75,00/mês", detail: "Atual R$ 500,00 → reduzir 15%", pct: 8, color: "bg-[#A78BFA]" },
                 ].map((cut) => (
                   <div key={cut.name} className="space-y-1">
                     <div className="flex items-center justify-between text-[12px]">
@@ -1929,10 +1929,10 @@ function PainelSimulacaoSection() {
             {/* Total */}
             <div className="flex items-center justify-between rounded-[6px] border border-[#C7D2FE] bg-primary-light px-3.5 py-2.5">
               <span className="text-[13px] font-semibold text-primary">Total possível</span>
-              <span className="text-[15px] font-bold text-primary tabular-nums">R$ 1.005/mês</span>
+              <span className="text-[15px] font-bold text-primary tabular-nums">R$ 1.005,00/mês</span>
             </div>
             <p className="text-right text-[11px] text-text-secondary">
-              R$ 60 acima do necessário — folga para imprevistos
+              R$ 60,00 acima do necessário — folga para imprevistos
             </p>
           </div>
         </div>
@@ -2914,9 +2914,9 @@ function BreadcrumbsSection() {
           <div className="flex items-center gap-1.5 text-sm">
             <a href="#breadcrumbs" className="text-primary hover:underline">Mar 2026</a>
             <span className="text-muted-foreground">›</span>
-            <span className="font-medium text-foreground">Essenciais — R$ 7.680</span>
+            <span className="font-medium text-foreground">Essenciais — R$ 7.680,00</span>
           </div>
-          <p className="text-xs text-muted-foreground">83% do orçamento de R$ 9.258</p>
+          <p className="text-xs text-muted-foreground">83,00% do orçamento de R$ 9.258,00</p>
         </div>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
@@ -3050,13 +3050,13 @@ function GradeTimelineSection() {
                         style={{ width: `${pct}%` }}
                       />
                       <span className="absolute inset-0 flex items-center justify-center text-[11px] font-semibold text-white mix-blend-difference">
-                        R${val.toLocaleString("pt-BR")}
+                        R$ {val.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                       </span>
                     </div>
                     <p className="mt-0.5 text-center text-[10px] text-muted-foreground tabular-nums">
                       {isCurrentMonth
-                        ? `R$${val.toLocaleString("pt-BR")} / R$${cat.budgets[i].toLocaleString("pt-BR")}`
-                        : `~R$${val.toLocaleString("pt-BR")}`}
+                        ? `R$ ${val.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} / R$ ${cat.budgets[i].toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
+                        : `~R$ ${val.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`}
                     </p>
                   </div>
                 )
@@ -3106,14 +3106,14 @@ function TreemapSection() {
                 {item.name}
               </p>
               <p className={`text-xl font-bold ${item.textColor}`}>
-                R${item.value.toLocaleString("pt-BR")}
+                R$ {item.value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
               </p>
               <p className={`text-xs ${item.textColor} opacity-70`}>
-                {item.pct}% do total
+                {item.pct.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}% do total
               </p>
               {/* Bottom info */}
               <div className={`absolute inset-x-3 bottom-3 text-[10px] ${item.textColor} opacity-60`}>
-                <p>Orçam. R${item.value.toLocaleString("pt-BR")}</p>
+                <p>Orçam. R$ {item.value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
                 <div className="mt-0.5 h-0.5 rounded-full bg-positive" />
                 <p className="mt-0.5">Latam Pass Visa</p>
               </div>
@@ -3132,7 +3132,7 @@ function TreemapSection() {
                 {item.name}
               </p>
               <p className="text-sm font-bold text-foreground">
-                R${item.value.toLocaleString("pt-BR")}
+                R$ {item.value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
               </p>
             </div>
           ))}
@@ -3144,10 +3144,10 @@ function TreemapSection() {
           <div className="inline-block rounded-lg bg-[#1C1917] px-4 py-3 text-white shadow-lg">
             <p className="text-sm font-semibold">Supermercado</p>
             <div className="mt-1.5 space-y-0.5 text-xs">
-              <div className="flex justify-between gap-6"><span className="text-white/60">Orçamento</span><span className="font-medium tabular-nums">R$3.000</span></div>
-              <div className="flex justify-between gap-6"><span className="text-white/60">Gasto</span><span className="font-medium tabular-nums">R$2.122</span></div>
-              <div className="flex justify-between gap-6"><span className="text-white/60">Resta</span><span className="font-medium tabular-nums">R$878</span></div>
-              <div className="flex justify-between gap-6"><span className="text-white/60">Uso</span><span className="font-medium tabular-nums">70%</span></div>
+              <div className="flex justify-between gap-6"><span className="text-white/60">Orçamento</span><span className="font-medium tabular-nums">R$ 3.000,00</span></div>
+              <div className="flex justify-between gap-6"><span className="text-white/60">Gasto</span><span className="font-medium tabular-nums">R$ 2.122,00</span></div>
+              <div className="flex justify-between gap-6"><span className="text-white/60">Resta</span><span className="font-medium tabular-nums">R$ 878,00</span></div>
+              <div className="flex justify-between gap-6"><span className="text-white/60">Uso</span><span className="font-medium tabular-nums">70,00%</span></div>
             </div>
             <p className="mt-2 text-[11px] text-white/50">Latam Pass Visa</p>
           </div>
@@ -3171,10 +3171,10 @@ function TooltipDetalheSection() {
           <div className="inline-block rounded-lg bg-[#1C1917] px-4 py-3 text-white shadow-lg">
             <p className="text-sm font-semibold">Supermercado</p>
             <div className="mt-1.5 space-y-0.5 text-xs">
-              <div className="flex justify-between gap-8"><span className="text-white/60">Orçamento</span><span className="font-medium tabular-nums">R$3.000</span></div>
-              <div className="flex justify-between gap-8"><span className="text-white/60">Gasto</span><span className="font-medium tabular-nums">R$2.122</span></div>
-              <div className="flex justify-between gap-8"><span className="text-white/60">Resta</span><span className="font-medium tabular-nums">R$878</span></div>
-              <div className="flex justify-between gap-8"><span className="text-white/60">Uso</span><span className="font-medium tabular-nums">70%</span></div>
+              <div className="flex justify-between gap-8"><span className="text-white/60">Orçamento</span><span className="font-medium tabular-nums">R$ 3.000,00</span></div>
+              <div className="flex justify-between gap-8"><span className="text-white/60">Gasto</span><span className="font-medium tabular-nums">R$ 2.122,00</span></div>
+              <div className="flex justify-between gap-8"><span className="text-white/60">Resta</span><span className="font-medium tabular-nums">R$ 878,00</span></div>
+              <div className="flex justify-between gap-8"><span className="text-white/60">Uso</span><span className="font-medium tabular-nums">70,00%</span></div>
             </div>
             <p className="mt-2 text-[11px] text-white/50">Latam Pass Visa</p>
           </div>
@@ -3184,8 +3184,8 @@ function TooltipDetalheSection() {
           <div className="inline-block rounded-lg border bg-white px-4 py-3 shadow-md">
             <p className="text-sm font-semibold text-foreground">Internet</p>
             <div className="mt-1.5 space-y-0.5 text-xs">
-              <div className="flex justify-between gap-8"><span className="text-muted-foreground">Orçam.</span><span className="font-medium tabular-nums">R$158</span></div>
-              <div className="flex justify-between gap-8"><span className="text-muted-foreground">Gasto</span><span className="font-medium tabular-nums">R$158</span></div>
+              <div className="flex justify-between gap-8"><span className="text-muted-foreground">Orçam.</span><span className="font-medium tabular-nums">R$ 158,00</span></div>
+              <div className="flex justify-between gap-8"><span className="text-muted-foreground">Gasto</span><span className="font-medium tabular-nums">R$ 158,00</span></div>
               <div className="flex justify-between gap-8"><span className="text-muted-foreground">Status</span><span className="font-medium text-primary">Fixo</span></div>
             </div>
           </div>
