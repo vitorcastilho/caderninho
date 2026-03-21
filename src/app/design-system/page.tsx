@@ -583,18 +583,53 @@ function DialogsSection() {
               <SheetHeader>
                 <SheetTitle>Detalhes da transação</SheetTitle>
                 <SheetDescription>
-                  Visualize e edite os detalhes desta transação.
+                  Edite os detalhes desta transação.
                 </SheetDescription>
               </SheetHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-1">
+              <div className="space-y-4 px-4 py-4">
+                <div className="space-y-1.5">
                   <Label>Descrição</Label>
                   <Input defaultValue="Supermercado Extra" />
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-1.5">
                   <Label>Valor</Label>
                   <Input defaultValue="R$ 234,56" />
                 </div>
+                <div className="space-y-1.5">
+                  <Label>Categoria</Label>
+                  <Select defaultValue="alimentacao">
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="alimentacao">🍔 Alimentação</SelectItem>
+                      <SelectItem value="transporte">🚗 Transporte</SelectItem>
+                      <SelectItem value="moradia">🏠 Moradia</SelectItem>
+                      <SelectItem value="saude">💊 Saúde</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Data</Label>
+                  <Input type="date" defaultValue="2026-03-20" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Observações</Label>
+                  <Input placeholder="Nota opcional..." />
+                </div>
+                <div className="flex items-center justify-between rounded-[var(--radius-card)] border px-3 py-2.5">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="inline-flex shrink-0 items-center justify-center rounded-[3px] border border-black/[0.06] bg-[#1A1F71] px-[3px] py-[1px] text-[7px] font-extrabold italic text-white" style={{ width: 26, height: 16 }}>
+                      VISA
+                    </span>
+                    <span className="text-muted-foreground">Latam Pass •••• 4532</span>
+                  </div>
+                  <Badge variant="secondary" className="text-[11px]">Crédito</Badge>
+                </div>
+              </div>
+              <div className="flex gap-2 border-t px-4 pt-4">
+                <Button className="flex-1">Salvar</Button>
+                <Button variant="outline" className="flex-1">Cancelar</Button>
               </div>
             </SheetContent>
           </Sheet>
