@@ -40,7 +40,7 @@ import {
 } from "@/client/components/ui/table"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/client/components/ui/tabs"
 import { Skeleton } from "@/client/components/ui/skeleton"
-import { ChevronDown, Plus, Pencil, Archive, Loader2 } from "lucide-react"
+import { ChevronDown, Plus, Pencil, Archive, Loader2, Clock, X, AlertTriangle, CheckCircle2 } from "lucide-react"
 
 /* ─── helpers ─── */
 
@@ -87,6 +87,8 @@ export default function DesignSystemPage() {
       <DialogsSection />
       <TabelasSection />
       <TabsSection />
+      <BannersSection />
+      <SummaryCardsSection />
       <EmptyStatesSection />
       <ListaColapsavelSection />
       <CursoresSection />
@@ -602,7 +604,107 @@ function TabsSection() {
   )
 }
 
-/* ─── 10. Empty States ─── */
+/* ─── 10. Banners ─── */
+
+function BannersSection() {
+  return (
+    <Section id="banners" title="Banners">
+      <div className="space-y-4 max-w-2xl">
+        {/* Info banner — padrão proto-10 checklist */}
+        <div className="relative flex items-center gap-3 rounded-[var(--radius-card)] border border-info/20 bg-info-bg px-5 py-3.5">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-info">
+            <Clock className="size-[18px] text-white" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-info-text">
+              Amanha vence: Internet R$ 158,00
+            </p>
+          </div>
+          <Button size="sm" className="shrink-0 bg-info text-white hover:bg-info/90">
+            Marcar como pago
+          </Button>
+          <button
+            type="button"
+            className="absolute top-2 right-2 rounded p-1 text-info-text/50 transition-opacity hover:text-info-text"
+          >
+            <X className="size-3.5" />
+          </button>
+        </div>
+
+        {/* Attention banner */}
+        <div className="relative flex items-center gap-3 rounded-[var(--radius-card)] border border-attention/20 bg-attention-bg px-5 py-3.5">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-attention">
+            <AlertTriangle className="size-[18px] text-white" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-attention-text">
+              2 faturas precisam ser atualizadas
+            </p>
+            <p className="text-xs text-attention-text/80">
+              Latam Pass e Pao de Acucar estao com valores estimados.
+            </p>
+          </div>
+          <Button size="sm" className="shrink-0 bg-attention text-white hover:bg-attention/90">
+            Atualizar faturas
+          </Button>
+        </div>
+
+        {/* Positive banner */}
+        <div className="flex items-center gap-3 rounded-[var(--radius-card)] border border-positive/20 bg-positive-bg px-5 py-3.5">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-positive">
+            <CheckCircle2 className="size-[18px] text-white" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-positive-text">
+              Todas as contas do mes estao pagas!
+            </p>
+          </div>
+        </div>
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Icone circular colorido + texto + CTA opcional + dismiss. Cores: info (azul), attention (amarelo), positive (verde).
+      </p>
+    </Section>
+  )
+}
+
+/* ─── 11. Summary Cards ─── */
+
+function SummaryCardsSection() {
+  return (
+    <Section id="summary-cards" title="Summary Cards">
+      <div className="grid max-w-2xl grid-cols-3 gap-4">
+        <div className="rounded-[var(--radius-card)] border border-border bg-card p-5 transition-shadow hover:shadow-sm">
+          <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            Total do mes
+          </p>
+          <p className="text-2xl font-bold tabular-nums">R$ 14.858</p>
+        </div>
+        <div className="rounded-[var(--radius-card)] border border-border bg-card p-5 transition-shadow hover:shadow-sm">
+          <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            Confirmado
+          </p>
+          <p className="text-2xl font-bold tabular-nums text-positive-text">
+            R$ 5.044
+          </p>
+        </div>
+        <div className="rounded-[var(--radius-card)] border border-border bg-card p-5 transition-shadow hover:shadow-sm">
+          <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            Pendente
+          </p>
+          <p className="text-2xl font-bold tabular-nums text-attention-text">
+            R$ 9.814
+          </p>
+        </div>
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Grid 3 colunas, label uppercase + valor grande. Cores semanticas para status.
+      </p>
+    </Section>
+  )
+}
+
+/* ─── 12. Empty States ─── */
 
 function EmptyStatesSection() {
   return (

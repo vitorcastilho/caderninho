@@ -8,6 +8,8 @@ const sections = [
   { id: "dialogs", label: "Dialogs" },
   { id: "tabelas", label: "Tabelas" },
   { id: "tabs", label: "Tabs" },
+  { id: "banners", label: "Banners" },
+  { id: "summary-cards", label: "Summary Cards" },
   { id: "empty-states", label: "Empty States" },
   { id: "lista-colapsavel", label: "Lista Colapsavel" },
   { id: "cursores", label: "Cursores" },
