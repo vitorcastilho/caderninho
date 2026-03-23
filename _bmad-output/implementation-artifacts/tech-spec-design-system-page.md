@@ -172,95 +172,95 @@ As seguintes inconsistências foram encontradas nos 27 protótipos e devem ser *
 
 ### Tasks
 
-- [ ] Task 1: Criar estrutura da rota `/design-system`
+- [x] Task 1: Criar estrutura da rota `/design-system`
   - File: `src/app/design-system/layout.tsx`
   - Action: Criar layout standalone (sem sidebar/header) com título "Design System — Caderninho", navegação lateral fixa com anchor links para cada seção, e container com max-width
   - File: `src/app/design-system/page.tsx`
   - Action: Criar page.tsx como client component ("use client") que importa e renderiza todas as seções — necessário por causa dos ~15 useState para interatividade (toggles, dialogs, collapsibles, density, etc.)
   - Notes: Rota fora dos route groups `(app)` e `(auth)`. Client component justificado pela quantidade de seções interativas
 
-- [ ] Task 2: Seção Cores/Tokens
+- [x] Task 2: Seção Cores/Tokens
   - File: `src/app/design-system/page.tsx`
   - Action: Renderizar swatches de todas as cores CSS definidas em `globals.css`. Organizar em grupos: Neutros (bg, surface, border, text-primary/secondary/tertiary), Primária (primary, primary-hover, primary-light), Semânticas (positive, attention, alert, critical, info com bg/text variants), Destrutiva (destructive). Cada swatch mostra: nome da variável CSS, valor hex, e preview colorido
   - Notes: Ler valores de `globals.css` para documentação. Incluir `--info` se já existir, senão registrar como pendência
 
-- [ ] Task 3: Seção Tipografia
+- [x] Task 3: Seção Tipografia
   - File: `src/app/design-system/page.tsx`
   - Action: Renderizar exemplos reais de cada nível tipográfico usando classes Tailwind: H1 (text-2xl/font-bold), H2 (text-xl/font-semibold), H3 (text-lg/font-semibold), H4 (text-base/font-medium), Body (text-sm), Small (text-xs/text-muted-foreground), Label (text-sm/font-medium via componente Label). Usar texto em português relevante ao app. Mostrar `tabular-nums` para valores monetários
   - Notes: Font-family: Inter. Usa escala Tailwind padrão (aproximações dos valores de `ux-design-directions.html`)
 
-- [ ] Task 4: Seção Botões
+- [x] Task 4: Seção Botões
   - File: `src/app/design-system/page.tsx`
   - Action: Renderizar grid com todos os 6 variants (`default`, `outline`, `secondary`, `ghost`, `destructive`, `link`) × 8 sizes (`default`, `xs`, `sm`, `lg`, `icon`, `icon-xs`, `icon-sm`, `icon-lg`). Para cada combinação, mostrar: estado normal, hover (documentar cor), disabled (`disabled` prop), e loading (com texto "Salvando..."). Importar `Button` real de `@/client/components/ui/button`
   - Notes: Usar componente real, não mockup. O grid pode ser uma tabela ou grid CSS
 
-- [ ] Task 5: Seção Cards
+- [x] Task 5: Seção Cards
   - File: `src/app/design-system/page.tsx`
   - Action: Renderizar exemplos de Card com diferentes composições: Card simples (apenas CardContent), Card completo (CardHeader + CardTitle + CardDescription + CardContent), Card com ações no header. Documentar: `rounded-card` (12px), `bg-card`, `border`, sem shadow por padrão
   - Notes: Importar `Card` e sub-componentes reais
 
-- [ ] Task 6: Seção Formulários
+- [x] Task 6: Seção Formulários
   - File: `src/app/design-system/page.tsx`
   - Action: Renderizar exemplos de: Input (default, focus, error com `aria-invalid`, disabled), Select com opções, Label associado a Input, Input com prefixo (R$) estilo monetário (`inputMode="numeric"`). Mostrar estados visuais lado a lado
   - Notes: Importar componentes reais. Documentar padrão de input monetário (referência: `BankAccountForm.tsx`)
 
-- [ ] Task 7: Seção Badges
+- [x] Task 7: Seção Badges
   - File: `src/app/design-system/page.tsx`
   - Action: Renderizar os 4 variants do Badge (`default`, `secondary`, `outline`, `destructive`) com textos de exemplo relevantes (ex: "Ativo", "Pendente", "3 categorias", "Atrasado")
   - Notes: Importar `Badge` real
 
-- [ ] Task 8: Seção Dialogs
+- [x] Task 8: Seção Dialogs
   - File: `src/app/design-system/page.tsx`
   - Action: Renderizar exemplo interativo de Dialog com: DialogTrigger (botão que abre), DialogContent com DialogHeader (título + descrição), DialogFooter com botões Cancelar (outline) e Confirmar (destructive). Incluir exemplo de confirmação destrutiva (ex: "Arquivar categoria")
   - Notes: `'use client'` necessário para interatividade do dialog. Pode ser um componente separado importado na page
 
-- [ ] Task 9: Seção Tabelas
+- [x] Task 9: Seção Tabelas
   - File: `src/app/design-system/page.tsx`
   - Action: Renderizar Table com dados de exemplo (3-4 linhas) com: TableHeader, TableBody, TableRow, TableHead, TableCell. Usar dados financeiros fictícios para contextualizar (nome, valor, status)
   - Notes: Importar componentes reais de Table
 
-- [ ] Task 10: Seção Tabs
+- [x] Task 10: Seção Tabs
   - File: `src/app/design-system/page.tsx`
   - Action: Renderizar Tabs com 3 abas de exemplo (ex: "Visual", "Lista", "Timeline") com conteúdo simples em cada TabsContent
   - Notes: Importar componentes reais de Tabs
 
-- [ ] Task 11: Seção Empty States
+- [x] Task 11: Seção Empty States
   - File: `src/app/design-system/page.tsx`
   - Action: Renderizar o padrão canônico de empty state: container com `border border-dashed border-border rounded-lg`, texto descritivo centralizado, botão CTA (secondary), e hint text (muted). Exemplo: "Nenhuma categoria ainda" + botão "+ Adicionar categoria" + hint "Ex: Moradia, Alimentação..."
   - Notes: Seguir padrão já implementado em `ClassificationSection.tsx`
 
-- [ ] Task 12: Seção Lista Colapsável
+- [x] Task 12: Seção Lista Colapsável
   - File: `src/app/design-system/page.tsx`
   - Action: Renderizar o padrão canônico de lista colapsável com: header clicável (chevron ▼ que rotaciona -90° ao colapsar, título, spacer, badge de contagem, ações), body com itens que podem ter sub-itens indentados (28px margin-left). Documentar: chevron DOWN = expandido, chevron LEFT = colapsado. Sub-itens com dot bullet (4px circle). Ações de sub-itens aparecem só no hover
   - Notes: `'use client'` necessário para toggle. Definir este como o ÚNICO padrão de lista colapsável do app
 
-- [ ] Task 13: Seção Cursores
+- [x] Task 13: Seção Cursores
   - File: `src/app/design-system/page.tsx`
   - Action: Renderizar 3 zonas interativas demonstrando: `cursor-pointer` (botões, links, elementos clicáveis), `cursor-default` (texto, labels, áreas não interativas — padrão do body), `cursor-text` (inputs em focus). Cada zona com label descritivo e borda visual
   - Notes: Documentar regra: body = cursor-default, Button = cursor-pointer, Input = cursor-text
 
-- [ ] Task 14: Seção Espaçamento/Density
+- [x] Task 14: Seção Espaçamento/Density
   - File: `src/app/design-system/page.tsx`
   - Action: Renderizar toggle entre `data-density="spacious"` e `data-density="compact"` com um card de exemplo que muda visualmente entre os dois modos. Documentar a escala de espaçamento usada: 4px, 8px, 12px, 16px, 20px, 24px, 32px
   - Notes: `'use client'` necessário para toggle. Usar `DensityProvider` existente como referência
 
-- [ ] Task 15: Seção Skeleton Loading
+- [x] Task 15: Seção Skeleton Loading
   - File: `src/app/design-system/page.tsx`
   - Action: Renderizar exemplos de Skeleton em diferentes formatos: linha de texto, card completo, avatar circular. Mostrar animação pulse em ação
   - Notes: Importar `Skeleton` real
 
 ### Acceptance Criteria
 
-- [ ] AC 1: Given ambiente de desenvolvimento, when acessar `/design-system`, then a página renderiza com todas as 14 seções visíveis e navegáveis por anchor links
-- [ ] AC 2: Given a seção de cores, when visualizar, then todas as cores do `globals.css` são mostradas com swatches, nome da variável CSS e valor hex
-- [ ] AC 3: Given a seção de botões, when visualizar, then todos os 6 variants e 8 sizes são renderizados agrupados por tipo (variantes, tamanhos, ícones, estados), incluindo disabled e loading
-- [ ] AC 4: Given a seção de formulários, when visualizar, then Input, Select e Label são renderizados em estados default, focus, error e disabled
-- [ ] AC 5: Given a seção de lista colapsável, when clicar no header, then o body colapsa/expande com animação do chevron (▼ → ◀)
-- [ ] AC 6: Given a seção de density, when alternar entre spacious e compact, then o card de exemplo muda de espaçamento visualmente
-- [ ] AC 7: Given a seção de cursores, when passar o mouse nas 3 zonas, then o cursor muda corretamente (pointer, default, text)
-- [ ] AC 8: Given a seção de empty states, when visualizar, then o padrão canônico é exibido com borda tracejada, CTA e hint
-- [ ] AC 9: Given qualquer componente na página, when inspecionar, then é o componente real importado de `@/client/components/ui/` (não mockup)
-- [ ] AC 10: Given a rota `/design-system`, when verificar em produção, then a rota NÃO aparece no sidebar de navegação
+- [x] AC 1: Given ambiente de desenvolvimento, when acessar `/design-system`, then a página renderiza com todas as 14 seções visíveis e navegáveis por anchor links
+- [x] AC 2: Given a seção de cores, when visualizar, then todas as cores do `globals.css` são mostradas com swatches, nome da variável CSS e valor hex
+- [x] AC 3: Given a seção de botões, when visualizar, then todos os 6 variants e 8 sizes são renderizados agrupados por tipo (variantes, tamanhos, ícones, estados), incluindo disabled e loading
+- [x] AC 4: Given a seção de formulários, when visualizar, then Input, Select e Label são renderizados em estados default, focus, error e disabled
+- [x] AC 5: Given a seção de lista colapsável, when clicar no header, then o body colapsa/expande com animação do chevron (▼ → ◀)
+- [x] AC 6: Given a seção de density, when alternar entre spacious e compact, then o card de exemplo muda de espaçamento visualmente
+- [x] AC 7: Given a seção de cursores, when passar o mouse nas 3 zonas, then o cursor muda corretamente (pointer, default, text)
+- [x] AC 8: Given a seção de empty states, when visualizar, then o padrão canônico é exibido com borda tracejada, CTA e hint
+- [x] AC 9: Given qualquer componente na página, when inspecionar, then é o componente real importado de `@/client/components/ui/` (não mockup)
+- [x] AC 10: Given a rota `/design-system`, when verificar em produção, then a rota NÃO aparece no sidebar de navegação
 
 ### Review Action Items (R1 — 2026-03-23)
 
