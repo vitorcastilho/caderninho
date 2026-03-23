@@ -89,7 +89,7 @@ As seguintes inconsistências foram encontradas nos 27 protótipos e devem ser *
 **MEDIUM — Documentar no design system:**
 9. Sidebar width: 220px (canônico de `ux-design-directions`)
 10. Form-group gap: padronizar
-11. Overlay opacity: padronizar 0.4
+11. Overlay opacity: padronizar 0.25 (bg-black/25) + backdrop-blur-sm
 12. Cor `--info`: adicionar ao globals.css (`#3B82F6`, bg `#DBEAFE`, text `#1E40AF`)
 
 ### Files to Reference
@@ -261,6 +261,38 @@ As seguintes inconsistências foram encontradas nos 27 protótipos e devem ser *
 - [ ] AC 8: Given a seção de empty states, when visualizar, then o padrão canônico é exibido com borda tracejada, CTA e hint
 - [ ] AC 9: Given qualquer componente na página, when inspecionar, then é o componente real importado de `@/client/components/ui/` (não mockup)
 - [ ] AC 10: Given a rota `/design-system`, when verificar em produção, then a rota NÃO aparece no sidebar de navegação
+
+### Review Action Items (R1 — 2026-03-23)
+
+**🔴 HIGH — Deve fixar antes de fechar a story:**
+
+- [x] **[H1] Swatch da seção Cores deve mostrar variável CSS e valor hex**
+  - Arquivo: `src/app/design-system/page.tsx` — componente `Swatch` (linha 72) e `CoresSection` (linha 141)
+  - Problema: AC 2 exige "nome da variável CSS e valor hex". Atualmente o Swatch só mostra preview colorido + label curto (ex: "background"). Um dev não consegue saber que a variável é `--background` e o valor é `#FAFAF9`
+  - Fix: Alterar o componente `Swatch` para receber e exibir o nome da variável CSS (ex: `--background`) e o valor hex (ex: `#FAFAF9`) como texto. Atualizar todas as chamadas em `CoresSection` para passar esses dados
+  - AC validado: AC 2
+
+**🟢 LOW — Backlog (não blocking, implementar quando conveniente):**
+
+- [ ] **[L1] Botões: layout agrupado ao invés de grid 6×8**
+  - AC 3 menciona "grid com todos os 6 variants × 8 sizes". Implementação agrupa por tipo (variants, sizes, ícones, estados) — mais usável, mas não é matriz cruzada. Todos os variants e sizes estão visíveis individualmente
+  - Sugestão: Manter layout atual (mais legível) e atualizar AC 3 para refletir
+
+- [ ] **[L2] Border-radius Input/Button: 8px vs spec 6px**
+  - `globals.css`: `--radius-button` mudou de 6px→8px. `button.tsx` e `input.tsx`: `rounded-lg`→`rounded-md`. Tech-spec dizia 6px mas dev padronizou em 8px
+  - Sugestão: Se 8px é o valor definitivo, atualizar tech-spec inconsistência #2
+
+- [ ] **[L3] Tipografia com tamanhos Tailwind aproximados**
+  - H2 = text-xl (20px) vs spec 18px/600. H3 = text-lg (18px) vs spec 14px/700. Label sem uppercase/tracking 0.5px
+  - Sugestão: Avaliar se vale criar custom sizes ou aceitar equivalentes Tailwind
+
+- [ ] **[L4] Page.tsx inteira como "use client"**
+  - Tech-spec diz "server component que importa". Implementação usa `"use client"` no topo por causa dos hooks de interatividade (useState em ~15 seções)
+  - Sugestão: Extrair seções interativas em client components separados e manter page como server component. Ou aceitar e atualizar tech-spec
+
+- [ ] **[L5] 7 arquivos UI alterados não documentados em `files_to_modify`**
+  - globals.css, button.tsx, dialog.tsx, input.tsx, select.tsx, sheet.tsx, tabs.tsx foram modificados para corrigir inconsistências (cursor-pointer, overlay, radius) mas não estão em `files_to_modify`
+  - Sugestão: Atualizar `files_to_modify` no tech-spec para incluir todos os arquivos tocados
 
 ## Additional Context
 

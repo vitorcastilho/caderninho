@@ -69,14 +69,18 @@ function Section({
   )
 }
 
-function Swatch({ color, label }: { color: string; label: string }) {
+function Swatch({ color, label, cssVar }: { color: string; label: string; cssVar: string }) {
   return (
-    <div className="flex flex-col items-center gap-1">
+    <div className="flex items-center gap-3 rounded-md border px-3 py-2">
       <div
-        className="size-10 rounded-md ring-1 ring-foreground/10"
+        className="size-10 shrink-0 rounded-md ring-1 ring-foreground/10"
         style={{ backgroundColor: color }}
       />
-      <span className="text-xs text-muted-foreground">{label}</span>
+      <div className="flex flex-col gap-0.5">
+        <span className="text-sm font-medium">{label}</span>
+        <span className="font-mono text-xs text-muted-foreground">{cssVar}</span>
+        <span className="font-mono text-xs text-muted-foreground">{color}</span>
+      </div>
     </div>
   )
 }
@@ -144,43 +148,43 @@ function CoresSection() {
       <div className="space-y-6">
         <div>
           <h3 className="mb-3 text-sm font-medium">Neutros (Stone)</h3>
-          <div className="flex flex-wrap gap-3">
-            <Swatch color="#FAFAF9" label="background" />
-            <Swatch color="#F5F5F4" label="muted" />
-            <Swatch color="#E7E5E4" label="border" />
-            <Swatch color="#A8A29E" label="tertiary" />
-            <Swatch color="#78716C" label="secondary" />
-            <Swatch color="#1C1917" label="foreground" />
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+            <Swatch color="#FAFAF9" label="background" cssVar="--background" />
+            <Swatch color="#F5F5F4" label="muted" cssVar="--muted" />
+            <Swatch color="#E7E5E4" label="border" cssVar="--border" />
+            <Swatch color="#A8A29E" label="tertiary" cssVar="--color-text-tertiary" />
+            <Swatch color="#78716C" label="secondary" cssVar="--muted-foreground" />
+            <Swatch color="#1C1917" label="foreground" cssVar="--foreground" />
           </div>
         </div>
 
         <div>
           <h3 className="mb-3 text-sm font-medium">Primária (Indigo)</h3>
-          <div className="flex flex-wrap gap-3">
-            <Swatch color="#EEF2FF" label="primary-light" />
-            <Swatch color="#4F46E5" label="primary" />
-            <Swatch color="#4338CA" label="primary-hover" />
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+            <Swatch color="#EEF2FF" label="primary-light" cssVar="--color-primary-light" />
+            <Swatch color="#4F46E5" label="primary" cssVar="--primary" />
+            <Swatch color="#4338CA" label="primary-hover" cssVar="--color-primary-hover" />
           </div>
         </div>
 
         <div>
           <h3 className="mb-3 text-sm font-medium">Status</h3>
-          <div className="flex flex-wrap gap-3">
-            <Swatch color="#DCFCE7" label="positive-bg" />
-            <Swatch color="#22C55E" label="positive" />
-            <Swatch color="#166534" label="positive-text" />
-            <Swatch color="#FEF9C3" label="attention-bg" />
-            <Swatch color="#EAB308" label="attention" />
-            <Swatch color="#854D0E" label="attention-text" />
-            <Swatch color="#FFF7ED" label="alert-bg" />
-            <Swatch color="#F97316" label="alert" />
-            <Swatch color="#9A3412" label="alert-text" />
-            <Swatch color="#DBEAFE" label="info-bg" />
-            <Swatch color="#3B82F6" label="info" />
-            <Swatch color="#1E40AF" label="info-text" />
-            <Swatch color="#FEE2E2" label="critical-bg" />
-            <Swatch color="#DC2626" label="critical" />
-            <Swatch color="#991B1B" label="critical-text" />
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+            <Swatch color="#DCFCE7" label="positive-bg" cssVar="--color-positive-bg" />
+            <Swatch color="#22C55E" label="positive" cssVar="--color-positive" />
+            <Swatch color="#166534" label="positive-text" cssVar="--color-positive-text" />
+            <Swatch color="#FEF9C3" label="attention-bg" cssVar="--color-attention-bg" />
+            <Swatch color="#EAB308" label="attention" cssVar="--color-attention" />
+            <Swatch color="#854D0E" label="attention-text" cssVar="--color-attention-text" />
+            <Swatch color="#FFF7ED" label="alert-bg" cssVar="--color-alert-bg" />
+            <Swatch color="#F97316" label="alert" cssVar="--color-alert" />
+            <Swatch color="#9A3412" label="alert-text" cssVar="--color-alert-text" />
+            <Swatch color="#DBEAFE" label="info-bg" cssVar="--color-info-bg" />
+            <Swatch color="#3B82F6" label="info" cssVar="--color-info" />
+            <Swatch color="#1E40AF" label="info-text" cssVar="--color-info-text" />
+            <Swatch color="#FEE2E2" label="critical-bg" cssVar="--color-critical-bg" />
+            <Swatch color="#DC2626" label="critical" cssVar="--color-critical" />
+            <Swatch color="#991B1B" label="critical-text" cssVar="--color-critical-text" />
           </div>
         </div>
       </div>
