@@ -125,6 +125,15 @@ So that common purchases are registered faster with fewer taps.
   - [x] 12.5 Auditoria registrada para mutações com novos campos
   - [x] 12.6 Validação backend bloqueia instrumento inexistente/arquivado
 
+### Review Follow-ups (AI) — R1 2026-03-23
+
+- [x] [AI-Review][HIGH] Invariante type+id quebrável via API parcial — `paymentMethodRefine` no `updateCategorySchema` não distingue `undefined` (campo não enviado) de `null` (limpeza explícita). Enviar apenas `{ defaultPaymentMethodType: null }` passa no Zod e quebra invariante AC#9 no banco. Corrigir refine para exigir ambos os campos quando qualquer um é fornecido. [src/shared/schemas/category.schema.ts:6-13, src/server/domain/categories/use-cases/update-category.ts:51]
+- [x] [AI-Review][HIGH] CreditCardBrandBadge — logo Mastercard com bug visual. Círculos usam `position: absolute` sem `position: relative` no container pai. Ao scrollar, os círculos ficam flutuando fora do badge. Adicionar `relative` ao span pai e usar `left`/`right` ou `translate` em vez de `margin`. [src/client/components/ui/credit-card-brand-badge.tsx:40-53]
+- [x] [AI-Review][MEDIUM] Arquivo `credit-card-brand-badge.tsx` criado mas não documentado no File List da story e não commitado (untracked no git). Adicionar ao File List e commitar.
+- [x] [AI-Review][MEDIUM] `CategoryCard.tsx` e `CategoryForm.tsx` têm mudanças uncommitted após commit `85064c4` (uso do `CreditCardBrandBadge`). Commitar as mudanças pendentes.
+- [x] [AI-Review][LOW] Migration meta files (`meta/0009_snapshot.json`, `meta/_journal.json`) ausentes do File List da story.
+- [x] [AI-Review][LOW] Botão submit no `CategoryForm` permanece habilitado quando tipo de pagamento selecionado mas nenhum instrumento escolhido. Backend rejeita via Zod, mas UX melhoraria com botão desabilitado. [src/client/components/categories/CategoryForm.tsx:371]
+
 ## Dev Notes
 
 ### ALERTA CRITICO: Seguir Blueprint das Stories 2.1-2.4
@@ -461,15 +470,25 @@ Nenhum bloqueio ou debug necessário durante a implementação.
 - Testes adicionados: 10 novos testes de schema Zod, 7 novos testes de create-category, 5 novos testes de update-category
 - Todos os testes existentes atualizados para incluir os novos campos no tipo `Category` (6 arquivos de teste)
 - 94 arquivos de teste, 627 testes, todos passando, zero regressões
+- ✅ Resolvido review finding [HIGH]: Invariante type+id quebrável — criado `updatePaymentMethodRefine` que distingue `undefined` de `null`, impedindo update parcial que quebra AC#9
+- ✅ Resolvido review finding [HIGH]: CreditCardBrandBadge Mastercard — adicionado `relative` ao container pai e trocado `margin` por `left`/`right` para posicionar os círculos
+- ✅ Resolvido review finding [MEDIUM]: `credit-card-brand-badge.tsx` adicionado ao File List e commitado
+- ✅ Resolvido review finding [MEDIUM]: Mudanças pendentes em CategoryCard e CategoryForm commitadas
+- ✅ Resolvido review finding [LOW]: Meta files da migration adicionados ao File List
+- ✅ Resolvido review finding [LOW]: Botão submit desabilitado quando tipo de pagamento selecionado mas instrumento não escolhido
+- 94 arquivos de teste, 630 testes (+3 novos para invariante AC#9), todos passando, zero regressões
 
 ### Change Log
 
 - 2026-03-23: Implementação completa da Story 2.5 — Configuração de método de pagamento padrão por categoria
+- 2026-03-23: Code Review R1 — 2 HIGH, 2 MEDIUM, 2 LOW encontrados. Action items criados. Status → in-progress.
+- 2026-03-23: Resolvidos 6 action items do Code Review R1 (2 HIGH, 2 MEDIUM, 2 LOW). Status → review.
 
 ### File List
 
 **Criados:**
 - `src/server/infrastructure/database/migrations/0009_colossal_speedball.sql`
+- `src/client/components/ui/credit-card-brand-badge.tsx`
 
 **Modificados:**
 - `src/server/infrastructure/database/schema/categories.ts`
@@ -495,5 +514,7 @@ Nenhum bloqueio ou debug necessário durante a implementação.
 - `src/client/components/categories/ClassificationSection.tsx`
 - `src/client/components/categories/CategoryForm.tsx`
 - `src/client/components/categories/CategoryCard.tsx`
+- `src/server/infrastructure/database/migrations/meta/0009_snapshot.json`
+- `src/server/infrastructure/database/migrations/meta/_journal.json`
 - `_bmad-output/implementation-artifacts/sprint-status.yaml`
 - `_bmad-output/implementation-artifacts/2-5-configuracao-de-metodo-de-pagamento-padrao-por-categoria.md`

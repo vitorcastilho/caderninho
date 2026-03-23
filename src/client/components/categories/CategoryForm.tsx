@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/client/components/ui/select';
+import { CreditCardBrandBadge } from '@/client/components/ui/credit-card-brand-badge';
 import { centsToDisplayValue, displayValueToCents } from '@/client/utils/currency-input';
 import {
   createCategoryAction,
@@ -119,8 +120,8 @@ export function CategoryForm({
   const activeBankAccounts = bankAccounts.filter((a) => a.status === 'active');
   const activeCreditCards = creditCards.filter((c) => c.status === 'active');
 
-  const instrumentOptions = paymentType === 'credit_card'
-    ? activeCreditCards.map((c) => ({ id: c.id, label: c.name }))
+  const instrumentOptions: { id: string; label: string; brand?: string }[] = paymentType === 'credit_card'
+    ? activeCreditCards.map((c) => ({ id: c.id, label: c.name, brand: c.brand }))
     : paymentType === 'debit' || paymentType === 'pix'
       ? activeBankAccounts.map((a) => ({ id: a.id, label: `${a.bank} - ${a.name}` }))
       : [];
@@ -320,13 +321,32 @@ export function CategoryForm({
           <Select key={paymentType} value={paymentMethodId} onValueChange={(val) => setPaymentMethodId(val ?? '')}>
             <SelectTrigger className="w-full" id="payment-instrument">
               <SelectValue>
-                {instrumentOptions.find((o) => o.id === paymentMethodId)?.label ?? 'Selecione...'}
+                {(() => {
+                  const selected = instrumentOptions.find((o) => o.id === paymentMethodId);
+                  if (!selected) return 'Selecione...';
+                  if (selected.brand) {
+                    return (
+                      <span className="inline-flex items-center gap-1.5">
+                        <CreditCardBrandBadge brand={selected.brand} />
+                        {selected.label}
+                      </span>
+                    );
+                  }
+                  return selected.label;
+                })()}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {instrumentOptions.map((opt) => (
                 <SelectItem key={opt.id} value={opt.id}>
-                  {opt.label}
+                  {opt.brand ? (
+                    <span className="inline-flex items-center gap-1.5">
+                      <CreditCardBrandBadge brand={opt.brand} />
+                      {opt.label}
+                    </span>
+                  ) : (
+                    opt.label
+                  )}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -348,7 +368,7 @@ export function CategoryForm({
             Cancelar
           </Button>
         )}
-        <Button type="submit" disabled={isPending || name.trim().length === 0 || !selectedClassificationId}>
+        <Button type="submit" disabled={isPending || name.trim().length === 0 || !selectedClassificationId || (paymentType !== 'none' && !paymentMethodId)}>
           {isPending ? 'Salvando...' : mode === 'create' ? 'Criar' : 'Salvar alterações'}
         </Button>
       </div>

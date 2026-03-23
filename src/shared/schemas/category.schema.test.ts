@@ -245,6 +245,27 @@ describe('updateCategorySchema', () => {
     });
     expect(result.success).toBe(false);
   });
+
+  it('should reject only type as null without id (invariante AC#9)', () => {
+    const result = updateCategorySchema.safeParse({
+      defaultPaymentMethodType: null,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject only id as null without type (invariante AC#9)', () => {
+    const result = updateCategorySchema.safeParse({
+      defaultPaymentMethodId: null,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should accept update with name and no payment fields (no change to payment)', () => {
+    const result = updateCategorySchema.safeParse({
+      name: 'Novo Nome',
+    });
+    expect(result.success).toBe(true);
+  });
 });
 
 describe('categoryIdSchema', () => {

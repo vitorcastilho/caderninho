@@ -12,6 +12,29 @@ const paymentMethodRefine = (data: {
   return hasType === hasId;
 };
 
+/**
+ * Refine para update: distingue `undefined` (campo não enviado) de `null` (limpeza explícita).
+ * Se qualquer campo de pagamento for explicitamente enviado (incluindo null), ambos devem estar presentes.
+ */
+const updatePaymentMethodRefine = (data: {
+  defaultPaymentMethodType?: string | null;
+  defaultPaymentMethodId?: string | null;
+}) => {
+  const typeProvided = data.defaultPaymentMethodType !== undefined;
+  const idProvided = data.defaultPaymentMethodId !== undefined;
+
+  // Nenhum campo enviado — sem alteração no pagamento, válido
+  if (!typeProvided && !idProvided) return true;
+
+  // Apenas um enviado — inválido, ambos devem ser enviados juntos
+  if (typeProvided !== idProvided) return false;
+
+  // Ambos enviados — devem ser consistentes (ambos null ou ambos preenchidos)
+  const hasType = data.defaultPaymentMethodType != null;
+  const hasId = data.defaultPaymentMethodId != null;
+  return hasType === hasId;
+};
+
 const paymentMethodRefineMessage = 'Tipo e instrumento de pagamento devem ser preenchidos juntos';
 
 export const createCategorySchema = z
@@ -53,7 +76,7 @@ export const updateCategorySchema = z
     },
     { message: 'Orçamento máximo deve ser maior ou igual ao mínimo' },
   )
-  .refine(paymentMethodRefine, { message: paymentMethodRefineMessage });
+  .refine(updatePaymentMethodRefine, { message: paymentMethodRefineMessage });
 
 export const categoryIdSchema = idSchema;
 

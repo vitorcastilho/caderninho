@@ -6,6 +6,7 @@ import { ChevronDown } from 'lucide-react';
 import { cn } from '@/client/utils/utils';
 
 import { Button } from '@/client/components/ui/button';
+import { CreditCardBrandBadge } from '@/client/components/ui/credit-card-brand-badge';
 import {
   Dialog,
   DialogContent,
@@ -74,16 +75,22 @@ function formatBudget(minCents: number | null, maxCents: number | null): string 
   return `${formatCurrency(minCents)} — ${formatCurrency(maxCents)}`;
 }
 
-function resolvePaymentMethodLabel(
+function resolvePaymentMethodDisplay(
   type: string | null,
   id: string | null,
   bankAccounts: BankAccount[],
   creditCards: CreditCard[],
-): string | null {
+): React.ReactNode | null {
   if (!type || !id) return null;
   if (type === 'credit_card') {
     const card = creditCards.find((c) => c.id === id);
-    return card ? `\u{1F4B3} ${card.name}` : null;
+    if (!card) return null;
+    return (
+      <span className="inline-flex items-center gap-1">
+        <CreditCardBrandBadge brand={card.brand} />
+        <span>{card.name}</span>
+      </span>
+    );
   }
   const account = bankAccounts.find((a) => a.id === id);
   if (!account) return null;
@@ -111,7 +118,7 @@ export function CategoryCard({
   const totalSubs = activeSubcategories.length + archivedSubcategories.length;
 
   const budgetDisplay = formatBudget(category.budgetMinCents, category.budgetMaxCents);
-  const paymentMethodLabel = resolvePaymentMethodLabel(
+  const paymentMethodDisplay = resolvePaymentMethodDisplay(
     category.defaultPaymentMethodType,
     category.defaultPaymentMethodId,
     bankAccounts,
@@ -188,9 +195,9 @@ export function CategoryCard({
           </span>
         )}
 
-        {paymentMethodLabel && (
+        {paymentMethodDisplay && (
           <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-            {paymentMethodLabel}
+            {paymentMethodDisplay}
           </span>
         )}
 
