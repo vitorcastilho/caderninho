@@ -12,6 +12,8 @@ export const categories = pgTable('categories', {
     .references(() => essentialityClassifications.id),
   budgetMinCents: integer('budget_min_cents'),
   budgetMaxCents: integer('budget_max_cents'),
+  defaultPaymentMethodType: text('default_payment_method_type'),
+  defaultPaymentMethodId: text('default_payment_method_id'),
   status: text('status').notNull().default('active'),
   organizationId: text('organization_id')
     .notNull()

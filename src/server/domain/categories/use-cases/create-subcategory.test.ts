@@ -21,7 +21,9 @@ const mockAuditLogger: AuditLogger = vi.fn();
 
 const activeCategory = {
   id: 'cat-1', name: 'Moradia', classificationId: 'class-1',
-  budgetMinCents: 220000, budgetMaxCents: null, status: 'active' as const,
+  budgetMinCents: 220000, budgetMaxCents: null,
+  defaultPaymentMethodType: null, defaultPaymentMethodId: null,
+  status: 'active' as const,
   organizationId: 'org-123', createdAt: new Date(), updatedAt: new Date(),
 };
 

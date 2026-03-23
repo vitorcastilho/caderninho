@@ -31,6 +31,8 @@ interface Category {
   classificationId: string;
   budgetMinCents: number | null;
   budgetMaxCents: number | null;
+  defaultPaymentMethodType: string | null;
+  defaultPaymentMethodId: string | null;
   status: 'active' | 'archived';
 }
 
@@ -41,9 +43,25 @@ interface Subcategory {
   status: 'active' | 'archived';
 }
 
+interface BankAccount {
+  id: string;
+  name: string;
+  bank: string;
+  status: 'active' | 'archived';
+}
+
+interface CreditCard {
+  id: string;
+  name: string;
+  brand: string;
+  status: 'active' | 'archived';
+}
+
 interface CategoryCardProps {
   category: Category;
   subcategories: Subcategory[];
+  bankAccounts: BankAccount[];
+  creditCards: CreditCard[];
   onEdit: () => void;
   onAddSubcategory: () => void;
   onEditSubcategory: (subcategory: Subcategory) => void;
@@ -56,9 +74,28 @@ function formatBudget(minCents: number | null, maxCents: number | null): string 
   return `${formatCurrency(minCents)} — ${formatCurrency(maxCents)}`;
 }
 
+function resolvePaymentMethodLabel(
+  type: string | null,
+  id: string | null,
+  bankAccounts: BankAccount[],
+  creditCards: CreditCard[],
+): string | null {
+  if (!type || !id) return null;
+  if (type === 'credit_card') {
+    const card = creditCards.find((c) => c.id === id);
+    return card ? `\u{1F4B3} ${card.name}` : null;
+  }
+  const account = bankAccounts.find((a) => a.id === id);
+  if (!account) return null;
+  if (type === 'debit') return `\u{1F3E6} ${account.bank} - Débito`;
+  return `\u{1F4F1} ${account.bank} - Pix`;
+}
+
 export function CategoryCard({
   category,
   subcategories,
+  bankAccounts,
+  creditCards,
   onEdit,
   onAddSubcategory,
   onEditSubcategory,
@@ -74,6 +111,12 @@ export function CategoryCard({
   const totalSubs = activeSubcategories.length + archivedSubcategories.length;
 
   const budgetDisplay = formatBudget(category.budgetMinCents, category.budgetMaxCents);
+  const paymentMethodLabel = resolvePaymentMethodLabel(
+    category.defaultPaymentMethodType,
+    category.defaultPaymentMethodId,
+    bankAccounts,
+    creditCards,
+  );
 
   function handleArchiveCategory() {
     startTransition(async () => {
@@ -142,6 +185,12 @@ export function CategoryCard({
         {budgetDisplay && (
           <span className="text-xs text-muted-foreground tabular-nums">
             {budgetDisplay}
+          </span>
+        )}
+
+        {paymentMethodLabel && (
+          <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+            {paymentMethodLabel}
           </span>
         )}
 
