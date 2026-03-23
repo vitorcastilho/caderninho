@@ -5,7 +5,9 @@ import { toast } from 'sonner';
 
 import { createCategoryAction } from '@/server/actions/category.actions';
 import { ONBOARDING_CATEGORY_SUGGESTIONS } from '@/shared/constants/onboarding-suggestions';
-import { centsToDisplayValue } from '@/client/utils/currency-input';
+import { centsToDisplayValue, displayValueToCents } from '@/client/utils/currency-input';
+import { Input } from '@/client/components/ui/input';
+import { Label } from '@/client/components/ui/label';
 
 interface Classification {
   id: string;
@@ -36,6 +38,11 @@ export function CategoriesStep({
   onCategoriesCreated,
 }: CategoriesStepProps) {
   const [isPending, startTransition] = useTransition();
+  const [showForm, setShowForm] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newClassification, setNewClassification] = useState('');
+  const [newBudgetDisplay, setNewBudgetDisplay] = useState('0,00');
+  const [newEmoji, setNewEmoji] = useState('📂');
 
   // Inicializar sugestões com estado editável
   const [suggestions, setSuggestions] = useState<CategorySuggestion[]>(() =>
@@ -61,6 +68,29 @@ export function CategoriesStep({
     setSuggestions((prev) =>
       prev.map((s, i) => (i === index ? { ...s, enabled: !s.enabled } : s)),
     );
+  }
+
+  function handleAddCustomCategory() {
+    const budgetCents = displayValueToCents(newBudgetDisplay);
+    const classificationName = classifications.find((c) => c.id === newClassification)?.name;
+    if (!classificationName) return;
+
+    setSuggestions((prev) => [
+      ...prev,
+      {
+        name: newName.trim(),
+        classificationName,
+        budgetCents,
+        emoji: newEmoji,
+        enabled: true,
+      },
+    ]);
+
+    setNewName('');
+    setNewClassification('');
+    setNewBudgetDisplay('0,00');
+    setNewEmoji('📂');
+    setShowForm(false);
   }
 
   function handleCreateCategories() {
@@ -189,6 +219,94 @@ export function CategoriesStep({
           </div>
         ))}
       </div>
+
+      {/* Formulário inline para adicionar categoria */}
+      {showForm && (
+        <div className="mb-3 rounded-md border border-indigo-200 bg-indigo-50 p-3">
+          <div className="text-xs font-semibold text-indigo-600 mb-2">Adicionar categoria</div>
+          <div className="flex flex-col gap-2.5">
+            <div className="grid grid-cols-[auto_1fr] gap-2">
+              <div className="flex flex-col gap-1">
+                <Label htmlFor="onb-cat-emoji" className="text-xs text-stone-500">Emoji</Label>
+                <Input
+                  id="onb-cat-emoji"
+                  value={newEmoji}
+                  onChange={(e) => setNewEmoji(e.target.value)}
+                  className="h-8 w-14 text-center text-sm"
+                  maxLength={2}
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <Label htmlFor="onb-cat-name" className="text-xs text-stone-500">Nome da categoria</Label>
+                <Input
+                  id="onb-cat-name"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  placeholder="Ex: Transporte"
+                  className="h-8 text-sm"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex flex-col gap-1">
+                <Label htmlFor="onb-cat-class" className="text-xs text-stone-500">Classificação</Label>
+                <select
+                  id="onb-cat-class"
+                  value={newClassification}
+                  onChange={(e) => setNewClassification(e.target.value)}
+                  className="h-8 rounded-md border border-stone-200 bg-white px-2 text-xs text-stone-900 outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600/20"
+                >
+                  <option value="">Selecionar...</option>
+                  {classifications.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex flex-col gap-1">
+                <Label htmlFor="onb-cat-budget" className="text-xs text-stone-500">Orçamento / mês</Label>
+                <Input
+                  id="onb-cat-budget"
+                  value={`R$ ${newBudgetDisplay}`}
+                  onChange={(e) => {
+                    const digits = e.target.value.replace(/\D/g, '');
+                    const cents = parseInt(digits || '0', 10);
+                    setNewBudgetDisplay(centsToDisplayValue(cents));
+                  }}
+                  inputMode="numeric"
+                  className="h-8 text-sm"
+                />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setShowForm(false)}
+                className="flex-1 rounded-md px-3 py-1.5 text-xs font-medium text-stone-500 hover:text-stone-700"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleAddCustomCategory}
+                disabled={!newName.trim() || !newClassification}
+                className="flex-1 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
+              >
+                Adicionar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Botão adicionar categoria */}
+      {!showForm && (
+        <button
+          onClick={() => setShowForm(true)}
+          className="w-full rounded-md border border-dashed border-indigo-400 px-4 py-2.5 text-[13px] font-medium text-indigo-600 transition-colors hover:border-indigo-500 hover:bg-indigo-50"
+        >
+          + Adicionar categoria
+        </button>
+      )}
 
       <div className="mt-auto flex flex-col gap-1.5 pt-4">
         <button
