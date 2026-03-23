@@ -4,6 +4,7 @@ import { useState, useTransition, useCallback } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/client/components/ui/button';
+import { Breadcrumb } from '@/client/components/ui/breadcrumb';
 import {
   Dialog,
   DialogContent,
@@ -79,9 +80,18 @@ export function IncomeSourceList({ initialIncomeSources }: IncomeSourceListProps
 
   return (
     <div className="col-span-full flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-foreground">Fontes de Receita</h1>
-        <Button onClick={() => setShowCreateForm(true)}>Nova Fonte</Button>
+      <div>
+        <Breadcrumb
+          items={[
+            { label: 'Configurações' },
+            { label: 'Fontes de Receita' },
+          ]}
+          className="mb-1"
+        />
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold text-foreground">Fontes de Receita</h1>
+          <Button onClick={() => setShowCreateForm(true)}>Nova Fonte</Button>
+        </div>
       </div>
 
       <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
@@ -120,16 +130,19 @@ export function IncomeSourceList({ initialIncomeSources }: IncomeSourceListProps
       </Dialog>
 
       {activeSources.length === 0 && archivedSources.length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground">
-          <p>Nenhuma fonte de receita cadastrada.</p>
-          <p className="text-sm mt-1">Clique em &ldquo;Nova Fonte&rdquo; para começar.</p>
+        <div className="flex flex-col items-center gap-4 rounded-card border border-dashed border-border px-6 py-8 text-center">
+          <p className="text-sm text-muted-foreground">Nenhuma fonte de receita cadastrada.</p>
+          <Button variant="secondary" size="sm" onClick={() => setShowCreateForm(true)}>
+            Nova Fonte
+          </Button>
+          <p className="text-xs text-muted-foreground">Cadastre suas fontes de renda (CLT, PJ, freelance...).</p>
         </div>
       ) : (
         <>
           {activeSources.length === 0 ? (
             <p className="text-sm text-muted-foreground">Nenhuma fonte ativa.</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {activeSources.map((source) => (
                 <IncomeSourceCard
                   key={source.id}
@@ -153,7 +166,7 @@ export function IncomeSourceList({ initialIncomeSources }: IncomeSourceListProps
                   : `Mostrar arquivadas (${archivedSources.length})`}
               </Button>
               {showArchived && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-2 opacity-60">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2 opacity-60">
                   {archivedSources.map((source) => (
                     <IncomeSourceCard
                       key={source.id}

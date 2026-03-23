@@ -4,6 +4,7 @@ import { useState, useTransition, useCallback } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/client/components/ui/button';
+import { Breadcrumb } from '@/client/components/ui/breadcrumb';
 import {
   Dialog,
   DialogContent,
@@ -83,9 +84,18 @@ export function InvestmentList({ initialInvestments }: InvestmentListProps) {
 
   return (
     <div className="col-span-full flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-foreground">Investimentos</h1>
-        <Button onClick={() => setShowCreateForm(true)}>Novo Investimento</Button>
+      <div>
+        <Breadcrumb
+          items={[
+            { label: 'Configurações' },
+            { label: 'Investimentos' },
+          ]}
+          className="mb-1"
+        />
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold text-foreground">Investimentos</h1>
+          <Button onClick={() => setShowCreateForm(true)}>Novo Investimento</Button>
+        </div>
       </div>
 
       <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
@@ -124,16 +134,19 @@ export function InvestmentList({ initialInvestments }: InvestmentListProps) {
       </Dialog>
 
       {activeInvestments.length === 0 && archivedInvestments.length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground">
-          <p>Nenhum investimento cadastrado.</p>
-          <p className="text-sm mt-1">Clique em &ldquo;Novo Investimento&rdquo; para começar.</p>
+        <div className="flex flex-col items-center gap-4 rounded-card border border-dashed border-border px-6 py-8 text-center">
+          <p className="text-sm text-muted-foreground">Nenhum investimento cadastrado.</p>
+          <Button variant="secondary" size="sm" onClick={() => setShowCreateForm(true)}>
+            Novo Investimento
+          </Button>
+          <p className="text-xs text-muted-foreground">Ex: CDB, Tesouro Direto, Ações...</p>
         </div>
       ) : (
         <>
           {activeInvestments.length === 0 ? (
             <p className="text-sm text-muted-foreground">Nenhum investimento ativo.</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {activeInvestments.map((investment) => (
                 <InvestmentCard
                   key={investment.id}
@@ -157,7 +170,7 @@ export function InvestmentList({ initialInvestments }: InvestmentListProps) {
                   : `Mostrar arquivados (${archivedInvestments.length})`}
               </Button>
               {showArchived && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-2 opacity-60">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2 opacity-60">
                   {archivedInvestments.map((investment) => (
                     <InvestmentCard
                       key={investment.id}

@@ -173,9 +173,11 @@ export function RegisterForm() {
               className="h-11 pr-11"
               {...register("password")}
             />
-            <button
+            <Button
               type="button"
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-text-tertiary hover:text-muted-foreground"
+              variant="ghost"
+              size="icon-xs"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-muted-foreground"
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
             >
@@ -184,7 +186,7 @@ export function RegisterForm() {
               ) : (
                 <Eye className="size-[18px]" />
               )}
-            </button>
+            </Button>
           </div>
 
           <PasswordStrengthIndicator control={control} />
@@ -207,9 +209,11 @@ export function RegisterForm() {
               className="h-11 pr-11"
               {...register("confirmPassword")}
             />
-            <button
+            <Button
               type="button"
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-text-tertiary hover:text-muted-foreground"
+              variant="ghost"
+              size="icon-xs"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-muted-foreground"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               aria-label={
                 showConfirmPassword ? "Ocultar senha" : "Mostrar senha"
@@ -220,7 +224,7 @@ export function RegisterForm() {
               ) : (
                 <Eye className="size-[18px]" />
               )}
-            </button>
+            </Button>
           </div>
           {errors.confirmPassword && (
             <p className="mt-1 text-xs text-critical">

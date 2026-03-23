@@ -11,6 +11,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/client/utils/utils";
+import { Button } from "@/client/components/ui/button";
 import { authClient } from "@/client/utils/auth-client";
 
 interface NavItem {
@@ -102,13 +103,14 @@ export function BottomNavigation() {
 
         {/* Logout */}
         <li className="flex-1">
-          <button
+          <Button
+            variant="ghost"
             onClick={handleLogout}
-            className="flex flex-col items-center justify-center gap-0.5 py-1.5 w-full min-h-[44px] text-muted-foreground transition-colors duration-150 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="flex flex-col items-center justify-center gap-0.5 py-1.5 w-full h-auto min-h-[44px] text-muted-foreground rounded-none"
           >
             <LogOut className="size-5" />
             <span className="text-[10px] font-medium">Sair</span>
-          </button>
+          </Button>
         </li>
       </ul>
     </nav>

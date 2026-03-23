@@ -39,7 +39,7 @@ describe("Sidebar", () => {
   });
 
   it("deve renderizar os 4 itens de navegacao", () => {
-    render(<Sidebar />);
+    render(<Sidebar userName="Vitor" />);
 
     expect(screen.getByText("Dashboard")).toBeInTheDocument();
     expect(screen.getByText("Orçamentos")).toBeInTheDocument();
@@ -49,7 +49,7 @@ describe("Sidebar", () => {
 
   it("deve marcar item ativo com aria-current=page", () => {
     mockPathname.mockReturnValue("/dashboard");
-    render(<Sidebar />);
+    render(<Sidebar userName="Vitor" />);
 
     const dashboardLink = screen.getByRole("link", { name: /dashboard/i });
     expect(dashboardLink).toHaveAttribute("aria-current", "page");
@@ -57,14 +57,14 @@ describe("Sidebar", () => {
 
   it("deve nao marcar itens inativos com aria-current", () => {
     mockPathname.mockReturnValue("/dashboard");
-    render(<Sidebar />);
+    render(<Sidebar userName="Vitor" />);
 
     const checklistLink = screen.getByRole("link", { name: /checklist/i });
     expect(checklistLink).not.toHaveAttribute("aria-current");
   });
 
   it("deve ter role=navigation com aria-label", () => {
-    render(<Sidebar />);
+    render(<Sidebar userName="Vitor" />);
 
     expect(
       screen.getByRole("navigation", { name: /menu lateral/i })
@@ -73,7 +73,7 @@ describe("Sidebar", () => {
 
   it("deve renderizar botao de toggle com aria-label correto quando expandido", () => {
     mockCollapsed.mockReturnValue(false);
-    render(<Sidebar />);
+    render(<Sidebar userName="Vitor" />);
 
     expect(
       screen.getByRole("button", { name: /recolher menu/i })
@@ -82,7 +82,7 @@ describe("Sidebar", () => {
 
   it("deve renderizar botao de toggle com aria-label correto quando colapsado", () => {
     mockCollapsed.mockReturnValue(true);
-    render(<Sidebar />);
+    render(<Sidebar userName="Vitor" />);
 
     expect(
       screen.getByRole("button", { name: /expandir menu/i })
@@ -91,7 +91,7 @@ describe("Sidebar", () => {
 
   it("deve aplicar classe de largura expandida quando nao colapsado", () => {
     mockCollapsed.mockReturnValue(false);
-    render(<Sidebar />);
+    render(<Sidebar userName="Vitor" />);
 
     const sidebar = screen.getByRole("complementary");
     expect(sidebar.className).toContain("lg:w-[220px]");
@@ -100,7 +100,7 @@ describe("Sidebar", () => {
 
   it("deve aplicar classe de largura colapsada quando colapsado", () => {
     mockCollapsed.mockReturnValue(true);
-    render(<Sidebar />);
+    render(<Sidebar userName="Vitor" />);
 
     const sidebar = screen.getByRole("complementary");
     expect(sidebar.className).toContain("lg:w-[56px]");
@@ -109,7 +109,7 @@ describe("Sidebar", () => {
 
   it("deve ter aria-expanded=false no botao toggle quando colapsado", () => {
     mockCollapsed.mockReturnValue(true);
-    render(<Sidebar />);
+    render(<Sidebar userName="Vitor" />);
 
     const toggleBtn = screen.getByRole("button", { name: /expandir menu/i });
     expect(toggleBtn).toHaveAttribute("aria-expanded", "false");
@@ -117,7 +117,7 @@ describe("Sidebar", () => {
 
   it("deve ter aria-expanded=true no botao toggle quando expandido", () => {
     mockCollapsed.mockReturnValue(false);
-    render(<Sidebar />);
+    render(<Sidebar userName="Vitor" />);
 
     const toggleBtn = screen.getByRole("button", { name: /recolher menu/i });
     expect(toggleBtn).toHaveAttribute("aria-expanded", "true");
@@ -125,7 +125,7 @@ describe("Sidebar", () => {
 
   it("deve chamar signOut e redirecionar para /login ao clicar em Sair", async () => {
     const user = userEvent.setup();
-    render(<Sidebar />);
+    render(<Sidebar userName="Vitor" />);
 
     const logoutButton = screen.getByRole("button", { name: /sair/i });
     await user.click(logoutButton);

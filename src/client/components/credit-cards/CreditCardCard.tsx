@@ -72,7 +72,7 @@ export function CreditCardCard({ card, onEdit, onStatusChange }: CreditCardCardP
       <CardHeader>
         <CardTitle>{card.name}</CardTitle>
         <CardAction>
-          <div className="flex gap-1">
+          <div className="flex gap-2">
             <Button variant="ghost" size="xs" onClick={() => onEdit(card.id)}>
               Editar
             </Button>

@@ -28,7 +28,7 @@ export default async function AppLayout({
       </a>
 
       {/* Sidebar — visible on tablet (md: collapsed) and desktop (lg: toggle) */}
-      <Sidebar />
+      <Sidebar userName={session.user.name} />
 
       {/* Main content area */}
       <main id="main-content" className="flex-1 overflow-y-auto pb-14 md:pb-0">

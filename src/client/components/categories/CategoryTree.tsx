@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { Info, X } from 'lucide-react';
 
 import { Button } from '@/client/components/ui/button';
+import { Breadcrumb } from '@/client/components/ui/breadcrumb';
 import {
   Dialog,
   DialogContent,
@@ -123,6 +124,13 @@ export function CategoryTree({
   return (
     <div className="col-span-full flex flex-col gap-4">
       <div>
+        <Breadcrumb
+          items={[
+            { label: 'Configurações' },
+            { label: 'Categorias' },
+          ]}
+          className="mb-1"
+        />
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-foreground">Categorias</h1>
           <Button onClick={() => setShowCreateClassification(true)}>
@@ -135,9 +143,9 @@ export function CategoryTree({
       </div>
 
       {showOnboarding && (
-        <div className="flex gap-3 items-start rounded-card bg-blue-50 border border-blue-200 p-4 dark:bg-blue-950/30 dark:border-blue-900">
-          <Info className="size-5 shrink-0 text-blue-600 mt-0.5 dark:text-blue-400" />
-          <div className="flex-1 text-sm text-blue-900 dark:text-blue-200">
+        <div className="flex gap-3 items-start rounded-card bg-info-bg border border-info p-4">
+          <Info className="size-5 shrink-0 text-info mt-0.5" />
+          <div className="flex-1 text-sm text-info-text">
             <p className="font-semibold mb-1">Como funciona?</p>
             <p className="mb-2">
               Seus gastos são organizados em 3 níveis para facilitar o controle do orçamento:
@@ -151,13 +159,15 @@ export function CategoryTree({
               Já criamos classificações padrão para você. Comece adicionando suas categorias de gasto dentro delas.
             </p>
           </div>
-          <button
+          <Button
+            variant="ghost"
+            size="icon-xs"
             onClick={() => setOnboardingDismissed(true)}
-            className="shrink-0 text-blue-400 hover:text-blue-600 transition-colors dark:text-blue-500 dark:hover:text-blue-300"
             title="Fechar"
+            className="shrink-0 text-info hover:text-info-text"
           >
             <X className="size-4" />
-          </button>
+          </Button>
         </div>
       )}
 
@@ -303,18 +313,19 @@ export function CategoryTree({
 
       {/* Classification sections */}
       {activeClassifications.length === 0 && archivedClassifications.length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground">
-          <p>Nenhuma classificação cadastrada.</p>
-          <p className="text-sm mt-1">
-            Clique em &ldquo;Nova Classificação&rdquo; para começar.
-          </p>
+        <div className="flex flex-col items-center gap-3 rounded-card border border-dashed border-border px-6 py-8 text-center">
+          <p className="text-sm text-muted-foreground">Nenhuma classificação cadastrada.</p>
+          <Button variant="secondary" size="sm" onClick={() => setShowCreateClassification(true)}>
+            + Nova classificação
+          </Button>
+          <p className="text-xs text-muted-foreground">Classificações organizam suas categorias por tipo de necessidade.</p>
         </div>
       ) : (
         <>
           {activeClassifications.length === 0 ? (
             <p className="text-sm text-muted-foreground">Nenhuma classificação ativa.</p>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-0">
               {activeClassifications.map((classification) => (
                 <ClassificationSection
                   key={classification.id}
@@ -353,7 +364,7 @@ export function CategoryTree({
                   : `Mostrar arquivadas (${archivedClassifications.length})`}
               </Button>
               {showArchived && (
-                <div className="space-y-2 mt-2 opacity-60">
+                <div className="space-y-0 mt-2 opacity-60">
                   {archivedClassifications.map((classification) => (
                     <ClassificationSection
                       key={classification.id}

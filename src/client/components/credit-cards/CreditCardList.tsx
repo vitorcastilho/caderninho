@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 
 import { listCreditCardsAction, getCreditCardAction } from '@/server/actions/credit-card.actions';
 import { Button } from '@/client/components/ui/button';
+import { Breadcrumb } from '@/client/components/ui/breadcrumb';
 import {
   Dialog,
   DialogContent,
@@ -79,9 +80,18 @@ export function CreditCardList({ initialCards }: CreditCardListProps) {
 
   return (
     <div className="col-span-full flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-foreground">Cartões de Crédito</h1>
-        <Button onClick={() => setShowCreateForm(true)}>Novo Cartão</Button>
+      <div>
+        <Breadcrumb
+          items={[
+            { label: 'Configurações' },
+            { label: 'Cartões de Crédito' },
+          ]}
+          className="mb-1"
+        />
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold text-foreground">Cartões de Crédito</h1>
+          <Button onClick={() => setShowCreateForm(true)}>Novo Cartão</Button>
+        </div>
       </div>
 
       {/* Create Form Dialog */}
@@ -123,16 +133,19 @@ export function CreditCardList({ initialCards }: CreditCardListProps) {
 
       {/* Active Cards */}
       {activeCards.length === 0 && archivedCards.length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground">
-          <p>Nenhum cartão cadastrado.</p>
-          <p className="text-sm mt-1">Clique em &ldquo;Novo Cartão&rdquo; para começar.</p>
+        <div className="flex flex-col items-center gap-4 rounded-card border border-dashed border-border px-6 py-8 text-center">
+          <p className="text-sm text-muted-foreground">Nenhum cartão cadastrado.</p>
+          <Button onClick={() => setShowCreateForm(true)} variant="secondary" size="sm">
+            Novo Cartão
+          </Button>
+          <p className="text-xs text-muted-foreground">Cadastre seus cartões de crédito para acompanhar limites e faturas.</p>
         </div>
       ) : (
         <>
           {activeCards.length === 0 ? (
             <p className="text-sm text-muted-foreground">Nenhum cartão ativo.</p>
           ) : (
-            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 transition-opacity ${isPending ? 'opacity-50 pointer-events-none' : ''}`}>
+            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 transition-opacity ${isPending ? 'opacity-50 pointer-events-none' : ''}`}>
               {activeCards.map((card) => (
                 <CreditCardCard
                   key={card.id}
@@ -155,7 +168,7 @@ export function CreditCardList({ initialCards }: CreditCardListProps) {
                 {showArchived ? 'Ocultar arquivados' : `Mostrar arquivados (${archivedCards.length})`}
               </Button>
               {showArchived && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-2 opacity-60">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2 opacity-60">
                   {archivedCards.map((card) => (
                     <CreditCardCard
                       key={card.id}
