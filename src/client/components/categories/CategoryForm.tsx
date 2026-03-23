@@ -317,7 +317,7 @@ export function CategoryForm({
           <Label htmlFor="payment-instrument">
             {paymentType === 'credit_card' ? 'Cartão' : 'Conta'}
           </Label>
-          <Select value={paymentMethodId} onValueChange={(val) => setPaymentMethodId(val ?? '')}>
+          <Select key={paymentType} value={paymentMethodId} onValueChange={(val) => setPaymentMethodId(val ?? '')}>
             <SelectTrigger className="w-full" id="payment-instrument">
               <SelectValue>
                 {instrumentOptions.find((o) => o.id === paymentMethodId)?.label ?? 'Selecione...'}
