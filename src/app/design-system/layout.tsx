@@ -12,6 +12,8 @@ const sections = [
   { id: "tabelas", label: "Tabelas" },
   { id: "tabs", label: "Tabs" },
   { id: "dialogs", label: "Dialogs & Sheets" },
+  { id: "dropdown-menu", label: "Dropdown Menu" },
+  { id: "toast", label: "Toast / Notificações" },
   { id: "skeleton", label: "Skeleton" },
   // Controles
   { id: "toggle-switch", label: "Toggle Switch" },
@@ -23,6 +25,7 @@ const sections = [
   { id: "banners", label: "Banners" },
   { id: "summary-cards", label: "Summary Cards" },
   { id: "barras-progresso", label: "Barras de Progresso" },
+  { id: "progress-ring", label: "Progress Ring" },
   { id: "cards-orcamento", label: "Cards de Orçamento" },
   { id: "barra-resumo", label: "Barra de Resumo" },
   { id: "seletor-mes", label: "Seletor de Mês" },
@@ -31,6 +34,7 @@ const sections = [
   { id: "checklist", label: "Checklist" },
   { id: "parcelas-ativas", label: "Parcelas Ativas" },
   { id: "card-cartao-credito", label: "Card Cartão de Crédito" },
+  { id: "card-cartao-hero", label: "Card Cartão Hero" },
   { id: "lista-colapsavel", label: "Lista Colapsável" },
   { id: "empty-states", label: "Empty States" },
   // Visualizações
@@ -54,7 +58,7 @@ export default function DesignSystemLayout({
 }) {
   return (
     <div className="flex min-h-screen">
-      <nav className="fixed top-0 left-0 h-screen w-56 overflow-y-auto border-r bg-background p-4">
+      <nav className="fixed top-0 left-0 h-screen w-[220px] overflow-y-auto border-r bg-background p-4">
         <h1 className="mb-6 text-base font-semibold">
           Design System
           <span className="block text-xs font-normal text-muted-foreground">
@@ -74,7 +78,7 @@ export default function DesignSystemLayout({
           ))}
         </ul>
       </nav>
-      <main className="ml-56 max-w-5xl flex-1 cursor-default p-6">{children}</main>
+      <main className="ml-[220px] max-w-5xl flex-1 cursor-default p-6">{children}</main>
     </div>
   )
 }

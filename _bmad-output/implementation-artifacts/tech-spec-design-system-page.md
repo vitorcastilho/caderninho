@@ -2,7 +2,7 @@
 title: 'Página de Design System'
 slug: 'design-system-page'
 created: '2026-03-20'
-status: 'ready-for-dev'
+status: 'review'
 stepsCompleted: [1, 2, 3, 4]
 tech_stack: ['Next.js 16', 'React 19', 'Tailwind CSS v4', 'shadcn/ui v4 + Base UI', 'CVA']
 files_to_modify: ['src/app/design-system/page.tsx', 'src/app/design-system/layout.tsx', 'src/app/globals.css', 'src/client/components/ui/button.tsx', 'src/client/components/ui/dialog.tsx', 'src/client/components/ui/input.tsx', 'src/client/components/ui/select.tsx', 'src/client/components/ui/sheet.tsx', 'src/client/components/ui/tabs.tsx']
@@ -293,6 +293,74 @@ As seguintes inconsistências foram encontradas nos 27 protótipos e devem ser *
 - [x] **[L5] 7 arquivos UI alterados não documentados em `files_to_modify`**
   - globals.css, button.tsx, dialog.tsx, input.tsx, select.tsx, sheet.tsx, tabs.tsx foram modificados para corrigir inconsistências (cursor-pointer, overlay, radius) mas não estão em `files_to_modify`
   - Sugestão: Atualizar `files_to_modify` no tech-spec para incluir todos os arquivos tocados
+
+### Auditoria de Cobertura — Protótipos vs Design System (R2 — 2026-03-23)
+
+**🔴 HIGH — Componentes faltantes no DS (existem nos protótipos mas não no catálogo):**
+
+- [x] **[A-H1] Toast/Sonner** (proto-04)
+  - Arquivo: `src/app/design-system/page.tsx`
+  - Problema: O protótipo 04 usa toast/notificações de ação (ex: "Transação salva"), mas o DS não tem seção demonstrando o componente Sonner/Toast
+  - Fix: Adicionar seção "Toast / Notificações" ao DS renderizando exemplos reais do Sonner (success, error, info, com action button)
+
+- [x] **[A-H2] Progress Ring (circular)** (proto-10, visual-checklist)
+  - Arquivo: `src/app/design-system/page.tsx`
+  - Problema: Protótipos usam SVG circular com stroke-dasharray para mostrar progresso (ex: checklist 7/12 = 58%). DS só tem barras de progresso lineares
+  - Fix: Adicionar seção "Progress Ring" ou expandir "Barras de Progresso" com variante circular SVG
+
+- [x] **[A-H3] Password strength indicator** (proto-02)
+  - Arquivo: `src/app/design-system/page.tsx`
+  - Problema: Proto-02 (cadastro) tem barra de força de senha com 4 segmentos coloridos (fraca/média/forte/muito forte). Não documentado no DS
+  - Fix: Adicionar na seção "Formulários" um exemplo de input de senha com indicador de força
+
+- [x] **[A-H4] Card brands Elo/Amex/Hiper** (proto-08)
+  - Arquivo: `src/app/design-system/page.tsx`
+  - Problema: Seção "Card Cartão de Crédito" só mostra Visa e Mastercard. Proto-08 (onboarding) define Elo, Amex e Hiper com estilos específicos
+  - Fix: Adicionar as 3 bandeiras faltantes na seção existente
+
+- [x] **[A-H5] Input valid state (borda verde)** (proto-02)
+  - Arquivo: `src/app/design-system/page.tsx`
+  - Problema: Seção "Formulários" mostra estados default, focus, error e disabled, mas não mostra o estado "válido" com borda verde usado no proto-02
+  - Fix: Adicionar variante "valid/success" ao showcase de inputs
+
+- [x] **[A-H6] Dropdown / Context Menu** (categories-ux-v2, proto-14)
+  - Arquivo: `src/app/design-system/page.tsx`
+  - Problema: Protótipos usam menus contextuais (seta apontando para ícone, itens, separador, item destrutivo em vermelho). O DS não tem seção para Dropdown Menu
+  - Fix: Adicionar seção "Dropdown Menu" renderizando o componente real com variantes (item normal, separador, item destrutivo)
+
+- [x] **[A-H7] Credit Card Hero Visual** (proto-12, visual-credit-card-detail)
+  - Arquivo: `src/app/design-system/page.tsx`
+  - Problema: Proto-12 tem card visual com gradiente indigo, chip dourado, número com letter-spacing, flag — é um componente complexo e central. Não documentado no DS
+  - Fix: Adicionar seção "Card Cartão Hero" ou expandir a existente "Card Cartão de Crédito" com a variante hero/visual
+
+**🔴 HIGH — Inconsistências internas no DS:**
+
+- [x] **[A-H8] Sidebar width 224px vs 220px canônico**
+  - Arquivo: `src/app/design-system/layout.tsx`
+  - Problema: O layout usa `w-56` (224px) mas o protótipo canônico (proto-10) e a seção MenuLateral dentro do próprio DS mostram 220px. Inconsistência entre o frame e o conteúdo
+  - Fix: Alterar `w-56` para `w-[220px]` e `ml-56` para `ml-[220px]` no layout.tsx
+
+- [x] **[A-H9] Native `<button>` onde deveria usar `<Button>` component**
+  - Arquivo: `src/app/design-system/page.tsx` — seções SeletorMes, ControleSegmentado, ColunaMensal, CLItem
+  - Problema: Várias seções usam `<button>` HTML nativo ao invés do `<Button>` do shadcn/ui. O DS deveria ser referência de uso correto dos componentes
+  - Fix: Substituir `<button>` nativo por `<Button>` component em todas as seções afetadas
+
+**🟡 MEDIUM — Inconsistências menores:**
+
+- [x] **[A-M1] Mixed border-radius approaches**
+  - Arquivo: `src/app/design-system/page.tsx`
+  - Problema: Algumas seções usam tokens CSS (`rounded-[var(--radius-card)]`), outras usam classes Tailwind diretas (`rounded-lg`, `rounded-xl`). Falta consistência
+  - Fix: Padronizar uso de tokens CSS de border-radius onde existirem tokens definidos
+
+- [x] **[A-M2] Hardcoded colors em vez de tokens**
+  - Arquivo: `src/app/design-system/page.tsx`
+  - Problema: Algumas seções usam cores hardcoded (ex: `bg-indigo-600`, `text-red-500`) em vez dos tokens semânticos definidos em globals.css
+  - Fix: Substituir cores hardcoded por tokens semânticos (ex: `bg-primary`, `text-critical`)
+
+- [x] **[A-M3] Loading button text inconsistente**
+  - Arquivo: `src/app/design-system/page.tsx`
+  - Problema: Seção de botões mostra estado loading mas o texto durante loading varia entre seções. Definir padrão canônico
+  - Fix: Padronizar texto de loading buttons (ex: "Salvando..." com spinner)
 
 ## Additional Context
 

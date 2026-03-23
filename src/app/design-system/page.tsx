@@ -48,7 +48,8 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/client/components/ui/sheet"
-import { ChevronDown, ChevronLeft, ChevronRight, Plus, Pencil, Archive, Loader2, Clock, X, AlertTriangle, CheckCircle2, LayoutDashboard, PiggyBank, CheckSquare, TrendingUp, ShoppingCart, GraduationCap, Home, Fuel, Bus, UtensilsCrossed, Package, MoreVertical, Settings, Building2, Users, GripVertical } from "lucide-react"
+import { ChevronDown, ChevronLeft, ChevronRight, Plus, Pencil, Archive, Loader2, Clock, X, AlertTriangle, CheckCircle2, LayoutDashboard, PiggyBank, CheckSquare, TrendingUp, ShoppingCart, GraduationCap, Home, Fuel, Bus, UtensilsCrossed, Package, MoreVertical, Settings, Building2, Users, GripVertical, Trash2, Copy, CreditCard } from "lucide-react"
+import { toast } from "sonner"
 
 /* ─── helpers ─── */
 
@@ -103,6 +104,8 @@ export default function DesignSystemPage() {
       <TabelasSection />
       <TabsSection />
       <DialogsSection />
+      <DropdownMenuSection />
+      <ToastSection />
       <SkeletonSection />
       {/* Controles */}
       <ToggleSwitchSection />
@@ -114,6 +117,7 @@ export default function DesignSystemPage() {
       <BannersSection />
       <SummaryCardsSection />
       <BarrasProgressoSection />
+      <ProgressRingSection />
       <CardsOrcamentoSection />
       <BarraResumoSection />
       <SeletorMesSection />
@@ -122,6 +126,7 @@ export default function DesignSystemPage() {
       <ChecklistSection />
       <ParcelasAtivasSection />
       <CardCartaoCreditoSection />
+      <CardCartaoHeroSection />
       <ListaColapsavelSection />
       <EmptyStatesSection />
       {/* Visualizações */}
@@ -298,6 +303,10 @@ function BotoesSection() {
             </Button>
             <Button disabled>
               <Loader2 className="animate-spin" />
+              Salvando...
+            </Button>
+            <Button disabled variant="outline">
+              <Loader2 className="animate-spin" />
               Carregando...
             </Button>
           </div>
@@ -459,11 +468,48 @@ function FormulariosSection() {
           </p>
         </div>
 
+        {/* Valid */}
+        <div className="grid gap-2">
+          <Label htmlFor="demo-valid">Campo válido</Label>
+          <Input
+            id="demo-valid"
+            defaultValue="vitor@email.com"
+            className="border-positive focus-visible:ring-positive/50"
+          />
+          <p className="text-xs text-positive-text">E-mail válido</p>
+        </div>
+
         {/* Error */}
         <div className="grid gap-2">
           <Label htmlFor="demo-error">Campo com erro</Label>
           <Input id="demo-error" aria-invalid="true" defaultValue="abc" />
           <p className="text-xs text-destructive">Valor inválido</p>
+        </div>
+
+        {/* Password strength */}
+        <div className="grid gap-2">
+          <Label htmlFor="demo-password">Senha (com indicador de força)</Label>
+          <Input id="demo-password" type="password" defaultValue="Senh@F0rte!" />
+          <div className="flex gap-1">
+            <div className="h-1 flex-1 rounded-full bg-critical" />
+            <div className="h-1 flex-1 rounded-full bg-attention" />
+            <div className="h-1 flex-1 rounded-full bg-positive" />
+            <div className="h-1 flex-1 rounded-full bg-positive" />
+          </div>
+          <p className="text-xs text-positive-text">Senha forte</p>
+        </div>
+
+        {/* Password weak example */}
+        <div className="grid gap-2">
+          <Label htmlFor="demo-password-weak">Senha fraca</Label>
+          <Input id="demo-password-weak" type="password" defaultValue="123" />
+          <div className="flex gap-1">
+            <div className="h-1 flex-1 rounded-full bg-critical" />
+            <div className="h-1 flex-1 rounded-full bg-muted" />
+            <div className="h-1 flex-1 rounded-full bg-muted" />
+            <div className="h-1 flex-1 rounded-full bg-muted" />
+          </div>
+          <p className="text-xs text-critical-text">Senha fraca</p>
         </div>
 
         {/* Disabled */}
@@ -642,6 +688,184 @@ function DialogsSection() {
           </Sheet>
         </div>
       </div>
+    </Section>
+  )
+}
+
+/* ─── Dropdown Menu ─── */
+
+function DropdownMenuSection() {
+  const [openMenu, setOpenMenu] = useState(false)
+
+  return (
+    <Section id="dropdown-menu" title="Dropdown Menu">
+      <div className="space-y-6">
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Context menu (ações de item)</h3>
+          <div className="relative inline-block">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setOpenMenu(!openMenu)}
+            >
+              <MoreVertical />
+            </Button>
+            {openMenu && (
+              <div className="absolute top-full left-0 z-10 mt-1 w-48 overflow-hidden rounded-[var(--radius-card)] border bg-popover p-1 shadow-md">
+                <button
+                  type="button"
+                  onClick={() => setOpenMenu(false)}
+                  className="flex w-full cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-sm transition-colors hover:bg-muted"
+                >
+                  <Pencil className="size-4 text-muted-foreground" />
+                  Editar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setOpenMenu(false)}
+                  className="flex w-full cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-sm transition-colors hover:bg-muted"
+                >
+                  <Copy className="size-4 text-muted-foreground" />
+                  Duplicar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setOpenMenu(false)}
+                  className="flex w-full cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-sm transition-colors hover:bg-muted"
+                >
+                  <Archive className="size-4 text-muted-foreground" />
+                  Arquivar
+                </button>
+                <div className="my-1 h-px bg-border" />
+                <button
+                  type="button"
+                  onClick={() => setOpenMenu(false)}
+                  className="flex w-full cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-sm text-critical transition-colors hover:bg-critical-bg"
+                >
+                  <Trash2 className="size-4" />
+                  Excluir
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Menu estático (referência visual)</h3>
+          <div className="w-48 overflow-hidden rounded-[var(--radius-card)] border bg-popover p-1 shadow-md">
+            <div className="flex items-center gap-2 rounded-md px-2.5 py-2 text-sm hover:bg-muted">
+              <Pencil className="size-4 text-muted-foreground" />
+              Editar
+            </div>
+            <div className="flex items-center gap-2 rounded-md px-2.5 py-2 text-sm hover:bg-muted">
+              <Copy className="size-4 text-muted-foreground" />
+              Duplicar
+            </div>
+            <div className="flex items-center gap-2 rounded-md px-2.5 py-2 text-sm hover:bg-muted">
+              <Archive className="size-4 text-muted-foreground" />
+              Arquivar
+            </div>
+            <div className="my-1 h-px bg-border" />
+            <div className="flex items-center gap-2 rounded-md px-2.5 py-2 text-sm text-critical hover:bg-critical-bg">
+              <Trash2 className="size-4" />
+              Excluir
+            </div>
+          </div>
+        </div>
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Padrão do proto-14: ícone + texto por item, separador antes de itens destrutivos, item destrutivo em text-critical + hover bg-critical-bg. Radius card, shadow-md, bg-popover.
+      </p>
+    </Section>
+  )
+}
+
+/* ─── Toast / Notificações ─── */
+
+function ToastSection() {
+  return (
+    <Section id="toast" title="Toast / Notificações">
+      <div className="space-y-6">
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Disparar toasts</h3>
+          <div className="flex flex-wrap gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => toast.success("Transação salva com sucesso")}
+            >
+              Success
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => toast.error("Erro ao salvar transação")}
+            >
+              Error
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => toast.info("Fatura será fechada em 3 dias")}
+            >
+              Info
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => toast.warning("Orçamento de Alimentação está em 92%")}
+            >
+              Warning
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                toast("Categoria arquivada", {
+                  action: {
+                    label: "Desfazer",
+                    onClick: () => toast.info("Ação desfeita"),
+                  },
+                })
+              }
+            >
+              Com ação
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => toast.loading("Salvando...")}
+            >
+              Loading
+            </Button>
+          </div>
+        </div>
+
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Variantes (estáticas)</h3>
+          <div className="max-w-sm space-y-3">
+            <div className="flex items-center gap-3 rounded-[var(--radius)] border bg-popover px-4 py-3 shadow-sm">
+              <CheckCircle2 className="size-4 shrink-0 text-positive" />
+              <span className="text-sm">Transação salva com sucesso</span>
+            </div>
+            <div className="flex items-center gap-3 rounded-[var(--radius)] border bg-popover px-4 py-3 shadow-sm">
+              <AlertTriangle className="size-4 shrink-0 text-critical" />
+              <span className="text-sm">Erro ao salvar transação</span>
+            </div>
+            <div className="flex items-center gap-3 rounded-[var(--radius)] border bg-popover px-4 py-3 shadow-sm">
+              <Clock className="size-4 shrink-0 text-info" />
+              <span className="text-sm">Fatura será fechada em 3 dias</span>
+            </div>
+            <div className="flex items-center justify-between gap-3 rounded-[var(--radius)] border bg-popover px-4 py-3 shadow-sm">
+              <span className="text-sm">Categoria arquivada</span>
+              <Button variant="outline" size="xs">Desfazer</Button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Componente Sonner com 4 variantes: success (verde), error (vermelho), info (azul), warning (amarelo). Suporta action button para &ldquo;Desfazer&rdquo;. Posicionado bottom-right por padrão.
+      </p>
     </Section>
   )
 }
@@ -871,6 +1095,128 @@ function BarrasProgressoSection() {
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
         Cores: positivo (verde &lt;75%), atenção (amarelo 75-85%), alerta (laranja 85-95%), crítico (vermelho &gt;95%), fixo (indigo 100% fixo). Barras sempre arredondadas.
+      </p>
+    </Section>
+  )
+}
+
+/* ─── Progress Ring ─── */
+
+function ProgressRing({
+  percentage,
+  size = 80,
+  strokeWidth = 6,
+  color = "var(--color-positive)",
+  label,
+  sublabel,
+}: {
+  percentage: number
+  size?: number
+  strokeWidth?: number
+  color?: string
+  label?: string
+  sublabel?: string
+}) {
+  const radius = (size - strokeWidth) / 2
+  const circumference = 2 * Math.PI * radius
+  const offset = circumference - (percentage / 100) * circumference
+
+  return (
+    <div className="flex flex-col items-center gap-1.5">
+      <div className="relative" style={{ width: size, height: size }}>
+        <svg width={size} height={size} className="-rotate-90">
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke="var(--muted)"
+            strokeWidth={strokeWidth}
+          />
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke={color}
+            strokeWidth={strokeWidth}
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            strokeLinecap="round"
+            className="transition-all duration-500"
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-sm font-bold tabular-nums">{percentage}%</span>
+        </div>
+      </div>
+      {label && <span className="text-xs font-medium">{label}</span>}
+      {sublabel && <span className="text-[10px] text-muted-foreground">{sublabel}</span>}
+    </div>
+  )
+}
+
+function ProgressRingSection() {
+  return (
+    <Section id="progress-ring" title="Progress Ring">
+      <div className="space-y-6">
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Tamanhos e status</h3>
+          <div className="flex flex-wrap items-end gap-8">
+            <ProgressRing
+              percentage={58}
+              size={80}
+              color="var(--color-positive)"
+              label="Checklist"
+              sublabel="7 de 12 pagos"
+            />
+            <ProgressRing
+              percentage={85}
+              size={80}
+              color="var(--color-attention)"
+              label="Orçamento"
+              sublabel="R$ 8.500 de R$ 10.000"
+            />
+            <ProgressRing
+              percentage={100}
+              size={80}
+              color="var(--color-primary)"
+              label="Fixos"
+              sublabel="Todos pagos"
+            />
+            <ProgressRing
+              percentage={110}
+              size={80}
+              color="var(--color-critical)"
+              label="Restaurante"
+              sublabel="Estourou orçamento"
+            />
+          </div>
+        </div>
+
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Tamanho compacto (inline)</h3>
+          <div className="flex items-center gap-6">
+            <ProgressRing percentage={75} size={48} strokeWidth={4} color="var(--color-positive)" />
+            <ProgressRing percentage={42} size={48} strokeWidth={4} color="var(--color-info)" />
+            <ProgressRing percentage={92} size={48} strokeWidth={4} color="var(--color-alert)" />
+          </div>
+        </div>
+
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Grande (dashboard)</h3>
+          <ProgressRing
+            percentage={67}
+            size={120}
+            strokeWidth={8}
+            color="var(--color-positive)"
+            label="Total utilizado"
+            sublabel="R$ 9.930 de R$ 14.858"
+          />
+        </div>
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        SVG circular com stroke-dasharray. Cores semânticas por status: verde (ok), amarelo (atenção), laranja (alerta), vermelho (estourou). 3 tamanhos: compacto (48px), padrão (80px), grande (120px).
       </p>
     </Section>
   )
@@ -1120,23 +1466,23 @@ function SeletorMesSection() {
         <div>
           <h3 className="mb-3 text-sm font-medium">Padrão com setas</h3>
           <div className="inline-flex items-center gap-2 rounded-[var(--radius-card)] border border-border bg-card px-3.5 py-1.5">
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="icon-xs"
               onClick={() => setMesIdx(Math.max(0, mesIdx - 1))}
-              className="cursor-pointer rounded p-0.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               <ChevronLeft className="size-4" />
-            </button>
+            </Button>
             <span className="min-w-[80px] text-center text-sm font-semibold">
               {meses[mesIdx]}
             </span>
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="icon-xs"
               onClick={() => setMesIdx(Math.min(meses.length - 1, mesIdx + 1))}
-              className="cursor-pointer rounded p-0.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               <ChevronRight className="size-4" />
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -1174,19 +1520,16 @@ function ControleSegmentadoSection() {
           <h3 className="mb-3 text-sm font-medium">View toggle (orçamentos)</h3>
           <div className="inline-flex gap-0.5 rounded-[var(--radius-card)] border border-border bg-card p-[3px]">
             {views.map((v) => (
-              <button
+              <Button
                 key={v.id}
-                type="button"
+                variant={activeView === v.id ? "default" : "ghost"}
+                size="sm"
                 onClick={() => setActiveView(v.id)}
-                className={`flex cursor-pointer items-center gap-1.5 rounded-[9px] border-none px-3.5 py-[7px] text-sm font-medium transition-all ${
-                  activeView === v.id
-                    ? "bg-primary font-semibold text-white"
-                    : "bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
-                }`}
+                className={activeView === v.id ? "rounded-[9px]" : "rounded-[9px] bg-transparent"}
               >
                 <span className="text-xs">{v.icon}</span>
                 {v.label}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -1284,11 +1627,32 @@ function ListaTransacoesSection() {
 
 /* ─── Checklist ─── */
 
-function CardBrand({ brand }: { brand: "visa" | "master" }) {
+function CardBrand({ brand }: { brand: "visa" | "master" | "elo" | "amex" | "hiper" }) {
   if (brand === "visa") {
     return (
-      <span className="inline-flex size-[26px_16px] w-[26px] h-4 shrink-0 items-center justify-center rounded-[3px] border border-foreground/6 bg-[#1A1F71] text-[7px] font-extrabold italic text-white">
+      <span className="inline-flex w-[26px] h-4 shrink-0 items-center justify-center rounded-[3px] border border-foreground/6 bg-[#1A1F71] text-[7px] font-extrabold italic text-white">
         VISA
+      </span>
+    )
+  }
+  if (brand === "elo") {
+    return (
+      <span className="inline-flex w-[26px] h-4 shrink-0 items-center justify-center rounded-[3px] border border-foreground/6 bg-[#000000] text-[7px] font-extrabold text-[#FFCB05]">
+        ELO
+      </span>
+    )
+  }
+  if (brand === "amex") {
+    return (
+      <span className="inline-flex w-[26px] h-4 shrink-0 items-center justify-center rounded-[3px] border border-foreground/6 bg-[#006FCF] text-[6px] font-extrabold text-white">
+        AMEX
+      </span>
+    )
+  }
+  if (brand === "hiper") {
+    return (
+      <span className="inline-flex w-[26px] h-4 shrink-0 items-center justify-center rounded-[3px] border border-foreground/6 bg-[#822124] text-[6px] font-extrabold text-white">
+        HIPER
       </span>
     )
   }
@@ -1381,23 +1745,24 @@ function CLItem({
 
       {/* Update button (for estimates) */}
       {showUpdateBtn && (
-        <button
-          type="button"
-          className="shrink-0 cursor-pointer rounded-md border border-attention/30 bg-attention-bg px-3 py-1.5 text-xs font-semibold text-attention-text transition-colors hover:bg-attention-bg/80"
+        <Button
+          variant="outline"
+          size="xs"
+          className="shrink-0 border-attention/30 bg-attention-bg text-attention-text hover:bg-attention-bg/80"
         >
           Atualizar fatura
-        </button>
+        </Button>
       )}
 
       {/* Hover actions — text links like proto-10 */}
       {showActions && (
         <div className="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
-          <button type="button" className="cursor-pointer text-xs font-medium text-muted-foreground transition-colors hover:text-primary hover:bg-primary-light px-2 py-1 rounded-md">
+          <Button variant="ghost" size="xs">
             Editar
-          </button>
-          <button type="button" className="cursor-pointer text-xs font-medium text-muted-foreground transition-colors hover:text-primary hover:bg-primary-light px-2 py-1 rounded-md">
+          </Button>
+          <Button variant="ghost" size="xs">
             Detalhes
-          </button>
+          </Button>
         </div>
       )}
     </div>
@@ -1553,18 +1918,31 @@ function ChecklistSection() {
               <CardBrand brand="master" />
               <span className="text-sm text-muted-foreground">Mastercard</span>
             </div>
+            <div className="flex items-center gap-2">
+              <CardBrand brand="elo" />
+              <span className="text-sm text-muted-foreground">Elo</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CardBrand brand="amex" />
+              <span className="text-sm text-muted-foreground">Amex</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CardBrand brand="hiper" />
+              <span className="text-sm text-muted-foreground">Hiper</span>
+            </div>
           </div>
         </div>
 
         {/* Botão atualizar fatura */}
         <div>
           <h3 className="mb-3 text-sm font-medium">Botão &ldquo;Atualizar fatura&rdquo;</h3>
-          <button
-            type="button"
-            className="cursor-pointer rounded-md border border-attention/30 bg-attention-bg px-3 py-1.5 text-xs font-semibold text-attention-text transition-colors hover:bg-attention-bg/80"
+          <Button
+            variant="outline"
+            size="xs"
+            className="border-attention/30 bg-attention-bg text-attention-text hover:bg-attention-bg/80"
           >
             Atualizar fatura
-          </button>
+          </Button>
           <p className="mt-2 text-xs text-muted-foreground">
             Usado quando o valor é estimativa e precisa ser confirmado com a fatura real.
           </p>
@@ -1690,11 +2068,32 @@ const creditCards = [
   },
 ]
 
-function CCFlagIcon({ flag }: { flag: "visa" | "master" }) {
+function CCFlagIcon({ flag }: { flag: "visa" | "master" | "elo" | "amex" | "hiper" }) {
   if (flag === "visa") {
     return (
       <div className="flex h-[24px] w-9 items-center justify-center rounded border border-black/5 bg-[#1A1F71] text-[8px] font-extrabold italic text-white">
         VISA
+      </div>
+    )
+  }
+  if (flag === "elo") {
+    return (
+      <div className="flex h-[24px] w-9 items-center justify-center rounded border border-black/5 bg-[#000000] text-[8px] font-extrabold text-[#FFCB05]">
+        ELO
+      </div>
+    )
+  }
+  if (flag === "amex") {
+    return (
+      <div className="flex h-[24px] w-9 items-center justify-center rounded border border-black/5 bg-[#006FCF] text-[7px] font-extrabold text-white">
+        AMEX
+      </div>
+    )
+  }
+  if (flag === "hiper") {
+    return (
+      <div className="flex h-[24px] w-9 items-center justify-center rounded border border-black/5 bg-[#822124] text-[7px] font-extrabold text-white">
+        HIPER
       </div>
     )
   }
@@ -1761,6 +2160,80 @@ function CardCartaoCreditoSection() {
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
         Padrão do proto-14: card com flag (VISA azul #1A1F71, Mastercard com círculos EB001B/F79E1B), datas de fechamento/vencimento, barra de limite usado. Cores de uso: azul (ok &lt;30%), amber (atenção 30-70%), vermelho (crítico &gt;70%). Ações: Editar + Remover.
+      </p>
+    </Section>
+  )
+}
+
+/* ─── Card Cartão Hero ─── */
+
+function CardCartaoHeroSection() {
+  return (
+    <Section id="card-cartao-hero" title="Card Cartão Hero">
+      <div className="space-y-6">
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Cartão visual (hero)</h3>
+          <div className="grid max-w-xl gap-4 sm:grid-cols-2">
+            {/* Visa — gradiente indigo */}
+            <div className="relative h-[200px] w-[320px] overflow-hidden rounded-2xl bg-gradient-to-br from-[#4F46E5] to-[#6366F1] p-6 text-white shadow-lg">
+              {/* Chip */}
+              <div className="mb-6 h-8 w-11 rounded-md bg-gradient-to-br from-[#D4AF37] to-[#F0D060] shadow-inner" />
+              {/* Número */}
+              <p className="mb-4 font-mono text-lg tracking-[0.2em]">
+                •••• •••• •••• 4532
+              </p>
+              {/* Info */}
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-white/60">Titular</p>
+                  <p className="text-sm font-semibold">VITOR CASTILHO</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-white/60">Validade</p>
+                  <p className="text-sm font-semibold">12/28</p>
+                </div>
+                <div className="text-right text-lg font-extrabold italic tracking-tight">
+                  VISA
+                </div>
+              </div>
+              {/* Decorative circles */}
+              <div className="absolute -top-10 -right-10 size-40 rounded-full bg-white/5" />
+              <div className="absolute -bottom-12 -left-8 size-32 rounded-full bg-white/5" />
+            </div>
+
+            {/* Mastercard — gradiente escuro */}
+            <div className="relative h-[200px] w-[320px] overflow-hidden rounded-2xl bg-gradient-to-br from-[#1C1917] to-[#44403C] p-6 text-white shadow-lg">
+              {/* Chip */}
+              <div className="mb-6 h-8 w-11 rounded-md bg-gradient-to-br from-[#D4AF37] to-[#F0D060] shadow-inner" />
+              {/* Número */}
+              <p className="mb-4 font-mono text-lg tracking-[0.2em]">
+                •••• •••• •••• 8821
+              </p>
+              {/* Info */}
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-white/60">Titular</p>
+                  <p className="text-sm font-semibold">VITOR CASTILHO</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-white/60">Validade</p>
+                  <p className="text-sm font-semibold">08/27</p>
+                </div>
+                {/* Mastercard circles */}
+                <div className="relative h-8 w-14">
+                  <div className="absolute left-0 top-0 size-8 rounded-full bg-[#EB001B]" />
+                  <div className="absolute right-0 top-0 size-8 rounded-full bg-[#F79E1B]" />
+                </div>
+              </div>
+              {/* Decorative circles */}
+              <div className="absolute -top-10 -right-10 size-40 rounded-full bg-white/5" />
+              <div className="absolute -bottom-12 -left-8 size-32 rounded-full bg-white/5" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Padrão do proto-12: card visual 320×200px com gradiente, chip dourado, número com letter-spacing 0.2em, titular + validade + flag. Visa: gradiente indigo (#4F46E5→#6366F1). Mastercard: gradiente stone (#1C1917→#44403C) com círculos EB001B/F79E1B. Decoração: círculos bg-white/5.
       </p>
     </Section>
   )
@@ -1915,7 +2388,7 @@ function MonthColumn({
                 variable: "border border-border bg-background",
                 installment: item.finished
                   ? "border border-positive bg-positive-bg"
-                  : "border border-[#DDD6FE] bg-[#F5F3FF]",
+                  : "border border-primary/20 bg-primary-light",
                 planned: "border-[1.5px] border-dashed border-primary bg-primary-light cursor-grab hover:shadow-[0_2px_6px_rgba(79,70,229,0.15)] hover:-translate-y-px",
               }
               return (
@@ -1932,7 +2405,7 @@ function MonthColumn({
                       <span className={`shrink-0 rounded-[2px] px-1 py-px text-[9px] font-semibold ${
                         item.finished
                           ? "bg-positive-bg text-positive-text"
-                          : "bg-[#E0E7FF] text-primary"
+                          : "bg-primary-light text-primary"
                       }`}>
                         {item.tag}
                       </span>
@@ -2081,9 +2554,9 @@ function ColunaMensalSection() {
         <div>
           <h3 className="mb-3 text-sm font-medium">Seletor de período</h3>
           <div className="inline-flex overflow-hidden rounded-[6px] border bg-background">
-            <button type="button" className="cursor-pointer border-r px-3.5 py-1.5 text-[13px] font-medium text-text-secondary transition-colors hover:bg-white hover:text-foreground">6 meses</button>
-            <button type="button" className="cursor-pointer border-r bg-primary px-3.5 py-1.5 text-[13px] font-semibold text-white">12 meses</button>
-            <button type="button" className="cursor-pointer px-3.5 py-1.5 text-[13px] font-medium text-text-secondary transition-colors hover:bg-white hover:text-foreground">24 meses</button>
+            <Button variant="ghost" size="sm" className="rounded-none border-r">6 meses</Button>
+            <Button variant="default" size="sm" className="rounded-none border-r">12 meses</Button>
+            <Button variant="ghost" size="sm" className="rounded-none">24 meses</Button>
           </div>
         </div>
       </div>
@@ -2333,7 +2806,7 @@ function EmptyStatesSection() {
   return (
     <Section id="empty-states" title="Empty States">
       <div className="max-w-md">
-        <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-border px-6 py-8 text-center">
+        <div className="flex flex-col items-center gap-3 rounded-[var(--radius-card)] border border-dashed border-border px-6 py-8 text-center">
           <p className="text-sm text-muted-foreground">
             Nenhuma categoria ainda
           </p>
