@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { Info, X } from 'lucide-react';
 
 import { Button } from '@/client/components/ui/button';
+import { Breadcrumb } from '@/client/components/ui/breadcrumb';
 import {
   Dialog,
   DialogContent,
@@ -123,6 +124,13 @@ export function CategoryTree({
   return (
     <div className="col-span-full flex flex-col gap-4">
       <div>
+        <Breadcrumb
+          items={[
+            { label: 'Configurações' },
+            { label: 'Categorias' },
+          ]}
+          className="mb-1"
+        />
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-foreground">Categorias</h1>
           <Button onClick={() => setShowCreateClassification(true)}>
@@ -317,7 +325,7 @@ export function CategoryTree({
           {activeClassifications.length === 0 ? (
             <p className="text-sm text-muted-foreground">Nenhuma classificação ativa.</p>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-0">
               {activeClassifications.map((classification) => (
                 <ClassificationSection
                   key={classification.id}
@@ -356,7 +364,7 @@ export function CategoryTree({
                   : `Mostrar arquivadas (${archivedClassifications.length})`}
               </Button>
               {showArchived && (
-                <div className="space-y-2 mt-2 opacity-60">
+                <div className="space-y-0 mt-2 opacity-60">
                   {archivedClassifications.map((classification) => (
                     <ClassificationSection
                       key={classification.id}

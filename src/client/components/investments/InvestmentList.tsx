@@ -4,6 +4,7 @@ import { useState, useTransition, useCallback } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/client/components/ui/button';
+import { Breadcrumb } from '@/client/components/ui/breadcrumb';
 import {
   Dialog,
   DialogContent,
@@ -83,9 +84,18 @@ export function InvestmentList({ initialInvestments }: InvestmentListProps) {
 
   return (
     <div className="col-span-full flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-foreground">Investimentos</h1>
-        <Button onClick={() => setShowCreateForm(true)}>Novo Investimento</Button>
+      <div>
+        <Breadcrumb
+          items={[
+            { label: 'Configurações' },
+            { label: 'Investimentos' },
+          ]}
+          className="mb-1"
+        />
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold text-foreground">Investimentos</h1>
+          <Button onClick={() => setShowCreateForm(true)}>Novo Investimento</Button>
+        </div>
       </div>
 
       <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>

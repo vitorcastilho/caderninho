@@ -4,6 +4,7 @@ import { useState, useTransition, useCallback } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/client/components/ui/button';
+import { Breadcrumb } from '@/client/components/ui/breadcrumb';
 import {
   Dialog,
   DialogContent,
@@ -73,9 +74,18 @@ export function BankAccountList({ initialAccounts }: BankAccountListProps) {
 
   return (
     <div className="col-span-full flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-foreground">Contas Bancárias</h1>
-        <Button onClick={() => setShowCreateForm(true)}>Nova Conta</Button>
+      <div>
+        <Breadcrumb
+          items={[
+            { label: 'Configurações' },
+            { label: 'Contas Bancárias' },
+          ]}
+          className="mb-1"
+        />
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold text-foreground">Contas Bancárias</h1>
+          <Button onClick={() => setShowCreateForm(true)}>Nova Conta</Button>
+        </div>
       </div>
 
       {/* Create Form Dialog */}

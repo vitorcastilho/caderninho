@@ -2,7 +2,8 @@
 
 import { useState, useTransition, useMemo } from 'react';
 import { toast } from 'sonner';
-import { ChevronRight, ChevronDown, Settings } from 'lucide-react';
+import { ChevronDown, Settings } from 'lucide-react';
+import { cn } from '@/client/utils/utils';
 
 import { Button } from '@/client/components/ui/button';
 import {
@@ -136,19 +137,25 @@ export function ClassificationSection({
   }
 
   return (
-    <div className="rounded-card bg-card border border-border">
-      {/* Header */}
+    <div className="mb-3">
+      {/* Header — Level 1 do padrão "Lista Colapsável" do DS */}
       <div
-        className="flex items-center gap-2 p-3 cursor-pointer hover:bg-muted/30 transition-colors"
+        className={cn(
+          'flex w-full cursor-pointer items-center gap-2.5 border border-border bg-card px-4 py-3 transition-colors hover:bg-muted/50',
+          expanded
+            ? 'rounded-t-[var(--radius-card)]'
+            : 'rounded-[var(--radius-card)]'
+        )}
         onClick={() => setExpanded(!expanded)}
       >
-        {expanded ? (
-          <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
-        ) : (
-          <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
-        )}
+        <ChevronDown
+          className={cn(
+            'size-[18px] shrink-0 text-muted-foreground transition-transform duration-150',
+            !expanded && '-rotate-90'
+          )}
+        />
 
-        <span className="text-sm font-semibold text-foreground">
+        <span className="flex-1 text-sm font-semibold">
           {classification.name}
         </span>
 
@@ -158,9 +165,7 @@ export function ClassificationSection({
           </span>
         )}
 
-        <span className="flex-1" />
-
-        <span className="text-[11px] text-muted-foreground bg-muted px-2 py-0.5 rounded-badge shrink-0">
+        <span className="text-xs font-medium text-muted-foreground">
           {classification.activeCategoryCount}{' '}
           {classification.activeCategoryCount === 1 ? 'categoria' : 'categorias'}
         </span>
@@ -192,7 +197,6 @@ export function ClassificationSection({
             <>
               <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
               <div className="absolute right-0 top-full mt-2 z-50 min-w-[200px] rounded-card bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 p-1">
-                {/* Arrow pointing to gear */}
                 <div className="absolute -top-1.5 right-2.5 size-3 rotate-45 bg-popover ring-1 ring-foreground/10 [clip-path:polygon(0%_0%,100%_0%,0%_100%)]" />
                 {classification.status === 'active' ? (
                   <>
@@ -270,12 +274,12 @@ export function ClassificationSection({
         </DialogContent>
       </Dialog>
 
-      {/* Categories */}
+      {/* Body — arredondamento inferior, borda sem topo (continuação visual do header) */}
       {expanded && (
-        <div className="px-3 pb-3">
+        <div className="overflow-hidden rounded-b-[var(--radius-card)] border border-t-0 border-border">
           {activeCategories.length === 0 && archivedCategories.length === 0 ? (
-            <div className="flex flex-col items-center gap-3 py-6 border border-dashed border-border rounded-card">
-              <p className="text-xs text-muted-foreground">Nenhuma categoria ainda</p>
+            <div className="flex flex-col items-center gap-3 px-6 py-8 text-center">
+              <p className="text-sm text-muted-foreground">Nenhuma categoria ainda</p>
               {classification.status === 'active' && (
                 <Button
                   variant="secondary"
@@ -291,22 +295,20 @@ export function ClassificationSection({
             </div>
           ) : (
             <>
-              <div className="space-y-1">
-                {activeCategories.map((category) => (
-                  <CategoryCard
-                    key={category.id}
-                    category={category}
-                    subcategories={subcategoriesByCategory.get(category.id) ?? []}
-                    onEdit={() => onEditCategory(category)}
-                    onAddSubcategory={() => onAddSubcategory(category.id)}
-                    onEditSubcategory={onEditSubcategory}
-                    onStatusChange={onStatusChange}
-                  />
-                ))}
-              </div>
+              {activeCategories.map((category) => (
+                <CategoryCard
+                  key={category.id}
+                  category={category}
+                  subcategories={subcategoriesByCategory.get(category.id) ?? []}
+                  onEdit={() => onEditCategory(category)}
+                  onAddSubcategory={() => onAddSubcategory(category.id)}
+                  onEditSubcategory={onEditSubcategory}
+                  onStatusChange={onStatusChange}
+                />
+              ))}
 
               {archivedCategories.length > 0 && (
-                <div className="mt-1">
+                <div className="border-t border-border px-4 py-2">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -318,7 +320,7 @@ export function ClassificationSection({
                       : `Mostrar arquivadas (${archivedCategories.length})`}
                   </Button>
                   {showArchivedCategories && (
-                    <div className="space-y-1 mt-1 opacity-60">
+                    <div className="mt-1 opacity-60">
                       {archivedCategories.map((category) => (
                         <CategoryCard
                           key={category.id}

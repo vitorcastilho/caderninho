@@ -12,6 +12,7 @@ import {
   Landmark,
   Wallet,
   Tags,
+  Building2,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -26,15 +27,31 @@ interface NavItem {
   icon: React.ComponentType<{ className?: string }>;
 }
 
-const navItems: NavItem[] = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/credit-cards", label: "Cartões", icon: CreditCard },
-  { href: "/investments", label: "Investimentos", icon: Landmark },
-  { href: "/income-sources", label: "Receitas", icon: Wallet },
-  { href: "/categories", label: "Categorias", icon: Tags },
-  { href: "/orcamentos", label: "Orçamentos", icon: PiggyBank },
-  { href: "/checklist", label: "Checklist", icon: CheckSquare },
-  { href: "/projecao", label: "Projeção", icon: TrendingUp },
+interface NavSection {
+  label: string;
+  items: NavItem[];
+}
+
+const navSections: NavSection[] = [
+  {
+    label: "Navegação",
+    items: [
+      { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { href: "/orcamentos", label: "Orçamentos", icon: PiggyBank },
+      { href: "/checklist", label: "Checklist", icon: CheckSquare },
+      { href: "/projecao", label: "Projeção", icon: TrendingUp },
+    ],
+  },
+  {
+    label: "Configurações",
+    items: [
+      { href: "/accounts", label: "Contas", icon: Building2 },
+      { href: "/credit-cards", label: "Cartões", icon: CreditCard },
+      { href: "/investments", label: "Investimentos", icon: Landmark },
+      { href: "/income-sources", label: "Receitas", icon: Wallet },
+      { href: "/categories", label: "Categorias", icon: Tags },
+    ],
+  },
 ];
 
 export function Sidebar() {
@@ -79,39 +96,55 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav aria-label="Menu lateral" className="flex-1 py-2">
-        <ul className="space-y-1 px-2">
-          {navItems.map((item) => {
-            const isActive = pathname?.startsWith(item.href);
-            const Icon = item.icon;
-            return (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  aria-current={isActive ? "page" : undefined}
-                  title={item.label}
-                  className={cn(
-                    "flex items-center gap-3 rounded-button px-2 py-2 text-sm transition-colors duration-150 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2",
-                    isActive
-                      ? "bg-primary-light text-primary font-semibold"
-                      : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                  )}
-                >
-                  <Icon className="size-5 shrink-0" />
-                  <span
-                    className={cn(
-                      "truncate",
-                      "md:hidden",
-                      !collapsed && "lg:inline"
-                    )}
-                  >
-                    {item.label}
-                  </span>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+      <nav aria-label="Menu lateral" className="flex-1 py-2 overflow-y-auto">
+        {navSections.map((section, sectionIdx) => (
+          <div key={section.label}>
+            {sectionIdx > 0 && (
+              <div className="mx-3 my-2 h-px bg-sidebar-border" />
+            )}
+            <div
+              className={cn(
+                "px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground",
+                "md:hidden",
+                !collapsed && "lg:block"
+              )}
+            >
+              {section.label}
+            </div>
+            <ul className="space-y-0.5 px-2">
+              {section.items.map((item) => {
+                const isActive = pathname?.startsWith(item.href);
+                const Icon = item.icon;
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      aria-current={isActive ? "page" : undefined}
+                      title={item.label}
+                      className={cn(
+                        "flex items-center gap-3 rounded-button px-2 py-2 text-sm transition-colors duration-150 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2",
+                        isActive
+                          ? "bg-primary-light text-primary font-semibold"
+                          : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      )}
+                    >
+                      <Icon className="size-5 shrink-0" />
+                      <span
+                        className={cn(
+                          "truncate",
+                          "md:hidden",
+                          !collapsed && "lg:inline"
+                        )}
+                      >
+                        {item.label}
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
       </nav>
 
       {/* Logout */}

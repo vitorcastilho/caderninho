@@ -121,45 +121,35 @@ export function CategoryCard({
   }
 
   return (
-    <div className="border border-border rounded-card overflow-hidden">
-      {/* Category row */}
-      <div className="flex items-center gap-2 px-3 py-2.5 hover:bg-muted/30 transition-colors">
-        <Button
-          variant="link"
-          size="sm"
+    <div className="border-b border-border last:border-b-0">
+      {/* Category row — Level 2 do padrão "Lista Colapsável" do DS */}
+      <div className="group/cat flex items-center gap-2 bg-muted/30 px-4 py-2.5 pl-10 transition-colors hover:bg-muted/60">
+        <span
+          className="flex-1 cursor-pointer text-sm font-medium hover:text-primary"
           onClick={onEdit}
-          className="px-0 h-auto text-sm font-semibold text-foreground hover:text-primary"
         >
           {category.name}
-        </Button>
+        </span>
 
         {budgetDisplay && (
-          <div className="flex items-center gap-1">
-            <span className="text-[11px] text-muted-foreground">Orçamento:</span>
-            <span className="text-xs text-muted-foreground tabular-nums bg-muted px-2 py-0.5 rounded-badge">
-              {budgetDisplay}
-            </span>
-          </div>
+          <span className="text-xs text-muted-foreground tabular-nums">
+            {budgetDisplay}
+          </span>
         )}
 
-        <span className="flex-1" />
-
-        <div className="flex gap-2">
+        <div className="flex gap-1 opacity-0 transition-opacity group-hover/cat:opacity-100">
           {category.status === 'active' && (
             <>
-              <Button
-                variant="secondary"
-                size="xs"
-                onClick={onAddSubcategory}
-              >
-                + Subcategoria
+              <Button variant="ghost" size="xs" onClick={onAddSubcategory}>
+                + Sub
               </Button>
               <Button variant="ghost" size="xs" onClick={onEdit}>
                 Editar
               </Button>
               <Button
-                variant="destructive"
+                variant="ghost"
                 size="xs"
+                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                 onClick={() => setShowArchiveDialog(true)}
               >
                 Arquivar
@@ -198,50 +188,42 @@ export function CategoryCard({
         </DialogContent>
       </Dialog>
 
-      {/* Subcategories */}
-      {activeSubcategories.length > 0 && (
-        <div className="px-3 pb-2 pt-0 ml-5 border-t border-muted">
-          {activeSubcategories.map((sub) => (
-            <div key={sub.id} className="flex items-center gap-1.5 py-1 group/sub">
-              <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
-              <Button
-                variant="link"
-                size="xs"
-                onClick={() => onEditSubcategory(sub)}
-                className="px-0 h-auto text-xs font-normal text-muted-foreground hover:text-primary"
-              >
-                {sub.name}
-              </Button>
-              <div className="flex gap-1 opacity-0 group-hover/sub:opacity-100 transition-opacity">
-                <Button
-                  variant="ghost"
-                  size="xs"
-                  className="h-5 text-xs px-1"
-                  onClick={() => onEditSubcategory(sub)}
-                >
-                  Editar
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="xs"
-                  className="h-5 text-xs px-1"
-                  onClick={() => handleArchiveSubcategory(sub)}
-                  disabled={isPending}
-                >
-                  Arquivar
-                </Button>
-              </div>
-            </div>
-          ))}
+      {/* Subcategories — Level 3 do padrão "Lista Colapsável" do DS */}
+      {activeSubcategories.map((sub) => (
+        <div
+          key={sub.id}
+          className="group/sub flex items-center gap-3 border-b border-border bg-card py-3 pr-4 pl-16 transition-colors last:border-b-0 hover:bg-muted/30"
+        >
+          <div className="size-1 shrink-0 rounded-full bg-muted-foreground/60" />
+          <span className="flex-1 text-sm">{sub.name}</span>
+          <div className="flex gap-1 opacity-0 transition-opacity group-hover/sub:opacity-100">
+            <Button
+              variant="ghost"
+              size="xs"
+              className="h-6 text-xs"
+              onClick={() => onEditSubcategory(sub)}
+            >
+              Editar
+            </Button>
+            <Button
+              variant="ghost"
+              size="xs"
+              className="h-6 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+              onClick={() => handleArchiveSubcategory(sub)}
+              disabled={isPending}
+            >
+              Arquivar
+            </Button>
+          </div>
         </div>
-      )}
+      ))}
 
       {archivedSubcategories.length > 0 && (
-        <div className="px-3 pb-2 ml-5">
+        <div className="border-b border-border px-4 py-2 pl-16 last:border-b-0">
           <Button
             variant="ghost"
             size="sm"
-            className="text-xs h-5 px-1"
+            className="text-xs h-6 px-2"
             onClick={() => setShowArchivedSubs(!showArchivedSubs)}
           >
             {showArchivedSubs
@@ -249,15 +231,18 @@ export function CategoryCard({
               : `+${archivedSubcategories.length} arquivada${archivedSubcategories.length > 1 ? 's' : ''}`}
           </Button>
           {showArchivedSubs && (
-            <div className="opacity-60">
+            <div className="mt-1 opacity-60">
               {archivedSubcategories.map((sub) => (
-                <div key={sub.id} className="flex items-center gap-1.5 py-1 group/sub">
-                  <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
-                  <span className="text-xs text-muted-foreground cursor-default">{sub.name}</span>
+                <div
+                  key={sub.id}
+                  className="group/sub flex items-center gap-3 py-2"
+                >
+                  <div className="size-1 shrink-0 rounded-full bg-muted-foreground/60" />
+                  <span className="flex-1 text-sm text-muted-foreground">{sub.name}</span>
                   <Button
                     variant="ghost"
                     size="xs"
-                    className="h-5 text-xs px-1 opacity-0 group-hover/sub:opacity-100 transition-opacity"
+                    className="h-6 text-xs opacity-0 group-hover/sub:opacity-100 transition-opacity"
                     onClick={() => handleReactivateSubcategory(sub)}
                     disabled={isPending}
                   >
