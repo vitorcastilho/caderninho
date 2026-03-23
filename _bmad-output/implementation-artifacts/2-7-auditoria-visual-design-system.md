@@ -105,6 +105,12 @@ Esta story audita e corrige essas inconsistências para que, daqui em diante, to
 - [x] Task 14: Rodar build (`npx next build`) e lint para garantir que as correções não quebraram nada
 - [x] Task 15: Verificar visualmente cada tela no browser — comparar antes/depois
 
+### Review Follow-ups (AI) — R1
+
+- [x] [AI-Review][HIGH] AC 3 — Converter 2 `<button>` nativos restantes no Sidebar.tsx para `<Button>` component (logout em :177 e toggle em :191). Importar `Button` de `@/client/components/ui/button`. [src/client/components/layout/Sidebar.tsx:177,191]
+- [x] [AI-Review][MEDIUM] File List — Adicionar 3 arquivos faltantes ao Dev Agent Record → File List: `src/app/(app)/layout.tsx`, `src/client/components/layout/Sidebar.test.tsx`, `src/client/components/ui/breadcrumb.tsx` (novo)
+- [x] [AI-Review][MEDIUM] AC 4 — ClassificationSection empty state perdeu `border-dashed` após refactor. Restaurado padrão canônico com `border border-dashed border-border rounded-card` e margem `m-3` para separar da borda sólida do container pai. [src/client/components/categories/ClassificationSection.tsx:281]
+
 ## Dev Notes
 
 ### O que NÃO fazer nesta story
@@ -224,8 +230,15 @@ AC 5-9 (Verificações de conformidade):
 - AC 8: Todos os cards usam tabular-nums + formatCurrency()
 - AC 9: Todas as rotas têm loading.tsx com Skeleton — gaps corrigidos para consistência
 
+**Fixes do Code Review R1:**
+- ✅ Resolved review finding [HIGH]: AC 3 — Sidebar.tsx: 2 `<button>` nativos convertidos para `<Button>` component (logout e toggle). Import de `Button` adicionado.
+- ✅ Resolved review finding [MEDIUM]: File List — 3 arquivos faltantes adicionados: `layout.tsx`, `Sidebar.test.tsx`, `breadcrumb.tsx`
+- ✅ Resolved review finding [MEDIUM]: AC 4 — ClassificationSection empty state: restaurado `border border-dashed border-border rounded-card` com `m-3` para separação visual do container pai
+
 ### Change Log
 - 2026-03-23: Implementação completa da Story 2.7 — auditoria e correções visuais
+- 2026-03-23: Code Review R1 — 1 HIGH, 2 MEDIUM, 2 LOW. 3 action items criados. Status → ready-for-dev
+- 2026-03-23: Fixes do Code Review R1 — 3 action items resolvidos (1 HIGH, 2 MEDIUM). Status → review
 
 ### File List
 
@@ -250,3 +263,6 @@ AC 5-9 (Verificações de conformidade):
 - src/app/(app)/investments/loading.tsx
 - src/app/(app)/income-sources/loading.tsx
 - src/app/(app)/categories/loading.tsx
+- src/app/(app)/layout.tsx
+- src/client/components/layout/Sidebar.test.tsx
+- src/client/components/ui/breadcrumb.tsx (novo)

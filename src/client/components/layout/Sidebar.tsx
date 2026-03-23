@@ -19,6 +19,7 @@ import Link from "next/link";
 import { cn } from "@/client/utils/utils";
 import { useSidebarState } from "@/client/hooks/use-sidebar-state";
 import { authClient } from "@/client/utils/auth-client";
+import { Button } from "@/client/components/ui/button";
 
 interface NavItem {
   href: string;
@@ -174,7 +175,8 @@ export function Sidebar({ userName }: SidebarProps) {
             collapsed && "lg:flex-col lg:items-center lg:gap-1"
           )}
         >
-          <button
+          <Button
+            variant="ghost"
             onClick={handleLogout}
             title="Sair"
             className={cn(
@@ -184,11 +186,13 @@ export function Sidebar({ userName }: SidebarProps) {
           >
             <LogOut className="size-[18px] shrink-0" />
             <span className={expandedOnly(collapsed)}>Sair</span>
-          </button>
+          </Button>
           <span
             className={cn("flex-1", collapsed && "lg:hidden")}
           />
-          <button
+          <Button
+            variant="ghost"
+            size="icon-xs"
             onClick={toggle}
             aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
             aria-expanded={!collapsed}
@@ -199,7 +203,7 @@ export function Sidebar({ userName }: SidebarProps) {
             ) : (
               <ChevronLeft className="size-[18px]" />
             )}
-          </button>
+          </Button>
         </div>
       </div>
     </aside>

@@ -278,7 +278,7 @@ export function ClassificationSection({
       {expanded && (
         <div className="overflow-hidden rounded-b-[var(--radius-card)] border border-t-0 border-border">
           {activeCategories.length === 0 && archivedCategories.length === 0 ? (
-            <div className="flex flex-col items-center gap-3 px-6 py-8 text-center">
+            <div className="flex flex-col items-center gap-3 px-6 py-8 text-center m-3 border border-dashed border-border rounded-card">
               <p className="text-sm text-muted-foreground">Nenhuma categoria ainda</p>
               {classification.status === 'active' && (
                 <Button
