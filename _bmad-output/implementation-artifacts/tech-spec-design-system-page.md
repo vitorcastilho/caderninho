@@ -5,8 +5,8 @@ created: '2026-03-20'
 status: 'ready-for-dev'
 stepsCompleted: [1, 2, 3, 4]
 tech_stack: ['Next.js 16', 'React 19', 'Tailwind CSS v4', 'shadcn/ui v4 + Base UI', 'CVA']
-files_to_modify: ['src/app/design-system/page.tsx', 'src/app/design-system/layout.tsx']
-code_patterns: ['route groups (app)/(auth)', 'server components', 'CSS tokens em globals.css']
+files_to_modify: ['src/app/design-system/page.tsx', 'src/app/design-system/layout.tsx', 'src/app/globals.css', 'src/client/components/ui/button.tsx', 'src/client/components/ui/dialog.tsx', 'src/client/components/ui/input.tsx', 'src/client/components/ui/select.tsx', 'src/client/components/ui/sheet.tsx', 'src/client/components/ui/tabs.tsx']
+code_patterns: ['route groups (app)/(auth)', 'client components com useState', 'CSS tokens em globals.css']
 test_patterns: []
 ---
 
@@ -70,7 +70,7 @@ Criar uma rota `/design-system` (visível apenas em ambiente de desenvolvimento)
 | Cursores | `cursor-default` no body, `cursor-pointer` em botões/interativos |
 | Transição padrão | 150ms ease |
 | Card border-radius | 12px (`rounded-card`) |
-| Input border-radius | 6px (padrão mais usado, `rounded-lg` no componente) |
+| Input border-radius | 8px (`--radius-button`, `rounded-md` no componente) |
 
 ### Inconsistências dos Protótipos (input para o Design System)
 
@@ -78,7 +78,7 @@ As seguintes inconsistências foram encontradas nos 27 protótipos e devem ser *
 
 **HIGH — O design system deve definir o valor correto:**
 1. Primary color: `#4F46E5` (canônico) — `categories-ux-v2` usa `#6d28d9` (errado)
-2. Input border-radius: componente usa `rounded-lg` — protótipos variam 6px/8px
+2. Input border-radius: padronizado em 8px (`--radius-button`, `rounded-md`) — protótipos variavam 6px/8px, 8px é o canônico
 3. Input border-width: componente usa `1px` — proto-02 usa `1.5px`
 4. Botão primary padding: variedade enorme entre protótipos — componente CVA é o canônico
 5. Botão disabled: usar `opacity-50` + `pointer-events-none` (padrão do componente)
@@ -176,8 +176,8 @@ As seguintes inconsistências foram encontradas nos 27 protótipos e devem ser *
   - File: `src/app/design-system/layout.tsx`
   - Action: Criar layout standalone (sem sidebar/header) com título "Design System — Caderninho", navegação lateral fixa com anchor links para cada seção, e container com max-width
   - File: `src/app/design-system/page.tsx`
-  - Action: Criar page.tsx como server component que importa e renderiza todas as seções
-  - Notes: Rota fora dos route groups `(app)` e `(auth)`
+  - Action: Criar page.tsx como client component ("use client") que importa e renderiza todas as seções — necessário por causa dos ~15 useState para interatividade (toggles, dialogs, collapsibles, density, etc.)
+  - Notes: Rota fora dos route groups `(app)` e `(auth)`. Client component justificado pela quantidade de seções interativas
 
 - [ ] Task 2: Seção Cores/Tokens
   - File: `src/app/design-system/page.tsx`
@@ -186,8 +186,8 @@ As seguintes inconsistências foram encontradas nos 27 protótipos e devem ser *
 
 - [ ] Task 3: Seção Tipografia
   - File: `src/app/design-system/page.tsx`
-  - Action: Renderizar exemplos reais de cada nível tipográfico: H1 (24px/700), H2 (18px/600), H3 (14px/700), Body (13-14px/400), Caption (12px/400), Label (11px/600 uppercase letter-spacing 0.5px). Usar texto em português relevante ao app. Mostrar `font-variant-numeric: tabular-nums` para valores monetários
-  - Notes: Font-family: Inter. Seguir escala de `ux-design-directions.html`
+  - Action: Renderizar exemplos reais de cada nível tipográfico usando classes Tailwind: H1 (text-2xl/font-bold), H2 (text-xl/font-semibold), H3 (text-lg/font-semibold), H4 (text-base/font-medium), Body (text-sm), Small (text-xs/text-muted-foreground), Label (text-sm/font-medium via componente Label). Usar texto em português relevante ao app. Mostrar `tabular-nums` para valores monetários
+  - Notes: Font-family: Inter. Usa escala Tailwind padrão (aproximações dos valores de `ux-design-directions.html`)
 
 - [ ] Task 4: Seção Botões
   - File: `src/app/design-system/page.tsx`
@@ -253,7 +253,7 @@ As seguintes inconsistências foram encontradas nos 27 protótipos e devem ser *
 
 - [ ] AC 1: Given ambiente de desenvolvimento, when acessar `/design-system`, then a página renderiza com todas as 14 seções visíveis e navegáveis por anchor links
 - [ ] AC 2: Given a seção de cores, when visualizar, then todas as cores do `globals.css` são mostradas com swatches, nome da variável CSS e valor hex
-- [ ] AC 3: Given a seção de botões, when visualizar, then todos os 6 variants × 8 sizes são renderizados em um grid, incluindo estados disabled e loading
+- [ ] AC 3: Given a seção de botões, when visualizar, then todos os 6 variants e 8 sizes são renderizados agrupados por tipo (variantes, tamanhos, ícones, estados), incluindo disabled e loading
 - [ ] AC 4: Given a seção de formulários, when visualizar, then Input, Select e Label são renderizados em estados default, focus, error e disabled
 - [ ] AC 5: Given a seção de lista colapsável, when clicar no header, then o body colapsa/expande com animação do chevron (▼ → ◀)
 - [ ] AC 6: Given a seção de density, when alternar entre spacious e compact, then o card de exemplo muda de espaçamento visualmente
@@ -274,23 +274,23 @@ As seguintes inconsistências foram encontradas nos 27 protótipos e devem ser *
 
 **🟢 LOW — Backlog (não blocking, implementar quando conveniente):**
 
-- [ ] **[L1] Botões: layout agrupado ao invés de grid 6×8**
+- [x] **[L1] Botões: layout agrupado ao invés de grid 6×8**
   - AC 3 menciona "grid com todos os 6 variants × 8 sizes". Implementação agrupa por tipo (variants, sizes, ícones, estados) — mais usável, mas não é matriz cruzada. Todos os variants e sizes estão visíveis individualmente
   - Sugestão: Manter layout atual (mais legível) e atualizar AC 3 para refletir
 
-- [ ] **[L2] Border-radius Input/Button: 8px vs spec 6px**
+- [x] **[L2] Border-radius Input/Button: 8px vs spec 6px**
   - `globals.css`: `--radius-button` mudou de 6px→8px. `button.tsx` e `input.tsx`: `rounded-lg`→`rounded-md`. Tech-spec dizia 6px mas dev padronizou em 8px
   - Sugestão: Se 8px é o valor definitivo, atualizar tech-spec inconsistência #2
 
-- [ ] **[L3] Tipografia com tamanhos Tailwind aproximados**
+- [x] **[L3] Tipografia com tamanhos Tailwind aproximados**
   - H2 = text-xl (20px) vs spec 18px/600. H3 = text-lg (18px) vs spec 14px/700. Label sem uppercase/tracking 0.5px
   - Sugestão: Avaliar se vale criar custom sizes ou aceitar equivalentes Tailwind
 
-- [ ] **[L4] Page.tsx inteira como "use client"**
+- [x] **[L4] Page.tsx inteira como "use client"**
   - Tech-spec diz "server component que importa". Implementação usa `"use client"` no topo por causa dos hooks de interatividade (useState em ~15 seções)
   - Sugestão: Extrair seções interativas em client components separados e manter page como server component. Ou aceitar e atualizar tech-spec
 
-- [ ] **[L5] 7 arquivos UI alterados não documentados em `files_to_modify`**
+- [x] **[L5] 7 arquivos UI alterados não documentados em `files_to_modify`**
   - globals.css, button.tsx, dialog.tsx, input.tsx, select.tsx, sheet.tsx, tabs.tsx foram modificados para corrigir inconsistências (cursor-pointer, overlay, radius) mas não estão em `files_to_modify`
   - Sugestão: Atualizar `files_to_modify` no tech-spec para incluir todos os arquivos tocados
 
