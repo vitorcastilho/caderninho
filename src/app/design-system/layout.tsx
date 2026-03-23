@@ -41,6 +41,7 @@ const sections = [
   { id: "grafico-barras", label: "Gráfico de Barras" },
   { id: "grade-timeline", label: "Grade Timeline" },
   { id: "treemap", label: "Treemap / Mapa Visual" },
+  { id: "mapa-gastos", label: "Mapa de Gastos (alt)" },
   { id: "tooltip-detalhe", label: "Tooltip de Detalhe" },
   { id: "legenda", label: "Legenda" },
   { id: "coluna-mensal", label: "Coluna Mensal" },

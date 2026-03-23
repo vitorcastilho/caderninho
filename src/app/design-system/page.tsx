@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState, useRef } from "react"
 import { Button } from "@/client/components/ui/button"
 import {
   Card,
@@ -133,6 +133,7 @@ export default function DesignSystemPage() {
       <GraficoBarrasSection />
       <GradeTimelineSection />
       <TreemapSection />
+      <MapaGastosSection />
       <TooltipDetalheSection />
       <LegendaSection />
       <ColunaMensalSection />
@@ -3792,25 +3793,247 @@ function GradeTimelineSection() {
 
 /* ─── Treemap / Mapa Visual ─── */
 
-const treemapData = [
+/* ── Squarified Treemap algorithm ── */
+
+interface TreemapItem {
+  name: string
+  value: number
+  bg: string
+  textColor: string
+}
+
+interface TreemapRect {
+  item: TreemapItem
+  x: number
+  y: number
+  w: number
+  h: number
+}
+
+function squarify(
+  items: TreemapItem[],
+  containerW: number,
+  containerH: number,
+): TreemapRect[] {
+  const totalValue = items.reduce((s, i) => s + i.value, 0)
+  const totalArea = containerW * containerH
+  const sorted = [...items].sort((a, b) => b.value - a.value)
+
+  const area = (item: TreemapItem) => (item.value / totalValue) * totalArea
+
+  const rects: TreemapRect[] = []
+  let x = 0
+  let y = 0
+  let w = containerW
+  let h = containerH
+
+  function worstRatio(row: TreemapItem[], side: number): number {
+    const rowArea = row.reduce((s, item) => s + area(item), 0)
+    const thickness = rowArea / side
+    let worst = 0
+    for (const item of row) {
+      const itemLen = area(item) / thickness
+      const ratio = Math.max(itemLen / thickness, thickness / itemLen)
+      worst = Math.max(worst, ratio)
+    }
+    return worst
+  }
+
+  function layoutRow(row: TreemapItem[]) {
+    const rowArea = row.reduce((s, item) => s + area(item), 0)
+
+    if (w >= h) {
+      // Lado curto = h → coluna na esquerda
+      const colW = rowArea / h
+      let cy = y
+      for (const item of row) {
+        const itemH = area(item) / colW
+        rects.push({ item, x, y: cy, w: colW, h: itemH })
+        cy += itemH
+      }
+      x += colW
+      w -= colW
+    } else {
+      // Lado curto = w → faixa no topo
+      const rowH = rowArea / w
+      let cx = x
+      for (const item of row) {
+        const itemW = area(item) / rowH
+        rects.push({ item, x: cx, y, w: itemW, h: rowH })
+        cx += itemW
+      }
+      y += rowH
+      h -= rowH
+    }
+  }
+
+  let remaining = [...sorted]
+
+  while (remaining.length > 0) {
+    const shortSide = Math.min(w, h)
+
+    const row: TreemapItem[] = [remaining[0]]
+    remaining = remaining.slice(1)
+
+    let currentWorst = worstRatio(row, shortSide)
+
+    while (remaining.length > 0) {
+      const candidate = remaining[0]
+      const newRow = [...row, candidate]
+      const newWorst = worstRatio(newRow, shortSide)
+
+      if (newWorst <= currentWorst) {
+        row.push(candidate)
+        currentWorst = newWorst
+        remaining = remaining.slice(1)
+      } else {
+        break
+      }
+    }
+
+    layoutRow(row)
+  }
+
+  return rects
+}
+
+const treemapItems: TreemapItem[] = [
+  { name: "Escola", value: 2800, bg: "#818CF8", textColor: "white" },
+  { name: "Supermercado", value: 2122, bg: "#86EFAC", textColor: "#1C1917" },
+  { name: "Moradia", value: 1800, bg: "#FDE68A", textColor: "#1C1917" },
+  { name: "Saúde", value: 950, bg: "#FDA4AF", textColor: "#1C1917" },
+  { name: "Gasolina", value: 420, bg: "#67E8F9", textColor: "#1C1917" },
+  { name: "Transporte", value: 380, bg: "#C4B5FD", textColor: "#1C1917" },
+  { name: "Lazer", value: 320, bg: "#FCA5A5", textColor: "#1C1917" },
+  { name: "Internet", value: 158, bg: "#A5B4FC", textColor: "white" },
+  { name: "Assinaturas", value: 140, bg: "#86EFAC", textColor: "#1C1917" },
+  { name: "Pets", value: 95, bg: "#FDE68A", textColor: "#1C1917" },
+  { name: "Vestuário", value: 80, bg: "#FDA4AF", textColor: "#1C1917" },
+]
+
+const TREEMAP_W = 760
+const TREEMAP_H = 420
+
+const treemapRects = squarify(treemapItems, TREEMAP_W, TREEMAP_H)
+const treemapTotal = treemapItems.reduce((s, i) => s + i.value, 0)
+
+function TreemapSection() {
+  const [hoveredBlock, setHoveredBlock] = useState<string | null>(null)
+  const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 })
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  return (
+    <Section id="treemap" title="Treemap / Mapa Visual">
+      <div className="relative space-y-4">
+        <div
+          ref={containerRef}
+          className="relative overflow-hidden rounded-[var(--radius-card)]"
+          style={{ width: TREEMAP_W, height: TREEMAP_H }}
+          onMouseLeave={() => setHoveredBlock(null)}
+        >
+          {treemapRects.map((r) => {
+            const pct = ((r.item.value / treemapTotal) * 100).toFixed(1)
+            const isTiny = r.w < 80 && r.h < 50
+            return (
+              <div
+                key={r.item.name}
+                className="absolute cursor-pointer border border-white/30 overflow-hidden transition-opacity hover:opacity-85"
+                style={{
+                  left: r.x,
+                  top: r.y,
+                  width: r.w,
+                  height: r.h,
+                  backgroundColor: r.item.bg,
+                  color: r.item.textColor,
+                }}
+                onMouseEnter={(e) => {
+                  setHoveredBlock(r.item.name)
+                  const rect = containerRef.current?.getBoundingClientRect()
+                  if (rect) {
+                    const tx = e.clientX - rect.left
+                    const ty = e.clientY - rect.top
+                    setTooltipPos({
+                      x: tx > TREEMAP_W - 200 ? tx - 200 : tx + 12,
+                      y: ty > TREEMAP_H - 80 ? ty - 80 : ty + 12,
+                    })
+                  }
+                }}
+                onMouseMove={(e) => {
+                  const rect = containerRef.current?.getBoundingClientRect()
+                  if (rect) {
+                    const tx = e.clientX - rect.left
+                    const ty = e.clientY - rect.top
+                    setTooltipPos({
+                      x: tx > TREEMAP_W - 200 ? tx - 200 : tx + 12,
+                      y: ty > TREEMAP_H - 80 ? ty - 80 : ty + 12,
+                    })
+                  }
+                }}
+              >
+                <div className="flex h-full flex-col p-2">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider opacity-80 leading-tight">
+                    {r.item.name}
+                  </p>
+                  {!isTiny && (
+                    <>
+                      <p className="mt-0.5 text-sm font-bold leading-tight">
+                        R$ {r.item.value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                      </p>
+                      <p className="text-[10px] opacity-60">{pct}%</p>
+                    </>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Tooltip flutuante — fora do overflow-hidden */}
+        {hoveredBlock && (() => {
+          const item = treemapItems.find(i => i.name === hoveredBlock)
+          if (!item) return null
+          const pct = ((item.value / treemapTotal) * 100).toFixed(1)
+          return (
+            <div
+              className="pointer-events-none absolute z-10 rounded-lg bg-[#1C1917] px-4 py-3 text-white shadow-lg"
+              style={{ left: tooltipPos.x, top: tooltipPos.y }}
+            >
+              <p className="text-sm font-semibold">{item.name}</p>
+              <div className="mt-1.5 space-y-0.5 text-xs">
+                <div className="flex justify-between gap-6"><span className="text-white/60">Gasto</span><span className="font-medium tabular-nums">R$ {item.value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span></div>
+                <div className="flex justify-between gap-6"><span className="text-white/60">% do total</span><span className="font-medium tabular-nums">{pct}%</span></div>
+              </div>
+            </div>
+          )
+        })()}
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Treemap squarified real: retângulos com área proporcional ao valor. 11 categorias. Hover mostra tooltip escuro. Cores por classificação. No app real: orçamento + barra de progresso + drill-down por grupo.
+      </p>
+    </Section>
+  )
+}
+
+/* ─── Mapa de Gastos (layout simplificado para comparação) ─── */
+
+const mapaGastosData = [
   { name: "ESCOLA", value: 2800, pct: 36, color: "bg-[#818CF8]", textColor: "text-white" },
   { name: "SUPERMERCADO", value: 2122, pct: 28, color: "bg-[#86EFAC]", textColor: "text-foreground" },
   { name: "MORADIA", value: 1800, pct: 23, color: "bg-[#FDE68A]", textColor: "text-foreground" },
 ]
 
-const treemapSmall = [
+const mapaGastosSmall = [
   { name: "GASOLINA", value: 420, color: "bg-[#86EFAC]" },
   { name: "TRANSPORTE", value: 380, color: "bg-[#FDE68A]" },
   { name: "INTERNET", value: 158, color: "bg-[#818CF8]" },
 ]
 
-function TreemapSection() {
+function MapaGastosSection() {
   return (
-    <Section id="treemap" title="Treemap / Mapa Visual">
+    <Section id="mapa-gastos" title="Mapa de Gastos (alternativo)">
       <div className="space-y-4">
-        {/* Treemap grid */}
         <div className="relative flex h-64 gap-1 overflow-hidden rounded-[var(--radius-card)]">
-          {treemapData.map((item) => (
+          {mapaGastosData.map((item) => (
             <div
               key={item.name}
               className={`${item.color} relative cursor-pointer rounded-lg p-3 transition-opacity hover:opacity-90`}
@@ -3825,7 +4048,6 @@ function TreemapSection() {
               <p className={`text-xs ${item.textColor} opacity-70`}>
                 {item.pct.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}% do total
               </p>
-              {/* Bottom info */}
               <div className={`absolute inset-x-3 bottom-3 text-[10px] ${item.textColor} opacity-60`}>
                 <p>Orçam. R$ {item.value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
                 <div className="mt-0.5 h-0.5 rounded-full bg-positive" />
@@ -3834,10 +4056,8 @@ function TreemapSection() {
             </div>
           ))}
         </div>
-
-        {/* Small blocks row */}
         <div className="flex gap-1">
-          {treemapSmall.map((item) => (
+          {mapaGastosSmall.map((item) => (
             <div
               key={item.name}
               className={`${item.color} flex-1 cursor-pointer rounded-lg p-2.5 transition-opacity hover:opacity-90`}
@@ -3851,24 +4071,9 @@ function TreemapSection() {
             </div>
           ))}
         </div>
-
-        {/* Hover tooltip example */}
-        <div>
-          <h3 className="mb-2 text-sm font-medium">Tooltip hover (aparece ao passar o mouse)</h3>
-          <div className="inline-block rounded-lg bg-[#1C1917] px-4 py-3 text-white shadow-lg">
-            <p className="text-sm font-semibold">Supermercado</p>
-            <div className="mt-1.5 space-y-0.5 text-xs">
-              <div className="flex justify-between gap-6"><span className="text-white/60">Orçamento</span><span className="font-medium tabular-nums">R$ 3.000,00</span></div>
-              <div className="flex justify-between gap-6"><span className="text-white/60">Gasto</span><span className="font-medium tabular-nums">R$ 2.122,00</span></div>
-              <div className="flex justify-between gap-6"><span className="text-white/60">Resta</span><span className="font-medium tabular-nums">R$ 878,00</span></div>
-              <div className="flex justify-between gap-6"><span className="text-white/60">Uso</span><span className="font-medium tabular-nums">70,00%</span></div>
-            </div>
-            <p className="mt-2 text-[11px] text-white/50">Latam Pass Visa</p>
-          </div>
-        </div>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
-        Padrão do proto-09 (view Mapa): retângulos proporcionais ao gasto. Hover mostra tooltip escuro. Cores por classificação. Bottom de cada bloco: orçamento + barra + método de pagamento. Click faz drill-down por grupo via breadcrumbs.
+        Layout simplificado: blocos com largura proporcional (%) e altura fixa. Comparar com o Treemap real acima para decidir qual modelo usar no app.
       </p>
     </Section>
   )
