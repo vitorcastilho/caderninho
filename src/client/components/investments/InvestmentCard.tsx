@@ -74,7 +74,7 @@ export function InvestmentCard({ investment, onEdit, onStatusChange }: Investmen
       <CardHeader>
         <CardTitle>{investment.name}</CardTitle>
         <CardAction>
-          <div className="flex gap-1">
+          <div className="flex gap-2">
             <Button variant="ghost" size="xs" onClick={() => onEdit(investment.id)}>
               Editar
             </Button>

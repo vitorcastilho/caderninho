@@ -120,16 +120,19 @@ export function IncomeSourceList({ initialIncomeSources }: IncomeSourceListProps
       </Dialog>
 
       {activeSources.length === 0 && archivedSources.length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground">
-          <p>Nenhuma fonte de receita cadastrada.</p>
-          <p className="text-sm mt-1">Clique em &ldquo;Nova Fonte&rdquo; para começar.</p>
+        <div className="flex flex-col items-center gap-4 rounded-card border border-dashed border-border px-6 py-8 text-center">
+          <p className="text-sm text-muted-foreground">Nenhuma fonte de receita cadastrada.</p>
+          <Button variant="secondary" size="sm" onClick={() => setShowCreateForm(true)}>
+            Nova Fonte
+          </Button>
+          <p className="text-xs text-muted-foreground">Cadastre suas fontes de renda (CLT, PJ, freelance...).</p>
         </div>
       ) : (
         <>
           {activeSources.length === 0 ? (
             <p className="text-sm text-muted-foreground">Nenhuma fonte ativa.</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {activeSources.map((source) => (
                 <IncomeSourceCard
                   key={source.id}
@@ -153,7 +156,7 @@ export function IncomeSourceList({ initialIncomeSources }: IncomeSourceListProps
                   : `Mostrar arquivadas (${archivedSources.length})`}
               </Button>
               {showArchived && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-2 opacity-60">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2 opacity-60">
                   {archivedSources.map((source) => (
                     <IncomeSourceCard
                       key={source.id}

@@ -70,7 +70,7 @@ export function BankAccountCard({ account, onEdit, onStatusChange }: BankAccount
       <CardHeader>
         <CardTitle>{account.name}</CardTitle>
         <CardAction>
-          <div className="flex gap-1">
+          <div className="flex gap-2">
             <Button variant="ghost" size="xs" onClick={() => onEdit(account.id)}>
               Editar
             </Button>

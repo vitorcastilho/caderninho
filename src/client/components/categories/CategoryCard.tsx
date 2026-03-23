@@ -121,20 +121,22 @@ export function CategoryCard({
   }
 
   return (
-    <div className="border border-border rounded-lg overflow-hidden">
+    <div className="border border-border rounded-card overflow-hidden">
       {/* Category row */}
       <div className="flex items-center gap-2 px-3 py-2.5 hover:bg-muted/30 transition-colors">
-        <button
+        <Button
+          variant="link"
+          size="sm"
           onClick={onEdit}
-          className="text-sm font-semibold text-foreground hover:text-primary transition-colors cursor-pointer"
+          className="px-0 h-auto text-sm font-semibold text-foreground hover:text-primary"
         >
           {category.name}
-        </button>
+        </Button>
 
         {budgetDisplay && (
           <div className="flex items-center gap-1">
             <span className="text-[11px] text-muted-foreground">Orçamento:</span>
-            <span className="text-xs text-muted-foreground tabular-nums bg-muted px-2 py-0.5 rounded">
+            <span className="text-xs text-muted-foreground tabular-nums bg-muted px-2 py-0.5 rounded-badge">
               {budgetDisplay}
             </span>
           </div>
@@ -142,7 +144,7 @@ export function CategoryCard({
 
         <span className="flex-1" />
 
-        <div className="flex gap-1">
+        <div className="flex gap-2">
           {category.status === 'active' && (
             <>
               <Button
@@ -202,12 +204,14 @@ export function CategoryCard({
           {activeSubcategories.map((sub) => (
             <div key={sub.id} className="flex items-center gap-1.5 py-1 group/sub">
               <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
-              <button
+              <Button
+                variant="link"
+                size="xs"
                 onClick={() => onEditSubcategory(sub)}
-                className="text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+                className="px-0 h-auto text-xs font-normal text-muted-foreground hover:text-primary"
               >
                 {sub.name}
-              </button>
+              </Button>
               <div className="flex gap-1 opacity-0 group-hover/sub:opacity-100 transition-opacity">
                 <Button
                   variant="ghost"

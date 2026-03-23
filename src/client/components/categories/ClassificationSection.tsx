@@ -160,7 +160,7 @@ export function ClassificationSection({
 
         <span className="flex-1" />
 
-        <span className="text-[11px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full shrink-0">
+        <span className="text-[11px] text-muted-foreground bg-muted px-2 py-0.5 rounded-badge shrink-0">
           {classification.activeCategoryCount}{' '}
           {classification.activeCategoryCount === 1 ? 'categoria' : 'categorias'}
         </span>
@@ -191,43 +191,51 @@ export function ClassificationSection({
           {showMenu && (
             <>
               <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
-              <div className="absolute right-0 top-full mt-2 z-50 min-w-[200px] rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 p-1">
+              <div className="absolute right-0 top-full mt-2 z-50 min-w-[200px] rounded-card bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 p-1">
                 {/* Arrow pointing to gear */}
                 <div className="absolute -top-1.5 right-2.5 size-3 rotate-45 bg-popover ring-1 ring-foreground/10 [clip-path:polygon(0%_0%,100%_0%,0%_100%)]" />
                 {classification.status === 'active' ? (
                   <>
-                    <button
-                      className="flex w-full items-center rounded-md px-3 py-1.5 text-sm hover:bg-accent"
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start"
                       onClick={() => {
                         setShowMenu(false);
                         onEditClassification(classification);
                       }}
                     >
                       Renomear
-                    </button>
-                    <button
-                      className="flex w-full items-center rounded-md px-3 py-1.5 text-sm hover:bg-accent"
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start"
                       onClick={() => {
                         setShowMenu(false);
                         onMergeClassification(classification);
                       }}
                     >
                       Mesclar com outra
-                    </button>
+                    </Button>
                     <div className="h-px bg-border my-1" />
-                    <button
-                      className="flex w-full items-center rounded-md px-3 py-1.5 text-sm text-destructive hover:bg-destructive/10"
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start text-destructive hover:bg-destructive/10 hover:text-destructive"
                       onClick={() => {
                         setShowMenu(false);
                         setShowArchiveDialog(true);
                       }}
                     >
                       Arquivar
-                    </button>
+                    </Button>
                   </>
                 ) : (
-                  <button
-                    className="flex w-full items-center rounded-md px-3 py-1.5 text-sm hover:bg-accent"
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start"
                     onClick={() => {
                       setShowMenu(false);
                       handleReactivate();
@@ -235,7 +243,7 @@ export function ClassificationSection({
                     disabled={isPending}
                   >
                     {isPending ? 'Reativando...' : 'Reativar'}
-                  </button>
+                  </Button>
                 )}
               </div>
             </>
@@ -266,7 +274,7 @@ export function ClassificationSection({
       {expanded && (
         <div className="px-3 pb-3">
           {activeCategories.length === 0 && archivedCategories.length === 0 ? (
-            <div className="flex flex-col items-center gap-2 py-6 border border-dashed border-border rounded-lg">
+            <div className="flex flex-col items-center gap-3 py-6 border border-dashed border-border rounded-card">
               <p className="text-xs text-muted-foreground">Nenhuma categoria ainda</p>
               {classification.status === 'active' && (
                 <Button

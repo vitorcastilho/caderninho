@@ -7,11 +7,11 @@ export default function CategoriesLoading() {
         <Skeleton className="h-7 w-40" />
         <Skeleton className="h-9 w-44" />
       </div>
-      <div className="space-y-3">
+      <div className="space-y-4">
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-card bg-card p-[var(--density-card-padding)] border border-border space-y-3"
+            className="rounded-card bg-card p-[var(--density-card-padding)] border border-border space-y-4"
           >
             <div className="flex items-center justify-between">
               <Skeleton className="h-5 w-48" />

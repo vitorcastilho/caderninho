@@ -16,6 +16,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/client/utils/utils";
+import { Button } from "@/client/components/ui/button";
 import { useSidebarState } from "@/client/hooks/use-sidebar-state";
 import { authClient } from "@/client/utils/auth-client";
 
@@ -115,10 +116,11 @@ export function Sidebar() {
 
       {/* Logout */}
       <div className="px-2 pb-1">
-        <button
+        <Button
+          variant="ghost"
           onClick={handleLogout}
           title="Sair"
-          className="flex items-center gap-3 w-full rounded-button px-2 py-2 text-sm text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors duration-150 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="flex items-center gap-3 w-full justify-start rounded-button px-2 py-2 text-sm text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
         >
           <LogOut className="size-5 shrink-0" />
           <span
@@ -130,23 +132,24 @@ export function Sidebar() {
           >
             Sair
           </span>
-        </button>
+        </Button>
       </div>
 
       {/* Collapse toggle button — desktop only */}
       <div className="hidden lg:block border-t border-sidebar-border p-2">
-        <button
+        <Button
+          variant="ghost"
           onClick={toggle}
           aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
           aria-expanded={!collapsed}
-          className="flex items-center justify-center w-full rounded-button p-2 text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors duration-150 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="flex items-center justify-center w-full rounded-button p-2 text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
         >
           {collapsed ? (
             <ChevronRight className="size-5" />
           ) : (
             <ChevronLeft className="size-5" />
           )}
-        </button>
+        </Button>
       </div>
     </aside>
   );

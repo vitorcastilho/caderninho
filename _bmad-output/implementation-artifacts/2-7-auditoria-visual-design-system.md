@@ -1,6 +1,6 @@
 # Story 2.7: Auditoria Visual — Alinhar Telas Existentes ao Design System e Protótipos
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -35,75 +35,75 @@ Esta story audita e corrige essas inconsistências para que, daqui em diante, to
 
 ## Acceptance Criteria
 
-- [ ] AC 1: Given qualquer tela auditada, when comparar com o design system, then TODOS os tokens de cor usam variáveis CSS do `globals.css` (nunca hex hardcoded como `#DDD6FE`, `#E0E7FF`, etc.)
-- [ ] AC 2: Given cards em qualquer tela, when inspecionar, then usam `rounded-[var(--radius-card)]` (12px) e não `rounded-lg` ou `rounded-xl` arbitrário
-- [ ] AC 3: Given botões em qualquer tela, when inspecionar, then usam o componente `<Button>` de `@/client/components/ui/button` (nunca `<button>` nativo)
-- [ ] AC 4: Given empty states em qualquer tela, when visualizar, then seguem o padrão canônico: `border border-dashed border-border rounded-[var(--radius-card)]` + texto + CTA + hint
-- [ ] AC 5: Given listas colapsáveis em qualquer tela, when interagir, then seguem o padrão do design system: chevron ▼ expandido / ◀ colapsado, badge de contagem, ações no hover
-- [ ] AC 6: Given inputs monetários (R$), when interagir, then seguem o padrão bancário (inputMode="numeric", vírgula automática, `centsToDisplayValue`/`displayValueToCents`)
-- [ ] AC 7: Given inputs de percentual (%), when interagir, then seguem o mesmo padrão (inputMode="numeric", vírgula automática, basis points)
-- [ ] AC 8: Given textos com valores monetários, when visualizar, then usam `tabular-nums` e `formatCurrency()` de `@/client/utils/utils`
-- [ ] AC 9: Given a seção de loading de qualquer tela, when carregando, then exibe `Skeleton` (nunca tela em branco)
-- [ ] AC 10: Given espaçamento entre elementos, when inspecionar, then usa a escala padrão do design system (4, 8, 12, 16, 20, 24, 32px)
+- [x] AC 1: Given qualquer tela auditada, when comparar com o design system, then TODOS os tokens de cor usam variáveis CSS do `globals.css` (nunca hex hardcoded como `#DDD6FE`, `#E0E7FF`, etc.)
+- [x] AC 2: Given cards em qualquer tela, when inspecionar, then usam `rounded-[var(--radius-card)]` (12px) e não `rounded-lg` ou `rounded-xl` arbitrário
+- [x] AC 3: Given botões em qualquer tela, when inspecionar, then usam o componente `<Button>` de `@/client/components/ui/button` (nunca `<button>` nativo)
+- [x] AC 4: Given empty states em qualquer tela, when visualizar, then seguem o padrão canônico: `border border-dashed border-border rounded-[var(--radius-card)]` + texto + CTA + hint
+- [x] AC 5: Given listas colapsáveis em qualquer tela, when interagir, then seguem o padrão do design system: chevron ▼ expandido / ◀ colapsado, badge de contagem, ações no hover
+- [x] AC 6: Given inputs monetários (R$), when interagir, then seguem o padrão bancário (inputMode="numeric", vírgula automática, `centsToDisplayValue`/`displayValueToCents`)
+- [x] AC 7: Given inputs de percentual (%), when interagir, then seguem o mesmo padrão (inputMode="numeric", vírgula automática, basis points)
+- [x] AC 8: Given textos com valores monetários, when visualizar, then usam `tabular-nums` e `formatCurrency()` de `@/client/utils/utils`
+- [x] AC 9: Given a seção de loading de qualquer tela, when carregando, then exibe `Skeleton` (nunca tela em branco)
+- [x] AC 10: Given espaçamento entre elementos, when inspecionar, then usa a escala padrão do design system (4, 8, 12, 16, 20, 24, 32px)
 
 ## Tasks
 
 ### Fase 1: Auditoria (investigação)
 
-- [ ] Task 1: Auditar `/accounts` — comparar `BankAccountForm`, `BankAccountCard`, `BankAccountList` contra design system e protótipos
+- [x] Task 1: Auditar `/accounts` — comparar `BankAccountForm`, `BankAccountCard`, `BankAccountList` contra design system e protótipos
   - File: `src/client/components/bank-accounts/*.tsx`
   - Action: Listar todas as inconsistências encontradas (tokens, espaçamento, componentes, padrões)
 
-- [ ] Task 2: Auditar `/credit-cards` — comparar `CreditCardForm`, `CreditCardCard`, `CreditCardList`
+- [x] Task 2: Auditar `/credit-cards` — comparar `CreditCardForm`, `CreditCardCard`, `CreditCardList`
   - File: `src/client/components/credit-cards/*.tsx`
   - Action: Listar inconsistências
 
-- [ ] Task 3: Auditar `/investments` — comparar `InvestmentForm`, `InvestmentCard`, `InvestmentList`
+- [x] Task 3: Auditar `/investments` — comparar `InvestmentForm`, `InvestmentCard`, `InvestmentList`
   - File: `src/client/components/investments/*.tsx`
   - Action: Listar inconsistências
 
-- [ ] Task 4: Auditar `/income-sources` — comparar `IncomeSourceForm`, `IncomeSourceCard`, `IncomeSourceList`
+- [x] Task 4: Auditar `/income-sources` — comparar `IncomeSourceForm`, `IncomeSourceCard`, `IncomeSourceList`
   - File: `src/client/components/income-sources/*.tsx`
   - Action: Listar inconsistências
 
-- [ ] Task 5: Auditar `/categories` — comparar `CategoryTree`, `ClassificationSection`, `CategoryCard`, `CategoryForm`, `SubcategoryForm`, `ClassificationForm`, `ClassificationMergeDialog`
+- [x] Task 5: Auditar `/categories` — comparar `CategoryTree`, `ClassificationSection`, `CategoryCard`, `CategoryForm`, `SubcategoryForm`, `ClassificationForm`, `ClassificationMergeDialog`
   - File: `src/client/components/categories/*.tsx`
   - Action: Listar inconsistências. Atenção especial: é a tela mais recente (PR #14) e foi marcada pelo usuário como "feiona"
   - Notes: Componentes incluem lista colapsável (classificação → categorias → subcategorias), formulários em dialog, merge dialog, empty states, badges de orçamento
 
-- [ ] Task 6: Auditar layout compartilhado — `Sidebar`, `BottomNavigation`, `DensityProvider`
+- [x] Task 6: Auditar layout compartilhado — `Sidebar`, `BottomNavigation`, `DensityProvider`
   - File: `src/client/components/layout/*.tsx`
   - Action: Listar inconsistências
 
-- [ ] Task 7: Auditar telas de auth — `LoginForm`, `RegisterForm`
+- [x] Task 7: Auditar telas de auth — `LoginForm`, `RegisterForm`
   - File: `src/client/components/auth/*.tsx`
   - Action: Listar inconsistências
 
-- [ ] Task 8: Auditar Dashboard
+- [x] Task 8: Auditar Dashboard
   - File: `src/app/(app)/dashboard/page.tsx`
   - Action: Listar inconsistências
 
 ### Fase 2: Correções
 
-- [ ] Task 9: Corrigir tokens de cor hardcoded → variáveis CSS semânticas (AC 1)
+- [x] Task 9: Corrigir tokens de cor hardcoded → variáveis CSS semânticas (AC 1)
   - Action: Substituir hex literals por tokens (`bg-primary`, `text-muted-foreground`, `border-border`, `bg-primary-light`, etc.)
 
-- [ ] Task 10: Corrigir border-radius → tokens do design system (AC 2)
+- [x] Task 10: Corrigir border-radius → tokens do design system (AC 2)
   - Action: Cards → `rounded-[var(--radius-card)]`, badges → `rounded-[var(--radius-badge)]`, botões → `rounded-[var(--radius-button)]`
 
-- [ ] Task 11: Substituir `<button>` nativo por `<Button>` component (AC 3)
+- [x] Task 11: Substituir `<button>` nativo por `<Button>` component (AC 3)
   - Action: Buscar todos os `<button` em componentes e trocar por `<Button>` com variant/size adequado
 
-- [ ] Task 12: Corrigir empty states para padrão canônico (AC 4)
+- [x] Task 12: Corrigir empty states para padrão canônico (AC 4)
   - Action: Verificar se existem empty states fora do padrão e alinhar
 
-- [ ] Task 13: Verificar e corrigir espaçamento (AC 10)
+- [x] Task 13: Verificar e corrigir espaçamento (AC 10)
   - Action: Conferir que gaps, paddings e margins seguem a escala do design system
 
 ### Fase 3: Validação
 
-- [ ] Task 14: Rodar build (`npx next build`) e lint para garantir que as correções não quebraram nada
-- [ ] Task 15: Verificar visualmente cada tela no browser — comparar antes/depois
+- [x] Task 14: Rodar build (`npx next build`) e lint para garantir que as correções não quebraram nada
+- [x] Task 15: Verificar visualmente cada tela no browser — comparar antes/depois
 
 ## Dev Notes
 
@@ -167,9 +167,86 @@ Esta story audita e corrige essas inconsistências para que, daqui em diante, to
 ## Dev Agent Record
 
 ### Agent Model Used
+Claude Opus 4.6
 
 ### Debug Log References
+- Build: `npx next build` — compilou com sucesso (13.2s Turbopack)
+- Testes: `npx vitest run` — 94 arquivos, 602 testes passando, zero regressão
+- Grep `<button`: 0 ocorrências em src/client/components (validação AC 3)
+- Grep `blue-[0-9]`: 0 ocorrências (validação AC 1)
+- Grep `#[0-9A-Fa-f]{6}`: apenas SVG Google (branding, exceção aceitável)
 
 ### Completion Notes List
 
+**Fase 1 — Auditoria (5 agentes paralelos):**
+- Auditoria de 8 áreas: bank-accounts, credit-cards, investments, income-sources, categories, layout, auth, dashboard
+- Categorias foi a tela com mais inconsistências (cores hardcoded, botões nativos, border-radius incorretos)
+- Bank-accounts, credit-cards, investments e income-sources compartilhavam os mesmos padrões de inconsistência (empty states genéricos, gap-3 em grids, gap-1 em ações de card)
+- Dashboard já estava conforme (usa rounded-card, tabular-nums, text-text-secondary/tertiary)
+- Nota: no Tailwind v4, `@theme { --radius-card: 12px }` gera automaticamente `rounded-card`, logo usos existentes de `rounded-card` estavam corretos (falsos positivos descartados)
+
+**Fase 2 — Correções aplicadas:**
+
+AC 1 (Tokens de cor):
+- CategoryTree.tsx: `bg-blue-50 border-blue-200 text-blue-600/900/400` → `bg-info-bg border-info text-info/text-info-text`
+
+AC 2 (Border-radius):
+- CategoryCard.tsx: `rounded-lg` → `rounded-card`
+- ClassificationSection.tsx: empty state `rounded-lg` → `rounded-card`, dropdown `rounded-lg` → `rounded-card`
+- ClassificationSection.tsx: badge `rounded-full` → `rounded-badge`
+- CategoryCard.tsx: badge `rounded` → `rounded-badge`
+
+AC 3 (Botões nativos → Button):
+- 13 `<button>` nativos convertidos para `<Button>` em 7 arquivos
+- ClassificationSection.tsx: 4 botões de dropdown menu → `<Button variant="ghost" size="sm">`
+- CategoryCard.tsx: nome categoria e subcategoria → `<Button variant="link">`
+- CategoryTree.tsx: close onboarding → `<Button variant="ghost" size="icon-xs">`
+- Sidebar.tsx: logout e toggle → `<Button variant="ghost">`
+- BottomNavigation.tsx: logout → `<Button variant="ghost">`
+- LoginForm.tsx: toggle senha → `<Button variant="ghost" size="icon-xs">`
+- RegisterForm.tsx: 2x toggle senha → `<Button variant="ghost" size="icon-xs">`
+
+AC 4 (Empty states):
+- 5 empty states convertidos para padrão canônico (dashed border + CTA + hint)
+- BankAccountList, CreditCardList, InvestmentList, IncomeSourceList, CategoryTree
+- ClassificationSection já tinha dashed border, apenas corrigido rounded-lg → rounded-card
+
+AC 10 (Espaçamento):
+- Grid gap em 4 listas: `gap-3` (12px) → `gap-4` (16px) — match com `--density-gap: 16px`
+- Card action gap em 4 cards: `gap-1` (4px) → `gap-2` (8px) — espaçamento mínimo para botões
+- CategoryCard action gap: `gap-1` → `gap-2`
+- Loading skeletons: gap-3 → gap-4, gap-1 → gap-2 (5 loading.tsx)
+
+AC 5-9 (Verificações de conformidade):
+- AC 5: Lista colapsável (ClassificationSection) já conforme — chevron, badge, actions no hover
+- AC 6: Inputs monetários corretos em BankAccountForm, CreditCardForm, InvestmentForm, IncomeSourceForm
+- AC 7: Input percentual correto em InvestmentForm (basisPoints)
+- AC 8: Todos os cards usam tabular-nums + formatCurrency()
+- AC 9: Todas as rotas têm loading.tsx com Skeleton — gaps corrigidos para consistência
+
+### Change Log
+- 2026-03-23: Implementação completa da Story 2.7 — auditoria e correções visuais
+
 ### File List
+
+**Modificados:**
+- src/client/components/bank-accounts/BankAccountList.tsx
+- src/client/components/bank-accounts/BankAccountCard.tsx
+- src/client/components/credit-cards/CreditCardList.tsx
+- src/client/components/credit-cards/CreditCardCard.tsx
+- src/client/components/investments/InvestmentList.tsx
+- src/client/components/investments/InvestmentCard.tsx
+- src/client/components/income-sources/IncomeSourceList.tsx
+- src/client/components/income-sources/IncomeSourceCard.tsx
+- src/client/components/categories/CategoryTree.tsx
+- src/client/components/categories/ClassificationSection.tsx
+- src/client/components/categories/CategoryCard.tsx
+- src/client/components/layout/Sidebar.tsx
+- src/client/components/layout/BottomNavigation.tsx
+- src/client/components/auth/LoginForm.tsx
+- src/client/components/auth/RegisterForm.tsx
+- src/app/(app)/accounts/loading.tsx
+- src/app/(app)/credit-cards/loading.tsx
+- src/app/(app)/investments/loading.tsx
+- src/app/(app)/income-sources/loading.tsx
+- src/app/(app)/categories/loading.tsx

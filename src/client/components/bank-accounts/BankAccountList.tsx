@@ -117,16 +117,19 @@ export function BankAccountList({ initialAccounts }: BankAccountListProps) {
 
       {/* Active Accounts */}
       {activeAccounts.length === 0 && archivedAccounts.length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground">
-          <p>Nenhuma conta cadastrada.</p>
-          <p className="text-sm mt-1">Clique em &ldquo;Nova Conta&rdquo; para começar.</p>
+        <div className="flex flex-col items-center gap-4 rounded-card border border-dashed border-border px-6 py-8 text-center">
+          <p className="text-sm text-muted-foreground">Nenhuma conta cadastrada.</p>
+          <Button variant="secondary" size="sm" onClick={() => setShowCreateForm(true)}>
+            Nova Conta
+          </Button>
+          <p className="text-xs text-muted-foreground">Cadastre suas contas bancárias para acompanhar saldos.</p>
         </div>
       ) : (
         <>
           {activeAccounts.length === 0 ? (
             <p className="text-sm text-muted-foreground">Nenhuma conta ativa.</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {activeAccounts.map((account) => (
                 <BankAccountCard
                   key={account.id}
@@ -149,7 +152,7 @@ export function BankAccountList({ initialAccounts }: BankAccountListProps) {
                 {showArchived ? 'Ocultar arquivadas' : `Mostrar arquivadas (${archivedAccounts.length})`}
               </Button>
               {showArchived && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-2 opacity-60">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2 opacity-60">
                   {archivedAccounts.map((account) => (
                     <BankAccountCard
                       key={account.id}
