@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest, NextResponse } from "next/server";
 
-import { middleware } from "./middleware";
+import { proxy } from "./proxy";
 
 // Mock logger to prevent console output in tests
 vi.mock("@/server/infrastructure/logging/logger", () => ({
@@ -37,7 +37,7 @@ function createRequest(
   return request;
 }
 
-describe("middleware", () => {
+describe("proxy", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -47,7 +47,7 @@ describe("middleware", () => {
       "better-auth.session_token": "valid-token-123",
     });
 
-    middleware(request);
+    proxy(request);
 
     expect(NextResponse.next).toHaveBeenCalled();
   });
@@ -55,7 +55,7 @@ describe("middleware", () => {
   it("deve redirecionar para /login quando cookie de sessao esta ausente", () => {
     const request = createRequest("/dashboard");
 
-    middleware(request);
+    proxy(request);
 
     expect(NextResponse.redirect).toHaveBeenCalled();
     const redirectCall = vi.mocked(NextResponse.redirect).mock.calls[0];
@@ -66,7 +66,7 @@ describe("middleware", () => {
   it("deve permitir acesso a /login sem cookie", () => {
     const request = createRequest("/login");
 
-    middleware(request);
+    proxy(request);
 
     expect(NextResponse.next).toHaveBeenCalled();
     expect(NextResponse.redirect).not.toHaveBeenCalled();
@@ -75,7 +75,7 @@ describe("middleware", () => {
   it("deve permitir acesso a /register sem cookie", () => {
     const request = createRequest("/register");
 
-    middleware(request);
+    proxy(request);
 
     expect(NextResponse.next).toHaveBeenCalled();
     expect(NextResponse.redirect).not.toHaveBeenCalled();
@@ -84,7 +84,7 @@ describe("middleware", () => {
   it("deve permitir acesso a /api/auth sem cookie", () => {
     const request = createRequest("/api/auth/sign-in/email");
 
-    middleware(request);
+    proxy(request);
 
     expect(NextResponse.next).toHaveBeenCalled();
     expect(NextResponse.redirect).not.toHaveBeenCalled();
@@ -93,7 +93,7 @@ describe("middleware", () => {
   it("deve redirecionar /checklist para /login sem cookie", () => {
     const request = createRequest("/checklist");
 
-    middleware(request);
+    proxy(request);
 
     expect(NextResponse.redirect).toHaveBeenCalled();
     const redirectCall = vi.mocked(NextResponse.redirect).mock.calls[0];
@@ -106,7 +106,7 @@ describe("middleware", () => {
       "better-auth.session_token": "valid-token-123",
     });
 
-    middleware(request);
+    proxy(request);
 
     expect(NextResponse.next).toHaveBeenCalled();
     expect(NextResponse.redirect).not.toHaveBeenCalled();
