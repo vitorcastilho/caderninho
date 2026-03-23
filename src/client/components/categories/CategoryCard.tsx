@@ -2,6 +2,8 @@
 
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
+import { ChevronDown } from 'lucide-react';
+import { cn } from '@/client/utils/utils';
 
 import { Button } from '@/client/components/ui/button';
 import {
@@ -62,12 +64,14 @@ export function CategoryCard({
   onEditSubcategory,
   onStatusChange,
 }: CategoryCardProps) {
+  const [expanded, setExpanded] = useState(true);
   const [showArchiveDialog, setShowArchiveDialog] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const activeSubcategories = subcategories.filter((s) => s.status === 'active');
   const archivedSubcategories = subcategories.filter((s) => s.status === 'archived');
   const [showArchivedSubs, setShowArchivedSubs] = useState(false);
+  const totalSubs = activeSubcategories.length + archivedSubcategories.length;
 
   const budgetDisplay = formatBudget(category.budgetMinCents, category.budgetMaxCents);
 
@@ -122,14 +126,18 @@ export function CategoryCard({
 
   return (
     <div className="border-b border-border last:border-b-0">
-      {/* Category row — Level 2 do padrão "Lista Colapsável" do DS */}
-      <div className="group/cat flex items-center gap-2 bg-muted/30 px-4 py-2.5 pl-10 transition-colors hover:bg-muted/60">
-        <span
-          className="flex-1 cursor-pointer text-sm font-medium hover:text-primary"
-          onClick={onEdit}
-        >
-          {category.name}
-        </span>
+      {/* Category header — Level 2 do padrão "Lista Colapsável" do DS */}
+      <div
+        className="group/cat flex w-full cursor-pointer items-center gap-2 bg-muted/30 px-4 py-2.5 pl-10 text-left transition-colors hover:bg-muted/60"
+        onClick={() => setExpanded(!expanded)}
+      >
+        <ChevronDown
+          className={cn(
+            'size-4 shrink-0 text-muted-foreground transition-transform duration-150',
+            !expanded && '-rotate-90'
+          )}
+        />
+        <span className="flex-1 text-sm font-medium">{category.name}</span>
 
         {budgetDisplay && (
           <span className="text-xs text-muted-foreground tabular-nums">
@@ -137,7 +145,16 @@ export function CategoryCard({
           </span>
         )}
 
-        <div className="flex gap-1 opacity-0 transition-opacity group-hover/cat:opacity-100">
+        {totalSubs > 0 && (
+          <span className="text-xs text-muted-foreground">
+            {totalSubs} {totalSubs === 1 ? 'item' : 'itens'}
+          </span>
+        )}
+
+        <div
+          className="flex gap-1 opacity-0 transition-opacity group-hover/cat:opacity-100"
+          onClick={(e) => e.stopPropagation()}
+        >
           {category.status === 'active' && (
             <>
               <Button variant="ghost" size="xs" onClick={onAddSubcategory}>
@@ -189,70 +206,74 @@ export function CategoryCard({
       </Dialog>
 
       {/* Subcategories — Level 3 do padrão "Lista Colapsável" do DS */}
-      {activeSubcategories.map((sub) => (
-        <div
-          key={sub.id}
-          className="group/sub flex items-center gap-3 border-b border-border bg-card py-3 pr-4 pl-16 transition-colors last:border-b-0 hover:bg-muted/30"
-        >
-          <div className="size-1 shrink-0 rounded-full bg-muted-foreground/60" />
-          <span className="flex-1 text-sm">{sub.name}</span>
-          <div className="flex gap-1 opacity-0 transition-opacity group-hover/sub:opacity-100">
-            <Button
-              variant="ghost"
-              size="xs"
-              className="h-6 text-xs"
-              onClick={() => onEditSubcategory(sub)}
+      {expanded && (
+        <>
+          {activeSubcategories.map((sub) => (
+            <div
+              key={sub.id}
+              className="group/sub flex items-center gap-3 border-b border-border bg-card py-3 pr-4 pl-16 transition-colors last:border-b-0 hover:bg-muted/30"
             >
-              Editar
-            </Button>
-            <Button
-              variant="ghost"
-              size="xs"
-              className="h-6 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
-              onClick={() => handleArchiveSubcategory(sub)}
-              disabled={isPending}
-            >
-              Arquivar
-            </Button>
-          </div>
-        </div>
-      ))}
-
-      {archivedSubcategories.length > 0 && (
-        <div className="border-b border-border px-4 py-2 pl-16 last:border-b-0">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-xs h-6 px-2"
-            onClick={() => setShowArchivedSubs(!showArchivedSubs)}
-          >
-            {showArchivedSubs
-              ? 'Ocultar'
-              : `+${archivedSubcategories.length} arquivada${archivedSubcategories.length > 1 ? 's' : ''}`}
-          </Button>
-          {showArchivedSubs && (
-            <div className="mt-1 opacity-60">
-              {archivedSubcategories.map((sub) => (
-                <div
-                  key={sub.id}
-                  className="group/sub flex items-center gap-3 py-2"
+              <div className="size-1 shrink-0 rounded-full bg-muted-foreground/60" />
+              <span className="flex-1 text-sm">{sub.name}</span>
+              <div className="flex gap-1 opacity-0 transition-opacity group-hover/sub:opacity-100">
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  className="h-6 text-xs"
+                  onClick={() => onEditSubcategory(sub)}
                 >
-                  <div className="size-1 shrink-0 rounded-full bg-muted-foreground/60" />
-                  <span className="flex-1 text-sm text-muted-foreground">{sub.name}</span>
-                  <Button
-                    variant="ghost"
-                    size="xs"
-                    className="h-6 text-xs opacity-0 group-hover/sub:opacity-100 transition-opacity"
-                    onClick={() => handleReactivateSubcategory(sub)}
-                    disabled={isPending}
-                  >
-                    Reativar
-                  </Button>
+                  Editar
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  className="h-6 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+                  onClick={() => handleArchiveSubcategory(sub)}
+                  disabled={isPending}
+                >
+                  Arquivar
+                </Button>
+              </div>
+            </div>
+          ))}
+
+          {archivedSubcategories.length > 0 && (
+            <div className="border-b border-border px-4 py-2 pl-16 last:border-b-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-xs h-6 px-2"
+                onClick={() => setShowArchivedSubs(!showArchivedSubs)}
+              >
+                {showArchivedSubs
+                  ? 'Ocultar'
+                  : `+${archivedSubcategories.length} arquivada${archivedSubcategories.length > 1 ? 's' : ''}`}
+              </Button>
+              {showArchivedSubs && (
+                <div className="mt-1 opacity-60">
+                  {archivedSubcategories.map((sub) => (
+                    <div
+                      key={sub.id}
+                      className="group/sub flex items-center gap-3 py-2"
+                    >
+                      <div className="size-1 shrink-0 rounded-full bg-muted-foreground/60" />
+                      <span className="flex-1 text-sm text-muted-foreground">{sub.name}</span>
+                      <Button
+                        variant="ghost"
+                        size="xs"
+                        className="h-6 text-xs opacity-0 group-hover/sub:opacity-100 transition-opacity"
+                        onClick={() => handleReactivateSubcategory(sub)}
+                        disabled={isPending}
+                      >
+                        Reativar
+                      </Button>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           )}
-        </div>
+        </>
       )}
     </div>
   );
