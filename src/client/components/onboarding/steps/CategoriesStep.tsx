@@ -163,7 +163,7 @@ export function CategoriesStep({
                           onChange={(e) => handleBudgetChange(suggestion.index, e.target.value)}
                           inputMode="numeric"
                           disabled={!suggestion.enabled}
-                          className="w-[85px] rounded border border-stone-200 bg-white px-2 py-1 text-right text-[13px] font-medium text-stone-900 outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600/20 disabled:opacity-50"
+                          className="w-[100px] rounded border border-stone-200 bg-white px-2 py-1.5 text-right text-sm font-medium text-stone-900 outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600/20 disabled:opacity-50"
                         />
                         <span className="text-[11px] text-stone-400">/ mês</span>
                       </div>
