@@ -1,6 +1,6 @@
 # Story 2.4: Categorias, Subcategorias e Classificações de Essencialidade
 
-Status: review
+Status: done
 
 ## Story
 
@@ -1003,3 +1003,4 @@ A tela de categorias deve mostrar a hierarquia completa:
 |---|---|---|
 | 2026-03-23 | Code Review R1 | 0 HIGH, 2 MEDIUM, 4 LOW. ACs 1-23 validadas como implementadas. Build limpo, 602 testes passando, lint 0 erros. Action items M1 (documentação) e M2 (commits misturados) criados. LOWs registrados como backlog. |
 | 2026-03-23 | Fix R1 M1+M2 | M1: Tasks marcadas [x], File List preenchida (82 arquivos), status → review. M2: Correções transversais documentadas na Completion Notes. |
+| 2026-03-23 | Code Review R2 | Todos os fixes de R1 validados. 0 findings novos. Status → done. |
