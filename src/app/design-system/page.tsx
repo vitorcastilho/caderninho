@@ -48,7 +48,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/client/components/ui/sheet"
-import { ChevronDown, ChevronLeft, ChevronRight, Plus, Pencil, Archive, Loader2, Clock, X, AlertTriangle, CheckCircle2, LayoutDashboard, CreditCard, Landmark, Wallet, PiggyBank, CheckSquare, TrendingUp, LogOut, ShoppingCart, GraduationCap, Home, Fuel, Bus, Globe, UtensilsCrossed, Package, MoreVertical, Settings, Building2, Users, BarChart3, Eye, EyeOff, GripVertical } from "lucide-react"
+import { ChevronDown, ChevronLeft, ChevronRight, Plus, Pencil, Archive, Loader2, Clock, X, AlertTriangle, CheckCircle2, LayoutDashboard, PiggyBank, CheckSquare, TrendingUp, ShoppingCart, GraduationCap, Home, Fuel, Bus, UtensilsCrossed, Package, MoreVertical, Settings, Building2, Users, GripVertical } from "lucide-react"
 
 /* ─── helpers ─── */
 
@@ -771,31 +771,7 @@ function TabsSection() {
 
 /* ─── Barras de Progresso ─── */
 
-function ProgressBar({
-  value,
-  color,
-  label,
-  className,
-}: {
-  value: number
-  color: string
-  label?: string
-  className?: string
-}) {
-  return (
-    <div className={className}>
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-        <div
-          className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${Math.min(value, 100)}%`, background: color }}
-        />
-      </div>
-      {label && (
-        <span className="mt-1 block text-xs text-muted-foreground">{label}</span>
-      )}
-    </div>
-  )
-}
+
 
 function BarrasProgressoSection() {
   return (
@@ -1578,7 +1554,7 @@ function ChecklistSection() {
 
         {/* Botão atualizar fatura */}
         <div>
-          <h3 className="mb-3 text-sm font-medium">Botão "Atualizar fatura"</h3>
+          <h3 className="mb-3 text-sm font-medium">Botão &ldquo;Atualizar fatura&rdquo;</h3>
           <button
             type="button"
             className="cursor-pointer rounded-md border border-attention/30 bg-attention-bg px-3 py-1.5 text-xs font-semibold text-attention-text transition-colors hover:bg-attention-bg/80"
@@ -1591,7 +1567,7 @@ function ChecklistSection() {
         </div>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
-        Padrão do proto-10: 3 grupos (Recorrente no Cartão, Variável/Fatura, Manual). Checkbox customizado com animação. Card brand badges (VISA/Mastercard) inline. Ações "Editar"/"Detalhes" em texto no hover. Badge "Atualizar fatura" para estimativas.
+        Padrão do proto-10: 3 grupos (Recorrente no Cartão, Variável/Fatura, Manual). Checkbox customizado com animação. Card brand badges (VISA/Mastercard) inline. Ações &ldquo;Editar&rdquo;/&ldquo;Detalhes&rdquo; em texto no hover. Badge &ldquo;Atualizar fatura&rdquo; para estimativas.
       </p>
     </Section>
   )
@@ -1669,7 +1645,7 @@ function ParcelasAtivasSection() {
         </CardContent>
       </Card>
       <p className="mt-3 text-xs text-muted-foreground">
-        Padrão do proto-12: tabela de parcelas ativas com colunas (Compra, Total, Parcela, Restam, Mensal, Termino). Contador "3 series" no header. Timeline abaixo: barras horizontais com gradientes por série, badge do mês de encerramento, texto "libera R$ X/mês". Cores: indigo (roxo), amber (amarelo), teal (verde-água).
+        Padrão do proto-12: tabela de parcelas ativas com colunas (Compra, Total, Parcela, Restam, Mensal, Termino). Contador &ldquo;3 series&rdquo; no header. Timeline abaixo: barras horizontais com gradientes por série, badge do mês de encerramento, texto &ldquo;libera R$ X/mês&rdquo;. Cores: indigo (roxo), amber (amarelo), teal (verde-água).
       </p>
     </Section>
   )
@@ -2108,7 +2084,7 @@ function ColunaMensalSection() {
         </div>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
-        Padrão Kanban do proto-11: coluna 192px por mês. Seções: FIXOS, VARIÁVEIS, PARCELAS, PLANEJADO. Itens fixos: bg branco + borda. Parcelas: bg roxo claro + tag (8/10). Parcela final: bg verde + tag verde. Planejados: borda dashed + bg primary-light + cursor grab. Badge "Libera" quando parcela termina. Margem no footer: verde positiva, vermelho negativa. Border-top colorida (3px) por estado da margem. Mês atual: border 2px verde + badge "ATUAL".
+        Padrão Kanban do proto-11: coluna 192px por mês. Seções: FIXOS, VARIÁVEIS, PARCELAS, PLANEJADO. Itens fixos: bg branco + borda. Parcelas: bg roxo claro + tag (8/10). Parcela final: bg verde + tag verde. Planejados: borda dashed + bg primary-light + cursor grab. Badge &ldquo;Libera&rdquo; quando parcela termina. Margem no footer: verde positiva, vermelho negativa. Border-top colorida (3px) por estado da margem. Mês atual: border 2px verde + badge &ldquo;ATUAL&rdquo;.
       </p>
     </Section>
   )
@@ -2124,7 +2100,7 @@ function PainelSimulacaoSection() {
         <div className="border-b px-6 pt-5 pb-4">
           <h3 className="flex items-center gap-2 text-base font-bold">
             <span>🏆</span>
-            Simular meta — "Dá pra ir?"
+            Simular meta — &ldquo;Dá pra ir?&rdquo;
           </h3>
         </div>
 
@@ -2878,8 +2854,6 @@ function CursoresSection() {
 function EspacamentoSection() {
   const [density, setDensity] = useState<"spacious" | "compact">("spacious")
 
-  const isCompact = density === "compact"
-
   return (
     <Section id="espacamento" title="Espaçamento / Density">
       <div className="mb-4 flex gap-2">
@@ -3187,7 +3161,7 @@ function BreadcrumbsSection() {
         </div>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
-        Padrão do proto-09: navegação hierárquica. Separador ›. Item atual sem link + font-medium. Link "Voltar" opcional com chevron.
+        Padrão do proto-09: navegação hierárquica. Separador ›. Item atual sem link + font-medium. Link &ldquo;Voltar&rdquo; opcional com chevron.
       </p>
     </Section>
   )
@@ -3354,8 +3328,6 @@ const treemapSmall = [
 ]
 
 function TreemapSection() {
-  const [hovered, setHovered] = useState<string | null>(null)
-
   return (
     <Section id="treemap" title="Treemap / Mapa Visual">
       <div className="space-y-4">
@@ -3366,8 +3338,6 @@ function TreemapSection() {
               key={item.name}
               className={`${item.color} relative cursor-pointer rounded-lg p-3 transition-opacity hover:opacity-90`}
               style={{ width: `${item.pct}%` }}
-              onMouseEnter={() => setHovered(item.name)}
-              onMouseLeave={() => setHovered(null)}
             >
               <p className={`text-[11px] font-semibold uppercase tracking-wider ${item.textColor} opacity-80`}>
                 {item.name}
