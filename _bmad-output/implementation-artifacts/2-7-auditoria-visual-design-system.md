@@ -1,6 +1,6 @@
 # Story 2.7: Auditoria Visual — Alinhar Telas Existentes ao Design System e Protótipos
 
-Status: review
+Status: done
 
 ## Story
 
@@ -239,6 +239,7 @@ AC 5-9 (Verificações de conformidade):
 - 2026-03-23: Implementação completa da Story 2.7 — auditoria e correções visuais
 - 2026-03-23: Code Review R1 — 1 HIGH, 2 MEDIUM, 2 LOW. 3 action items criados. Status → ready-for-dev
 - 2026-03-23: Fixes do Code Review R1 — 3 action items resolvidos (1 HIGH, 2 MEDIUM). Status → review
+- 2026-03-23: Code Review R2 — Todos os 3 fixes validados. 0 issues novas. Status → done
 
 ### File List
 
