@@ -60,6 +60,7 @@ development_status:
   2-4-categorias-subcategorias-e-classificacoes-de-essencialidade: done
   2-5-configuracao-de-metodo-de-pagamento-padrao-por-categoria: backlog
   2-6-onboarding-setup-inicial-guiado: backlog
+  2-7-auditoria-visual-design-system: ready-for-dev
   epic-2-retrospective: optional
 
   # Epic 3: Registro e Gestao de Transacoes
