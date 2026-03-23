@@ -17,7 +17,6 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/client/utils/utils";
-import { Button } from "@/client/components/ui/button";
 import { useSidebarState } from "@/client/hooks/use-sidebar-state";
 import { authClient } from "@/client/utils/auth-client";
 
@@ -54,10 +53,20 @@ const navSections: NavSection[] = [
   },
 ];
 
-export function Sidebar() {
+/** CSS helper: visível apenas quando sidebar está expandida (desktop lg) */
+const expandedOnly = (collapsed: boolean) =>
+  cn("md:hidden", !collapsed && "lg:inline");
+
+interface SidebarProps {
+  userName: string;
+}
+
+export function Sidebar({ userName }: SidebarProps) {
   const { collapsed, toggle } = useSidebarState();
   const pathname = usePathname();
   const router = useRouter();
+
+  const userInitial = userName?.charAt(0).toUpperCase() || "?";
 
   async function handleLogout() {
     await authClient.signOut();
@@ -68,49 +77,44 @@ export function Sidebar() {
     <aside
       className={cn(
         "hidden md:flex flex-col h-screen bg-sidebar border-r border-sidebar-border transition-all duration-200 ease-in-out",
-        /* Tablet (md): always collapsed 60px; Desktop (lg): respects user toggle */
         "md:w-[60px]",
         collapsed ? "lg:w-[56px]" : "lg:w-[220px]"
       )}
     >
-      {/* Logo area */}
-      <div className="flex items-center h-14 px-3 border-b border-sidebar-border">
-        <span
-          className={cn(
-            "text-lg font-bold text-sidebar-foreground",
-            "md:hidden",
-            !collapsed && "lg:block"
-          )}
-        >
-          Caderninho
-        </span>
-        <span
-          className={cn(
-            "hidden text-lg font-bold text-sidebar-foreground",
-            "md:block",
-            !collapsed && "lg:hidden"
-          )}
-        >
-          C
+      {/* Logo — DS: text-base font-bold tracking-[-0.01em] text-primary */}
+      <div
+        className={cn(
+          "flex items-center px-4 pt-5 pb-4",
+          collapsed && "lg:justify-center"
+        )}
+      >
+        <span className="text-base font-bold tracking-[-0.01em] text-primary">
+          <span>✎</span>
+          <span className={expandedOnly(collapsed)}> Caderninho</span>
         </span>
       </div>
 
+      {/* Separator — DS: mx-4 my-1 */}
+      <div className="mx-4 my-1 h-px bg-border" />
+
       {/* Navigation */}
-      <nav aria-label="Menu lateral" className="flex-1 py-2 overflow-y-auto">
+      <nav aria-label="Menu lateral" className="flex-1 overflow-y-auto">
         {navSections.map((section, sectionIdx) => (
           <div key={section.label}>
             {sectionIdx > 0 && (
-              <div className="mx-3 my-2 h-px bg-sidebar-border" />
+              <div className="mx-4 my-1 h-px bg-border" />
             )}
+            {/* Section label — DS: 11px uppercase tracking-0.06em text-text-tertiary */}
             <div
               className={cn(
-                "px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground",
+                "px-4 pt-4 pb-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-text-tertiary",
                 "md:hidden",
                 !collapsed && "lg:block"
               )}
             >
               {section.label}
             </div>
+            {/* Nav items — DS: 13px font-medium, gap 10px, px-3 py-2, icons 18px */}
             <ul className="space-y-0.5 px-2">
               {section.items.map((item) => {
                 const isActive = pathname?.startsWith(item.href);
@@ -122,20 +126,15 @@ export function Sidebar() {
                       aria-current={isActive ? "page" : undefined}
                       title={item.label}
                       className={cn(
-                        "flex items-center gap-3 rounded-button px-2 py-2 text-sm transition-colors duration-150 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2",
+                        "flex items-center gap-[10px] rounded-button px-3 py-2 text-[13px] font-medium transition-colors duration-150 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2",
                         isActive
                           ? "bg-primary-light text-primary font-semibold"
-                          : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                          : "text-text-secondary hover:bg-background hover:text-foreground",
+                        collapsed && "lg:justify-center lg:px-0"
                       )}
                     >
-                      <Icon className="size-5 shrink-0" />
-                      <span
-                        className={cn(
-                          "truncate",
-                          "md:hidden",
-                          !collapsed && "lg:inline"
-                        )}
-                      >
+                      <Icon className="size-[18px] shrink-0" />
+                      <span className={cn("flex-1 truncate", expandedOnly(collapsed))}>
                         {item.label}
                       </span>
                     </Link>
@@ -147,42 +146,61 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* Logout */}
-      <div className="px-2 pb-1">
-        <Button
-          variant="ghost"
-          onClick={handleLogout}
-          title="Sair"
-          className="flex items-center gap-3 w-full justify-start rounded-button px-2 py-2 text-sm text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+      {/* User profile + actions — DS: avatar 32x32, name 13px semibold, role 11px */}
+      <div className="mt-auto border-t border-sidebar-border p-3">
+        <div
+          className={cn(
+            "flex items-center gap-[10px]",
+            collapsed && "lg:justify-center"
+          )}
         >
-          <LogOut className="size-5 shrink-0" />
-          <span
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-[13px] font-bold text-white">
+            {userInitial}
+          </div>
+          <div className={cn("flex flex-col min-w-0", "md:hidden", !collapsed && "lg:flex")}>
+            <span className="truncate text-[13px] font-semibold text-foreground">
+              {userName}
+            </span>
+            <span className="text-[11px] text-text-tertiary">
+              Administrador
+            </span>
+          </div>
+        </div>
+
+        {/* Logout + Collapse toggle */}
+        <div
+          className={cn(
+            "mt-2 flex items-center",
+            collapsed && "lg:flex-col lg:items-center lg:gap-1"
+          )}
+        >
+          <button
+            onClick={handleLogout}
+            title="Sair"
             className={cn(
-              "truncate",
-              "md:hidden",
-              !collapsed && "lg:inline"
+              "flex items-center gap-[10px] rounded-button px-3 py-1.5 text-[13px] font-medium text-text-secondary transition-colors hover:bg-background hover:text-foreground",
+              collapsed && "lg:justify-center lg:px-2"
             )}
           >
-            Sair
-          </span>
-        </Button>
-      </div>
-
-      {/* Collapse toggle button — desktop only */}
-      <div className="hidden lg:block border-t border-sidebar-border p-2">
-        <Button
-          variant="ghost"
-          onClick={toggle}
-          aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
-          aria-expanded={!collapsed}
-          className="flex items-center justify-center w-full rounded-button p-2 text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-        >
-          {collapsed ? (
-            <ChevronRight className="size-5" />
-          ) : (
-            <ChevronLeft className="size-5" />
-          )}
-        </Button>
+            <LogOut className="size-[18px] shrink-0" />
+            <span className={expandedOnly(collapsed)}>Sair</span>
+          </button>
+          <span
+            className={cn("flex-1", collapsed && "lg:hidden")}
+          />
+          <button
+            onClick={toggle}
+            aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
+            aria-expanded={!collapsed}
+            className="hidden lg:flex items-center justify-center rounded-button p-1.5 text-text-secondary transition-colors hover:bg-background hover:text-foreground"
+          >
+            {collapsed ? (
+              <ChevronRight className="size-[18px]" />
+            ) : (
+              <ChevronLeft className="size-[18px]" />
+            )}
+          </button>
+        </div>
       </div>
     </aside>
   );
