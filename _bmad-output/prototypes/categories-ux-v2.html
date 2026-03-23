@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categorias — Protótipo UX v2</title>
+  <style>
+    :root {
+      --bg: #fafafa;
+      --card-bg: #ffffff;
+      --border: #e5e5e5;
+      --text: #1a1a1a;
+      --text-secondary: #737373;
+      --text-muted: #a3a3a3;
+      --primary: #6d28d9;
+      --primary-light: #f3e8ff;
+      --primary-hover: #7c3aed;
+      --destructive: #dc2626;
+      --destructive-light: #fef2f2;
+      --success: #16a34a;
+      --warning: #f59e0b;
+      --info-bg: #eff6ff;
+      --info-border: #bfdbfe;
+      --info-text: #1e40af;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 24px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* ========== TABS ========== */
+    .tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 32px;
+      border-bottom: 2px solid var(--border);
+    }
+    .tab {
+      padding: 12px 20px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.15s;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      font-weight: 600;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ========== HEADER ========== */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    .page-header h1 {
+      font-size: 22px;
+      font-weight: 700;
+    }
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    /* ========== ONBOARDING BANNER ========== */
+    .onboarding-banner {
+      background: var(--info-bg);
+      border: 1px solid var(--info-border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .onboarding-banner .icon {
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .onboarding-banner .content h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--info-text);
+      margin-bottom: 4px;
+    }
+    .onboarding-banner .content p {
+      font-size: 13px;
+      color: var(--info-text);
+      opacity: 0.85;
+    }
+    .onboarding-banner .content .hierarchy {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--info-text);
+      opacity: 0.75;
+      line-height: 1.8;
+    }
+    .onboarding-banner .dismiss {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: var(--info-text);
+      cursor: pointer;
+      font-size: 18px;
+      opacity: 0.5;
+      padding: 0 4px;
+    }
+    .onboarding-banner .dismiss:hover { opacity: 1; }
+
+    /* ========== CLASSIFICATION SECTION ========== */
+    .classification {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .classification-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .classification-header:hover {
+      background: #fafafa;
+    }
+    .chevron {
+      color: var(--text-muted);
+      font-size: 12px;
+      transition: transform 0.15s;
+      width: 16px;
+      text-align: center;
+    }
+    .classification.collapsed .chevron {
+      transform: rotate(-90deg);
+    }
+    .classification-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .classification-spacer {
+      flex: 1;
+    }
+    .classification-badge {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: #f5f5f5;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+    .classification-budget-total {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+      font-weight: 500;
+    }
+    .classification-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    /* ========== BUTTONS ========== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 5px 10px;
+    }
+    .btn-secondary:hover { background: #ede0ff; }
+    .btn-ghost {
+      background: none;
+      color: var(--text-secondary);
+      padding: 5px 8px;
+    }
+    .btn-ghost:hover { background: #f5f5f5; color: var(--text); }
+    .btn-destructive-ghost {
+      background: none;
+      color: var(--text-muted);
+      padding: 5px 8px;
+    }
+    .btn-destructive-ghost:hover {
+      background: var(--destructive-light);
+      color: var(--destructive);
+    }
+    .btn-icon {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      padding: 4px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .btn-icon:hover { background: #f5f5f5; color: var(--text-secondary); }
+
+    /* ========== CLASSIFICATION BODY ========== */
+    .classification-body {
+      padding: 0 16px 12px 16px;
+    }
+    .classification.collapsed .classification-body {
+      display: none;
+    }
+
+    /* ========== EMPTY STATE ========== */
+    .empty-state {
+      text-align: center;
+      padding: 24px 16px;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-sm);
+      margin: 4px 0;
+    }
+    .empty-state p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .empty-state .hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      margin-bottom: 0;
+    }
+
+    /* ========== CATEGORY ROW ========== */
+    .category {
+      margin: 4px 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .category-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+    }
+    .category-row:hover {
+      background: #fafafa;
+    }
+    .category-name {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .category-budget {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .budget-label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .budget-value {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+      background: #f5f5f5;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .category-spacer { flex: 1; }
+    .category-actions {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+    }
+
+    /* ========== SUBCATEGORY ========== */
+    .subcategories {
+      padding: 0 12px 8px 28px;
+      border-top: 1px solid #f5f5f5;
+    }
+    .subcategory-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 0;
+    }
+    .subcategory-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      flex-shrink: 0;
+    }
+    .subcategory-name {
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .subcategory-name:hover {
+      color: var(--primary);
+    }
+    .subcategory-actions {
+      display: flex;
+      gap: 2px;
+      margin-left: auto;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+    .subcategory-row:hover .subcategory-actions {
+      opacity: 1;
+    }
+    .add-subcategory-row {
+      padding: 4px 0;
+    }
+
+    /* ========== ARQUIVADOS ========== */
+    .archived-toggle {
+      margin-top: 16px;
+    }
+
+    /* ========== SECTION LABEL ========== */
+    .section-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    /* ========== MENU DROPDOWN ========== */
+    .menu-dropdown {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 6px);
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      min-width: 200px;
+      padding: 4px;
+      z-index: 10;
+    }
+    /* Seta apontando para a engrenagem */
+    .menu-dropdown::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      right: 10px;
+      width: 10px;
+      height: 10px;
+      background: var(--card-bg);
+      border-left: 1px solid var(--border);
+      border-top: 1px solid var(--border);
+      transform: rotate(45deg);
+    }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      width: 100%;
+      padding: 8px 12px;
+      border: none;
+      background: none;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text);
+      cursor: pointer;
+      border-radius: 4px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .menu-item:hover { background: #f5f5f5; }
+    .menu-item.destructive { color: var(--destructive); }
+    .menu-item.destructive:hover { background: var(--destructive-light); }
+    .menu-separator {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 0;
+    }
+
+    /* ========== SEPARATOR ========== */
+    .separator {
+      height: 1px;
+      background: var(--border);
+      margin: 24px 0;
+    }
+
+    /* ========== ANNOTATION ========== */
+    .annotation {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-size: 12px;
+      color: #92400e;
+    }
+    .annotation strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Tabs para alternar entre estados -->
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('first-access')">Primeiro acesso</div>
+    <div class="tab" onclick="showTab('populated')">Com dados</div>
+    <div class="tab" onclick="showTab('actions')">Ações expandidas</div>
+  </div>
+
+  <!-- ============================== -->
+  <!-- TAB 1: PRIMEIRO ACESSO         -->
+  <!-- ============================== -->
+  <div id="first-access" class="tab-content active">
+
+    <div class="annotation">
+      <strong>UX Note: Primeiro acesso</strong>
+      O usuário acabou de entrar pela primeira vez na tela de categorias. Vê 7 classificações padrão, todas vazias. Precisa entender: (1) o que são esses grupos, (2) o que fazer com eles, (3) como a hierarquia funciona.
+    </div>
+
+    <!-- Header -->
+    <div class="page-header">
+      <h1>Categorias</h1>
+      <button class="btn btn-primary">+ Nova classificação</button>
+    </div>
+    <p class="page-subtitle">Organize seus gastos em uma hierarquia: classificação &rarr; categoria &rarr; subcategoria</p>
+
+    <!-- Onboarding Banner -->
+    <div class="onboarding-banner">
+      <span class="icon">💡</span>
+      <div class="content">
+        <h3>Como funciona?</h3>
+        <p>Seus gastos são organizados em 3 níveis para facilitar o controle do orçamento:</p>
+        <div class="hierarchy">
+          <strong>Classificação</strong> &mdash; agrupa categorias por tipo de necessidade (ex: Essenciais, Qualidade de Vida)<br>
+          &nbsp;&nbsp;&rarr; <strong>Categoria</strong> &mdash; define onde o dinheiro vai, com orçamento mensal (ex: Moradia, Alimentação)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&rarr; <strong>Subcategoria</strong> &mdash; detalha os gastos dentro da categoria (ex: Aluguel, Supermercado)
+        </div>
+        <p style="margin-top: 10px;">Já criamos 7 classificações padrão para você. Comece adicionando suas categorias de gasto dentro delas.</p>
+      </div>
+      <button class="dismiss" title="Fechar">&times;</button>
+    </div>
+
+    <!-- Classificação: Essenciais (vazia) -->
+    <div class="classification">
+      <div class="classification-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="chevron">▼</span>
+        <span class="classification-name">Essenciais</span>
+        <span class="classification-spacer"></span>
+        <span class="classification-badge">0 categorias</span>
+        <div class="classification-actions">
+          <button class="btn btn-secondary" onclick="event.stopPropagation()">+ Categoria</button>
+          <button class="btn-icon" onclick="event.stopPropagation()" title="Opções da classificação">⚙</button>
+        </div>
+      </div>
+      <div class="classification-body">
+        <div class="empty-state">
+          <p>Nenhuma categoria ainda</p>
+          <button class="btn btn-secondary">+ Adicionar categoria</button>
+          <p class="hint">Ex: Moradia, Alimentação, Transporte, Saúde...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Classificação: Qualidade de Vida (vazia) -->
+    <div class="classification">
+      <div class="classification-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="chevron">▼</span>
+        <span class="classification-name">Qualidade de Vida</span>
+        <span class="classification-spacer"></span>
+        <span class="classification-badge">0 categorias</span>
+        <div class="classification-actions">
+          <button class="btn btn-secondary" onclick="event.stopPropagation()">+ Categoria</button>
+          <button class="btn-icon" onclick="event.stopPropagation()" title="Opções da classificação">⚙</button>
+        </div>
+      </div>
+      <div class="classification-body">
+        <div class="empty-state">
+          <p>Nenhuma categoria ainda</p>
+          <button class="btn btn-secondary">+ Adicionar categoria</button>
+          <p class="hint">Ex: Restaurantes, Lazer, Assinaturas, Hobbies...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Classificação: Investimentos (colapsada) -->
+    <div class="classification collapsed">
+      <div class="classification-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="chevron">▼</span>
+        <span class="classification-name">Investimentos</span>
+        <span class="classification-spacer"></span>
+        <span class="classification-badge">0 categorias</span>
+        <div class="classification-actions">
+          <button class="btn btn-secondary" onclick="event.stopPropagation()">+ Categoria</button>
+          <button class="btn-icon" onclick="event.stopPropagation()" title="Opções da classificação">⚙</button>
+        </div>
+      </div>
+      <div class="classification-body">
+        <div class="empty-state">
+          <p>Nenhuma categoria ainda</p>
+          <button class="btn btn-secondary">+ Adicionar categoria</button>
+          <p class="hint">Ex: Aportes, Previdência...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Classificação: Proteção (colapsada) -->
+    <div class="classification collapsed">
+      <div class="classification-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="chevron">▼</span>
+        <span class="classification-name">Proteção</span>
+        <span class="classification-spacer"></span>
+        <span class="classification-badge">0 categorias</span>
+        <div class="classification-actions">
+          <button class="btn btn-secondary" onclick="event.stopPropagation()">+ Categoria</button>
+          <button class="btn-icon" onclick="event.stopPropagation()" title="Opções da classificação">⚙</button>
+        </div>
+      </div>
+      <div class="classification-body">
+        <div class="empty-state">
+          <p>Nenhuma categoria ainda</p>
+          <button class="btn btn-secondary">+ Adicionar categoria</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mais 3 colapsadas -->
+    <div class="classification collapsed">
+      <div class="classification-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="chevron">▼</span>
+        <span class="classification-name">Doações</span>
+        <span class="classification-spacer"></span>
+        <span class="classification-badge">0 categorias</span>
+        <div class="classification-actions">
+          <button class="btn btn-secondary" onclick="event.stopPropagation()">+ Categoria</button>
+          <button class="btn-icon" onclick="event.stopPropagation()">⚙</button>
+        </div>
+      </div>
+      <div class="classification-body">
+        <div class="empty-state">
+          <p>Nenhuma categoria ainda</p>
+          <button class="btn btn-secondary">+ Adicionar categoria</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="classification collapsed">
+      <div class="classification-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="chevron">▼</span>
+        <span class="classification-name">Impostos e Obrigações</span>
+        <span class="classification-spacer"></span>
+        <span class="classification-badge">0 categorias</span>
+        <div class="classification-actions">
+          <button class="btn btn-secondary" onclick="event.stopPropagation()">+ Categoria</button>
+          <button class="btn-icon" onclick="event.stopPropagation()">⚙</button>
+        </div>
+      </div>
+      <div class="classification-body">
+        <div class="empty-state">
+          <p>Nenhuma categoria ainda</p>
+          <button class="btn btn-secondary">+ Adicionar categoria</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="classification collapsed">
+      <div class="classification-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="chevron">▼</span>
+        <span class="classification-name">Dívidas</span>
+        <span class="classification-spacer"></span>
+        <span class="classification-badge">0 categorias</span>
+        <div class="classification-actions">
+          <button class="btn btn-secondary" onclick="event.stopPropagation()">+ Categoria</button>
+          <button class="btn-icon" onclick="event.stopPropagation()">⚙</button>
+        </div>
+      </div>
+      <div class="classification-body">
+        <div class="empty-state">
+          <p>Nenhuma categoria ainda</p>
+          <button class="btn btn-secondary">+ Adicionar categoria</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============================== -->
+  <!-- TAB 2: COM DADOS               -->
+  <!-- ============================== -->
+  <div id="populated" class="tab-content">
+
+    <div class="annotation">
+      <strong>UX Note: Após preenchimento</strong>
+      O banner de onboarding sumiu (usuário fechou ou já preencheu categorias). As ações são explícitas, os orçamentos têm label, e a hierarquia é clara.
+    </div>
+
+    <!-- Header -->
+    <div class="page-header">
+      <h1>Categorias</h1>
+      <button class="btn btn-primary">+ Nova classificação</button>
+    </div>
+    <p class="page-subtitle">Organize seus gastos em uma hierarquia: classificação &rarr; categoria &rarr; subcategoria</p>
+
+    <!-- Classificação: Essenciais (com dados) -->
+    <div class="classification">
+      <div class="classification-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="chevron">▼</span>
+        <span class="classification-name">Essenciais</span>
+        <span class="classification-budget-total">R$ 5.000,00 — R$ 6.000,00</span>
+        <span class="classification-spacer"></span>
+        <span class="classification-badge">3 categorias</span>
+        <div class="classification-actions">
+          <button class="btn btn-secondary" onclick="event.stopPropagation()">+ Categoria</button>
+          <button class="btn-icon" onclick="event.stopPropagation()" title="Opções da classificação">⚙</button>
+        </div>
+      </div>
+      <div class="classification-body">
+
+        <!-- Categoria: Moradia -->
+        <div class="category">
+          <div class="category-row">
+            <span class="category-name">Moradia</span>
+            <div class="category-budget">
+              <span class="budget-label">Orçamento:</span>
+              <span class="budget-value">R$ 2.200,00</span>
+            </div>
+            <span class="category-spacer"></span>
+            <div class="category-actions">
+              <button class="btn btn-secondary" style="font-size: 11px;">+ Subcategoria</button>
+              <button class="btn btn-ghost">Editar</button>
+              <button class="btn btn-destructive-ghost">Arquivar</button>
+            </div>
+          </div>
+          <div class="subcategories">
+            <div class="subcategory-row">
+              <span class="subcategory-dot"></span>
+              <span class="subcategory-name">Aluguel</span>
+              <div class="subcategory-actions">
+                <button class="btn btn-ghost" style="font-size: 11px; padding: 2px 6px;">Editar</button>
+                <button class="btn btn-destructive-ghost" style="font-size: 11px; padding: 2px 6px;">Arquivar</button>
+              </div>
+            </div>
+            <div class="subcategory-row">
+              <span class="subcategory-dot"></span>
+              <span class="subcategory-name">Condomínio</span>
+              <div class="subcategory-actions">
+                <button class="btn btn-ghost" style="font-size: 11px; padding: 2px 6px;">Editar</button>
+                <button class="btn btn-destructive-ghost" style="font-size: 11px; padding: 2px 6px;">Arquivar</button>
+              </div>
+            </div>
+            <div class="subcategory-row">
+              <span class="subcategory-dot"></span>
+              <span class="subcategory-name">Energia Elétrica</span>
+              <div class="subcategory-actions">
+                <button class="btn btn-ghost" style="font-size: 11px; padding: 2px 6px;">Editar</button>
+                <button class="btn btn-destructive-ghost" style="font-size: 11px; padding: 2px 6px;">Arquivar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Categoria: Alimentação -->
+        <div class="category">
+          <div class="category-row">
+            <span class="category-name">Alimentação</span>
+            <div class="category-budget">
+              <span class="budget-label">Orçamento:</span>
+              <span class="budget-value">R$ 2.000,00 — R$ 3.000,00</span>
+            </div>
+            <span class="category-spacer"></span>
+            <div class="category-actions">
+              <button class="btn btn-secondary" style="font-size: 11px;">+ Subcategoria</button>
+              <button class="btn btn-ghost">Editar</button>
+              <button class="btn btn-destructive-ghost">Arquivar</button>
+            </div>
+          </div>
+          <div class="subcategories">
+            <div class="subcategory-row">
+              <span class="subcategory-dot"></span>
+              <span class="subcategory-name">Supermercado</span>
+              <div class="subcategory-actions">
+                <button class="btn btn-ghost" style="font-size: 11px; padding: 2px 6px;">Editar</button>
+                <button class="btn btn-destructive-ghost" style="font-size: 11px; padding: 2px 6px;">Arquivar</button>
+              </div>
+            </div>
+            <div class="subcategory-row">
+              <span class="subcategory-dot"></span>
+              <span class="subcategory-name">Feira</span>
+              <div class="subcategory-actions">
+                <button class="btn btn-ghost" style="font-size: 11px; padding: 2px 6px;">Editar</button>
+                <button class="btn btn-destructive-ghost" style="font-size: 11px; padding: 2px 6px;">Arquivar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Categoria: Transporte (sem subcategorias) -->
+        <div class="category">
+          <div class="category-row">
+            <span class="category-name">Transporte</span>
+            <div class="category-budget">
+              <span class="budget-label">Orçamento:</span>
+              <span class="budget-value">R$ 800,00</span>
+            </div>
+            <span class="category-spacer"></span>
+            <div class="category-actions">
+              <button class="btn btn-secondary" style="font-size: 11px;">+ Subcategoria</button>
+              <button class="btn btn-ghost">Editar</button>
+              <button class="btn btn-destructive-ghost">Arquivar</button>
+            </div>
+          </div>
+          <div class="subcategories">
+            <div class="subcategory-row">
+              <span class="subcategory-dot"></span>
+              <span class="subcategory-name">Combustível</span>
+              <div class="subcategory-actions">
+                <button class="btn btn-ghost" style="font-size: 11px; padding: 2px 6px;">Editar</button>
+                <button class="btn btn-destructive-ghost" style="font-size: 11px; padding: 2px 6px;">Arquivar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Classificação: Qualidade de Vida -->
+    <div class="classification">
+      <div class="classification-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="chevron">▼</span>
+        <span class="classification-name">Qualidade de Vida</span>
+        <span class="classification-budget-total">R$ 2.000,00</span>
+        <span class="classification-spacer"></span>
+        <span class="classification-badge">2 categorias</span>
+        <div class="classification-actions">
+          <button class="btn btn-secondary" onclick="event.stopPropagation()">+ Categoria</button>
+          <button class="btn-icon" onclick="event.stopPropagation()">⚙</button>
+        </div>
+      </div>
+      <div class="classification-body">
+
+        <div class="category">
+          <div class="category-row">
+            <span class="category-name">Restaurantes</span>
+            <div class="category-budget">
+              <span class="budget-label">Orçamento:</span>
+              <span class="budget-value">R$ 1.500,00</span>
+            </div>
+            <span class="category-spacer"></span>
+            <div class="category-actions">
+              <button class="btn btn-secondary" style="font-size: 11px;">+ Subcategoria</button>
+              <button class="btn btn-ghost">Editar</button>
+              <button class="btn btn-destructive-ghost">Arquivar</button>
+            </div>
+          </div>
+          <div class="subcategories">
+            <div class="subcategory-row">
+              <span class="subcategory-dot"></span>
+              <span class="subcategory-name">Fast Food</span>
+              <div class="subcategory-actions">
+                <button class="btn btn-ghost" style="font-size: 11px; padding: 2px 6px;">Editar</button>
+                <button class="btn btn-destructive-ghost" style="font-size: 11px; padding: 2px 6px;">Arquivar</button>
+              </div>
+            </div>
+            <div class="subcategory-row">
+              <span class="subcategory-dot"></span>
+              <span class="subcategory-name">Delivery</span>
+              <div class="subcategory-actions">
+                <button class="btn btn-ghost" style="font-size: 11px; padding: 2px 6px;">Editar</button>
+                <button class="btn btn-destructive-ghost" style="font-size: 11px; padding: 2px 6px;">Arquivar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="category">
+          <div class="category-row">
+            <span class="category-name">Lazer</span>
+            <div class="category-budget">
+              <span class="budget-label">Orçamento:</span>
+              <span class="budget-value">R$ 500,00</span>
+            </div>
+            <span class="category-spacer"></span>
+            <div class="category-actions">
+              <button class="btn btn-secondary" style="font-size: 11px;">+ Subcategoria</button>
+              <button class="btn btn-ghost">Editar</button>
+              <button class="btn btn-destructive-ghost">Arquivar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Classificação: Investimentos (vazia mas com CTA) -->
+    <div class="classification">
+      <div class="classification-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="chevron">▼</span>
+        <span class="classification-name">Investimentos</span>
+        <span class="classification-spacer"></span>
+        <span class="classification-badge">0 categorias</span>
+        <div class="classification-actions">
+          <button class="btn btn-secondary" onclick="event.stopPropagation()">+ Categoria</button>
+          <button class="btn-icon" onclick="event.stopPropagation()">⚙</button>
+        </div>
+      </div>
+      <div class="classification-body">
+        <div class="empty-state">
+          <p>Nenhuma categoria ainda</p>
+          <button class="btn btn-secondary">+ Adicionar categoria</button>
+          <p class="hint">Ex: Aportes, Previdência...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Proteção colapsada -->
+    <div class="classification collapsed">
+      <div class="classification-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="chevron">▼</span>
+        <span class="classification-name">Proteção</span>
+        <span class="classification-budget-total">R$ 1.497,94</span>
+        <span class="classification-spacer"></span>
+        <span class="classification-badge">1 categoria</span>
+        <div class="classification-actions">
+          <button class="btn btn-secondary" onclick="event.stopPropagation()">+ Categoria</button>
+          <button class="btn-icon" onclick="event.stopPropagation()">⚙</button>
+        </div>
+      </div>
+      <div class="classification-body">
+        <!-- conteúdo oculto quando colapsado -->
+      </div>
+    </div>
+
+    <!-- Doações colapsada -->
+    <div class="classification collapsed">
+      <div class="classification-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="chevron">▼</span>
+        <span class="classification-name">Doações</span>
+        <span class="classification-spacer"></span>
+        <span class="classification-badge">0 categorias</span>
+        <div class="classification-actions">
+          <button class="btn btn-secondary" onclick="event.stopPropagation()">+ Categoria</button>
+          <button class="btn-icon" onclick="event.stopPropagation()">⚙</button>
+        </div>
+      </div>
+      <div class="classification-body"></div>
+    </div>
+
+    <!-- Arquivados toggle -->
+    <div class="archived-toggle">
+      <button class="btn btn-ghost">Mostrar arquivadas (2)</button>
+    </div>
+
+  </div>
+
+  <!-- ============================== -->
+  <!-- TAB 3: AÇÕES EXPANDIDAS        -->
+  <!-- ============================== -->
+  <div id="actions" class="tab-content">
+
+    <div class="annotation">
+      <strong>UX Note: Menu da classificação expandido</strong>
+      O ícone de engrenagem abre um menu dropdown com ações claras. Cada ação tem label descritivo.
+    </div>
+
+    <!-- Header -->
+    <div class="page-header">
+      <h1>Categorias</h1>
+      <button class="btn btn-primary">+ Nova classificação</button>
+    </div>
+    <p class="page-subtitle">Organize seus gastos em uma hierarquia: classificação &rarr; categoria &rarr; subcategoria</p>
+
+    <!-- Classificação com menu aberto -->
+    <div class="classification">
+      <div class="classification-header">
+        <span class="chevron">▼</span>
+        <span class="classification-name">Essenciais</span>
+        <span class="classification-budget-total">R$ 5.000,00 — R$ 6.000,00</span>
+        <span class="classification-spacer"></span>
+        <span class="classification-badge">3 categorias</span>
+        <div class="classification-actions">
+          <button class="btn btn-secondary">+ Categoria</button>
+          <div style="position: relative;">
+            <button class="btn-icon" style="background: #f5f5f5;">⚙</button>
+            <!-- Menu dropdown aberto -->
+            <div class="menu-dropdown">
+              <button class="menu-item">Renomear</button>
+              <button class="menu-item">Mesclar com outra</button>
+              <div class="menu-separator"></div>
+              <button class="menu-item destructive">Arquivar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="classification-body">
+        <div class="category">
+          <div class="category-row">
+            <span class="category-name">Moradia</span>
+            <div class="category-budget">
+              <span class="budget-label">Orçamento:</span>
+              <span class="budget-value">R$ 2.200,00</span>
+            </div>
+            <span class="category-spacer"></span>
+            <div class="category-actions">
+              <button class="btn btn-secondary" style="font-size: 11px;">+ Subcategoria</button>
+              <button class="btn btn-ghost">Editar</button>
+              <button class="btn btn-destructive-ghost">Arquivar</button>
+            </div>
+          </div>
+          <div class="subcategories">
+            <div class="subcategory-row">
+              <span class="subcategory-dot"></span>
+              <span class="subcategory-name">Aluguel</span>
+              <div class="subcategory-actions" style="opacity: 1;">
+                <button class="btn btn-ghost" style="font-size: 11px; padding: 2px 6px;">Editar</button>
+                <button class="btn btn-destructive-ghost" style="font-size: 11px; padding: 2px 6px;">Arquivar</button>
+              </div>
+            </div>
+            <div class="subcategory-row">
+              <span class="subcategory-dot"></span>
+              <span class="subcategory-name">Condomínio</span>
+              <div class="subcategory-actions">
+                <button class="btn btn-ghost" style="font-size: 11px; padding: 2px 6px;">Editar</button>
+                <button class="btn btn-destructive-ghost" style="font-size: 11px; padding: 2px 6px;">Arquivar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="separator"></div>
+
+    <div class="annotation">
+      <strong>Resumo das melhorias aplicadas</strong>
+      <br><br>
+      <strong>1. Subtítulo descritivo</strong> — Explica a hierarquia logo abaixo do título<br><br>
+      <strong>2. Banner de onboarding</strong> — Aparece no primeiro acesso, explicando os 3 níveis com exemplos. Fechável pelo usuário.<br><br>
+      <strong>3. Botões com texto explícito</strong> — "+ Categoria" no header da classificação, "+ Subcategoria" na linha da categoria. Sem ambiguidade.<br><br>
+      <strong>4. Empty states acionáveis</strong> — Quando uma classificação está vazia: botão CTA + sugestão de exemplos contextuais (Essenciais sugere "Moradia, Alimentação...", Qualidade de Vida sugere "Restaurantes, Lazer...")<br><br>
+      <strong>5. Label "Orçamento:"</strong> — Antes do valor, explicitando que R$ 2.000 — R$ 3.000 é uma faixa de orçamento, não um gasto.<br><br>
+      <strong>6. Ações de categoria sempre visíveis</strong> — "Editar" e "Arquivar" estão sempre disponíveis na linha da categoria, sem depender de hover.<br><br>
+      <strong>7. Ações de subcategoria no hover</strong> — Para subcategorias, manter hover-only é aceitável (são itens menores e o clique no nome já abre edição).<br><br>
+      <strong>8. Menu da classificação limpo</strong> — Dropdown com seta apontando para a engrenagem (conexão visual clara), itens sem emojis, separador antes da ação destrutiva.<br><br>
+      <strong>9. Badge de contagem</strong> — Cada classificação mostra "N categorias" em badge pill, visualmente distinto do nome.
+    </div>
+
+  </div>
+
+  <script>
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
+
+</body>
+</html>

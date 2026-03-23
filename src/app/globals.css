@@ -54,7 +54,7 @@
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-xl: calc(var(--radius) * 1.2);
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
@@ -76,6 +76,11 @@
 
   --color-alert: #F97316;
   --color-alert-bg: #FFF7ED;
+  --color-alert-text: #9A3412;
+
+  --color-info: #3B82F6;
+  --color-info-bg: #DBEAFE;
+  --color-info-text: #1E40AF;
 
   --color-critical: #DC2626;
   --color-critical-bg: #FEE2E2;
@@ -89,9 +94,9 @@
   --color-text-tertiary: #A8A29E;
 
   /* Border-radius tokens */
-  --radius-button: 6px;
+  --radius-button: 8px;
   --radius-card-inner: 8px;
-  --radius-card: 10px;
+  --radius-card: 12px;
   --radius-card-lg: 12px;
   --radius-badge: 100px;
   --radius-mobile-frame: 24px;

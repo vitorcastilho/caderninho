@@ -1,0 +1,1820 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Protótipo 10 — Checklist Mensal | Caderninho</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Design Tokens ── */
+    :root {
+      --bg: #FAFAF9;
+      --surface: #FFFFFF;
+      --border: #E7E5E4;
+      --border-hover: #D6D3D1;
+      --text-primary: #1C1917;
+      --text-secondary: #78716C;
+      --text-tertiary: #A8A29E;
+      --primary: #4F46E5;
+      --primary-hover: #4338CA;
+      --primary-light: #EEF2FF;
+      --positive: #22C55E;
+      --positive-bg: #DCFCE7;
+      --positive-text: #166534;
+      --attention: #EAB308;
+      --attention-bg: #FEF9C3;
+      --attention-text: #854D0E;
+      --alert: #F97316;
+      --alert-bg: #FFF7ED;
+      --critical: #DC2626;
+      --critical-bg: #FEE2E2;
+      --critical-text: #991B1B;
+      --info: #3B82F6;
+      --info-bg: #DBEAFE;
+      --info-text: #1E40AF;
+      --radius-card: 12px;
+      --radius-input: 6px;
+      --radius-badge: 100px;
+      --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+      --shadow-card-hover: 0 2px 6px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.06);
+      --transition: 150ms ease;
+      --sidebar-width: 220px;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-variant-numeric: tabular-nums;
+      background: var(--bg);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
+    }
+
+    /* ── Page Title Header ── */
+    .page-title-header {
+      text-align: center;
+      padding: 32px 24px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .page-title-header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .page-title-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* ── App Layout ── */
+    .app-layout {
+      display: flex;
+      min-height: calc(100vh - 94px);
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 24px 0;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: calc(100vh - 94px);
+      overflow-y: auto;
+    }
+    .sidebar-logo {
+      padding: 0 20px 24px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-logo svg {
+      width: 24px; height: 24px;
+    }
+    .sidebar-section {
+      padding: 0 12px;
+      margin-bottom: 24px;
+    }
+    .sidebar-section-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-tertiary);
+      padding: 0 8px 8px;
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+      text-decoration: none;
+      position: relative;
+    }
+    .sidebar-item:hover {
+      background: var(--bg);
+      color: var(--text-primary);
+    }
+    .sidebar-item.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .sidebar-item svg {
+      width: 18px; height: 18px; flex-shrink: 0;
+    }
+    .sidebar-badge {
+      margin-left: auto;
+      background: var(--critical);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: var(--radius-badge);
+      line-height: 1.5;
+    }
+
+    /* ── Main Content ── */
+    .main-content {
+      flex: 1;
+      padding: 32px 40px 60px;
+      max-width: 900px;
+    }
+
+    /* ── Checklist Header ── */
+    .checklist-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .checklist-header-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .checklist-header h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .progress-ring-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .progress-ring {
+      position: relative;
+      width: 48px;
+      height: 48px;
+    }
+    .progress-ring svg {
+      transform: rotate(-90deg);
+    }
+    .progress-ring-bg {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 4;
+    }
+    .progress-ring-fill {
+      fill: none;
+      stroke: var(--primary);
+      stroke-width: 4;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.5s ease;
+    }
+    .progress-ring-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .progress-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.3;
+    }
+    .progress-label strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .month-picker {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .month-picker:hover {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79,70,229,.08);
+    }
+    .month-picker svg {
+      width: 16px; height: 16px; color: var(--text-tertiary);
+    }
+
+    /* ── Banner Alert ── */
+    .banner-alert {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--info-bg);
+      border: 1px solid rgba(59,130,246,.2);
+      border-radius: var(--radius-card);
+      padding: 14px 20px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .banner-alert-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--info);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .banner-alert-icon svg {
+      width: 18px; height: 18px; color: #fff;
+    }
+    .banner-alert-text {
+      flex: 1;
+    }
+    .banner-alert-text strong {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--info-text);
+    }
+    .banner-alert-text span {
+      font-size: 13px;
+      color: var(--info-text);
+      opacity: .8;
+    }
+    .banner-alert-action {
+      background: var(--info);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .banner-alert-action:hover {
+      background: #2563EB;
+    }
+    .banner-dismiss {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: none;
+      border: none;
+      color: var(--info-text);
+      opacity: .5;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      line-height: 0;
+      transition: opacity var(--transition);
+    }
+    .banner-dismiss:hover { opacity: 1; }
+    .banner-dismiss svg { width: 14px; height: 14px; }
+    .banner-alert.hidden { display: none; }
+
+    /* ── Summary Cards ── */
+    .summary-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .summary-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 20px;
+      transition: box-shadow var(--transition);
+    }
+    .summary-card:hover {
+      box-shadow: var(--shadow-card);
+    }
+    .summary-card-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: .03em;
+      margin-bottom: 6px;
+    }
+    .summary-card-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .summary-card-value.confirmed { color: var(--positive-text); }
+    .summary-card-value.pending { color: var(--attention-text); }
+
+    /* ── Checklist Groups ── */
+    .checklist-group {
+      margin-bottom: 20px;
+    }
+    .group-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card) var(--radius-card) 0 0;
+      cursor: pointer;
+      user-select: none;
+      transition: all var(--transition);
+    }
+    .group-header:hover {
+      background: var(--bg);
+    }
+    .checklist-group.collapsed .group-header {
+      border-radius: var(--radius-card);
+    }
+    .group-chevron {
+      width: 18px; height: 18px;
+      color: var(--text-tertiary);
+      transition: transform var(--transition);
+      flex-shrink: 0;
+    }
+    .checklist-group.collapsed .group-chevron {
+      transform: rotate(-90deg);
+    }
+    .group-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      flex: 1;
+    }
+    .group-count {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      font-weight: 500;
+    }
+    .group-items {
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 var(--radius-card) var(--radius-card);
+      overflow: hidden;
+    }
+    .checklist-group.collapsed .group-items {
+      display: none;
+    }
+
+    /* ── Checklist Item ── */
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      transition: background var(--transition);
+      position: relative;
+    }
+    .checklist-item:last-child { border-bottom: none; }
+    .checklist-item:hover {
+      background: #FAFAF9;
+    }
+    .checklist-item.checked {
+      background: rgba(220,252,231,.15);
+    }
+
+    /* Custom Checkbox */
+    .custom-checkbox {
+      position: relative;
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+    .custom-checkbox input {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      z-index: 2;
+      margin: 0;
+    }
+    .custom-checkbox .checkmark {
+      position: absolute;
+      inset: 0;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .custom-checkbox .checkmark svg {
+      width: 13px;
+      height: 13px;
+      color: #fff;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all var(--transition);
+    }
+    .custom-checkbox input:hover ~ .checkmark {
+      border-color: var(--primary);
+    }
+    .custom-checkbox input:checked ~ .checkmark {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+    .custom-checkbox input:checked ~ .checkmark svg {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .item-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .item-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      min-width: 120px;
+    }
+    .checklist-item.checked .item-name {
+      color: var(--text-secondary);
+    }
+    .item-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      min-width: 90px;
+    }
+    .checklist-item.checked .item-value {
+      color: var(--text-secondary);
+    }
+    .item-meta {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .item-meta-separator {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--text-tertiary);
+      flex-shrink: 0;
+    }
+
+    /* Status Badge */
+    .status-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: var(--radius-badge);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .status-badge.paid {
+      background: var(--positive-bg);
+      color: var(--positive-text);
+    }
+    .status-badge.tomorrow {
+      background: var(--info-bg);
+      color: var(--info-text);
+    }
+    .status-badge.pending {
+      background: var(--bg);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    .status-badge.overdue {
+      background: var(--critical-bg);
+      color: var(--critical-text);
+    }
+    .status-badge.estimate {
+      background: var(--attention-bg);
+      color: var(--attention-text);
+    }
+
+    /* Item Actions */
+    .item-actions {
+      display: flex;
+      gap: 4px;
+      opacity: 0;
+      transition: opacity var(--transition);
+      flex-shrink: 0;
+    }
+    .checklist-item:hover .item-actions {
+      opacity: 1;
+    }
+    .item-action-btn {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      background: none;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .item-action-btn:hover {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    /* Update Invoice Button */
+    .update-btn {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--attention-text);
+      background: var(--attention-bg);
+      border: 1px solid rgba(234,179,8,.3);
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .update-btn:hover {
+      background: #FEF08A;
+      border-color: rgba(234,179,8,.5);
+    }
+
+    /* ── Mobile Frame ── */
+    .mobile-section {
+      margin-top: 80px;
+      padding-top: 40px;
+      border-top: 2px dashed var(--border);
+    }
+    .mobile-section-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .mobile-section-subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+    .phone-frame {
+      width: 390px;
+      height: 844px;
+      margin: 0 auto;
+      border: 8px solid #1C1917;
+      border-radius: 44px;
+      background: var(--bg);
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,.15);
+    }
+    .phone-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150px;
+      height: 28px;
+      background: #1C1917;
+      border-radius: 0 0 18px 18px;
+      z-index: 10;
+    }
+    .phone-screen {
+      height: 100%;
+      overflow-y: auto;
+      padding-bottom: 70px;
+    }
+
+    /* Mobile Header */
+    .mobile-header {
+      background: var(--surface);
+      padding: 44px 20px 16px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+    .mobile-header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .mobile-header h3 {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .mobile-month-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 12px;
+      border-radius: var(--radius-badge);
+    }
+    .mobile-progress-bar {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .mobile-progress-fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+    .mobile-progress-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+    }
+
+    /* Mobile Banner */
+    .mobile-banner {
+      margin: 12px 16px;
+      background: var(--info-bg);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mobile-banner-dot {
+      width: 8px; height: 8px;
+      background: var(--info);
+      border-radius: 50%;
+      flex-shrink: 0;
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .4; }
+    }
+    .mobile-banner-text {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--info-text);
+    }
+    .mobile-banner-btn {
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      background: var(--info);
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+
+    /* Mobile Swipe Hint */
+    .mobile-swipe-hint {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 12px 16px 4px;
+      padding: 8px 12px;
+      background: var(--primary-light);
+      border-radius: 8px;
+    }
+    .mobile-swipe-hint svg {
+      width: 16px; height: 16px; color: var(--primary);
+    }
+    .mobile-swipe-hint span {
+      font-size: 12px;
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    /* Mobile Checklist Group */
+    .m-group {
+      margin: 8px 16px;
+    }
+    .m-group-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px 10px 0 0;
+      cursor: pointer;
+    }
+    .m-group.m-collapsed .m-group-header {
+      border-radius: 10px;
+    }
+    .m-group-chevron {
+      width: 16px; height: 16px;
+      color: var(--text-tertiary);
+      transition: transform var(--transition);
+    }
+    .m-group.m-collapsed .m-group-chevron {
+      transform: rotate(-90deg);
+    }
+    .m-group-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      flex: 1;
+    }
+    .m-group-count {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      font-weight: 500;
+    }
+    .m-group-items {
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      overflow: hidden;
+    }
+    .m-group.m-collapsed .m-group-items {
+      display: none;
+    }
+
+    /* Mobile Item */
+    .m-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .m-item:last-child { border-bottom: none; }
+    .m-item-check {
+      width: 20px; height: 20px;
+      border: 2px solid var(--border);
+      border-radius: 5px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .m-item-check.is-checked {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+    .m-item-check.is-checked svg {
+      width: 12px; height: 12px; color: #fff;
+    }
+    .m-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .m-item-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    .m-item-detail {
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+    .m-item-right {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .m-item-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .m-item-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: var(--radius-badge);
+      margin-top: 2px;
+      display: inline-block;
+    }
+    .m-item-badge.paid { background: var(--positive-bg); color: var(--positive-text); }
+    .m-item-badge.tomorrow { background: var(--info-bg); color: var(--info-text); }
+    .m-item-badge.pending { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border); }
+    .m-item-badge.estimate { background: var(--attention-bg); color: var(--attention-text); }
+
+    /* Mobile Bottom Nav */
+    .mobile-bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      padding: 8px 0 20px;
+      z-index: 10;
+    }
+    .mobile-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      padding-top: 4px;
+      position: relative;
+    }
+    .mobile-nav-item.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .mobile-nav-item svg {
+      width: 22px; height: 22px;
+    }
+    .mobile-nav-badge {
+      position: absolute;
+      top: 0;
+      right: calc(50% - 18px);
+      background: var(--critical);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Responsive for the page itself ── */
+    @media (max-width: 900px) {
+      .main-content {
+        padding: 24px 20px 60px;
+      }
+      .summary-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Inline Card Brand Icons */
+    .method-brand {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 16px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      vertical-align: middle;
+      margin-right: 4px;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .method-brand-visa {
+      background: #1A1F71;
+      color: #FFFFFF;
+      font-size: 7px;
+      font-style: italic;
+      font-weight: 800;
+    }
+    .method-brand-master {
+      background: #252525;
+      position: relative;
+      overflow: hidden;
+    }
+    .method-brand-master::before,
+    .method-brand-master::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .method-brand-master::before { left: 3px; background: #EB001B; }
+    .method-brand-master::after { right: 3px; background: #F79E1B; }
+  </style>
+</head>
+<body>
+
+  <!-- Page Title -->
+  <div class="page-title-header">
+    <h1>Protótipo 10 — Checklist Mensal</h1>
+    <p>Controle de pagamentos do mês</p>
+  </div>
+
+  <!-- App Layout -->
+  <div class="app-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M8 7h6"/><path d="M8 11h4"/></svg>
+        Caderninho
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Principal</div>
+        <a class="sidebar-item" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Dashboard
+        </a>
+        <a class="sidebar-item active" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Checklist
+          <span class="sidebar-badge">3</span>
+        </a>
+        <a class="sidebar-item" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Cartões
+        </a>
+        <a class="sidebar-item" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          Contas
+        </a>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Análise</div>
+        <a class="sidebar-item" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+          Categorias
+        </a>
+        <a class="sidebar-item" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Evolução
+        </a>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Config</div>
+        <a class="sidebar-item" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Configurações
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- Checklist Header -->
+      <div class="checklist-header">
+        <div class="checklist-header-left">
+          <h2>Checklist — Março 2026</h2>
+          <div class="progress-ring-container">
+            <div class="progress-ring">
+              <svg width="48" height="48" viewBox="0 0 48 48">
+                <circle class="progress-ring-bg" cx="24" cy="24" r="20"/>
+                <circle class="progress-ring-fill" id="progressRing" cx="24" cy="24" r="20"
+                  stroke-dasharray="125.66"
+                  stroke-dashoffset="54.04"/>
+              </svg>
+              <div class="progress-ring-text" id="progressPercent">57%</div>
+            </div>
+            <div class="progress-label">
+              <strong id="progressCount">8 de 14</strong><br/>confirmadas
+            </div>
+          </div>
+        </div>
+        <div class="month-picker">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Março 2026
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+
+      <!-- Banner Alert -->
+      <div class="banner-alert" id="bannerAlert">
+        <div class="banner-alert-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="banner-alert-text">
+          <strong>Amanhã vence: Internet R$158,00</strong>
+        </div>
+        <button class="banner-alert-action" onclick="markInternetPaid()">Marcar como pago</button>
+        <button class="banner-dismiss" onclick="dismissBanner()" aria-label="Fechar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="summary-row">
+        <div class="summary-card">
+          <div class="summary-card-label">Total do mês</div>
+          <div class="summary-card-value" id="summaryTotal">R$14.858</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-label">Confirmado</div>
+          <div class="summary-card-value confirmed" id="summaryConfirmed">R$9.600</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-label">Pendente</div>
+          <div class="summary-card-value pending" id="summaryPending">R$5.258</div>
+        </div>
+      </div>
+
+      <!-- Checklist Groups -->
+
+      <!-- Group 1: Débito Automático -->
+      <div class="checklist-group" data-group="debito">
+        <div class="group-header" onclick="toggleGroup(this)">
+          <svg class="group-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="group-title">Débito Automático</span>
+          <span class="group-count">3 itens</span>
+        </div>
+        <div class="group-items">
+          <!-- Aluguel -->
+          <div class="checklist-item checked" data-value="1800">
+            <label class="custom-checkbox">
+              <input type="checkbox" checked onchange="handleCheck(this)"/>
+              <span class="checkmark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+            </label>
+            <div class="item-content">
+              <span class="item-name">Aluguel</span>
+              <span class="item-value">R$1.800</span>
+              <span class="item-meta">
+                Pago em 01/03
+                <span class="item-meta-separator"></span>
+                Conta Itaú
+              </span>
+            </div>
+            <span class="status-badge paid">Pago</span>
+            <div class="item-actions">
+              <button class="item-action-btn">Editar</button>
+              <button class="item-action-btn">Detalhes</button>
+            </div>
+          </div>
+          <!-- Energia -->
+          <div class="checklist-item checked" data-value="320">
+            <label class="custom-checkbox">
+              <input type="checkbox" checked onchange="handleCheck(this)"/>
+              <span class="checkmark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+            </label>
+            <div class="item-content">
+              <span class="item-name">Energia</span>
+              <span class="item-value">R$320</span>
+              <span class="item-meta">
+                Pago em 05/03
+                <span class="item-meta-separator"></span>
+                Conta Nubank
+              </span>
+            </div>
+            <span class="status-badge paid">Pago</span>
+            <div class="item-actions">
+              <button class="item-action-btn">Editar</button>
+              <button class="item-action-btn">Detalhes</button>
+            </div>
+          </div>
+          <!-- Streaming -->
+          <div class="checklist-item checked" data-value="45">
+            <label class="custom-checkbox">
+              <input type="checkbox" checked onchange="handleCheck(this)"/>
+              <span class="checkmark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+            </label>
+            <div class="item-content">
+              <span class="item-name">Streaming</span>
+              <span class="item-value">R$45</span>
+              <span class="item-meta">
+                Pago em 01/03
+                <span class="item-meta-separator"></span>
+                Conta Nubank
+              </span>
+            </div>
+            <span class="status-badge paid">Pago</span>
+            <div class="item-actions">
+              <button class="item-action-btn">Editar</button>
+              <button class="item-action-btn">Detalhes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group 2: Agendado no Banco -->
+      <div class="checklist-group" data-group="agendado">
+        <div class="group-header" onclick="toggleGroup(this)">
+          <svg class="group-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="group-title">Agendado no Banco</span>
+          <span class="group-count">2 itens</span>
+        </div>
+        <div class="group-items">
+          <!-- Escola -->
+          <div class="checklist-item checked" data-value="2800">
+            <label class="custom-checkbox">
+              <input type="checkbox" checked onchange="handleCheck(this)"/>
+              <span class="checkmark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+            </label>
+            <div class="item-content">
+              <span class="item-name">Escola</span>
+              <span class="item-value">R$2.800</span>
+              <span class="item-meta">
+                Pago em 05/03
+                <span class="item-meta-separator"></span>
+                Conta Itaú
+              </span>
+            </div>
+            <span class="status-badge paid">Pago</span>
+            <div class="item-actions">
+              <button class="item-action-btn">Editar</button>
+              <button class="item-action-btn">Detalhes</button>
+            </div>
+          </div>
+          <!-- Internet -->
+          <div class="checklist-item" data-value="158" id="internetItem">
+            <label class="custom-checkbox">
+              <input type="checkbox" onchange="handleCheck(this)" id="internetCheckbox"/>
+              <span class="checkmark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+            </label>
+            <div class="item-content">
+              <span class="item-name">Internet</span>
+              <span class="item-value">R$158</span>
+              <span class="item-meta">
+                Vence 13/03
+                <span class="item-meta-separator"></span>
+                Conta Nubank
+              </span>
+            </div>
+            <span class="status-badge tomorrow" id="internetBadge">Amanhã</span>
+            <div class="item-actions">
+              <button class="item-action-btn">Editar</button>
+              <button class="item-action-btn">Detalhes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group 3: Recorrente no Cartão -->
+      <div class="checklist-group" data-group="cartao">
+        <div class="group-header" onclick="toggleGroup(this)">
+          <svg class="group-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="group-title">Recorrente no Cartão</span>
+          <span class="group-count">3 itens</span>
+        </div>
+        <div class="group-items">
+          <!-- Spotify -->
+          <div class="checklist-item checked" data-value="22">
+            <label class="custom-checkbox">
+              <input type="checkbox" checked onchange="handleCheck(this)"/>
+              <span class="checkmark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+            </label>
+            <div class="item-content">
+              <span class="item-name">Spotify</span>
+              <span class="item-value">R$22</span>
+              <span class="item-meta">
+                <span class="method-brand method-brand-visa">VISA</span> Latam Pass
+                <span class="item-meta-separator"></span>
+                Ciclo Mar
+              </span>
+            </div>
+            <span class="status-badge paid">Pago</span>
+            <div class="item-actions">
+              <button class="item-action-btn">Editar</button>
+              <button class="item-action-btn">Detalhes</button>
+            </div>
+          </div>
+          <!-- Netflix -->
+          <div class="checklist-item checked" data-value="45">
+            <label class="custom-checkbox">
+              <input type="checkbox" checked onchange="handleCheck(this)"/>
+              <span class="checkmark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+            </label>
+            <div class="item-content">
+              <span class="item-name">Netflix</span>
+              <span class="item-value">R$45</span>
+              <span class="item-meta">
+                <span class="method-brand method-brand-visa">VISA</span> Latam Pass
+                <span class="item-meta-separator"></span>
+                Ciclo Mar
+              </span>
+            </div>
+            <span class="status-badge paid">Pago</span>
+            <div class="item-actions">
+              <button class="item-action-btn">Editar</button>
+              <button class="item-action-btn">Detalhes</button>
+            </div>
+          </div>
+          <!-- iCloud -->
+          <div class="checklist-item checked" data-value="12">
+            <label class="custom-checkbox">
+              <input type="checkbox" checked onchange="handleCheck(this)"/>
+              <span class="checkmark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+            </label>
+            <div class="item-content">
+              <span class="item-name">iCloud</span>
+              <span class="item-value">R$12</span>
+              <span class="item-meta">
+                PDA
+                <span class="item-meta-separator"></span>
+                Ciclo Mar
+              </span>
+            </div>
+            <span class="status-badge paid">Pago</span>
+            <div class="item-actions">
+              <button class="item-action-btn">Editar</button>
+              <button class="item-action-btn">Detalhes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group 4: Variável (Fatura) -->
+      <div class="checklist-group" data-group="fatura">
+        <div class="group-header" onclick="toggleGroup(this)">
+          <svg class="group-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="group-title">Variável (Fatura)</span>
+          <span class="group-count">2 itens</span>
+        </div>
+        <div class="group-items">
+          <!-- Fatura Latam Pass -->
+          <div class="checklist-item" data-value="4200">
+            <label class="custom-checkbox">
+              <input type="checkbox" onchange="handleCheck(this)"/>
+              <span class="checkmark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+            </label>
+            <div class="item-content">
+              <span class="item-name"><span class="method-brand method-brand-visa">VISA</span> Fatura Latam Pass</span>
+              <span class="item-value">~R$4.200</span>
+              <span class="item-meta">
+                Vence 15/03
+                <span class="item-meta-separator"></span>
+                Estimativa
+              </span>
+            </div>
+            <span class="status-badge estimate">Estimativa</span>
+            <button class="update-btn">Atualizar fatura</button>
+            <div class="item-actions">
+              <button class="item-action-btn">Editar</button>
+              <button class="item-action-btn">Detalhes</button>
+            </div>
+          </div>
+          <!-- Fatura Pão de Açúcar -->
+          <div class="checklist-item" data-value="1980">
+            <label class="custom-checkbox">
+              <input type="checkbox" onchange="handleCheck(this)"/>
+              <span class="checkmark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+            </label>
+            <div class="item-content">
+              <span class="item-name"><span class="method-brand method-brand-master"></span> Fatura Pão de Açúcar</span>
+              <span class="item-value">~R$1.980</span>
+              <span class="item-meta">
+                Vence 10/03
+                <span class="item-meta-separator"></span>
+                Estimativa
+              </span>
+            </div>
+            <span class="status-badge estimate">Estimativa</span>
+            <button class="update-btn">Atualizar fatura</button>
+            <div class="item-actions">
+              <button class="item-action-btn">Editar</button>
+              <button class="item-action-btn">Detalhes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group 5: Manual -->
+      <div class="checklist-group" data-group="manual">
+        <div class="group-header" onclick="toggleGroup(this)">
+          <svg class="group-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="group-title">Manual</span>
+          <span class="group-count">4 itens</span>
+        </div>
+        <div class="group-items">
+          <!-- Faxineira -->
+          <div class="checklist-item" data-value="250">
+            <label class="custom-checkbox">
+              <input type="checkbox" onchange="handleCheck(this)"/>
+              <span class="checkmark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+            </label>
+            <div class="item-content">
+              <span class="item-name">Faxineira</span>
+              <span class="item-value">R$250</span>
+              <span class="item-meta">
+                Vence 20/03
+                <span class="item-meta-separator"></span>
+                PIX
+              </span>
+            </div>
+            <span class="status-badge pending">Pendente</span>
+            <div class="item-actions">
+              <button class="item-action-btn">Editar</button>
+              <button class="item-action-btn">Detalhes</button>
+            </div>
+          </div>
+          <!-- Condomínio -->
+          <div class="checklist-item" data-value="580">
+            <label class="custom-checkbox">
+              <input type="checkbox" onchange="handleCheck(this)"/>
+              <span class="checkmark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+            </label>
+            <div class="item-content">
+              <span class="item-name">Condomínio</span>
+              <span class="item-value">R$580</span>
+              <span class="item-meta">
+                Vence 15/03
+                <span class="item-meta-separator"></span>
+                Boleto
+              </span>
+            </div>
+            <span class="status-badge pending">Pendente</span>
+            <div class="item-actions">
+              <button class="item-action-btn">Editar</button>
+              <button class="item-action-btn">Detalhes</button>
+            </div>
+          </div>
+          <!-- Seguro carro -->
+          <div class="checklist-item" data-value="230">
+            <label class="custom-checkbox">
+              <input type="checkbox" onchange="handleCheck(this)"/>
+              <span class="checkmark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+            </label>
+            <div class="item-content">
+              <span class="item-name">Seguro carro</span>
+              <span class="item-value">R$230</span>
+              <span class="item-meta">
+                Vence 25/03
+                <span class="item-meta-separator"></span>
+                Débito
+              </span>
+            </div>
+            <span class="status-badge pending">Pendente</span>
+            <div class="item-actions">
+              <button class="item-action-btn">Editar</button>
+              <button class="item-action-btn">Detalhes</button>
+            </div>
+          </div>
+          <!-- Plano saúde -->
+          <div class="checklist-item" data-value="815">
+            <label class="custom-checkbox">
+              <input type="checkbox" onchange="handleCheck(this)"/>
+              <span class="checkmark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+            </label>
+            <div class="item-content">
+              <span class="item-name">Plano saúde</span>
+              <span class="item-value">R$815</span>
+              <span class="item-meta">
+                Vence 28/03
+                <span class="item-meta-separator"></span>
+                Boleto
+              </span>
+            </div>
+            <span class="status-badge pending">Pendente</span>
+            <div class="item-actions">
+              <button class="item-action-btn">Editar</button>
+              <button class="item-action-btn">Detalhes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- MOBILE VERSION -->
+      <!-- ═══════════════════════════════════════ -->
+      <div class="mobile-section">
+        <div class="mobile-section-title">Versão Mobile — 390px</div>
+        <div class="mobile-section-subtitle">"Today first" — banner do dia no topo, depois pendentes, depois concluídos</div>
+
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+
+            <!-- Mobile Header -->
+            <div class="mobile-header">
+              <div class="mobile-header-top">
+                <h3>Checklist</h3>
+                <span class="mobile-month-label">Mar 2026</span>
+              </div>
+              <div class="mobile-progress-bar">
+                <div class="mobile-progress-fill" id="mobileProgressFill" style="width: 57%"></div>
+              </div>
+              <div class="mobile-progress-label"><span id="mobileProgressLabel">8 de 14 confirmadas</span></div>
+            </div>
+
+            <!-- Mobile Banner -->
+            <div class="mobile-banner">
+              <div class="mobile-banner-dot"></div>
+              <div class="mobile-banner-text">Amanhã: Internet R$158</div>
+              <button class="mobile-banner-btn">Pagar</button>
+            </div>
+
+            <!-- Swipe Hint -->
+            <div class="mobile-swipe-hint">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <span>Deslize para a direita para marcar como pago</span>
+            </div>
+
+            <!-- Mobile Group: Pendentes (today-first) -->
+            <div class="m-group" data-mgroup="pendentes">
+              <div class="m-group-header" onclick="toggleMGroup(this)">
+                <svg class="m-group-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                <span class="m-group-title">Pendentes</span>
+                <span class="m-group-count">6 itens</span>
+              </div>
+              <div class="m-group-items">
+                <div class="m-item">
+                  <div class="m-item-check">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;color:transparent"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div class="m-item-info">
+                    <div class="m-item-name">Internet</div>
+                    <div class="m-item-detail">Vence 13/03 · Nubank</div>
+                  </div>
+                  <div class="m-item-right">
+                    <div class="m-item-value">R$158</div>
+                    <span class="m-item-badge tomorrow">Amanhã</span>
+                  </div>
+                </div>
+                <div class="m-item">
+                  <div class="m-item-check"></div>
+                  <div class="m-item-info">
+                    <div class="m-item-name"><span class="method-brand method-brand-visa">VISA</span> Fatura Latam Pass</div>
+                    <div class="m-item-detail">Vence 15/03 · Estimativa</div>
+                  </div>
+                  <div class="m-item-right">
+                    <div class="m-item-value">~R$4.200</div>
+                    <span class="m-item-badge estimate">Estimativa</span>
+                  </div>
+                </div>
+                <div class="m-item">
+                  <div class="m-item-check"></div>
+                  <div class="m-item-info">
+                    <div class="m-item-name"><span class="method-brand method-brand-master"></span> Fatura PDA</div>
+                    <div class="m-item-detail">Vence 10/03 · Estimativa</div>
+                  </div>
+                  <div class="m-item-right">
+                    <div class="m-item-value">~R$1.980</div>
+                    <span class="m-item-badge estimate">Estimativa</span>
+                  </div>
+                </div>
+                <div class="m-item">
+                  <div class="m-item-check"></div>
+                  <div class="m-item-info">
+                    <div class="m-item-name">Condomínio</div>
+                    <div class="m-item-detail">Vence 15/03 · Boleto</div>
+                  </div>
+                  <div class="m-item-right">
+                    <div class="m-item-value">R$580</div>
+                    <span class="m-item-badge pending">Pendente</span>
+                  </div>
+                </div>
+                <div class="m-item">
+                  <div class="m-item-check"></div>
+                  <div class="m-item-info">
+                    <div class="m-item-name">Faxineira</div>
+                    <div class="m-item-detail">Vence 20/03 · PIX</div>
+                  </div>
+                  <div class="m-item-right">
+                    <div class="m-item-value">R$250</div>
+                    <span class="m-item-badge pending">Pendente</span>
+                  </div>
+                </div>
+                <div class="m-item">
+                  <div class="m-item-check"></div>
+                  <div class="m-item-info">
+                    <div class="m-item-name">Seguro carro</div>
+                    <div class="m-item-detail">Vence 25/03 · Débito</div>
+                  </div>
+                  <div class="m-item-right">
+                    <div class="m-item-value">R$230</div>
+                    <span class="m-item-badge pending">Pendente</span>
+                  </div>
+                </div>
+                <div class="m-item">
+                  <div class="m-item-check"></div>
+                  <div class="m-item-info">
+                    <div class="m-item-name">Plano saúde</div>
+                    <div class="m-item-detail">Vence 28/03 · Boleto</div>
+                  </div>
+                  <div class="m-item-right">
+                    <div class="m-item-value">R$815</div>
+                    <span class="m-item-badge pending">Pendente</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mobile Group: Confirmados -->
+            <div class="m-group" data-mgroup="confirmados">
+              <div class="m-group-header" onclick="toggleMGroup(this)">
+                <svg class="m-group-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                <span class="m-group-title">Confirmados</span>
+                <span class="m-group-count">8 itens</span>
+              </div>
+              <div class="m-group-items">
+                <div class="m-item">
+                  <div class="m-item-check is-checked">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div class="m-item-info">
+                    <div class="m-item-name">Aluguel</div>
+                    <div class="m-item-detail">Pago 01/03 · Itaú</div>
+                  </div>
+                  <div class="m-item-right">
+                    <div class="m-item-value">R$1.800</div>
+                    <span class="m-item-badge paid">Pago</span>
+                  </div>
+                </div>
+                <div class="m-item">
+                  <div class="m-item-check is-checked">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div class="m-item-info">
+                    <div class="m-item-name">Escola</div>
+                    <div class="m-item-detail">Pago 05/03 · Itaú</div>
+                  </div>
+                  <div class="m-item-right">
+                    <div class="m-item-value">R$2.800</div>
+                    <span class="m-item-badge paid">Pago</span>
+                  </div>
+                </div>
+                <div class="m-item">
+                  <div class="m-item-check is-checked">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div class="m-item-info">
+                    <div class="m-item-name">Energia</div>
+                    <div class="m-item-detail">Pago 05/03 · Nubank</div>
+                  </div>
+                  <div class="m-item-right">
+                    <div class="m-item-value">R$320</div>
+                    <span class="m-item-badge paid">Pago</span>
+                  </div>
+                </div>
+                <div class="m-item">
+                  <div class="m-item-check is-checked">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div class="m-item-info">
+                    <div class="m-item-name">Streaming</div>
+                    <div class="m-item-detail">Pago 01/03 · Nubank</div>
+                  </div>
+                  <div class="m-item-right">
+                    <div class="m-item-value">R$45</div>
+                    <span class="m-item-badge paid">Pago</span>
+                  </div>
+                </div>
+                <div class="m-item">
+                  <div class="m-item-check is-checked">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div class="m-item-info">
+                    <div class="m-item-name">Spotify</div>
+                    <div class="m-item-detail"><span class="method-brand method-brand-visa">VISA</span> Latam Pass · Ciclo Mar</div>
+                  </div>
+                  <div class="m-item-right">
+                    <div class="m-item-value">R$22</div>
+                    <span class="m-item-badge paid">Pago</span>
+                  </div>
+                </div>
+                <div class="m-item">
+                  <div class="m-item-check is-checked">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div class="m-item-info">
+                    <div class="m-item-name">Netflix</div>
+                    <div class="m-item-detail"><span class="method-brand method-brand-visa">VISA</span> Latam Pass · Ciclo Mar</div>
+                  </div>
+                  <div class="m-item-right">
+                    <div class="m-item-value">R$45</div>
+                    <span class="m-item-badge paid">Pago</span>
+                  </div>
+                </div>
+                <div class="m-item">
+                  <div class="m-item-check is-checked">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div class="m-item-info">
+                    <div class="m-item-name">iCloud</div>
+                    <div class="m-item-detail">PDA · Ciclo Mar</div>
+                  </div>
+                  <div class="m-item-right">
+                    <div class="m-item-value">R$12</div>
+                    <span class="m-item-badge paid">Pago</span>
+                  </div>
+                </div>
+                <div class="m-item">
+                  <div class="m-item-check is-checked">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div class="m-item-info">
+                    <div class="m-item-name">Streaming</div>
+                    <div class="m-item-detail">Pago 01/03 · Nubank</div>
+                  </div>
+                  <div class="m-item-right">
+                    <div class="m-item-value">R$45</div>
+                    <span class="m-item-badge paid">Pago</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Mobile Bottom Nav -->
+          <nav class="mobile-bottom-nav">
+            <div class="mobile-nav-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+              Início
+            </div>
+            <div class="mobile-nav-item active">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              Checklist
+              <span class="mobile-nav-badge">3</span>
+            </div>
+            <div class="mobile-nav-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              Cartões
+            </div>
+            <div class="mobile-nav-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              Config
+            </div>
+          </nav>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // ── Constants ──
+    const TOTAL_VALUE = 14858;
+    const CIRCUMFERENCE = 2 * Math.PI * 20; // ~125.66
+
+    // ── Toggle group collapse ──
+    function toggleGroup(header) {
+      const group = header.closest('.checklist-group');
+      group.classList.toggle('collapsed');
+    }
+
+    // ── Toggle mobile group collapse ──
+    function toggleMGroup(header) {
+      const group = header.closest('.m-group');
+      group.classList.toggle('m-collapsed');
+    }
+
+    // ── Dismiss banner ──
+    function dismissBanner() {
+      document.getElementById('bannerAlert').classList.add('hidden');
+    }
+
+    // ── Mark Internet as paid from banner ──
+    function markInternetPaid() {
+      const cb = document.getElementById('internetCheckbox');
+      if (!cb.checked) {
+        cb.checked = true;
+        handleCheck(cb);
+      }
+      dismissBanner();
+    }
+
+    // ── Handle checkbox change ──
+    function handleCheck(checkbox) {
+      const item = checkbox.closest('.checklist-item');
+      const badge = item.querySelector('.status-badge');
+
+      if (checkbox.checked) {
+        item.classList.add('checked');
+        if (badge) {
+          badge.className = 'status-badge paid';
+          badge.textContent = 'Pago';
+        }
+      } else {
+        item.classList.remove('checked');
+        if (badge) {
+          // Restore original state based on item
+          const name = item.querySelector('.item-name').textContent;
+          if (name === 'Internet') {
+            badge.className = 'status-badge tomorrow';
+            badge.textContent = 'Amanhã';
+          } else if (item.querySelector('.update-btn')) {
+            badge.className = 'status-badge estimate';
+            badge.textContent = 'Estimativa';
+          } else {
+            badge.className = 'status-badge pending';
+            badge.textContent = 'Pendente';
+          }
+        }
+      }
+
+      updateProgress();
+    }
+
+    // ── Update progress ring, bar, and summary ──
+    function updateProgress() {
+      const allCheckboxes = document.querySelectorAll('.checklist-group .checklist-item input[type="checkbox"]');
+      const total = allCheckboxes.length;
+      let checked = 0;
+      let confirmedValue = 0;
+
+      allCheckboxes.forEach(cb => {
+        if (cb.checked) {
+          checked++;
+          const item = cb.closest('.checklist-item');
+          const val = parseInt(item.dataset.value) || 0;
+          confirmedValue += val;
+        }
+      });
+
+      const percent = Math.round((checked / total) * 100);
+      const pendingValue = TOTAL_VALUE - confirmedValue;
+
+      // Update progress ring
+      const ring = document.getElementById('progressRing');
+      const offset = CIRCUMFERENCE - (percent / 100) * CIRCUMFERENCE;
+      ring.style.strokeDashoffset = offset;
+
+      // Update text
+      document.getElementById('progressPercent').textContent = percent + '%';
+      document.getElementById('progressCount').textContent = checked + ' de ' + total;
+
+      // Update summary cards
+      document.getElementById('summaryConfirmed').textContent = 'R$' + confirmedValue.toLocaleString('pt-BR');
+      document.getElementById('summaryPending').textContent = 'R$' + pendingValue.toLocaleString('pt-BR');
+
+      // Update mobile progress
+      const mobileFill = document.getElementById('mobileProgressFill');
+      mobileFill.style.width = percent + '%';
+      document.getElementById('mobileProgressLabel').textContent = checked + ' de ' + total + ' confirmadas';
+    }
+
+    // ── Initialize ──
+    updateProgress();
+  </script>
+
+</body>
+</html>
