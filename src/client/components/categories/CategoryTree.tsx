@@ -35,6 +35,8 @@ interface Category {
   classificationId: string;
   budgetMinCents: number | null;
   budgetMaxCents: number | null;
+  defaultPaymentMethodType: string | null;
+  defaultPaymentMethodId: string | null;
   status: 'active' | 'archived';
 }
 
@@ -45,16 +47,34 @@ interface Subcategory {
   status: 'active' | 'archived';
 }
 
+interface BankAccount {
+  id: string;
+  name: string;
+  bank: string;
+  status: 'active' | 'archived';
+}
+
+interface CreditCard {
+  id: string;
+  name: string;
+  brand: string;
+  status: 'active' | 'archived';
+}
+
 interface CategoryTreeProps {
   initialClassifications: Classification[];
   initialCategories: Category[];
   initialSubcategories: Subcategory[];
+  bankAccounts: BankAccount[];
+  creditCards: CreditCard[];
 }
 
 export function CategoryTree({
   initialClassifications,
   initialCategories,
   initialSubcategories,
+  bankAccounts,
+  creditCards,
 }: CategoryTreeProps) {
   const [classifications, setClassifications] = useState<Classification[]>(initialClassifications);
   const [categories, setCategories] = useState<Category[]>(initialCategories);
@@ -73,6 +93,8 @@ export function CategoryTree({
     classificationId: string;
     budgetMinCents: number | null;
     budgetMaxCents: number | null;
+    defaultPaymentMethodType: string | null;
+    defaultPaymentMethodId: string | null;
   } | null>(null);
   const [creatingSubcategoryForCategory, setCreatingSubcategoryForCategory] = useState<string | null>(null);
   const [editingSubcategory, setEditingSubcategory] = useState<{ id: string; name: string } | null>(null);
@@ -240,6 +262,8 @@ export function CategoryTree({
               mode="create"
               classificationId={creatingCategoryForClassification}
               classifications={activeClassifications}
+              bankAccounts={bankAccounts}
+              creditCards={creditCards}
               onSuccess={() => {
                 setCreatingCategoryForClassification(null);
                 refreshData();
@@ -261,6 +285,8 @@ export function CategoryTree({
               mode="edit"
               defaultValues={editingCategory}
               classifications={activeClassifications}
+              bankAccounts={bankAccounts}
+              creditCards={creditCards}
               onSuccess={() => {
                 setEditingCategory(null);
                 refreshData();
@@ -335,6 +361,8 @@ export function CategoryTree({
                   onEditClassification={(c) => setEditingClassification({ id: c.id, name: c.name })}
                   onMergeClassification={(c) => setMergingClassification({ id: c.id, name: c.name })}
                   onAddCategory={(classificationId) => setCreatingCategoryForClassification(classificationId)}
+                  bankAccounts={bankAccounts}
+                  creditCards={creditCards}
                   onEditCategory={(cat) =>
                     setEditingCategory({
                       id: cat.id,
@@ -342,6 +370,8 @@ export function CategoryTree({
                       classificationId: cat.classificationId,
                       budgetMinCents: cat.budgetMinCents,
                       budgetMaxCents: cat.budgetMaxCents,
+                      defaultPaymentMethodType: cat.defaultPaymentMethodType,
+                      defaultPaymentMethodId: cat.defaultPaymentMethodId,
                     })
                   }
                   onAddSubcategory={(categoryId) => setCreatingSubcategoryForCategory(categoryId)}
@@ -371,6 +401,8 @@ export function CategoryTree({
                       classification={classification}
                       categories={categoriesByClassification.get(classification.id) ?? []}
                       subcategoriesByCategory={subcategoriesByCategory}
+                      bankAccounts={bankAccounts}
+                      creditCards={creditCards}
                       onEditClassification={(c) => setEditingClassification({ id: c.id, name: c.name })}
                       onMergeClassification={(c) => setMergingClassification({ id: c.id, name: c.name })}
                       onAddCategory={(classificationId) => setCreatingCategoryForClassification(classificationId)}
@@ -381,6 +413,8 @@ export function CategoryTree({
                           classificationId: cat.classificationId,
                           budgetMinCents: cat.budgetMinCents,
                           budgetMaxCents: cat.budgetMaxCents,
+                          defaultPaymentMethodType: cat.defaultPaymentMethodType,
+                          defaultPaymentMethodId: cat.defaultPaymentMethodId,
                         })
                       }
                       onAddSubcategory={(categoryId) => setCreatingSubcategoryForCategory(categoryId)}

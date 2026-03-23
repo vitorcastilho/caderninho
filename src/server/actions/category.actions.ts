@@ -35,6 +35,8 @@ export const createCategoryAction = withAuth(async (session, input: unknown) => 
     ...validation.data,
     budgetMinCents: validation.data.budgetMinCents ?? null,
     budgetMaxCents: validation.data.budgetMaxCents ?? null,
+    defaultPaymentMethodType: validation.data.defaultPaymentMethodType ?? null,
+    defaultPaymentMethodId: validation.data.defaultPaymentMethodId ?? null,
     organizationId,
     userId: session.user.id,
   });

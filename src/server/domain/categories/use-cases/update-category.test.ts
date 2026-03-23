@@ -3,6 +3,8 @@ import { vi } from 'vitest';
 import { updateCategory } from './update-category';
 import type { CategoryRepository } from '../repositories/category.repository';
 import type { ClassificationRepository } from '../repositories/classification.repository';
+import type { BankAccountRepository } from '@/server/domain/bank-accounts/repositories/bank-account.repository';
+import type { CreditCardRepository } from '@/server/domain/credit-cards/repositories/credit-card.repository';
 import type { AuditLogger } from '@/server/domain/shared/types/audit-logger';
 
 const mockRepository: CategoryRepository = {
@@ -16,11 +18,31 @@ const mockClassificationRepository: ClassificationRepository = {
   countByOrganization: vi.fn(), update: vi.fn(), updateStatus: vi.fn(),
 };
 
+const mockBankAccountRepository: BankAccountRepository = {
+  create: vi.fn(), findById: vi.fn(), findAllByOrganization: vi.fn(),
+  update: vi.fn(), updateStatus: vi.fn(),
+};
+
+const mockCreditCardRepository: CreditCardRepository = {
+  create: vi.fn(), findById: vi.fn(), findAllByOrganization: vi.fn(),
+  update: vi.fn(), updateStatus: vi.fn(),
+};
+
 const mockAuditLogger: AuditLogger = vi.fn();
+
+const deps = {
+  repository: mockRepository,
+  classificationRepository: mockClassificationRepository,
+  bankAccountRepository: mockBankAccountRepository,
+  creditCardRepository: mockCreditCardRepository,
+  auditLogger: mockAuditLogger,
+};
 
 const sampleCategory = {
   id: 'cat-1', name: 'Moradia', classificationId: 'class-1',
-  budgetMinCents: 220000, budgetMaxCents: null, status: 'active' as const,
+  budgetMinCents: 220000, budgetMaxCents: null,
+  defaultPaymentMethodType: null, defaultPaymentMethodId: null,
+  status: 'active' as const,
   organizationId: 'org-123', createdAt: new Date(), updatedAt: new Date(),
 };
 
@@ -32,10 +54,9 @@ describe('updateCategory', () => {
     vi.mocked(mockRepository.findById).mockResolvedValue(sampleCategory);
     vi.mocked(mockRepository.update).mockResolvedValue(updated);
 
-    const result = await updateCategory(
-      { repository: mockRepository, classificationRepository: mockClassificationRepository, auditLogger: mockAuditLogger },
-      { id: 'cat-1', organizationId: 'org-123', userId: 'user-1', data: { name: 'Novo Nome' } },
-    );
+    const result = await updateCategory(deps, {
+      id: 'cat-1', organizationId: 'org-123', userId: 'user-1', data: { name: 'Novo Nome' },
+    });
 
     expect(result.success).toBe(true);
     if (result.success) expect(result.data.name).toBe('Novo Nome');
@@ -44,10 +65,9 @@ describe('updateCategory', () => {
   it('should return error when not found', async () => {
     vi.mocked(mockRepository.findById).mockResolvedValue(null);
 
-    const result = await updateCategory(
-      { repository: mockRepository, classificationRepository: mockClassificationRepository, auditLogger: mockAuditLogger },
-      { id: 'cat-1', organizationId: 'org-123', userId: 'user-1', data: { name: 'Novo Nome' } },
-    );
+    const result = await updateCategory(deps, {
+      id: 'cat-1', organizationId: 'org-123', userId: 'user-1', data: { name: 'Novo Nome' },
+    });
 
     expect(result.success).toBe(false);
     if (!result.success) expect(result.error.code).toBe('CATEGORY_NOT_FOUND');
@@ -57,10 +77,9 @@ describe('updateCategory', () => {
     vi.mocked(mockRepository.findById).mockResolvedValue(sampleCategory);
     vi.mocked(mockClassificationRepository.findById).mockResolvedValue(null);
 
-    const result = await updateCategory(
-      { repository: mockRepository, classificationRepository: mockClassificationRepository, auditLogger: mockAuditLogger },
-      { id: 'cat-1', organizationId: 'org-123', userId: 'user-1', data: { classificationId: 'new-class' } },
-    );
+    const result = await updateCategory(deps, {
+      id: 'cat-1', organizationId: 'org-123', userId: 'user-1', data: { classificationId: 'new-class' },
+    });
 
     expect(result.success).toBe(false);
     if (!result.success) expect(result.error.code).toBe('CLASSIFICATION_NOT_FOUND');
@@ -73,12 +92,106 @@ describe('updateCategory', () => {
       organizationId: 'org-123', createdAt: new Date(), updatedAt: new Date(),
     });
 
-    const result = await updateCategory(
-      { repository: mockRepository, classificationRepository: mockClassificationRepository, auditLogger: mockAuditLogger },
-      { id: 'cat-1', organizationId: 'org-123', userId: 'user-1', data: { classificationId: 'new-class' } },
-    );
+    const result = await updateCategory(deps, {
+      id: 'cat-1', organizationId: 'org-123', userId: 'user-1', data: { classificationId: 'new-class' },
+    });
 
     expect(result.success).toBe(false);
     if (!result.success) expect(result.error.code).toBe('CLASSIFICATION_ARCHIVED');
+  });
+
+  it('should update payment method to credit card', async () => {
+    const updated = { ...sampleCategory, defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-1' };
+    vi.mocked(mockRepository.findById).mockResolvedValue(sampleCategory);
+    vi.mocked(mockRepository.update).mockResolvedValue(updated);
+    vi.mocked(mockCreditCardRepository.findById).mockResolvedValue({
+      id: 'card-1', name: 'Latam Pass', brand: 'Visa', limitCents: 500000,
+      closingDay: 10, dueDay: 20, status: 'active',
+      organizationId: 'org-123', createdAt: new Date(), updatedAt: new Date(),
+    });
+
+    const result = await updateCategory(deps, {
+      id: 'cat-1', organizationId: 'org-123', userId: 'user-1',
+      data: { defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-1' },
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.defaultPaymentMethodType).toBe('credit_card');
+      expect(result.data.defaultPaymentMethodId).toBe('card-1');
+    }
+  });
+
+  it('should clear payment method (null/null)', async () => {
+    const existing = { ...sampleCategory, defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-1' };
+    const updated = { ...sampleCategory, defaultPaymentMethodType: null, defaultPaymentMethodId: null };
+    vi.mocked(mockRepository.findById).mockResolvedValue(existing);
+    vi.mocked(mockRepository.update).mockResolvedValue(updated);
+
+    const result = await updateCategory(deps, {
+      id: 'cat-1', organizationId: 'org-123', userId: 'user-1',
+      data: { defaultPaymentMethodType: null, defaultPaymentMethodId: null },
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.defaultPaymentMethodType).toBeNull();
+      expect(result.data.defaultPaymentMethodId).toBeNull();
+    }
+  });
+
+  it('should return error when updating to non-existent credit card', async () => {
+    vi.mocked(mockRepository.findById).mockResolvedValue(sampleCategory);
+    vi.mocked(mockCreditCardRepository.findById).mockResolvedValue(null);
+
+    const result = await updateCategory(deps, {
+      id: 'cat-1', organizationId: 'org-123', userId: 'user-1',
+      data: { defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-999' },
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) expect(result.error.code).toBe('PAYMENT_METHOD_NOT_FOUND');
+  });
+
+  it('should return error when updating to archived bank account', async () => {
+    vi.mocked(mockRepository.findById).mockResolvedValue(sampleCategory);
+    vi.mocked(mockBankAccountRepository.findById).mockResolvedValue({
+      id: 'acc-1', name: 'Itaú', bank: 'Itaú', balanceCents: 1000000,
+      status: 'archived', organizationId: 'org-123', createdAt: new Date(), updatedAt: new Date(),
+    });
+
+    const result = await updateCategory(deps, {
+      id: 'cat-1', organizationId: 'org-123', userId: 'user-1',
+      data: { defaultPaymentMethodType: 'pix', defaultPaymentMethodId: 'acc-1' },
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) expect(result.error.code).toBe('PAYMENT_METHOD_ARCHIVED');
+  });
+
+  it('should include payment method fields in audit log', async () => {
+    const updated = { ...sampleCategory, defaultPaymentMethodType: 'debit', defaultPaymentMethodId: 'acc-1' };
+    vi.mocked(mockRepository.findById).mockResolvedValue(sampleCategory);
+    vi.mocked(mockRepository.update).mockResolvedValue(updated);
+    vi.mocked(mockBankAccountRepository.findById).mockResolvedValue({
+      id: 'acc-1', name: 'Itaú', bank: 'Itaú', balanceCents: 1000000,
+      status: 'active', organizationId: 'org-123', createdAt: new Date(), updatedAt: new Date(),
+    });
+
+    await updateCategory(deps, {
+      id: 'cat-1', organizationId: 'org-123', userId: 'user-1',
+      data: { defaultPaymentMethodType: 'debit', defaultPaymentMethodId: 'acc-1' },
+    });
+
+    expect(mockAuditLogger).toHaveBeenCalledWith(expect.objectContaining({
+      oldValue: expect.objectContaining({
+        defaultPaymentMethodType: null,
+        defaultPaymentMethodId: null,
+      }),
+      newValue: expect.objectContaining({
+        defaultPaymentMethodType: 'debit',
+        defaultPaymentMethodId: 'acc-1',
+      }),
+    }));
   });
 });

@@ -97,6 +97,92 @@ describe('createCategorySchema', () => {
     });
     expect(result.success).toBe(true);
   });
+
+  it('should accept valid payment method (credit_card)', () => {
+    const result = createCategorySchema.safeParse({
+      name: 'Alimentação',
+      classificationId: validUUID,
+      defaultPaymentMethodType: 'credit_card',
+      defaultPaymentMethodId: validUUID,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should accept valid payment method (debit)', () => {
+    const result = createCategorySchema.safeParse({
+      name: 'Alimentação',
+      classificationId: validUUID,
+      defaultPaymentMethodType: 'debit',
+      defaultPaymentMethodId: validUUID,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should accept valid payment method (pix)', () => {
+    const result = createCategorySchema.safeParse({
+      name: 'Alimentação',
+      classificationId: validUUID,
+      defaultPaymentMethodType: 'pix',
+      defaultPaymentMethodId: validUUID,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should accept null payment method (no default)', () => {
+    const result = createCategorySchema.safeParse({
+      name: 'Alimentação',
+      classificationId: validUUID,
+      defaultPaymentMethodType: null,
+      defaultPaymentMethodId: null,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should accept omitted payment method fields', () => {
+    const result = createCategorySchema.safeParse({
+      name: 'Alimentação',
+      classificationId: validUUID,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject type without id', () => {
+    const result = createCategorySchema.safeParse({
+      name: 'Alimentação',
+      classificationId: validUUID,
+      defaultPaymentMethodType: 'credit_card',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject id without type', () => {
+    const result = createCategorySchema.safeParse({
+      name: 'Alimentação',
+      classificationId: validUUID,
+      defaultPaymentMethodId: validUUID,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject invalid payment method type', () => {
+    const result = createCategorySchema.safeParse({
+      name: 'Alimentação',
+      classificationId: validUUID,
+      defaultPaymentMethodType: 'cash',
+      defaultPaymentMethodId: validUUID,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject invalid payment method id (not UUID)', () => {
+    const result = createCategorySchema.safeParse({
+      name: 'Alimentação',
+      classificationId: validUUID,
+      defaultPaymentMethodType: 'credit_card',
+      defaultPaymentMethodId: 'not-a-uuid',
+    });
+    expect(result.success).toBe(false);
+  });
 });
 
 describe('updateCategorySchema', () => {
@@ -128,6 +214,57 @@ describe('updateCategorySchema', () => {
       budgetMaxCents: 300000,
     });
     expect(result.success).toBe(false);
+  });
+
+  it('should accept payment method update (both fields)', () => {
+    const result = updateCategorySchema.safeParse({
+      defaultPaymentMethodType: 'pix',
+      defaultPaymentMethodId: validUUID,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should accept clearing payment method (both null)', () => {
+    const result = updateCategorySchema.safeParse({
+      defaultPaymentMethodType: null,
+      defaultPaymentMethodId: null,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject type without id in update', () => {
+    const result = updateCategorySchema.safeParse({
+      defaultPaymentMethodType: 'debit',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject id without type in update', () => {
+    const result = updateCategorySchema.safeParse({
+      defaultPaymentMethodId: validUUID,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject only type as null without id (invariante AC#9)', () => {
+    const result = updateCategorySchema.safeParse({
+      defaultPaymentMethodType: null,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject only id as null without type (invariante AC#9)', () => {
+    const result = updateCategorySchema.safeParse({
+      defaultPaymentMethodId: null,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should accept update with name and no payment fields (no change to payment)', () => {
+    const result = updateCategorySchema.safeParse({
+      name: 'Novo Nome',
+    });
+    expect(result.success).toBe(true);
   });
 });
 

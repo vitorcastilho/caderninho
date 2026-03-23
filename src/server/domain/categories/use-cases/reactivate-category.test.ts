@@ -14,7 +14,9 @@ const mockAuditLogger: AuditLogger = vi.fn();
 
 const archivedCategory = {
   id: 'cat-1', name: 'Moradia', classificationId: 'class-1',
-  budgetMinCents: 220000, budgetMaxCents: null, status: 'archived' as const,
+  budgetMinCents: 220000, budgetMaxCents: null,
+  defaultPaymentMethodType: null, defaultPaymentMethodId: null,
+  status: 'archived' as const,
   organizationId: 'org-123', createdAt: new Date(), updatedAt: new Date(),
 };
 

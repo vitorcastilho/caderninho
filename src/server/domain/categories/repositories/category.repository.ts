@@ -4,6 +4,8 @@ export type Category = {
   classificationId: string;
   budgetMinCents: number | null;
   budgetMaxCents: number | null;
+  defaultPaymentMethodType: string | null;
+  defaultPaymentMethodId: string | null;
   status: 'active' | 'archived';
   organizationId: string;
   createdAt: Date;
@@ -17,6 +19,8 @@ export interface CategoryRepository {
     classificationId: string;
     budgetMinCents: number | null;
     budgetMaxCents: number | null;
+    defaultPaymentMethodType: string | null;
+    defaultPaymentMethodId: string | null;
     organizationId: string;
   }): Promise<Category>;
 
@@ -46,6 +50,8 @@ export interface CategoryRepository {
       classificationId: string;
       budgetMinCents: number | null;
       budgetMaxCents: number | null;
+      defaultPaymentMethodType: string | null;
+      defaultPaymentMethodId: string | null;
     }>,
   ): Promise<Category>;
 

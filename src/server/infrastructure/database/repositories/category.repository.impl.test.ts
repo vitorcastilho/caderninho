@@ -51,6 +51,8 @@ const sampleCategory = {
   classificationId: '550e8400-e29b-41d4-a716-446655440001',
   budgetMinCents: 220000,
   budgetMaxCents: null,
+  defaultPaymentMethodType: null,
+  defaultPaymentMethodId: null,
   status: 'active' as const,
   organizationId: 'org-123',
   createdAt: new Date('2026-01-01'),
@@ -72,6 +74,8 @@ describe('DrizzleCategoryRepository', () => {
         classificationId: sampleCategory.classificationId,
         budgetMinCents: sampleCategory.budgetMinCents,
         budgetMaxCents: sampleCategory.budgetMaxCents,
+        defaultPaymentMethodType: sampleCategory.defaultPaymentMethodType,
+        defaultPaymentMethodId: sampleCategory.defaultPaymentMethodId,
         organizationId: sampleCategory.organizationId,
       });
 

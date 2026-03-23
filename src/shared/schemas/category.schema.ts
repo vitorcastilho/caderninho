@@ -1,6 +1,41 @@
 import { z } from 'zod';
 
 import { idSchema, amountCentsSchema } from './common.schema';
+import { PAYMENT_METHOD_TYPES } from '@/shared/constants/category.constants';
+
+const paymentMethodRefine = (data: {
+  defaultPaymentMethodType?: string | null;
+  defaultPaymentMethodId?: string | null;
+}) => {
+  const hasType = data.defaultPaymentMethodType != null;
+  const hasId = data.defaultPaymentMethodId != null;
+  return hasType === hasId;
+};
+
+/**
+ * Refine para update: distingue `undefined` (campo não enviado) de `null` (limpeza explícita).
+ * Se qualquer campo de pagamento for explicitamente enviado (incluindo null), ambos devem estar presentes.
+ */
+const updatePaymentMethodRefine = (data: {
+  defaultPaymentMethodType?: string | null;
+  defaultPaymentMethodId?: string | null;
+}) => {
+  const typeProvided = data.defaultPaymentMethodType !== undefined;
+  const idProvided = data.defaultPaymentMethodId !== undefined;
+
+  // Nenhum campo enviado — sem alteração no pagamento, válido
+  if (!typeProvided && !idProvided) return true;
+
+  // Apenas um enviado — inválido, ambos devem ser enviados juntos
+  if (typeProvided !== idProvided) return false;
+
+  // Ambos enviados — devem ser consistentes (ambos null ou ambos preenchidos)
+  const hasType = data.defaultPaymentMethodType != null;
+  const hasId = data.defaultPaymentMethodId != null;
+  return hasType === hasId;
+};
+
+const paymentMethodRefineMessage = 'Tipo e instrumento de pagamento devem ser preenchidos juntos';
 
 export const createCategorySchema = z
   .object({
@@ -8,6 +43,8 @@ export const createCategorySchema = z
     classificationId: idSchema,
     budgetMinCents: amountCentsSchema.nullable().optional(),
     budgetMaxCents: amountCentsSchema.nullable().optional(),
+    defaultPaymentMethodType: z.enum(PAYMENT_METHOD_TYPES).nullable().optional(),
+    defaultPaymentMethodId: idSchema.nullable().optional(),
   })
   .refine(
     (data) => {
@@ -16,7 +53,8 @@ export const createCategorySchema = z
       return true;
     },
     { message: 'Orçamento máximo deve ser maior ou igual ao mínimo' },
-  );
+  )
+  .refine(paymentMethodRefine, { message: paymentMethodRefineMessage });
 
 export const updateCategorySchema = z
   .object({
@@ -24,6 +62,8 @@ export const updateCategorySchema = z
     classificationId: idSchema.optional(),
     budgetMinCents: amountCentsSchema.nullable().optional(),
     budgetMaxCents: amountCentsSchema.nullable().optional(),
+    defaultPaymentMethodType: z.enum(PAYMENT_METHOD_TYPES).nullable().optional(),
+    defaultPaymentMethodId: idSchema.nullable().optional(),
   })
   .refine((data) => Object.keys(data).length > 0, {
     message: 'Pelo menos um campo deve ser informado',
@@ -35,7 +75,8 @@ export const updateCategorySchema = z
       return true;
     },
     { message: 'Orçamento máximo deve ser maior ou igual ao mínimo' },
-  );
+  )
+  .refine(updatePaymentMethodRefine, { message: paymentMethodRefineMessage });
 
 export const categoryIdSchema = idSchema;
 

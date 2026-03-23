@@ -36,6 +36,8 @@ interface Category {
   classificationId: string;
   budgetMinCents: number | null;
   budgetMaxCents: number | null;
+  defaultPaymentMethodType: string | null;
+  defaultPaymentMethodId: string | null;
   status: 'active' | 'archived';
 }
 
@@ -46,10 +48,26 @@ interface Subcategory {
   status: 'active' | 'archived';
 }
 
+interface BankAccount {
+  id: string;
+  name: string;
+  bank: string;
+  status: 'active' | 'archived';
+}
+
+interface CreditCard {
+  id: string;
+  name: string;
+  brand: string;
+  status: 'active' | 'archived';
+}
+
 interface ClassificationSectionProps {
   classification: Classification;
   categories: Category[];
   subcategoriesByCategory: Map<string, Subcategory[]>;
+  bankAccounts: BankAccount[];
+  creditCards: CreditCard[];
   onEditClassification: (classification: Classification) => void;
   onMergeClassification: (classification: Classification) => void;
   onAddCategory: (classificationId: string) => void;
@@ -91,6 +109,8 @@ export function ClassificationSection({
   classification,
   categories,
   subcategoriesByCategory,
+  bankAccounts,
+  creditCards,
   onEditClassification,
   onMergeClassification,
   onAddCategory,
@@ -300,6 +320,8 @@ export function ClassificationSection({
                   key={category.id}
                   category={category}
                   subcategories={subcategoriesByCategory.get(category.id) ?? []}
+                  bankAccounts={bankAccounts}
+                  creditCards={creditCards}
                   onEdit={() => onEditCategory(category)}
                   onAddSubcategory={() => onAddSubcategory(category.id)}
                   onEditSubcategory={onEditSubcategory}
@@ -326,6 +348,8 @@ export function ClassificationSection({
                           key={category.id}
                           category={category}
                           subcategories={subcategoriesByCategory.get(category.id) ?? []}
+                          bankAccounts={bankAccounts}
+                          creditCards={creditCards}
                           onEdit={() => onEditCategory(category)}
                           onAddSubcategory={() => onAddSubcategory(category.id)}
                           onEditSubcategory={onEditSubcategory}

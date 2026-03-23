@@ -14,6 +14,8 @@ export class DrizzleCategoryRepository implements CategoryRepository {
     classificationId: string;
     budgetMinCents: number | null;
     budgetMaxCents: number | null;
+    defaultPaymentMethodType: string | null;
+    defaultPaymentMethodId: string | null;
     organizationId: string;
   }): Promise<Category> {
     const [category] = await db
@@ -93,6 +95,8 @@ export class DrizzleCategoryRepository implements CategoryRepository {
       classificationId: string;
       budgetMinCents: number | null;
       budgetMaxCents: number | null;
+      defaultPaymentMethodType: string | null;
+      defaultPaymentMethodId: string | null;
     }>,
   ): Promise<Category> {
     const [category] = await db
