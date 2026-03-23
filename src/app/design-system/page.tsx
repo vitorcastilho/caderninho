@@ -2173,9 +2173,9 @@ function CardCartaoHeroSection() {
       <div className="space-y-6">
         <div>
           <h3 className="mb-3 text-sm font-medium">Cartão visual (hero)</h3>
-          <div className="grid max-w-xl gap-4 sm:grid-cols-2">
+          <div className="flex flex-wrap gap-6">
             {/* Visa — gradiente indigo */}
-            <div className="relative h-[200px] w-[320px] overflow-hidden rounded-2xl bg-gradient-to-br from-[#4F46E5] to-[#6366F1] p-6 text-white shadow-lg">
+            <div className="relative h-[200px] w-[320px] shrink-0 overflow-hidden rounded-2xl bg-gradient-to-br from-[#4F46E5] to-[#6366F1] p-6 text-white shadow-lg">
               {/* Chip */}
               <div className="mb-6 h-8 w-11 rounded-md bg-gradient-to-br from-[#D4AF37] to-[#F0D060] shadow-inner" />
               {/* Número */}
@@ -2202,7 +2202,7 @@ function CardCartaoHeroSection() {
             </div>
 
             {/* Mastercard — gradiente escuro */}
-            <div className="relative h-[200px] w-[320px] overflow-hidden rounded-2xl bg-gradient-to-br from-[#1C1917] to-[#44403C] p-6 text-white shadow-lg">
+            <div className="relative h-[200px] w-[320px] shrink-0 overflow-hidden rounded-2xl bg-gradient-to-br from-[#1C1917] to-[#44403C] p-6 text-white shadow-lg">
               {/* Chip */}
               <div className="mb-6 h-8 w-11 rounded-md bg-gradient-to-br from-[#D4AF37] to-[#F0D060] shadow-inner" />
               {/* Número */}
