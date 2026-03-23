@@ -58,7 +58,7 @@ development_status:
   2-2-cadastro-e-gestao-de-cartoes-de-credito-estrutura: done
   2-3-cadastro-de-investimentos-e-fontes-de-receita: done
   2-4-categorias-subcategorias-e-classificacoes-de-essencialidade: done
-  2-5-configuracao-de-metodo-de-pagamento-padrao-por-categoria: review
+  2-5-configuracao-de-metodo-de-pagamento-padrao-por-categoria: done
   2-6-onboarding-setup-inicial-guiado: backlog
   2-7-auditoria-visual-design-system: done
   epic-2-retrospective: optional

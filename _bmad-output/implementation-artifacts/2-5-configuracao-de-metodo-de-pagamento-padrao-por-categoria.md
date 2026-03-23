@@ -1,6 +1,6 @@
 # Story 2.5: Configuração de Método de Pagamento Padrão por Categoria
 
-Status: review
+Status: done
 
 ## Story
 
@@ -483,6 +483,7 @@ Nenhum bloqueio ou debug necessário durante a implementação.
 - 2026-03-23: Implementação completa da Story 2.5 — Configuração de método de pagamento padrão por categoria
 - 2026-03-23: Code Review R1 — 2 HIGH, 2 MEDIUM, 2 LOW encontrados. Action items criados. Status → in-progress.
 - 2026-03-23: Resolvidos 6 action items do Code Review R1 (2 HIGH, 2 MEDIUM, 2 LOW). Status → review.
+- 2026-03-23: Code Review R2 — todos os 6 fixes validados e aprovados. 0 findings novos. Status → done.
 
 ### File List
 
