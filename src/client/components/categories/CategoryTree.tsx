@@ -44,6 +44,8 @@ interface Subcategory {
   id: string;
   name: string;
   categoryId: string;
+  defaultPaymentMethodType: string | null;
+  defaultPaymentMethodId: string | null;
   status: 'active' | 'archived';
 }
 
@@ -97,7 +99,12 @@ export function CategoryTree({
     defaultPaymentMethodId: string | null;
   } | null>(null);
   const [creatingSubcategoryForCategory, setCreatingSubcategoryForCategory] = useState<string | null>(null);
-  const [editingSubcategory, setEditingSubcategory] = useState<{ id: string; name: string } | null>(null);
+  const [editingSubcategory, setEditingSubcategory] = useState<{
+    id: string;
+    name: string;
+    defaultPaymentMethodType: string | null;
+    defaultPaymentMethodId: string | null;
+  } | null>(null);
 
   const refreshData = useCallback(() => {
     startTransition(async () => {
@@ -307,6 +314,8 @@ export function CategoryTree({
             <SubcategoryForm
               mode="create"
               categoryId={creatingSubcategoryForCategory}
+              bankAccounts={bankAccounts}
+              creditCards={creditCards}
               onSuccess={() => {
                 setCreatingSubcategoryForCategory(null);
                 refreshData();
@@ -327,6 +336,8 @@ export function CategoryTree({
             <SubcategoryForm
               mode="edit"
               defaultValues={editingSubcategory}
+              bankAccounts={bankAccounts}
+              creditCards={creditCards}
               onSuccess={() => {
                 setEditingSubcategory(null);
                 refreshData();
@@ -375,7 +386,12 @@ export function CategoryTree({
                     })
                   }
                   onAddSubcategory={(categoryId) => setCreatingSubcategoryForCategory(categoryId)}
-                  onEditSubcategory={(sub) => setEditingSubcategory({ id: sub.id, name: sub.name })}
+                  onEditSubcategory={(sub) => setEditingSubcategory({
+                      id: sub.id,
+                      name: sub.name,
+                      defaultPaymentMethodType: sub.defaultPaymentMethodType,
+                      defaultPaymentMethodId: sub.defaultPaymentMethodId,
+                    })}
                   onStatusChange={refreshData}
                 />
               ))}
@@ -418,7 +434,12 @@ export function CategoryTree({
                         })
                       }
                       onAddSubcategory={(categoryId) => setCreatingSubcategoryForCategory(categoryId)}
-                      onEditSubcategory={(sub) => setEditingSubcategory({ id: sub.id, name: sub.name })}
+                      onEditSubcategory={(sub) => setEditingSubcategory({
+                      id: sub.id,
+                      name: sub.name,
+                      defaultPaymentMethodType: sub.defaultPaymentMethodType,
+                      defaultPaymentMethodId: sub.defaultPaymentMethodId,
+                    })}
                       onStatusChange={refreshData}
                     />
                   ))}

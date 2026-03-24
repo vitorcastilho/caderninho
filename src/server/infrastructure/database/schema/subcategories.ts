@@ -10,6 +10,8 @@ export const subcategories = pgTable('subcategories', {
   categoryId: text('category_id')
     .notNull()
     .references(() => categories.id),
+  defaultPaymentMethodType: text('default_payment_method_type'),
+  defaultPaymentMethodId: text('default_payment_method_id'),
   status: text('status').notNull().default('active'),
   organizationId: text('organization_id')
     .notNull()

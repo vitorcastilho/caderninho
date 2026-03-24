@@ -21,6 +21,7 @@ import {
   DialogTrigger,
   DialogClose,
 } from '@/client/components/ui/dialog';
+import { BankLogo } from '@/client/components/ui/bank-logo';
 import { formatCurrency } from '@/client/utils/format-currency';
 import { archiveBankAccountAction, reactivateBankAccountAction } from '@/server/actions/bank-account.actions';
 
@@ -105,7 +106,10 @@ export function BankAccountCard({ account, onEdit, onStatusChange }: BankAccount
         </CardAction>
       </CardHeader>
       <CardContent>
-        <p className="text-xs text-muted-foreground">{account.bank}</p>
+        <div className="flex items-center gap-2">
+          <BankLogo bank={account.bank} size="sm" />
+          <p className="text-xs text-muted-foreground">{account.bank}</p>
+        </div>
         <p className="text-lg font-bold tabular-nums text-foreground mt-1">
           {formatCurrency(account.balanceCents)}
         </p>

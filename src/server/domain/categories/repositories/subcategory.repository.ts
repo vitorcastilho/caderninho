@@ -2,6 +2,8 @@ export type Subcategory = {
   id: string;
   name: string;
   categoryId: string;
+  defaultPaymentMethodType: string | null;
+  defaultPaymentMethodId: string | null;
   status: 'active' | 'archived';
   organizationId: string;
   createdAt: Date;
@@ -13,6 +15,8 @@ export interface SubcategoryRepository {
     id: string;
     name: string;
     categoryId: string;
+    defaultPaymentMethodType: string | null;
+    defaultPaymentMethodId: string | null;
     organizationId: string;
   }): Promise<Subcategory>;
 
@@ -37,7 +41,11 @@ export interface SubcategoryRepository {
   update(
     id: string,
     organizationId: string,
-    data: Partial<{ name: string }>,
+    data: Partial<{
+      name: string;
+      defaultPaymentMethodType: string | null;
+      defaultPaymentMethodId: string | null;
+    }>,
   ): Promise<Subcategory>;
 
   updateStatus(

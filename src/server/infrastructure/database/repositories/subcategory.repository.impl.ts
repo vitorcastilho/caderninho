@@ -12,6 +12,8 @@ export class DrizzleSubcategoryRepository implements SubcategoryRepository {
     id: string;
     name: string;
     categoryId: string;
+    defaultPaymentMethodType: string | null;
+    defaultPaymentMethodId: string | null;
     organizationId: string;
   }): Promise<Subcategory> {
     const [subcategory] = await db
@@ -86,7 +88,11 @@ export class DrizzleSubcategoryRepository implements SubcategoryRepository {
   async update(
     id: string,
     organizationId: string,
-    data: Partial<{ name: string }>,
+    data: Partial<{
+      name: string;
+      defaultPaymentMethodType: string | null;
+      defaultPaymentMethodId: string | null;
+    }>,
   ): Promise<Subcategory> {
     const [subcategory] = await db
       .update(subcategories)

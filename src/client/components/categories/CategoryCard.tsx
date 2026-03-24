@@ -41,6 +41,8 @@ interface Subcategory {
   id: string;
   name: string;
   categoryId: string;
+  defaultPaymentMethodType: string | null;
+  defaultPaymentMethodId: string | null;
   status: 'active' | 'archived';
 }
 
