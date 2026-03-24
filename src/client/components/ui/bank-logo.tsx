@@ -41,6 +41,11 @@ const BANK_MAP: Record<string, BankConfig> = {
 export function resolveBankIdentity(bankName: string): BankConfig {
   const lower = bankName.toLowerCase().trim();
 
+  // Empty string → fallback
+  if (!lower) {
+    return { color: 'hsl(var(--muted-foreground))', bgColor: 'hsl(var(--muted))', label: '?' };
+  }
+
   // Exact match first
   if (BANK_MAP[lower]) return BANK_MAP[lower];
 

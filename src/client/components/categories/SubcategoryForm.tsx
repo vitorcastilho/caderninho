@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/client/components/ui/select';
+import { BankLogo } from '@/client/components/ui/bank-logo';
 import { CreditCardBrandBadge } from '@/client/components/ui/credit-card-brand-badge';
 import {
   createSubcategoryAction,
@@ -82,10 +83,10 @@ export function SubcategoryForm({
   const activeBankAccounts = bankAccounts.filter((a) => a.status === 'active');
   const activeCreditCards = creditCards.filter((c) => c.status === 'active');
 
-  const instrumentOptions: { id: string; label: string; brand?: string }[] = paymentType === 'credit_card'
+  const instrumentOptions: { id: string; label: string; brand?: string; bank?: string }[] = paymentType === 'credit_card'
     ? activeCreditCards.map((c) => ({ id: c.id, label: c.name, brand: c.brand }))
     : paymentType === 'debit' || paymentType === 'pix'
-      ? activeBankAccounts.map((a) => ({ id: a.id, label: `${a.bank} - ${a.name}` }))
+      ? activeBankAccounts.map((a) => ({ id: a.id, label: `${a.bank} - ${a.name}`, bank: a.bank }))
       : [];
 
   function handleSubmit(e: React.FormEvent) {
@@ -194,6 +195,14 @@ export function SubcategoryForm({
                       </span>
                     );
                   }
+                  if (selected.bank) {
+                    return (
+                      <span className="inline-flex items-center gap-1.5">
+                        <BankLogo bank={selected.bank} size="sm" />
+                        {selected.label}
+                      </span>
+                    );
+                  }
                   return selected.label;
                 })()}
               </SelectValue>
@@ -204,6 +213,11 @@ export function SubcategoryForm({
                   {opt.brand ? (
                     <span className="inline-flex items-center gap-1.5">
                       <CreditCardBrandBadge brand={opt.brand} />
+                      {opt.label}
+                    </span>
+                  ) : opt.bank ? (
+                    <span className="inline-flex items-center gap-1.5">
+                      <BankLogo bank={opt.bank} size="sm" />
                       {opt.label}
                     </span>
                   ) : (

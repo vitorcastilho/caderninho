@@ -174,6 +174,13 @@ Esta story implementa 3 decisões de produto documentadas na retrospectiva do É
   - [x] 16.2: `npx next build` — build sem erros
   - [x] 16.3: Verificação visual das telas modificadas
 
+### Review Follow-ups (AI)
+
+- [x] [AI-Review][MEDIUM] Atualizar File List — adicionar 5 arquivos de teste modificados mas não documentados: `archive-subcategory.test.ts`, `get-subcategory.test.ts`, `list-subcategories.test.ts`, `reactivate-subcategory.test.ts`, `subcategory.repository.impl.test.ts` [_bmad-output/implementation-artifacts/2-5-1-decisoes-de-produto-e-ajustes-de-modelo.md:File List]
+- [x] [AI-Review][LOW] Corrigir `resolveBankIdentity` para retornar fallback quando `bankName` é string vazia (atualmente faz match falso com primeiro banco do BANK_MAP) [src/client/components/ui/bank-logo.tsx:49]
+- [x] [AI-Review][LOW] Adicionar indicação visual de override de payment method nas subcategorias da tree view (análogo ao badge da categoria) [src/client/components/categories/CategoryCard.tsx:269]
+- [x] [AI-Review][LOW] Usar BankLogo nos seletores de instrumento (debit/pix) do SubcategoryForm para consistência visual [src/client/components/categories/SubcategoryForm.tsx:88]
+
 ## Dev Notes
 
 ### Padrões a seguir (referências no código existente)
@@ -296,11 +303,17 @@ Nenhum problema encontrado durante a implementação.
 - ✅ Auditoria de labels: zero referências a "cartão de débito" — `PAYMENT_METHOD_TYPE_LABELS.debit` = "Débito"
 - ✅ 661 testes passando (97 arquivos), zero regressões
 - ✅ Build Next.js 16.1.6 sem erros
-- ✅ Testes expandidos: create-subcategory (11 testes), update-subcategory (9 testes), bank-logo (11 testes)
+- ✅ Testes expandidos: create-subcategory (11 testes), update-subcategory (9 testes), bank-logo (13 testes)
+- ✅ Resolved review finding [MEDIUM]: File List atualizada com 5 arquivos de teste faltantes
+- ✅ Resolved review finding [LOW]: resolveBankIdentity retorna fallback para string vazia/whitespace
+- ✅ Resolved review finding [LOW]: Indicação visual de override de payment method nas subcategorias da tree view
+- ✅ Resolved review finding [LOW]: BankLogo integrado nos seletores de instrumento (debit/pix) do SubcategoryForm
 
 ### Change Log
 
 - 2026-03-24: Implementação completa da Story 2.5.1 — override de payment method por subcategoria, componente BankLogo, integração nas telas existentes, auditoria de labels de débito
+- 2026-03-24: Code Review R1 — 0 CRITICAL, 0 HIGH, 1 MEDIUM (File List incompleta), 3 LOW (backlog). Todos os ACs implementados. 661 testes passando. Action items criados.
+- 2026-03-24: Addressed code review findings — 4 itens resolvidos (1 MEDIUM, 3 LOW). 663 testes passando. Build OK.
 
 ### File List
 
@@ -314,10 +327,15 @@ Nenhum problema encontrado durante a implementação.
 - `src/shared/schemas/subcategory.schema.ts`
 - `src/server/domain/categories/repositories/subcategory.repository.ts`
 - `src/server/infrastructure/database/repositories/subcategory.repository.impl.ts`
+- `src/server/infrastructure/database/repositories/subcategory.repository.impl.test.ts`
 - `src/server/domain/categories/use-cases/create-subcategory.ts`
 - `src/server/domain/categories/use-cases/create-subcategory.test.ts`
 - `src/server/domain/categories/use-cases/update-subcategory.ts`
 - `src/server/domain/categories/use-cases/update-subcategory.test.ts`
+- `src/server/domain/categories/use-cases/archive-subcategory.test.ts`
+- `src/server/domain/categories/use-cases/get-subcategory.test.ts`
+- `src/server/domain/categories/use-cases/list-subcategories.test.ts`
+- `src/server/domain/categories/use-cases/reactivate-subcategory.test.ts`
 - `src/server/factories/category.ts`
 - `src/server/actions/subcategory.actions.ts`
 - `src/client/components/categories/SubcategoryForm.tsx`

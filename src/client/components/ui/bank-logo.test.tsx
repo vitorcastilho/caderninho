@@ -37,6 +37,17 @@ describe('resolveBankIdentity', () => {
     const result = resolveBankIdentity('Desconhecido');
     expect(result.label).toBe('D');
   });
+
+  it('should return fallback for empty string', () => {
+    const result = resolveBankIdentity('');
+    expect(result.label).toBe('?');
+    expect(result.bgColor).toBe('hsl(var(--muted))');
+  });
+
+  it('should return fallback for whitespace-only string', () => {
+    const result = resolveBankIdentity('   ');
+    expect(result.label).toBe('?');
+  });
 });
 
 describe('BankLogo', () => {
