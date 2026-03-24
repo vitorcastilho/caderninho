@@ -2,8 +2,9 @@
 
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
+import { Pencil } from 'lucide-react';
 
-import { createCreditCardAction } from '@/server/actions/credit-card.actions';
+import { createCreditCardAction, updateCreditCardAction, archiveCreditCardAction } from '@/server/actions/credit-card.actions';
 import { centsToDisplayValue, displayValueToCents } from '@/client/utils/currency-input';
 import { CreditCardBrandBadge } from '@/client/components/ui/credit-card-brand-badge';
 import { Input } from '@/client/components/ui/input';
@@ -24,12 +25,14 @@ interface CreditCardsStepProps {
   onNext: () => void;
   onSkip: () => void;
   onCardAdded: (card: CreditCardItem) => void;
+  onCardRemoved: (cardId: string) => void;
 }
 
 const BRAND_OPTIONS = ['Visa', 'Mastercard', 'Elo', 'Amex', 'Hipercard'];
 
-export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded }: CreditCardsStepProps) {
+export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded, onCardRemoved }: CreditCardsStepProps) {
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [name, setName] = useState('');
   const [brand, setBrand] = useState('');
@@ -37,7 +40,40 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded }: 
   const [closingDay, setClosingDay] = useState('');
   const [dueDay, setDueDay] = useState('');
 
-  function handleAddCard(e: React.FormEvent) {
+  function resetForm() {
+    setName('');
+    setBrand('');
+    setLimitDisplay('0,00');
+    setClosingDay('');
+    setDueDay('');
+    setEditingId(null);
+    setShowForm(false);
+  }
+
+  function handleStartEdit(card: CreditCardItem) {
+    setEditingId(card.id);
+    setName(card.name);
+    setBrand(card.brand);
+    setLimitDisplay(centsToDisplayValue(card.limitCents));
+    setClosingDay(String(card.closingDay));
+    setDueDay(String(card.dueDay));
+    setShowForm(true);
+  }
+
+  function handleRemoveCard(id: string) {
+    startTransition(async () => {
+      const result = await archiveCreditCardAction({ id });
+      if (result.success) {
+        toast.success('Cartão removido.');
+        onCardRemoved(id);
+        resetForm();
+      } else {
+        toast.error(result.error.message);
+      }
+    });
+  }
+
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     const limitCents = displayValueToCents(limitDisplay);
@@ -50,28 +86,39 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded }: 
     }
 
     startTransition(async () => {
-      const result = await createCreditCardAction({
-        name,
-        brand,
-        limitCents,
-        closingDay: closingDayNum,
-        dueDay: dueDayNum,
-      });
-
-      if (result.success) {
-        toast.success('Cartão adicionado!');
-        onCardAdded(result.data as CreditCardItem);
-        setName('');
-        setBrand('');
-        setLimitDisplay('0,00');
-        setClosingDay('');
-        setDueDay('');
-        setShowForm(false);
+      if (editingId) {
+        const result = await updateCreditCardAction({
+          id: editingId,
+          data: { name, brand, limitCents, closingDay: closingDayNum, dueDay: dueDayNum },
+        });
+        if (result.success) {
+          toast.success('Cartão atualizado!');
+          onCardRemoved(editingId);
+          onCardAdded(result.data as CreditCardItem);
+          resetForm();
+        } else {
+          toast.error(result.error.message);
+        }
       } else {
-        toast.error(result.error.message);
+        const result = await createCreditCardAction({
+          name,
+          brand,
+          limitCents,
+          closingDay: closingDayNum,
+          dueDay: dueDayNum,
+        });
+        if (result.success) {
+          toast.success('Cartão adicionado!');
+          onCardAdded(result.data as CreditCardItem);
+          resetForm();
+        } else {
+          toast.error(result.error.message);
+        }
       }
     });
   }
+
+  const activeCards = existingCards.filter(c => c.status !== 'archived');
 
   return (
     <div className="flex flex-1 flex-col">
@@ -81,9 +128,9 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded }: 
       </p>
 
       {/* Lista de cartões */}
-      {existingCards.length > 0 && (
+      {activeCards.length > 0 && (
         <div className="flex flex-col gap-2 mb-3">
-          {existingCards.filter(c => c.status !== 'archived').map((card) => (
+          {activeCards.map((card) => (
             <div
               key={card.id}
               className="flex flex-col gap-1 rounded-md border border-stone-200 bg-stone-50 px-3 py-2.5 transition-colors hover:border-stone-300"
@@ -96,9 +143,15 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded }: 
                     Limite: R$ {centsToDisplayValue(card.limitCents)}
                   </div>
                 </div>
-                <span className="flex h-6 w-6 items-center justify-center rounded bg-green-50 text-xs text-green-800">
-                  ✓
-                </span>
+                <button
+                  type="button"
+                  onClick={() => handleStartEdit(card)}
+                  disabled={isPending}
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded text-stone-400 transition-colors hover:bg-stone-200 hover:text-stone-600 disabled:opacity-50"
+                  title="Editar cartão"
+                >
+                  <Pencil className="size-3.5" />
+                </button>
               </div>
               <div className="text-[11px] text-stone-400 pl-[36px]">
                 Fecha dia {card.closingDay} · Vence dia {card.dueDay}
@@ -108,10 +161,12 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded }: 
         </div>
       )}
 
-      {/* Formulário inline */}
+      {/* Formulário inline (criar ou editar) */}
       {showForm && (
-        <form onSubmit={handleAddCard} className="mb-3 rounded-md border border-indigo-200 bg-indigo-50 p-3">
-          <div className="text-xs font-semibold text-indigo-600 mb-2">Adicionar cartão</div>
+        <form onSubmit={handleSubmit} className="mb-3 rounded-md border border-indigo-200 bg-indigo-50 p-3">
+          <div className="text-xs font-semibold text-indigo-600 mb-2">
+            {editingId ? 'Editar cartão' : 'Adicionar cartão'}
+          </div>
           <div className="flex flex-col gap-2.5">
             <div className="flex flex-col gap-1">
               <Label htmlFor="onb-card-name" className="text-xs text-stone-500">Nome do cartão</Label>
@@ -184,9 +239,19 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded }: 
               </div>
             </div>
             <div className="flex gap-2">
+              {editingId && (
+                <button
+                  type="button"
+                  onClick={() => handleRemoveCard(editingId)}
+                  disabled={isPending}
+                  className="rounded-md px-3 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 disabled:opacity-50"
+                >
+                  Remover
+                </button>
+              )}
               <button
                 type="button"
-                onClick={() => setShowForm(false)}
+                onClick={resetForm}
                 className="flex-1 rounded-md px-3 py-1.5 text-xs font-medium text-stone-500 hover:text-stone-700"
               >
                 Cancelar
@@ -196,7 +261,7 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded }: 
                 disabled={isPending || !name.trim() || !brand || !closingDay || !dueDay}
                 className="flex-1 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
               >
-                {isPending ? 'Salvando...' : 'Adicionar'}
+                {isPending ? 'Salvando...' : editingId ? 'Salvar' : 'Adicionar'}
               </button>
             </div>
           </div>
@@ -205,7 +270,7 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded }: 
 
       {!showForm && (
         <button
-          onClick={() => setShowForm(true)}
+          onClick={() => { resetForm(); setShowForm(true); }}
           className="w-full rounded-md border border-dashed border-indigo-400 px-4 py-2.5 text-[13px] font-medium text-indigo-600 transition-colors hover:border-indigo-500 hover:bg-indigo-50"
         >
           + Adicionar cartão

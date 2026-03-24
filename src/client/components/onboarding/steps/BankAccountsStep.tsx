@@ -2,8 +2,9 @@
 
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
+import { Pencil } from 'lucide-react';
 
-import { createBankAccountAction } from '@/server/actions/bank-account.actions';
+import { createBankAccountAction, updateBankAccountAction, archiveBankAccountAction } from '@/server/actions/bank-account.actions';
 import { centsToDisplayValue, displayValueToCents } from '@/client/utils/currency-input';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
@@ -21,35 +22,76 @@ interface BankAccountsStepProps {
   onNext: () => void;
   onSkip: () => void;
   onAccountAdded: (account: BankAccountItem) => void;
+  onAccountRemoved: (accountId: string) => void;
 }
 
-export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAdded }: BankAccountsStepProps) {
+export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAdded, onAccountRemoved }: BankAccountsStepProps) {
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [name, setName] = useState('');
   const [bank, setBank] = useState('');
   const [balanceDisplay, setBalanceDisplay] = useState('0,00');
 
-  function handleAddAccount(e: React.FormEvent) {
-    e.preventDefault();
+  function resetForm() {
+    setName('');
+    setBank('');
+    setBalanceDisplay('0,00');
+    setEditingId(null);
+    setShowForm(false);
+  }
 
-    const balanceCents = displayValueToCents(balanceDisplay);
+  function handleStartEdit(account: BankAccountItem) {
+    setEditingId(account.id);
+    setName(account.name);
+    setBank(account.bank);
+    setBalanceDisplay(centsToDisplayValue(account.balanceCents));
+    setShowForm(true);
+  }
 
+  function handleRemoveAccount(id: string) {
     startTransition(async () => {
-      const result = await createBankAccountAction({ name, bank, balanceCents });
-
+      const result = await archiveBankAccountAction({ id });
       if (result.success) {
-        toast.success('Conta adicionada!');
-        onAccountAdded(result.data as BankAccountItem);
-        setName('');
-        setBank('');
-        setBalanceDisplay('0,00');
-        setShowForm(false);
+        toast.success('Conta removida.');
+        onAccountRemoved(id);
+        resetForm();
       } else {
         toast.error(result.error.message);
       }
     });
   }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const balanceCents = displayValueToCents(balanceDisplay);
+
+    startTransition(async () => {
+      if (editingId) {
+        const result = await updateBankAccountAction({ id: editingId, data: { name, bank, balanceCents } });
+        if (result.success) {
+          toast.success('Conta atualizada!');
+          // Remove a antiga e adiciona a atualizada
+          onAccountRemoved(editingId);
+          onAccountAdded(result.data as BankAccountItem);
+          resetForm();
+        } else {
+          toast.error(result.error.message);
+        }
+      } else {
+        const result = await createBankAccountAction({ name, bank, balanceCents });
+        if (result.success) {
+          toast.success('Conta adicionada!');
+          onAccountAdded(result.data as BankAccountItem);
+          resetForm();
+        } else {
+          toast.error(result.error.message);
+        }
+      }
+    });
+  }
+
+  const activeAccounts = existingAccounts.filter(a => a.status !== 'archived');
 
   return (
     <div className="flex flex-1 flex-col">
@@ -59,9 +101,9 @@ export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAd
       </p>
 
       {/* Lista de contas */}
-      {existingAccounts.length > 0 && (
+      {activeAccounts.length > 0 && (
         <div className="flex flex-col gap-2 mb-3">
-          {existingAccounts.filter(a => a.status !== 'archived').map((account) => (
+          {activeAccounts.map((account) => (
             <div
               key={account.id}
               className="flex items-center gap-2.5 rounded-md border border-stone-200 bg-stone-50 px-3 py-2.5 transition-colors hover:border-stone-300"
@@ -75,18 +117,26 @@ export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAd
                   Saldo: R$ {centsToDisplayValue(account.balanceCents)}
                 </div>
               </div>
-              <span className="flex h-6 w-6 items-center justify-center rounded bg-green-50 text-xs text-green-800">
-                ✓
-              </span>
+              <button
+                type="button"
+                onClick={() => handleStartEdit(account)}
+                disabled={isPending}
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded text-stone-400 transition-colors hover:bg-stone-200 hover:text-stone-600 disabled:opacity-50"
+                title="Editar conta"
+              >
+                <Pencil className="size-3.5" />
+              </button>
             </div>
           ))}
         </div>
       )}
 
-      {/* Formulário inline */}
+      {/* Formulário inline (criar ou editar) */}
       {showForm && (
-        <form onSubmit={handleAddAccount} className="mb-3 rounded-md border border-indigo-200 bg-indigo-50 p-3">
-          <div className="text-xs font-semibold text-indigo-600 mb-2">Adicionar conta</div>
+        <form onSubmit={handleSubmit} className="mb-3 rounded-md border border-indigo-200 bg-indigo-50 p-3">
+          <div className="text-xs font-semibold text-indigo-600 mb-2">
+            {editingId ? 'Editar conta' : 'Adicionar conta'}
+          </div>
           <div className="flex flex-col gap-2.5">
             <div className="flex flex-col gap-1">
               <Label htmlFor="onb-bank-name" className="text-xs text-stone-500">Nome do banco</Label>
@@ -124,9 +174,19 @@ export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAd
               />
             </div>
             <div className="flex gap-2">
+              {editingId && (
+                <button
+                  type="button"
+                  onClick={() => handleRemoveAccount(editingId)}
+                  disabled={isPending}
+                  className="rounded-md px-3 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 disabled:opacity-50"
+                >
+                  Remover
+                </button>
+              )}
               <button
                 type="button"
-                onClick={() => setShowForm(false)}
+                onClick={resetForm}
                 className="flex-1 rounded-md px-3 py-1.5 text-xs font-medium text-stone-500 hover:text-stone-700"
               >
                 Cancelar
@@ -136,7 +196,7 @@ export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAd
                 disabled={isPending || !name.trim() || !bank.trim()}
                 className="flex-1 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
               >
-                {isPending ? 'Salvando...' : 'Adicionar'}
+                {isPending ? 'Salvando...' : editingId ? 'Salvar' : 'Adicionar'}
               </button>
             </div>
           </div>
@@ -146,7 +206,7 @@ export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAd
       {/* Botão adicionar */}
       {!showForm && (
         <button
-          onClick={() => setShowForm(true)}
+          onClick={() => { resetForm(); setShowForm(true); }}
           className="w-full rounded-md border border-dashed border-indigo-400 px-4 py-2.5 text-[13px] font-medium text-indigo-600 transition-colors hover:border-indigo-500 hover:bg-indigo-50"
         >
           + Adicionar conta

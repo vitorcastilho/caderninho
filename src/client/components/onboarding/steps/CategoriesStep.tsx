@@ -2,12 +2,14 @@
 
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
+import { Pencil } from 'lucide-react';
 
 import { createCategoryAction } from '@/server/actions/category.actions';
 import { ONBOARDING_CATEGORY_SUGGESTIONS } from '@/shared/constants/onboarding-suggestions';
 import { centsToDisplayValue, displayValueToCents } from '@/client/utils/currency-input';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
+import { EmojiPicker } from '@/client/components/ui/emoji-picker';
 
 interface Classification {
   id: string;
@@ -21,12 +23,6 @@ interface CategorySuggestion {
   emoji: string;
   enabled: boolean;
 }
-
-const EMOJI_OPTIONS = [
-  '🛒', '🏠', '⛽', '📱', '🎓', '🍕',
-  '🚗', '👕', '💊', '🐶', '🎮', '✈️',
-  '💇', '🎬', '📦', '💰', '🏋️', '☕',
-];
 
 interface CreatedCategory {
   id: string;
@@ -50,6 +46,7 @@ export function CategoriesStep({
 }: CategoriesStepProps) {
   const [isPending, startTransition] = useTransition();
   const [showForm, setShowForm] = useState(false);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [newName, setNewName] = useState('');
   const [newClassification, setNewClassification] = useState('');
   const [newBudgetDisplay, setNewBudgetDisplay] = useState('0,00');
@@ -59,13 +56,33 @@ export function CategoriesStep({
   const [suggestions, setSuggestions] = useState<CategorySuggestion[]>(() =>
     ONBOARDING_CATEGORY_SUGGESTIONS.map((s) => ({
       ...s,
-      // Desabilitar se já existe categoria com mesmo nome
       enabled: !existingCategories.some(
         (c) => c.name.toLowerCase() === s.name.toLowerCase(),
       ),
       budgetCents: s.budgetCents,
     })),
   );
+
+  function resetForm() {
+    setNewName('');
+    setNewClassification('');
+    setNewBudgetDisplay('0,00');
+    setNewEmoji('📂');
+    setEditingIndex(null);
+    setShowForm(false);
+  }
+
+  function handleStartEdit(index: number) {
+    const s = suggestions[index];
+    setEditingIndex(index);
+    setNewName(s.name);
+    setNewEmoji(s.emoji);
+    setNewBudgetDisplay(centsToDisplayValue(s.budgetCents));
+    // Encontrar o id da classificação pelo nome
+    const classification = classifications.find((c) => c.name === s.classificationName);
+    setNewClassification(classification?.id ?? '');
+    setShowForm(true);
+  }
 
   function handleBudgetChange(index: number, value: string) {
     const digits = value.replace(/\D/g, '');
@@ -81,27 +98,40 @@ export function CategoriesStep({
     );
   }
 
-  function handleAddCustomCategory() {
+  function handleRemoveSuggestion(index: number) {
+    setSuggestions((prev) => prev.filter((_, i) => i !== index));
+    resetForm();
+  }
+
+  function handleSaveCategory() {
     const budgetCents = displayValueToCents(newBudgetDisplay);
     const classificationName = classifications.find((c) => c.id === newClassification)?.name;
     if (!classificationName) return;
 
-    setSuggestions((prev) => [
-      ...prev,
-      {
-        name: newName.trim(),
-        classificationName,
-        budgetCents,
-        emoji: newEmoji,
-        enabled: true,
-      },
-    ]);
+    if (editingIndex !== null) {
+      // Atualizar sugestão existente
+      setSuggestions((prev) =>
+        prev.map((s, i) =>
+          i === editingIndex
+            ? { ...s, name: newName.trim(), classificationName, budgetCents, emoji: newEmoji }
+            : s,
+        ),
+      );
+    } else {
+      // Adicionar nova
+      setSuggestions((prev) => [
+        ...prev,
+        {
+          name: newName.trim(),
+          classificationName,
+          budgetCents,
+          emoji: newEmoji,
+          enabled: true,
+        },
+      ]);
+    }
 
-    setNewName('');
-    setNewClassification('');
-    setNewBudgetDisplay('0,00');
-    setNewEmoji('📂');
-    setShowForm(false);
+    resetForm();
   }
 
   function handleCreateCategories() {
@@ -225,8 +255,19 @@ export function CategoriesStep({
                     {!existsAlready && (
                       <button
                         type="button"
+                        onClick={() => handleStartEdit(suggestion.index)}
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded text-stone-400 transition-colors hover:bg-stone-200 hover:text-stone-600"
+                        title="Editar categoria"
+                      >
+                        <Pencil className="size-3.5" />
+                      </button>
+                    )}
+
+                    {!existsAlready && (
+                      <button
+                        type="button"
                         onClick={() => toggleSuggestion(suggestion.index)}
-                        className={`ml-1 flex h-5 w-5 shrink-0 items-center justify-center rounded text-[10px] transition-colors ${
+                        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded text-[10px] transition-colors ${
                           suggestion.enabled
                             ? 'bg-green-50 text-green-800'
                             : 'bg-stone-100 text-stone-400 hover:bg-red-50 hover:text-red-500'
@@ -243,38 +284,27 @@ export function CategoriesStep({
         ))}
       </div>
 
-      {/* Formulário inline para adicionar categoria */}
+      {/* Formulário inline (adicionar ou editar) */}
       {showForm && (
         <div className="mb-3 rounded-md border border-indigo-200 bg-indigo-50 p-3">
-          <div className="text-xs font-semibold text-indigo-600 mb-2">Adicionar categoria</div>
+          <div className="text-xs font-semibold text-indigo-600 mb-2">
+            {editingIndex !== null ? 'Editar categoria' : 'Adicionar categoria'}
+          </div>
           <div className="flex flex-col gap-2.5">
-            <div className="flex flex-col gap-1">
-              <Label htmlFor="onb-cat-name" className="text-xs text-stone-500">Nome da categoria</Label>
-              <Input
-                id="onb-cat-name"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                placeholder="Ex: Transporte"
-                className="h-8 text-sm"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <Label className="text-xs text-stone-500">Ícone</Label>
-              <div className="flex flex-wrap gap-1">
-                {EMOJI_OPTIONS.map((emoji) => (
-                  <button
-                    key={emoji}
-                    type="button"
-                    onClick={() => setNewEmoji(emoji)}
-                    className={`flex h-8 w-8 items-center justify-center rounded text-base transition-colors ${
-                      newEmoji === emoji
-                        ? 'bg-indigo-200 ring-1 ring-indigo-400'
-                        : 'bg-white hover:bg-stone-100'
-                    }`}
-                  >
-                    {emoji}
-                  </button>
-                ))}
+            <div className="flex gap-2">
+              <div className="flex flex-col gap-1">
+                <Label className="text-xs text-stone-500">Ícone</Label>
+                <EmojiPicker value={newEmoji} onChange={setNewEmoji} />
+              </div>
+              <div className="flex flex-1 flex-col gap-1">
+                <Label htmlFor="onb-cat-name" className="text-xs text-stone-500">Nome da categoria</Label>
+                <Input
+                  id="onb-cat-name"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  placeholder="Ex: Transporte"
+                  className="h-10 text-sm"
+                />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -308,20 +338,29 @@ export function CategoriesStep({
               </div>
             </div>
             <div className="flex gap-2">
+              {editingIndex !== null && (
+                <button
+                  type="button"
+                  onClick={() => handleRemoveSuggestion(editingIndex)}
+                  className="rounded-md px-3 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50"
+                >
+                  Remover
+                </button>
+              )}
               <button
                 type="button"
-                onClick={() => setShowForm(false)}
+                onClick={resetForm}
                 className="flex-1 rounded-md px-3 py-1.5 text-xs font-medium text-stone-500 hover:text-stone-700"
               >
                 Cancelar
               </button>
               <button
                 type="button"
-                onClick={handleAddCustomCategory}
+                onClick={handleSaveCategory}
                 disabled={!newName.trim() || !newClassification}
                 className="flex-1 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
               >
-                Adicionar
+                {editingIndex !== null ? 'Salvar' : 'Adicionar'}
               </button>
             </div>
           </div>
@@ -331,7 +370,7 @@ export function CategoriesStep({
       {/* Botão adicionar categoria */}
       {!showForm && (
         <button
-          onClick={() => setShowForm(true)}
+          onClick={() => { resetForm(); setShowForm(true); }}
           className="w-full rounded-md border border-dashed border-indigo-400 px-4 py-2.5 text-[13px] font-medium text-indigo-600 transition-colors hover:border-indigo-500 hover:bg-indigo-50"
         >
           + Adicionar categoria

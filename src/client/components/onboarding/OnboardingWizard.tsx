@@ -69,8 +69,16 @@ export function OnboardingWizard({
     setAccounts((prev) => [...prev, account]);
   }
 
+  function handleAccountRemoved(accountId: string) {
+    setAccounts((prev) => prev.filter((a) => a.id !== accountId));
+  }
+
   function handleCardAdded(card: CreditCardData) {
     setCards((prev) => [...prev, card]);
+  }
+
+  function handleCardRemoved(cardId: string) {
+    setCards((prev) => prev.filter((c) => c.id !== cardId));
   }
 
   function handleCategoriesCreated(createdCategories: CategoryData[]) {
@@ -107,6 +115,7 @@ export function OnboardingWizard({
               onNext={goNext}
               onSkip={goNext}
               onAccountAdded={handleAccountAdded}
+              onAccountRemoved={handleAccountRemoved}
             />
           )}
 
@@ -116,6 +125,7 @@ export function OnboardingWizard({
               onNext={goNext}
               onSkip={goNext}
               onCardAdded={handleCardAdded}
+              onCardRemoved={handleCardRemoved}
             />
           )}
 

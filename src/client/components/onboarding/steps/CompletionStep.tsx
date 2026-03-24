@@ -100,12 +100,6 @@ export function CompletionStep({
         >
           {isPending ? 'Finalizando...' : 'Ir para o Dashboard'}
         </button>
-        <button
-          disabled
-          className="w-full rounded-md bg-indigo-50 px-6 py-3 text-sm font-semibold text-indigo-600 border border-transparent transition-colors hover:bg-indigo-100 hover:border-indigo-600 disabled:opacity-50"
-        >
-          Convidar alguém
-        </button>
       </div>
     </div>
   );

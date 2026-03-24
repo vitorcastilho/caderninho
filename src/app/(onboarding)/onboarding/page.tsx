@@ -4,7 +4,7 @@ import { checkOnboardingStatusAction } from '@/server/actions/onboarding.actions
 import { listBankAccountsAction } from '@/server/actions/bank-account.actions';
 import { listCreditCardsAction } from '@/server/actions/credit-card.actions';
 import { listCategoriesAction } from '@/server/actions/category.actions';
-import { listClassificationsAction } from '@/server/actions/classification.actions';
+import { listClassificationsAction, seedDefaultClassificationsAction } from '@/server/actions/classification.actions';
 import { OnboardingWizard } from '@/client/components/onboarding/OnboardingWizard';
 
 export default async function OnboardingPage() {
@@ -13,6 +13,9 @@ export default async function OnboardingPage() {
   if (onboardingResult.success && onboardingResult.data.completed) {
     redirect('/dashboard');
   }
+
+  // Garantir que classificações padrão existam antes de listar
+  await seedDefaultClassificationsAction(null);
 
   // Carregar dados existentes (para retomada de progresso)
   const [accountsResult, cardsResult, categoriesResult, classificationsResult] = await Promise.all([
