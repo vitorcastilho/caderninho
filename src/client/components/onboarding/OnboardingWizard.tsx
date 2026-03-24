@@ -14,6 +14,7 @@ interface BankAccountData {
   name: string;
   bank: string;
   balanceCents: number;
+  status: string;
 }
 
 interface CreditCardData {
@@ -23,6 +24,7 @@ interface CreditCardData {
   limitCents: number;
   closingDay: number;
   dueDay: number;
+  status: string;
 }
 
 interface CategoryData {
@@ -71,20 +73,13 @@ export function OnboardingWizard({
     setCards((prev) => [...prev, card]);
   }
 
-  function handleCategoriesCreated(count: number) {
-    // Atualizar contagem de categorias (não temos os dados completos, mas podemos incrementar)
-    setCategories((prev) => [
-      ...prev,
-      ...Array.from({ length: count }, (_, i) => ({
-        id: `new-${Date.now()}-${i}`,
-        name: `Categoria ${prev.length + i + 1}`,
-      })),
-    ]);
+  function handleCategoriesCreated(createdCategories: CategoryData[]) {
+    setCategories((prev) => [...prev, ...createdCategories]);
   }
 
   // Calcular totais para o step de completion
-  const activeAccounts = accounts.filter(a => (a as BankAccountData & { status?: string }).status !== 'archived');
-  const activeCards = cards.filter(c => (c as CreditCardData & { status?: string }).status !== 'archived');
+  const activeAccounts = accounts.filter(a => a.status !== 'archived');
+  const activeCards = cards.filter(c => c.status !== 'archived');
   const totalBalanceCents = activeAccounts.reduce((sum, a) => sum + a.balanceCents, 0);
 
   return (

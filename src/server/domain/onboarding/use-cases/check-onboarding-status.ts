@@ -12,7 +12,7 @@ export async function checkOnboardingStatus(
 ): Promise<Result<{ completed: boolean }>> {
   const completed = await deps.repository.getOnboardingStatus(params.organizationId);
 
-  if (completed === undefined || completed === null) {
+  if (completed === null) {
     return err('ORGANIZATION_NOT_FOUND', 'Organização não encontrada.');
   }
 

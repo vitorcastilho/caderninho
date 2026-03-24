@@ -16,6 +16,7 @@ interface CreditCardItem {
   limitCents: number;
   closingDay: number;
   dueDay: number;
+  status: string;
 }
 
 interface CreditCardsStepProps {
@@ -42,6 +43,11 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded }: 
     const limitCents = displayValueToCents(limitDisplay);
     const closingDayNum = parseInt(closingDay || '0', 10);
     const dueDayNum = parseInt(dueDay || '0', 10);
+
+    if (closingDayNum < 1 || closingDayNum > 31 || dueDayNum < 1 || dueDayNum > 31) {
+      toast.error('Dia de fechamento e vencimento devem ser entre 1 e 31.');
+      return;
+    }
 
     startTransition(async () => {
       const result = await createCreditCardAction({
@@ -77,7 +83,7 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded }: 
       {/* Lista de cartões */}
       {existingCards.length > 0 && (
         <div className="flex flex-col gap-2 mb-3">
-          {existingCards.filter(c => (c as CreditCardItem & { status?: string }).status !== 'archived').map((card) => (
+          {existingCards.filter(c => c.status !== 'archived').map((card) => (
             <div
               key={card.id}
               className="flex flex-col gap-1 rounded-md border border-stone-200 bg-stone-50 px-3 py-2.5 transition-colors hover:border-stone-300"
@@ -187,7 +193,7 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded }: 
               </button>
               <button
                 type="submit"
-                disabled={isPending || !name.trim() || !brand}
+                disabled={isPending || !name.trim() || !brand || !closingDay || !dueDay}
                 className="flex-1 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
               >
                 {isPending ? 'Salvando...' : 'Adicionar'}

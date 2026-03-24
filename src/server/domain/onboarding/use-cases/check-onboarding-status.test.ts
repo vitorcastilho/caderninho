@@ -41,4 +41,18 @@ describe('checkOnboardingStatus', () => {
       expect(result.data.completed).toBe(true);
     }
   });
+
+  it('should return ORGANIZATION_NOT_FOUND when org does not exist', async () => {
+    vi.mocked(mockRepository.getOnboardingStatus).mockResolvedValue(null);
+
+    const result = await checkOnboardingStatus(
+      { repository: mockRepository },
+      { organizationId: 'non-existent-org' },
+    );
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.code).toBe('ORGANIZATION_NOT_FOUND');
+    }
+  });
 });

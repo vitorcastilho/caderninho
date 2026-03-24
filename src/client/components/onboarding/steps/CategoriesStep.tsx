@@ -22,12 +22,23 @@ interface CategorySuggestion {
   enabled: boolean;
 }
 
+const EMOJI_OPTIONS = [
+  '🛒', '🏠', '⛽', '📱', '🎓', '🍕',
+  '🚗', '👕', '💊', '🐶', '🎮', '✈️',
+  '💇', '🎬', '📦', '💰', '🏋️', '☕',
+];
+
+interface CreatedCategory {
+  id: string;
+  name: string;
+}
+
 interface CategoriesStepProps {
   classifications: Classification[];
   existingCategories: { id: string; name: string }[];
   onNext: () => void;
   onSkip: () => void;
-  onCategoriesCreated: (count: number) => void;
+  onCategoriesCreated: (categories: CreatedCategory[]) => void;
 }
 
 export function CategoriesStep({
@@ -101,33 +112,45 @@ export function CategoriesStep({
     }
 
     startTransition(async () => {
-      let createdCount = 0;
+      const results = await Promise.all(
+        enabledSuggestions.map((suggestion) => {
+          const classification = classifications.find(
+            (c) => c.name === suggestion.classificationName,
+          );
+          if (!classification) return Promise.resolve(null);
 
-      for (const suggestion of enabledSuggestions) {
-        // Encontrar classification ID pelo nome
-        const classification = classifications.find(
-          (c) => c.name === suggestion.classificationName,
-        );
-        if (!classification) continue;
+          return createCategoryAction({
+            name: suggestion.name,
+            classificationId: classification.id,
+            budgetMinCents: suggestion.budgetCents,
+            budgetMaxCents: null,
+            defaultPaymentMethodType: null,
+            defaultPaymentMethodId: null,
+          });
+        }),
+      );
 
-        const result = await createCategoryAction({
-          name: suggestion.name,
-          classificationId: classification.id,
-          budgetMinCents: suggestion.budgetCents,
-          budgetMaxCents: null,
-          defaultPaymentMethodType: null,
-          defaultPaymentMethodId: null,
-        });
+      const created: CreatedCategory[] = [];
+      let failedCount = 0;
 
+      for (const result of results) {
+        if (!result) continue;
         if (result.success) {
-          createdCount++;
+          created.push({ id: result.data.id, name: result.data.name });
+        } else {
+          failedCount++;
         }
       }
 
-      if (createdCount > 0) {
-        toast.success(`${createdCount} categorias criadas!`);
-        onCategoriesCreated(createdCount);
+      if (created.length > 0) {
+        toast.success(`${created.length} categorias criadas!`);
+        onCategoriesCreated(created);
       }
+
+      if (failedCount > 0) {
+        toast.error(`${failedCount} categoria(s) não puderam ser criadas.`);
+      }
+
       onNext();
     });
   }
@@ -225,26 +248,33 @@ export function CategoriesStep({
         <div className="mb-3 rounded-md border border-indigo-200 bg-indigo-50 p-3">
           <div className="text-xs font-semibold text-indigo-600 mb-2">Adicionar categoria</div>
           <div className="flex flex-col gap-2.5">
-            <div className="grid grid-cols-[auto_1fr] gap-2">
-              <div className="flex flex-col gap-1">
-                <Label htmlFor="onb-cat-emoji" className="text-xs text-stone-500">Emoji</Label>
-                <Input
-                  id="onb-cat-emoji"
-                  value={newEmoji}
-                  onChange={(e) => setNewEmoji(e.target.value)}
-                  className="h-8 w-14 text-center text-sm"
-                  maxLength={2}
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <Label htmlFor="onb-cat-name" className="text-xs text-stone-500">Nome da categoria</Label>
-                <Input
-                  id="onb-cat-name"
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                  placeholder="Ex: Transporte"
-                  className="h-8 text-sm"
-                />
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="onb-cat-name" className="text-xs text-stone-500">Nome da categoria</Label>
+              <Input
+                id="onb-cat-name"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder="Ex: Transporte"
+                className="h-8 text-sm"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label className="text-xs text-stone-500">Ícone</Label>
+              <div className="flex flex-wrap gap-1">
+                {EMOJI_OPTIONS.map((emoji) => (
+                  <button
+                    key={emoji}
+                    type="button"
+                    onClick={() => setNewEmoji(emoji)}
+                    className={`flex h-8 w-8 items-center justify-center rounded text-base transition-colors ${
+                      newEmoji === emoji
+                        ? 'bg-indigo-200 ring-1 ring-indigo-400'
+                        : 'bg-white hover:bg-stone-100'
+                    }`}
+                  >
+                    {emoji}
+                  </button>
+                ))}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-2">

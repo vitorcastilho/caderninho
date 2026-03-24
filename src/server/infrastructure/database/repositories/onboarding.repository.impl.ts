@@ -5,14 +5,14 @@ import { organizations } from '@/server/infrastructure/database/schema';
 import type { OnboardingRepository } from '@/server/domain/onboarding/repositories/onboarding.repository';
 
 export class DrizzleOnboardingRepository implements OnboardingRepository {
-  async getOnboardingStatus(organizationId: string): Promise<boolean> {
+  async getOnboardingStatus(organizationId: string): Promise<boolean | null> {
     const results = await db
       .select({ hasCompletedOnboarding: organizations.hasCompletedOnboarding })
       .from(organizations)
       .where(eq(organizations.id, organizationId));
 
     if (results.length === 0) {
-      return false;
+      return null;
     }
 
     return results[0].hasCompletedOnboarding;

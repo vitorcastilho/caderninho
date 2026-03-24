@@ -13,6 +13,7 @@ interface BankAccountItem {
   name: string;
   bank: string;
   balanceCents: number;
+  status: string;
 }
 
 interface BankAccountsStepProps {
@@ -60,7 +61,7 @@ export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAd
       {/* Lista de contas */}
       {existingAccounts.length > 0 && (
         <div className="flex flex-col gap-2 mb-3">
-          {existingAccounts.filter(a => (a as BankAccountItem & { status?: string }).status !== 'archived').map((account) => (
+          {existingAccounts.filter(a => a.status !== 'archived').map((account) => (
             <div
               key={account.id}
               className="flex items-center gap-2.5 rounded-md border border-stone-200 bg-stone-50 px-3 py-2.5 transition-colors hover:border-stone-300"

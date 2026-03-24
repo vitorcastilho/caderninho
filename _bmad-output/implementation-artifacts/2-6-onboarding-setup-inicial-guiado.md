@@ -95,7 +95,7 @@ So that I can configure bank accounts, credit cards, categories and budgets quic
   - [x]7.3 Se `completed === true`, continua normalmente (dashboard)
 
 - [x] Task 8: Criar rota `/onboarding` (AC: #4-#8)
-  - [x]8.1 Criar `src/app/(app)/onboarding/page.tsx` — Server Component que carrega dados iniciais (classificações, contas existentes, cartões existentes, categorias existentes)
+  - [x]8.1 Criar `src/app/(onboarding)/onboarding/page.tsx` — Server Component que carrega dados iniciais (classificações, contas existentes, cartões existentes, categorias existentes)
   - [x]8.2 Criar `src/app/(app)/onboarding/loading.tsx` — skeleton
 
 ### Módulo: UI — Componente Wizard
@@ -157,6 +157,16 @@ So that I can configure bank accounts, credit cards, categories and budgets quic
   - [x]16.5 Retomada de onboarding funcional (fechar e voltar)
   - [x]16.6 Redirect correto (primeiro acesso → onboarding, acesso subsequente → dashboard)
   - [x]16.7 Validar visualmente contra `proto-08-onboarding.html`
+
+### Review Follow-ups (AI)
+
+- [x] [AI-Review][HIGH] Contrato repository/use-case quebrado: `ORGANIZATION_NOT_FOUND` é dead code. Repository retorna `boolean` mas use cases checam `null`/`undefined`. Fix: interface deve retornar `boolean | null`, repo deve retornar `null` quando org não existe, testes devem cobrir esse cenário. [check-onboarding-status.ts:14-17, complete-onboarding.ts:17-19, onboarding.repository.impl.ts:14-15]
+- [x] [AI-Review][MEDIUM] Criação sequencial de categorias (N+1 server calls). Usar `Promise.all` ao invés de `for...of` com await sequencial. [CategoriesStep.tsx:112-131]
+- [x] [AI-Review][MEDIUM] Falhas parciais silenciosas na criação de categorias. Se algumas falharem, o wizard avança sem informar o usuário. Adicionar feedback de erros parciais. [CategoriesStep.tsx:128-138]
+- [x] [AI-Review][MEDIUM] Type assertion hack para filtrar status. Adicionar `status: string` nas interfaces `BankAccountData` e `CreditCardData` do OnboardingWizard. [OnboardingWizard.tsx:86-87]
+- [x] [AI-Review][MEDIUM] `handleCategoriesCreated` cria dados fictícios com IDs e nomes falsos. Receber os dados reais do server ao invés de placeholders. [OnboardingWizard.tsx:74-83]
+- [x] [AI-Review][LOW] CreditCardsStep não valida range de closingDay/dueDay no client antes do submit. [CreditCardsStep.tsx:43-44]
+- [x] [AI-Review][LOW] Task 8.1 documenta rota `(app)` mas implementação está em `(onboarding)`. Atualizar descrição da task. [Story file]
 
 ## Dev Notes
 
@@ -437,6 +447,13 @@ Nenhum issue de debug encontrado.
 
 ### Completion Notes List
 
+- ✅ Resolved review finding [HIGH]: Contrato repository/use-case corrigido — interface retorna `boolean | null`, repo retorna `null` quando org não existe, use cases checam `null` (sem `undefined`), 2 testes novos para cenário org não encontrada
+- ✅ Resolved review finding [MEDIUM]: Criação de categorias agora usa `Promise.all` em paralelo em vez de `for...of` sequencial
+- ✅ Resolved review finding [MEDIUM]: Falhas parciais na criação de categorias agora exibem toast.error com contagem de categorias que falharam
+- ✅ Resolved review finding [MEDIUM]: Type assertion hack removido — `status: string` adicionado às interfaces `BankAccountData`, `CreditCardData` (OnboardingWizard) e `BankAccountItem`, `CreditCardItem` (steps)
+- ✅ Resolved review finding [MEDIUM]: `handleCategoriesCreated` agora recebe `CreatedCategory[]` com dados reais retornados pelo server (id + name)
+- ✅ Resolved review finding [LOW]: CreditCardsStep agora valida closingDay/dueDay entre 1-31 no client antes do submit, botão desabilitado se campos vazios
+- ✅ Resolved review finding [LOW]: Task 8.1 atualizada para refletir rota `(onboarding)` em vez de `(app)`
 - Campo `has_completed_onboarding` adicionado na tabela `organizations` via migration Drizzle (0010)
 - Domain layer criado: use cases `checkOnboardingStatus` e `completeOnboarding` com Result Pattern e DI via deps
 - 5 testes unitários para use cases (2 para check, 3 para complete) — todos passando
@@ -492,3 +509,5 @@ Nenhum issue de debug encontrado.
 ## Change Log
 
 - 2026-03-23: Implementação completa da Story 2.6 — Onboarding setup inicial guiado. Wizard de 5 etapas com detecção de primeiro acesso, persistência via server actions existentes, retomada de progresso e categorias sugeridas.
+- 2026-03-23: Code Review R1 — 1 HIGH, 4 MEDIUM, 2 LOW findings. Action items criados. Status → in-progress para dev fixar.
+- 2026-03-23: Todos os 7 review follow-ups resolvidos (1 HIGH, 4 MEDIUM, 2 LOW). Contrato repository/use-case alinhado, criação paralela de categorias com feedback de falhas, type assertions removidos, dados reais nos callbacks, validação client-side de dias. 637 testes passando, 0 regressões.

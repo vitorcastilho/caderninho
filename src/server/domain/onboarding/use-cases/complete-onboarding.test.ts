@@ -64,4 +64,20 @@ describe('completeOnboarding', () => {
     }
     expect(mockRepository.completeOnboarding).not.toHaveBeenCalled();
   });
+
+  it('should return ORGANIZATION_NOT_FOUND when org does not exist', async () => {
+    vi.mocked(mockRepository.getOnboardingStatus).mockResolvedValue(null);
+
+    const result = await completeOnboarding(
+      { repository: mockRepository, auditLogger: mockAuditLogger },
+      { organizationId: 'non-existent-org', userId: 'user-1' },
+    );
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.code).toBe('ORGANIZATION_NOT_FOUND');
+    }
+    expect(mockRepository.completeOnboarding).not.toHaveBeenCalled();
+    expect(mockAuditLogger).not.toHaveBeenCalled();
+  });
 });
