@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, unique } from 'drizzle-orm/pg-core';
+import { pgTable, text, boolean, timestamp, unique } from 'drizzle-orm/pg-core';
 
 import { users } from './auth';
 
@@ -8,6 +8,7 @@ export const organizations = pgTable('organizations', {
   slug: text('slug').unique(),
   logo: text('logo'),
   metadata: text('metadata'),
+  hasCompletedOnboarding: boolean('has_completed_onboarding').notNull().default(false),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
