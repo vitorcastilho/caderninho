@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Protótipo 12a — Cartões | Caderninho</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Design Tokens ── */
+    :root {
+      --bg: #FAFAF9;
+      --surface: #FFFFFF;
+      --border: #E7E5E4;
+      --border-hover: #D6D3D1;
+      --text-primary: #1C1917;
+      --text-secondary: #78716C;
+      --text-tertiary: #A8A29E;
+      --primary: #4F46E5;
+      --primary-hover: #4338CA;
+      --primary-light: #EEF2FF;
+      --primary-fg: #FFFFFF;
+      --positive: #22C55E;
+      --positive-bg: #DCFCE7;
+      --positive-text: #166534;
+      --attention: #EAB308;
+      --attention-bg: #FEF9C3;
+      --attention-text: #854D0E;
+      --alert: #F97316;
+      --alert-bg: #FFF7ED;
+      --critical: #DC2626;
+      --critical-bg: #FEE2E2;
+      --critical-text: #991B1B;
+      --radius-card: 12px;
+      --radius-button: 8px;
+      --radius-input: 8px;
+      --radius-badge: 100px;
+      --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+      --shadow-card-lg: 0 2px 6px rgba(0,0,0,.06), 0 8px 32px rgba(0,0,0,.06);
+      --shadow-card-hover: 0 2px 6px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.06);
+      --transition: 150ms ease;
+      --sidebar-width: 220px;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
+    }
+
+    /* ── Tabular Nums (seletivo) ── */
+    .metric-value,
+    .summary-value,
+    .cc-list-available,
+    .cc-list-limit-total,
+    .cc-list-fatura-value,
+    .m-summary-value,
+    .m-cc-fatura-value {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ── Page Title Header ── */
+    .page-title-header {
+      text-align: center;
+      padding: 32px 24px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .page-title-header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .page-title-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* ── App Layout ── */
+    .app-layout {
+      display: flex;
+      min-height: calc(100vh - 94px);
+    }
+
+    /* ── Sidebar ── */
+    .sidebar { width: 220px; height: 100%; min-height: 820px; position: relative; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 40; flex-shrink: 0; }
+    .sidebar-logo { display: flex; align-items: center; padding: 20px 16px 16px; gap: 8px; }
+    .sidebar-logo-icon { color: var(--primary); display: flex; align-items: center; }
+    .sidebar-logo-text { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: var(--primary); }
+    .sidebar-separator { height: 1px; background: var(--border); margin: 4px 16px; }
+    .sidebar-nav { flex: 1; overflow-y: auto; }
+    .sidebar-section-label { padding: 16px 16px 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); }
+    .sidebar-items { list-style: none; margin: 0; padding: 0 8px; display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: all 150ms; cursor: pointer; }
+    .sidebar-item:hover { background: var(--bg); color: var(--text-primary); }
+    .sidebar-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+    .sidebar-icon { width: 18px; height: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .sidebar-icon svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding: 12px; }
+    .sidebar-user { display: flex; align-items: center; gap: 10px; }
+    .sidebar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+    .sidebar-user-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .sidebar-user-role { font-size: 11px; color: var(--text-tertiary); }
+    .sidebar-logout { display: flex; align-items: center; gap: 10px; margin-top: 0; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 150ms; border: none; background: none; width: 100%; }
+    .sidebar-logout:hover { background: var(--bg); color: var(--text-primary); }
+    .sidebar-logout svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ── Main Content ── */
+    .main-content {
+      flex: 1;
+      padding: 28px 32px 48px;
+      max-width: 1100px;
+    }
+
+    /* ── Content Header ── */
+    .content-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .content-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .content-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .counter-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 24px;
+      padding: 0 8px;
+      border-radius: var(--radius-badge);
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .btn-add-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      background: var(--primary);
+      color: #FFFFFF;
+      border: none;
+      border-radius: var(--radius-button);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition);
+      font-family: inherit;
+    }
+
+    .btn-add-card:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-add-card svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    /* ── Summary Bar ── */
+    .summary-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .summary-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 16px 18px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .summary-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .summary-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .summary-value.attention { color: var(--attention-text); }
+    .summary-value.positive { color: var(--positive-text); }
+
+    .summary-progress {
+      margin-top: 10px;
+    }
+
+    .summary-progress-bar {
+      height: 8px;
+      background: var(--bg);
+      border-radius: 100px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .summary-progress-fill {
+      height: 100%;
+      border-radius: 100px;
+      background: var(--attention);
+      transition: width 0.6s ease;
+    }
+
+    .summary-progress-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    /* ── Cards Grid ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+      gap: 24px;
+    }
+
+    /* ── Card Item ── */
+    .cc-list-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      transition: box-shadow var(--transition), border-color var(--transition);
+    }
+
+    .cc-list-card:hover {
+      box-shadow: var(--shadow-card-hover);
+      border-color: var(--border-hover);
+    }
+
+    .cc-list-card-top {
+      display: flex;
+      gap: 20px;
+      padding: 20px 20px 16px;
+    }
+
+    /* ── Card Visual Mini ── */
+    .cc-visual-mini {
+      width: 200px;
+      height: 126px;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: #FFFFFF;
+      font-size: 13px;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cc-visual-mini::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      right: -15%;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .cc-visual-mini .cc-mini-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cc-visual-mini .cc-mini-brand {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .cc-visual-mini .cc-chip {
+      width: 28px;
+      height: 20px;
+      background: linear-gradient(135deg, #FFD700, #FFA000);
+      border-radius: 3px;
+    }
+
+    .cc-visual-mini .cc-mini-number {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cc-visual-mini .cc-mini-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cc-visual-mini .cc-mini-holder {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    .cc-mini-flag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 18px;
+      padding: 0 6px;
+      border-radius: 3px;
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .cc-mini-flag.visa {
+      background: #1A1F71;
+      color: #FFFFFF;
+      font-style: italic;
+    }
+
+    .cc-mini-flag.mastercard {
+      background: #252525;
+      color: #FFFFFF;
+      position: relative;
+      overflow: hidden;
+      width: 30px;
+      padding: 0;
+    }
+
+    .cc-mini-flag.mastercard::before,
+    .cc-mini-flag.mastercard::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .cc-mini-flag.mastercard::before { left: 3px; background: #EB001B; }
+    .cc-mini-flag.mastercard::after { right: 3px; background: #F79E1B; }
+
+    /* Card gradients */
+    .cc-gradient-latam { background: linear-gradient(135deg, #1a237e 0%, #283593 100%); }
+    .cc-gradient-pda-green { background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); }
+    .cc-gradient-uniclass { background: linear-gradient(135deg, #5d4037 0%, #795548 100%); }
+    .cc-gradient-pda-purple { background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 100%); }
+
+    /* ── Card Info Section ── */
+    .cc-list-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .cc-list-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .cc-list-final {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .cc-list-dates {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    /* ── Limit Bar Section ── */
+    .cc-list-limit-section {
+      padding: 0 20px 16px;
+    }
+
+    .cc-list-limit-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .cc-list-available {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .cc-list-limit-total {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      font-weight: 400;
+    }
+
+    .cc-list-limit-bar {
+      height: 6px;
+      background: var(--bg);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .cc-list-limit-fill {
+      height: 100%;
+      border-radius: 100px;
+    }
+
+    .cc-list-limit-fill.ok { background: var(--positive); }
+    .cc-list-limit-fill.warning { background: var(--attention); }
+    .cc-list-limit-fill.danger { background: var(--critical); }
+
+    /* ── Fatura Section ── */
+    .cc-list-fatura {
+      padding: 14px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .cc-list-fatura-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cc-list-fatura-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .cc-list-fatura-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .fatura-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: var(--radius-badge);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .fatura-badge.estimativa { background: var(--attention-bg); color: var(--attention-text); }
+    .fatura-badge.fechada { background: var(--primary-light); color: var(--primary); }
+    .fatura-badge.aberta { background: var(--positive-bg); color: var(--positive-text); }
+
+    /* ── Card Footer ── */
+    .cc-list-footer {
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .cc-list-link {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: none;
+      cursor: pointer;
+      transition: color var(--transition);
+    }
+
+    .cc-list-link:hover {
+      color: var(--primary-hover);
+    }
+
+    /* ══════════════════════════════════════════════ */
+    /* ── MOBILE SECTION ── */
+    /* ══════════════════════════════════════════════ */
+    .mobile-section {
+      margin-top: 56px;
+      padding-top: 40px;
+      border-top: 2px dashed var(--border);
+    }
+
+    .mobile-section-title {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .mobile-section-sub {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-bottom: 28px;
+    }
+
+    .phone-frame {
+      width: 390px;
+      height: 844px;
+      margin: 0 auto;
+      border: 8px solid #1C1917;
+      border-radius: 44px;
+      background: var(--bg);
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.15);
+    }
+
+    .phone-notch {
+      width: 150px;
+      height: 28px;
+      background: #1C1917;
+      border-radius: 0 0 18px 18px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 5;
+    }
+
+    .phone-screen {
+      height: calc(100% - 28px);
+      overflow-y: auto;
+      padding-bottom: 56px;
+    }
+
+    .phone-screen::-webkit-scrollbar {
+      width: 3px;
+    }
+    .phone-screen::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .phone-screen::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+
+    /* ── Mobile Header ── */
+    .m-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 16px 12px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 4;
+    }
+
+    .m-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .m-header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .m-counter-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: var(--radius-badge);
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .m-btn-add {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .m-btn-add svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    /* ── Mobile Summary ── */
+    .m-summary {
+      padding: 16px;
+    }
+
+    .m-summary-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .m-summary-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .m-summary-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .m-summary-progress {
+      height: 6px;
+      background: var(--bg);
+      border-radius: 100px;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+
+    .m-summary-progress-fill {
+      height: 100%;
+      border-radius: 100px;
+      background: var(--attention);
+    }
+
+    .m-summary-pct {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-align: right;
+    }
+
+    /* ── Mobile Card Item ── */
+    .m-cc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      margin: 0 16px 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+
+    .m-cc-visual {
+      width: 100%;
+      height: 80px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: #FFFFFF;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .m-cc-visual::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      right: -10%;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .m-cc-visual-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .m-cc-visual-brand {
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .m-cc-visual-chip {
+      width: 24px;
+      height: 17px;
+      background: linear-gradient(135deg, #FFD700, #FFA000);
+      border-radius: 3px;
+    }
+
+    .m-cc-visual-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      position: relative;
+      z-index: 1;
+    }
+
+    .m-cc-visual-number {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+    }
+
+    .m-cc-visual-flag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 16px;
+      padding: 0 5px;
+      border-radius: 3px;
+      font-size: 7px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .m-cc-visual-flag.visa {
+      background: #1A1F71;
+      color: #FFFFFF;
+      font-style: italic;
+    }
+
+    .m-cc-visual-flag.mastercard {
+      background: #252525;
+      color: #FFFFFF;
+      position: relative;
+      overflow: hidden;
+      width: 26px;
+      padding: 0;
+    }
+
+    .m-cc-visual-flag.mastercard::before,
+    .m-cc-visual-flag.mastercard::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .m-cc-visual-flag.mastercard::before { left: 2px; background: #EB001B; }
+    .m-cc-visual-flag.mastercard::after { right: 2px; background: #F79E1B; }
+
+    .m-cc-body {
+      padding: 12px 16px;
+    }
+
+    .m-cc-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .m-cc-final {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    .m-cc-limit-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+
+    .m-cc-limit-available {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .m-cc-limit-total {
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    .m-cc-limit-bar {
+      height: 5px;
+      background: var(--bg);
+      border-radius: 100px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .m-cc-limit-fill {
+      height: 100%;
+      border-radius: 100px;
+    }
+
+    .m-cc-limit-fill.ok { background: var(--positive); }
+    .m-cc-limit-fill.warning { background: var(--attention); }
+    .m-cc-limit-fill.danger { background: var(--critical); }
+
+    .m-cc-fatura-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .m-cc-fatura-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .m-cc-fatura-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .m-cc-fatura-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .m-cc-footer {
+      padding: 10px 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .m-cc-link {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    /* ── Bottom Nav ── */
+    .bottom-nav { position: relative; height: 56px; background: var(--surface); border-top: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-around; z-index: 50; }
+    .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px 0; min-height: 44px; color: var(--text-tertiary); text-decoration: none; font-size: 10px; font-weight: 500; cursor: pointer; }
+    .bottom-nav-item.active { color: var(--primary); }
+    .bottom-nav-icon { width: 20px; height: 20px; }
+    .bottom-nav-icon svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .bottom-nav-fab { display: flex; flex-direction: column; align-items: center; text-decoration: none; margin-top: -16px; }
+    .bottom-nav-fab-icon { width: 48px; height: 48px; background: var(--primary); color: #FFFFFF; border-radius: 50%; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; }
+    .bottom-nav-fab-icon svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .bottom-nav-fab-label { margin-top: 2px; font-size: 10px; font-weight: 500; color: var(--text-tertiary); }
+  </style>
+</head>
+<body>
+
+<!-- ── Page Title ── -->
+<header class="page-title-header">
+  <h1>Protótipo 12a — Cartões</h1>
+  <p>Visão geral de todos os cartões de crédito</p>
+</header>
+
+<!-- ── App Layout ── -->
+<div class="app-layout">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="sidebar-logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/><path d="M8 11h8"/><path d="M8 7h6"/></svg></span>
+      <span class="sidebar-logo-text">Caderninho</span>
+    </div>
+    <div class="sidebar-separator"></div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Navegação</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
+          Dashboard
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"/><path d="M16 10h.01"/><path d="M2 8v1a2 2 0 0 0 2 2h1"/></svg></span>
+          Orçamentos
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span>
+          Checklist
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>
+          Projeção
+        </li>
+      </ul>
+      <div class="sidebar-separator"></div>
+      <div class="sidebar-section-label">Configurações</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M10 12h4"/><path d="M10 8h4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/></svg></span>
+          Contas
+        </li>
+        <li class="sidebar-item active">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
+          Cartões
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/></svg></span>
+          Investimentos
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>
+          Receitas
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z"/><path d="M2 7v6.172a2 2 0 0 0 .586 1.414l6.71 6.71a2.4 2.4 0 0 0 3.191.193"/><circle cx="10.5" cy="6.5" r=".5" fill="currentColor"/></svg></span>
+          Categorias
+        </li>
+      </ul>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">V</div>
+        <div>
+          <div class="sidebar-user-name">Vitor</div>
+          <div class="sidebar-user-role">Administrador</div>
+        </div>
+      </div>
+      <div class="sidebar-separator"></div>
+      <button class="sidebar-logout">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+        Sair
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── Main Content ── -->
+  <main class="main-content">
+
+    <!-- Content Header -->
+    <div class="content-header">
+      <div class="content-header-left">
+        <h2>Cartões</h2>
+        <span class="counter-badge">4</span>
+      </div>
+      <button class="btn-add-card">
+        <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+        Adicionar Cartão
+      </button>
+    </div>
+
+    <!-- Summary Bar -->
+    <div class="summary-bar">
+      <div class="summary-card">
+        <div class="summary-label">Limite Total</div>
+        <div class="summary-value">R$ 26.000,00</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Utilizado</div>
+        <div class="summary-value attention">R$ 10.580,00</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Disponível</div>
+        <div class="summary-value positive">R$ 15.420,00</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Utilização Geral</div>
+        <div class="summary-progress">
+          <div class="summary-progress-bar">
+            <div class="summary-progress-fill" style="width: 40.7%;"></div>
+          </div>
+          <div class="summary-progress-label">40,7%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="cards-grid">
+
+      <!-- Card 1: Latam Pass Visa -->
+      <div class="cc-list-card">
+        <div class="cc-list-card-top">
+          <div class="cc-visual-mini cc-gradient-latam">
+            <div class="cc-mini-top">
+              <span class="cc-mini-brand">Latam Pass</span>
+              <div class="cc-chip"></div>
+            </div>
+            <div class="cc-mini-number">**** **** **** 4532</div>
+            <div class="cc-mini-bottom">
+              <span class="cc-mini-holder">Vitor Castilho</span>
+              <span class="cc-mini-flag visa">VISA</span>
+            </div>
+          </div>
+          <div class="cc-list-info">
+            <div class="cc-list-name">Latam Pass Visa</div>
+            <div class="cc-list-final">Final **** 4532</div>
+            <div class="cc-list-dates">Fecha dia 7 · Vence dia 15</div>
+          </div>
+        </div>
+        <div class="cc-list-limit-section">
+          <div class="cc-list-limit-header">
+            <span class="cc-list-available">Disponível: R$ 2.820,00</span>
+            <span class="cc-list-limit-total">Limite: R$ 10.000,00</span>
+          </div>
+          <div class="cc-list-limit-bar">
+            <div class="cc-list-limit-fill danger" style="width: 71.8%;"></div>
+          </div>
+        </div>
+        <div class="cc-list-fatura">
+          <div class="cc-list-fatura-left">
+            <div>
+              <div class="cc-list-fatura-label">Fatura Mar 2026</div>
+              <div class="cc-list-fatura-value">R$ 4.200,00</div>
+            </div>
+          </div>
+          <span class="fatura-badge estimativa">Estimativa</span>
+        </div>
+        <div class="cc-list-footer">
+          <a class="cc-list-link" href="#">Ver detalhes &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Card 2: Pão de Açúcar Master -->
+      <div class="cc-list-card">
+        <div class="cc-list-card-top">
+          <div class="cc-visual-mini cc-gradient-pda-green">
+            <div class="cc-mini-top">
+              <span class="cc-mini-brand">Pão de Açúcar</span>
+              <div class="cc-chip"></div>
+            </div>
+            <div class="cc-mini-number">**** **** **** 8871</div>
+            <div class="cc-mini-bottom">
+              <span class="cc-mini-holder">Vitor Castilho</span>
+              <span class="cc-mini-flag mastercard"></span>
+            </div>
+          </div>
+          <div class="cc-list-info">
+            <div class="cc-list-name">Pão de Açúcar Master</div>
+            <div class="cc-list-final">Final **** 8871</div>
+            <div class="cc-list-dates">Fecha dia 3 · Vence dia 10</div>
+          </div>
+        </div>
+        <div class="cc-list-limit-section">
+          <div class="cc-list-limit-header">
+            <span class="cc-list-available">Disponível: R$ 3.020,00</span>
+            <span class="cc-list-limit-total">Limite: R$ 5.000,00</span>
+          </div>
+          <div class="cc-list-limit-bar">
+            <div class="cc-list-limit-fill warning" style="width: 39.6%;"></div>
+          </div>
+        </div>
+        <div class="cc-list-fatura">
+          <div class="cc-list-fatura-left">
+            <div>
+              <div class="cc-list-fatura-label">Fatura Mar 2026</div>
+              <div class="cc-list-fatura-value">R$ 1.450,00</div>
+            </div>
+          </div>
+          <span class="fatura-badge fechada">Fechada</span>
+        </div>
+        <div class="cc-list-footer">
+          <a class="cc-list-link" href="#">Ver detalhes &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Card 3: Uniclass Visa -->
+      <div class="cc-list-card">
+        <div class="cc-list-card-top">
+          <div class="cc-visual-mini cc-gradient-uniclass">
+            <div class="cc-mini-top">
+              <span class="cc-mini-brand">Uniclass</span>
+              <div class="cc-chip"></div>
+            </div>
+            <div class="cc-mini-number">**** **** **** 2109</div>
+            <div class="cc-mini-bottom">
+              <span class="cc-mini-holder">Vitor Castilho</span>
+              <span class="cc-mini-flag visa">VISA</span>
+            </div>
+          </div>
+          <div class="cc-list-info">
+            <div class="cc-list-name">Uniclass Visa</div>
+            <div class="cc-list-final">Final **** 2109</div>
+            <div class="cc-list-dates">Fecha dia 10 · Vence dia 20</div>
+          </div>
+        </div>
+        <div class="cc-list-limit-section">
+          <div class="cc-list-limit-header">
+            <span class="cc-list-available">Disponível: R$ 7.000,00</span>
+            <span class="cc-list-limit-total">Limite: R$ 8.000,00</span>
+          </div>
+          <div class="cc-list-limit-bar">
+            <div class="cc-list-limit-fill ok" style="width: 12.5%;"></div>
+          </div>
+        </div>
+        <div class="cc-list-fatura">
+          <div class="cc-list-fatura-left">
+            <div>
+              <div class="cc-list-fatura-label">Fatura Mar 2026</div>
+              <div class="cc-list-fatura-value">R$ 780,00</div>
+            </div>
+          </div>
+          <span class="fatura-badge aberta">Aberta</span>
+        </div>
+        <div class="cc-list-footer">
+          <a class="cc-list-link" href="#">Ver detalhes &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Card 4: PDA Visa -->
+      <div class="cc-list-card">
+        <div class="cc-list-card-top">
+          <div class="cc-visual-mini cc-gradient-pda-purple">
+            <div class="cc-mini-top">
+              <span class="cc-mini-brand">PDA</span>
+              <div class="cc-chip"></div>
+            </div>
+            <div class="cc-mini-number">**** **** **** 6633</div>
+            <div class="cc-mini-bottom">
+              <span class="cc-mini-holder">Vitor Castilho</span>
+              <span class="cc-mini-flag visa">VISA</span>
+            </div>
+          </div>
+          <div class="cc-list-info">
+            <div class="cc-list-name">PDA Visa</div>
+            <div class="cc-list-final">Final **** 6633</div>
+            <div class="cc-list-dates">Fecha dia 5 · Vence dia 12</div>
+          </div>
+        </div>
+        <div class="cc-list-limit-section">
+          <div class="cc-list-limit-header">
+            <span class="cc-list-available">Disponível: R$ 2.580,00</span>
+            <span class="cc-list-limit-total">Limite: R$ 3.000,00</span>
+          </div>
+          <div class="cc-list-limit-bar">
+            <div class="cc-list-limit-fill ok" style="width: 14%;"></div>
+          </div>
+        </div>
+        <div class="cc-list-fatura">
+          <div class="cc-list-fatura-left">
+            <div>
+              <div class="cc-list-fatura-label">Fatura Mar 2026</div>
+              <div class="cc-list-fatura-value">R$ 350,00</div>
+            </div>
+          </div>
+          <span class="fatura-badge estimativa">Estimativa</span>
+        </div>
+        <div class="cc-list-footer">
+          <a class="cc-list-link" href="#">Ver detalhes &rarr;</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- ── MOBILE VERSION ── -->
+    <!-- ══════════════════════════════════════════════ -->
+    <section class="mobile-section">
+      <div class="mobile-section-title">Versão Mobile</div>
+      <div class="mobile-section-sub">iPhone 14 — 390 x 844 px</div>
+
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+
+          <!-- Mobile Header -->
+          <div class="m-header">
+            <div class="m-header-left">
+              <h1>Cartões</h1>
+              <span class="m-counter-badge">4</span>
+            </div>
+            <button class="m-btn-add">
+              <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+            </button>
+          </div>
+
+          <!-- Mobile Summary -->
+          <div class="m-summary">
+            <div class="m-summary-row">
+              <span class="m-summary-label">Utilizado</span>
+              <span class="m-summary-value">R$ 10.580,00 <span style="font-weight:400;font-size:11px;color:var(--text-tertiary);">/ R$ 26.000,00</span></span>
+            </div>
+            <div class="m-summary-progress">
+              <div class="m-summary-progress-fill" style="width: 40.7%;"></div>
+            </div>
+            <div class="m-summary-pct">40,7% utilizado</div>
+          </div>
+
+          <!-- Mobile Card 1: Latam Pass Visa -->
+          <div class="m-cc-card">
+            <div class="m-cc-visual cc-gradient-latam">
+              <div class="m-cc-visual-top">
+                <span class="m-cc-visual-brand">Latam Pass Visa</span>
+                <div class="m-cc-visual-chip"></div>
+              </div>
+              <div class="m-cc-visual-bottom">
+                <span class="m-cc-visual-number">**** **** **** 4532</span>
+                <span class="m-cc-visual-flag visa">VISA</span>
+              </div>
+            </div>
+            <div class="m-cc-body">
+              <div class="m-cc-name">Latam Pass Visa</div>
+              <div class="m-cc-final">Final **** 4532</div>
+              <div class="m-cc-limit-row">
+                <span class="m-cc-limit-available">Disponível: R$ 2.820,00</span>
+                <span class="m-cc-limit-total">R$ 10.000,00</span>
+              </div>
+              <div class="m-cc-limit-bar">
+                <div class="m-cc-limit-fill danger" style="width: 71.8%;"></div>
+              </div>
+              <div class="m-cc-fatura-row">
+                <div class="m-cc-fatura-left">
+                  <div>
+                    <div class="m-cc-fatura-label">Fatura Mar 2026</div>
+                    <div class="m-cc-fatura-value">R$ 4.200,00</div>
+                  </div>
+                </div>
+                <span class="fatura-badge estimativa">Estimativa</span>
+              </div>
+            </div>
+            <div class="m-cc-footer">
+              <a class="m-cc-link" href="#">Ver detalhes &rarr;</a>
+            </div>
+          </div>
+
+          <!-- Mobile Card 2: Pão de Açúcar Master -->
+          <div class="m-cc-card">
+            <div class="m-cc-visual cc-gradient-pda-green">
+              <div class="m-cc-visual-top">
+                <span class="m-cc-visual-brand">Pão de Açúcar Master</span>
+                <div class="m-cc-visual-chip"></div>
+              </div>
+              <div class="m-cc-visual-bottom">
+                <span class="m-cc-visual-number">**** **** **** 8871</span>
+                <span class="m-cc-visual-flag mastercard"></span>
+              </div>
+            </div>
+            <div class="m-cc-body">
+              <div class="m-cc-name">Pão de Açúcar Master</div>
+              <div class="m-cc-final">Final **** 8871</div>
+              <div class="m-cc-limit-row">
+                <span class="m-cc-limit-available">Disponível: R$ 3.020,00</span>
+                <span class="m-cc-limit-total">R$ 5.000,00</span>
+              </div>
+              <div class="m-cc-limit-bar">
+                <div class="m-cc-limit-fill warning" style="width: 39.6%;"></div>
+              </div>
+              <div class="m-cc-fatura-row">
+                <div class="m-cc-fatura-left">
+                  <div>
+                    <div class="m-cc-fatura-label">Fatura Mar 2026</div>
+                    <div class="m-cc-fatura-value">R$ 1.450,00</div>
+                  </div>
+                </div>
+                <span class="fatura-badge fechada">Fechada</span>
+              </div>
+            </div>
+            <div class="m-cc-footer">
+              <a class="m-cc-link" href="#">Ver detalhes &rarr;</a>
+            </div>
+          </div>
+
+          <!-- Mobile Card 3: Uniclass Visa -->
+          <div class="m-cc-card">
+            <div class="m-cc-visual cc-gradient-uniclass">
+              <div class="m-cc-visual-top">
+                <span class="m-cc-visual-brand">Uniclass Visa</span>
+                <div class="m-cc-visual-chip"></div>
+              </div>
+              <div class="m-cc-visual-bottom">
+                <span class="m-cc-visual-number">**** **** **** 2109</span>
+                <span class="m-cc-visual-flag visa">VISA</span>
+              </div>
+            </div>
+            <div class="m-cc-body">
+              <div class="m-cc-name">Uniclass Visa</div>
+              <div class="m-cc-final">Final **** 2109</div>
+              <div class="m-cc-limit-row">
+                <span class="m-cc-limit-available">Disponível: R$ 7.000,00</span>
+                <span class="m-cc-limit-total">R$ 8.000,00</span>
+              </div>
+              <div class="m-cc-limit-bar">
+                <div class="m-cc-limit-fill ok" style="width: 12.5%;"></div>
+              </div>
+              <div class="m-cc-fatura-row">
+                <div class="m-cc-fatura-left">
+                  <div>
+                    <div class="m-cc-fatura-label">Fatura Mar 2026</div>
+                    <div class="m-cc-fatura-value">R$ 780,00</div>
+                  </div>
+                </div>
+                <span class="fatura-badge aberta">Aberta</span>
+              </div>
+            </div>
+            <div class="m-cc-footer">
+              <a class="m-cc-link" href="#">Ver detalhes &rarr;</a>
+            </div>
+          </div>
+
+          <!-- Mobile Card 4: PDA Visa -->
+          <div class="m-cc-card">
+            <div class="m-cc-visual cc-gradient-pda-purple">
+              <div class="m-cc-visual-top">
+                <span class="m-cc-visual-brand">PDA Visa</span>
+                <div class="m-cc-visual-chip"></div>
+              </div>
+              <div class="m-cc-visual-bottom">
+                <span class="m-cc-visual-number">**** **** **** 6633</span>
+                <span class="m-cc-visual-flag visa">VISA</span>
+              </div>
+            </div>
+            <div class="m-cc-body">
+              <div class="m-cc-name">PDA Visa</div>
+              <div class="m-cc-final">Final **** 6633</div>
+              <div class="m-cc-limit-row">
+                <span class="m-cc-limit-available">Disponível: R$ 2.580,00</span>
+                <span class="m-cc-limit-total">R$ 3.000,00</span>
+              </div>
+              <div class="m-cc-limit-bar">
+                <div class="m-cc-limit-fill ok" style="width: 14%;"></div>
+              </div>
+              <div class="m-cc-fatura-row">
+                <div class="m-cc-fatura-left">
+                  <div>
+                    <div class="m-cc-fatura-label">Fatura Mar 2026</div>
+                    <div class="m-cc-fatura-value">R$ 350,00</div>
+                  </div>
+                </div>
+                <span class="fatura-badge estimativa">Estimativa</span>
+              </div>
+            </div>
+            <div class="m-cc-footer">
+              <a class="m-cc-link" href="#">Ver detalhes &rarr;</a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Mobile Bottom Nav -->
+        <div class="bottom-nav">
+          <a class="bottom-nav-item">
+            <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
+            <span>Dashboard</span>
+          </a>
+          <a class="bottom-nav-item active">
+            <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
+            <span>Cartões</span>
+          </a>
+          <a class="bottom-nav-fab">
+            <span class="bottom-nav-fab-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>
+            <span class="bottom-nav-fab-label">Registrar</span>
+          </a>
+          <a class="bottom-nav-item">
+            <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span>
+            <span>Checklist</span>
+          </a>
+          <a class="bottom-nav-item">
+            <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>
+            <span>Projeção</span>
+          </a>
+          <a class="bottom-nav-item">
+            <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg></span>
+            <span>Sair</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+</body>
+</html>
