@@ -843,227 +843,207 @@ Valores por card:
 
 ---
 
-## AI-14: Adicionar badge de bandeira/banco ao lado do select "Pagamento padrão" no proto-14
-
-**Severidade:** MEDIUM
-**Arquivo:** `_bmad-output/prototypes/proto-14-settings.html`
-**Problema:** No formulário de edição de categoria (edit-row expandido), o campo "Pagamento padrão" é um `<select>` puro sem badge visual ao lado. A tabela na view de leitura JÁ mostra os badges (ex: `[VISA] Latam Pass (à vista)`), mas ao clicar em editar, o dropdown perde o indicador visual.
-
-### Contexto
-
-HTML `<select><option>` não suporta HTML inline nas opções. A solução é a mesma do AI-7: adicionar um badge ao LADO do select, fora dele.
-
-### O que mudar
-
-**1. Adicionar CSS de `.method-select-wrapper`** (após as definições de `.method-brand` por volta da linha 1056):
-
-```css
-.method-select-wrapper {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.bank-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 16px;
-  padding: 0 4px;
-  border-radius: 4px;
-  font-size: 8px;
-  font-weight: 700;
-  flex-shrink: 0;
-  border: 1px solid rgba(0,0,0,0.06);
-}
-.bank-badge-itau   { background: #003399; color: #FFFFFF; }
-.bank-badge-nubank { background: #820AD1; color: #FFFFFF; }
-.bank-badge-bb     { background: #FFFF00; color: #003882; }
-```
-
-**2. Edit-row 0 (Supermercado) — linha 1160-1170:**
-
-```html
-<!-- ANTES: -->
-<div class="form-group">
-  <label>Pagamento padrao</label>
-  <select>
-    <option selected>Latam Pass Visa (a vista)</option>
-    <option>Pao de Acucar Master (a vista)</option>
-    <option>Uniclass Visa (parcelado)</option>
-    <option>PDA Visa (a vista)</option>
-    <option>Debito Itau</option>
-    <option>Debito Nubank</option>
-    <option>Debito BB</option>
-  </select>
-</div>
-
-<!-- DEPOIS: -->
-<div class="form-group">
-  <label>Pagamento padrao</label>
-  <div class="method-select-wrapper">
-    <span class="method-brand method-brand-visa">VISA</span>
-    <select>
-      <option selected>Latam Pass Visa (a vista)</option>
-      <option>Pao de Acucar Master (a vista)</option>
-      <option>Uniclass Visa (parcelado)</option>
-      <option>PDA Visa (a vista)</option>
-      <option>Debito Itau</option>
-      <option>Debito Nubank</option>
-      <option>Debito BB</option>
-    </select>
-  </div>
-</div>
-```
-
-**3. Aplicar o mesmo padrão nos edit-rows 1 a 8** (linhas 1219, 1230, 1241, 1252, 1263, 1274, 1285, 1296 — estão em linhas minificadas):
-
-O badge exibido deve refletir a `<option selected>`:
-
-| Edit-row | Categoria | Opção selecionada | Badge |
-|----------|-----------|-------------------|-------|
-| 0 | Supermercado | Latam Pass Visa (a vista) | `method-brand-visa` → VISA |
-| 1 | Gasolina | PDA Visa (a vista) | `method-brand-visa` → VISA |
-| 2 | Restaurante | Latam Pass Visa (a vista) | `method-brand-visa` → VISA |
-| 3 | Moradia | Debito Itau | `bank-badge-itau` → Itaú |
-| 4 | Educação | Debito Itau | `bank-badge-itau` → Itaú |
-| 5 | Internet/Tel | Debito Nubank | `bank-badge-nubank` → Nu |
-| 6 | Transporte | Debito Itau | `bank-badge-itau` → Itaú |
-| 7 | Compras | Uniclass Visa (parcelado) | `method-brand-visa` → VISA |
-| 8 | Lazer | Latam Pass Visa (a vista) | `method-brand-visa` → VISA |
-
-**Nota:** O badge é estático no protótipo HTML. Na implementação real, o badge atualizará dinamicamente quando o usuário trocar a opção do select.
-
-### Correção adicional: Badges de "Débito" na tabela
-
-Na tabela de leitura, as linhas com "Débito" mostram badge de CARTÃO onde deveriam mostrar badge de BANCO:
-
-**Linha 1237** — Moradia:
-```
-ANTES:  <td class="cat-payment"><span class="method-brand method-brand-visa">VISA</span> Debito Itau</td>
-DEPOIS: <td class="cat-payment"><span class="bank-badge bank-badge-itau">Itaú</span> Debito Itau</td>
-```
-
-**Linha 1248** — Educação:
-```
-ANTES:  <td class="cat-payment"><span class="method-brand method-brand-visa">VISA</span> Debito Itau</td>
-DEPOIS: <td class="cat-payment"><span class="bank-badge bank-badge-itau">Itaú</span> Debito Itau</td>
-```
-
-**Linha 1259** — Internet/Tel:
-```
-ANTES:  <td class="cat-payment"><span class="method-brand method-brand-master"></span> Debito Nubank</td>
-DEPOIS: <td class="cat-payment"><span class="bank-badge bank-badge-nubank">Nu</span> Debito Nubank</td>
-```
-
-**Linha 1270** — Transporte:
-```
-ANTES:  <td class="cat-payment"><span class="method-brand method-brand-visa">VISA</span> Debito Itau</td>
-DEPOIS: <td class="cat-payment"><span class="bank-badge bank-badge-itau">Itaú</span> Debito Itau</td>
-```
-
-### O que NÃO mudar
-
-- Os badges de CARTÃO nas linhas de cartão de crédito (Latam Pass, PDA, Uniclass) — estes estão corretos com `method-brand-visa`
-- O layout da tabela e do formulário de edição permanece igual
-- Não mexer na versão mobile das categorias (os cards mobile não mostram método)
-
----
-
-## AI-15: Adicionar configuração de método de pagamento por subcategoria no proto-14
+## AI-14: Redesign da aba "Categorias" do proto-14 para o modelo de categorização v2
 
 **Severidade:** HIGH
 **Arquivo:** `_bmad-output/prototypes/proto-14-settings.html`
-**Problema:** Na Story 2.5.1, ficou decidido que **subcategorias agora têm método de pagamento configurável próprio** (podem herdar da categoria pai ou ter um método diferente). O protótipo proto-14 não reflete essa decisão — as subcategorias aparecem como tags simples sem nenhuma opção de método de pagamento.
+**Referência:** `_bmad-output/planning-artifacts/decisao-modelo-categorizacao-v2.md`
+**Problema:** O proto-14 atual usa o modelo antigo (classificação como enum fixo de 4 tipos + método de pagamento na categoria). O modelo v2 aprovado pelo PO muda fundamentalmente a estrutura:
 
-### Situação ATUAL (linhas 1189-1198)
+- **Classificações** são 100% customizáveis (não mais enum fixo)
+- **Método de pagamento** sai da categoria e vai para a **subcategoria**
+- **Orçamento** é opcional em **todos os 4 níveis** (classificação, categoria, subcategoria, estabelecimento)
+- **Estabelecimento** é uma nova entidade aprendida do uso
+
+### Mudanças estruturais na aba "Categorias" (desktop)
+
+**1. Remover a coluna "Essencialidade" da tabela** — classificação agora é a seção que agrupa as categorias, não um campo dentro da categoria.
+
+**2. Remover a coluna "Pagamento padrão" da tabela de categorias** — método de pagamento agora pertence à subcategoria, não à categoria.
+
+**3. Organizar categorias por seções de classificação** — em vez de uma tabela flat com todas as categorias, o layout deve ser:
+
+```
+📊 Essenciais fixos [R$ 6.000,00/mês] [Editar] [Excluir]
+┌─────────────────────────────────────────────────────────┐
+│ Emoji │ Nome        │ Orçamento/mês │ Subcategorias │ ⋯ │
+│ 🏠    │ Moradia     │ R$ 4.000,00   │ 4             │ ⋯ │
+│ 📱    │ Assinaturas │ R$ 200,00     │ 2             │ ⋯ │
+└─────────────────────────────────────────────────────────┘
+[+ Adicionar categoria]
+
+📊 Essenciais variáveis [R$ 8.000,00/mês] [Editar] [Excluir]
+┌─────────────────────────────────────────────────────────┐
+│ Emoji │ Nome         │ Orçamento/mês │ Subcategorias │ ⋯ │
+│ 🍽    │ Alimentação  │ R$ 5.500,00   │ 3             │ ⋯ │
+│ 🚗    │ Transporte   │ R$ 1.500,00   │ 4             │ ⋯ │
+└─────────────────────────────────────────────────────────┘
+[+ Adicionar categoria]
+
+📊 Qualidade de vida [R$ 4.000,00/mês] [Editar] [Excluir]
+...
+
+[+ Adicionar classificação]
+```
+
+**4. Formulário de edição de categoria** — atualizar para remover campos obsoletos e adicionar novos:
+
+- **Remover:** campo "Pagamento padrão" (select de método) — método agora é na subcategoria
+- **Remover:** campo "Essencialidade" (radio buttons) — a categoria já está dentro da seção da classificação
+- **Manter:** Nome, Emoji, Orçamento mensal
+- **Manter:** Subcategorias (mas o formato muda — ver AI-15)
+
+**5. Formulário de edição/criação de classificação** — novo:
 
 ```html
-<div class="form-group" style="grid-column: 1 / -1;">
-  <label>Subcategorias</label>
-  <div class="subcategories-list">
-    <span class="subcategory-tag">Hortifruti <span class="remove-sub">&times;</span></span>
-    <span class="subcategory-tag">Acougue <span class="remove-sub">&times;</span></span>
-    <span class="subcategory-tag">Padaria <span class="remove-sub">&times;</span></span>
-    <span class="subcategory-tag">Limpeza <span class="remove-sub">&times;</span></span>
-    <span class="subcategory-tag">Higiene <span class="remove-sub">&times;</span></span>
-    <span class="subcategory-tag" style="border-style:dashed; color:var(--primary); cursor:pointer;">+ Adicionar</span>
+<div class="classification-edit-form">
+  <div class="form-group">
+    <label>Nome da classificação</label>
+    <input type="text" value="Essenciais fixos" />
+  </div>
+  <div class="form-group">
+    <label>Emoji (opcional)</label>
+    <input type="text" value="📊" style="width: 60px;" />
+  </div>
+  <div class="form-group">
+    <label>Orçamento mensal (opcional)</label>
+    <input type="text" value="R$ 6.000,00" inputmode="numeric" />
   </div>
 </div>
 ```
 
-### Situação DESEJADA
+**6. Correção de badges de banco** — na tabela de leitura atual, itens "Débito" mostram badge de CARTÃO onde deveriam mostrar badge de BANCO. Embora o proto inteiro precise de redesign, se alguma célula de método permanecer (ex: na subcategoria expandida), usar:
 
-Cada subcategoria deve mostrar seu método de pagamento (ou "Herdar" quando usa o da categoria pai). O layout muda de tags inline para uma mini-lista com subcategoria + método:
+| Método | Badge correto |
+|--------|--------------|
+| Débito Itaú | `bank-badge-itau` (Itaú azul #003399) |
+| Débito Nubank | `bank-badge-nubank` (Nu roxo #820AD1) |
+| Débito BB | `bank-badge-bb` (BB amarelo #FFFF00) |
+| Latam Pass Visa | `method-brand-visa` (VISA) |
+| PDA Visa | `method-brand-visa` (VISA) |
+| Pão de Açúcar Master | `method-brand-master` (Mastercard) |
+
+### Versão mobile
+
+A versão mobile (cards) também precisa refletir o modelo v2:
+- Cards agrupados por classificação (seções colapsáveis)
+- Sem campo de método no card da categoria
+- Classificação como header de seção com orçamento
+
+### Dados do protótipo (referência: dados reais do PO)
+
+Usar os dados de `decisao-modelo-categorizacao-v2.md` seção 4:
+
+| Classificação | Orçamento | Categorias |
+|--------------|-----------|------------|
+| Essenciais fixos | R$ 6.000,00 | Moradia (R$ 4.000,00), Assinaturas (R$ 200,00) |
+| Essenciais variáveis | R$ 8.000,00 | Alimentação (R$ 5.500,00), Transporte (R$ 1.500,00) |
+| Qualidade de vida | R$ 4.000,00 | Restaurante (R$ 2.000,00), Viagem (R$ 2.000,00) |
+| Investimentos | — | Educação (R$ 2.800,00) |
+| Proteção | — | Seguros (R$ 500,00) |
+| Imprevistos | R$ 1.000,00 | (sem categorias pré-definidas) |
+
+### O que NÃO mudar
+
+- As outras abas de Configurações (Contas, Cartões, etc.) permanecem iguais
+- O sidebar e o layout geral da página permanecem iguais
+- O CSS base (variables, fonts, spacing tokens) permanece igual
+
+---
+
+## AI-15: Subcategorias com método de pagamento primário e orçamento no proto-14
+
+**Severidade:** HIGH
+**Arquivo:** `_bmad-output/prototypes/proto-14-settings.html`
+**Referência:** `_bmad-output/planning-artifacts/decisao-modelo-categorizacao-v2.md`
+**Problema:** No modelo v2, **subcategoria é onde o método de pagamento é configurado** — não mais como "override" ou "herdar da categoria", mas como campo PRIMÁRIO. Além disso, subcategorias agora podem ter orçamento mensal próprio (opcional). O proto-14 atual mostra subcategorias como tags simples sem método nem orçamento.
+
+### Modelo v2 — Subcategoria
+
+| Campo | Obrigatório? | Descrição |
+|-------|-------------|-----------|
+| Nome | Sim | Nome da subcategoria (ex: "Supermercado") |
+| Método de pagamento | Opcional | Método padrão para registros nesta subcategoria |
+| Orçamento mensal | Opcional | Valor mensal alocado para esta subcategoria |
+
+### Layout desejado — Subcategorias dentro do edit-form de categoria
+
+Em vez de tags inline, cada subcategoria é uma mini-row com nome + método + orçamento:
 
 ```html
 <div class="form-group" style="grid-column: 1 / -1;">
   <label>Subcategorias</label>
   <div class="subcategories-config">
     <div class="subcat-row">
-      <span class="subcat-name">Hortifruti</span>
-      <select class="subcat-method-select">
-        <option selected>Herdar (Latam Pass Visa)</option>
-        <option>Pao de Acucar Master</option>
-        <option>PDA Visa</option>
-        <option>Debito Itau</option>
-        <option>Debito Nubank</option>
-      </select>
-      <span class="remove-sub" style="cursor:pointer; color:var(--text-tertiary); font-size:16px;">&times;</span>
+      <span class="subcat-name">Supermercado</span>
+      <div class="subcat-fields">
+        <div class="method-select-wrapper">
+          <span class="method-brand method-brand-visa">VISA</span>
+          <select class="subcat-method-select">
+            <option selected>Latam Pass Visa</option>
+            <option>Pao de Acucar Master</option>
+            <option>PDA Visa</option>
+            <option>Debito Itau</option>
+            <option>Debito Nubank</option>
+          </select>
+        </div>
+        <input class="subcat-budget-input" type="text" placeholder="Orçamento (opcional)" value="R$ 3.000,00" inputmode="numeric" />
+      </div>
+      <span class="remove-sub">&times;</span>
     </div>
     <div class="subcat-row">
-      <span class="subcat-name">Acougue</span>
-      <select class="subcat-method-select">
-        <option selected>Herdar (Latam Pass Visa)</option>
-        <option>Pao de Acucar Master</option>
-        <option>PDA Visa</option>
-        <option>Debito Itau</option>
-        <option>Debito Nubank</option>
-      </select>
-      <span class="remove-sub" style="cursor:pointer; color:var(--text-tertiary); font-size:16px;">&times;</span>
+      <span class="subcat-name">Restaurante trabalho</span>
+      <div class="subcat-fields">
+        <div class="method-select-wrapper">
+          <span class="method-brand method-brand-visa">VISA</span>
+          <select class="subcat-method-select">
+            <option>Latam Pass Visa</option>
+            <option>Pao de Acucar Master</option>
+            <option selected>PDA Visa</option>
+            <option>Debito Itau</option>
+            <option>Debito Nubank</option>
+          </select>
+        </div>
+        <input class="subcat-budget-input" type="text" placeholder="Orçamento (opcional)" value="R$ 1.500,00" inputmode="numeric" />
+      </div>
+      <span class="remove-sub">&times;</span>
     </div>
     <div class="subcat-row">
-      <span class="subcat-name">Padaria</span>
-      <select class="subcat-method-select">
-        <option>Herdar (Latam Pass Visa)</option>
-        <option selected>Pao de Acucar Master</option>
-        <option>PDA Visa</option>
-        <option>Debito Itau</option>
-        <option>Debito Nubank</option>
-      </select>
-      <span class="remove-sub" style="cursor:pointer; color:var(--text-tertiary); font-size:16px;">&times;</span>
+      <span class="subcat-name">Feira/Hortifruti</span>
+      <div class="subcat-fields">
+        <div class="method-select-wrapper">
+          <span class="method-brand method-brand-visa">VISA</span>
+          <select class="subcat-method-select">
+            <option selected>Latam Pass Visa</option>
+            <option>Pao de Acucar Master</option>
+            <option>PDA Visa</option>
+            <option>Debito Itau</option>
+            <option>Debito Nubank</option>
+          </select>
+        </div>
+        <input class="subcat-budget-input" type="text" placeholder="Orçamento (opcional)" value="R$ 500,00" inputmode="numeric" />
+      </div>
+      <span class="remove-sub">&times;</span>
     </div>
-    <div class="subcat-row">
-      <span class="subcat-name">Limpeza</span>
-      <select class="subcat-method-select">
-        <option selected>Herdar (Latam Pass Visa)</option>
-        <option>Pao de Acucar Master</option>
-        <option>PDA Visa</option>
-        <option>Debito Itau</option>
-        <option>Debito Nubank</option>
-      </select>
-      <span class="remove-sub" style="cursor:pointer; color:var(--text-tertiary); font-size:16px;">&times;</span>
-    </div>
-    <div class="subcat-row">
-      <span class="subcat-name">Higiene</span>
-      <select class="subcat-method-select">
-        <option selected>Herdar (Latam Pass Visa)</option>
-        <option>Pao de Acucar Master</option>
-        <option>PDA Visa</option>
-        <option>Debito Itau</option>
-        <option>Debito Nubank</option>
-      </select>
-      <span class="remove-sub" style="cursor:pointer; color:var(--text-tertiary); font-size:16px;">&times;</span>
-    </div>
-    <div class="subcat-row" style="border-style:dashed; border-color:var(--primary); color:var(--primary); cursor:pointer; justify-content:center; font-size:13px; font-weight:500; padding:8px;">
+    <div class="subcat-row subcat-add" style="border-style:dashed; border-color:var(--primary); color:var(--primary); cursor:pointer; justify-content:center; font-size:13px; font-weight:500; padding:8px;">
       + Adicionar subcategoria
     </div>
   </div>
 </div>
 ```
 
-### CSS necessário
+### Saldo não alocado
 
-Adicionar ao `<style>` do proto-14:
+Abaixo da lista de subcategorias, mostrar o saldo não alocado da categoria:
+
+```html
+<div class="budget-unallocated" style="margin-top: 8px; padding: 8px 12px; background: var(--surface); border-radius: 8px; font-size: 12px; color: var(--text-tertiary);">
+  Não alocado dentro de Alimentação: <strong style="color: var(--text-secondary);">R$ 500,00</strong>
+  <span style="font-size: 10px;">(R$ 5.500,00 − R$ 3.000,00 − R$ 1.500,00 − R$ 500,00)</span>
+</div>
+```
+
+### CSS necessário
 
 ```css
 .subcategories-config {
@@ -1087,11 +1067,23 @@ Adicionar ao `<style>` do proto-14:
   font-size: 13px;
   font-weight: 500;
   color: var(--text-primary);
-  min-width: 100px;
+  min-width: 120px;
+}
+
+.subcat-fields {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.method-select-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .subcat-method-select {
-  flex: 1;
   padding: 4px 8px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -1101,27 +1093,60 @@ Adicionar ao `<style>` do proto-14:
   background: var(--bg);
 }
 
-.subcat-method-select:focus {
-  border-color: var(--primary);
-  outline: none;
+.subcat-budget-input {
+  width: 120px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--text-primary);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
+
+.bank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 4px;
+  font-size: 8px;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.bank-badge-itau   { background: #003399; color: #FFFFFF; }
+.bank-badge-nubank { background: #820AD1; color: #FFFFFF; }
+.bank-badge-bb     { background: #FFFF00; color: #003882; }
 ```
 
-### Dados do protótipo
+### Dados do protótipo — Categoria "Alimentação" expandida
 
-Para o exemplo "Supermercado" (pagamento padrão = Latam Pass Visa), mostrar:
-- Hortifruti: **Herdar (Latam Pass Visa)** — selecionado
-- Açougue: **Herdar (Latam Pass Visa)** — selecionado
-- Padaria: **Pão de Açúcar Master** — exemplo de subcategoria com método diferente
-- Limpeza: **Herdar (Latam Pass Visa)** — selecionado
-- Higiene: **Herdar (Latam Pass Visa)** — selecionado
+Usar dados reais do PO (seção 4 do documento de decisão):
 
-**A ideia:** "Padaria" usa cartão Pão de Açúcar (faz sentido — desconto no supermercado Pão de Açúcar), enquanto as outras subcategorias herdam o Latam Pass da categoria pai.
+| Subcategoria | Método | Orçamento |
+|-------------|--------|-----------|
+| Supermercado | Latam Pass Visa | R$ 3.000,00 |
+| Restaurante trabalho | PDA Visa | R$ 1.500,00 |
+| Feira/Hortifruti | Latam Pass Visa | R$ 500,00 |
+
+**Saldo não alocado:** R$ 500,00 (R$ 5.500,00 − R$ 3.000,00 − R$ 1.500,00 − R$ 500,00)
+
+### Prioridade de método no registro (informativo — para referência visual)
+
+```
+1. Estabelecimento tem padrão aprendido? → Sugere método do estabelecimento
+2. Estabelecimento novo?                  → Sugere método da subcategoria
+3. Subcategoria sem método?               → Usuário escolhe manualmente
+```
 
 ### O que NÃO mudar
 
-- As subcategorias dos outros edit-rows (1-8) não precisam ter essa granularidade — a maioria deles nem tem subcategorias no protótipo atual. Apenas o edit-row 0 (Supermercado) que já está expandido precisa dessa mudança.
-- A tabela de leitura (não expandida) permanece igual.
+- O botão "+" de adicionar subcategoria permanece (apenas muda de tag para row)
+- Estabelecimentos NÃO aparecem no formulário de configuração — são aprendidos do uso durante o registro
+- A versão mobile não precisa mostrar todos os campos de subcategoria inline (pode usar um modal/sheet ao tocar na subcategoria)
 
 ---
 
@@ -1248,6 +1273,6 @@ Após executar os 16 action items, o dev deve verificar:
 - [ ] AI-11: Abrir proto-10 no browser → itens de Débito Automático mostram badge do banco; itens Manual com Débito mostram badge do banco; padrão `[Badge] Método • Info temporal` consistente em todas as seções
 - [ ] AI-12: Abrir proto-12 no browser → card "Parcelas Ativas" é full-width abaixo das duas colunas, tabela com 5 colunas (sem "Restam"), não espremido
 - [ ] AI-13: Abrir proto-12 no browser → aba "Parcelas" mobile mostra barra de progresso colorida em cada card + info "libera limite"
-- [ ] AI-14: Abrir proto-14 no browser → edit-form "Pagamento padrão" mostra badge ao lado do select; tabela mostra badge de BANCO para itens "Débito" (não badge de cartão)
-- [ ] AI-15: Abrir proto-14 no browser → subcategorias no edit-form mostram dropdown de método individual com opção "Herdar" + possibilidade de método diferente
+- [ ] AI-14: Abrir proto-14 no browser → aba "Categorias" organizada por seções de classificação customizável (Essenciais fixos, Essenciais variáveis, Qualidade de vida, etc.), cada classificação com nome + orçamento + botões editar/excluir; categorias sem coluna "Pagamento padrão" nem "Essencialidade"; botão "+ Adicionar classificação" visível
+- [ ] AI-15: Abrir proto-14 no browser → ao expandir edição de "Alimentação", subcategorias (Supermercado, Restaurante trabalho, Feira/Hortifruti) mostram método de pagamento primário (com badge) + orçamento individual + saldo não alocado da categoria
 - [ ] AI-16: Abrir proto-15 no browser → seção desktop mostra gráfico de barras real (6 meses, mês atual em indigo) em vez de placeholder texto
