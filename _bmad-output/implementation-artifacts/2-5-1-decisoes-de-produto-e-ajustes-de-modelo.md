@@ -1,6 +1,6 @@
 # Story 2.5.1: Decisões de Produto e Ajustes de Modelo
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -314,6 +314,7 @@ Nenhum problema encontrado durante a implementação.
 - 2026-03-24: Implementação completa da Story 2.5.1 — override de payment method por subcategoria, componente BankLogo, integração nas telas existentes, auditoria de labels de débito
 - 2026-03-24: Code Review R1 — 0 CRITICAL, 0 HIGH, 1 MEDIUM (File List incompleta), 3 LOW (backlog). Todos os ACs implementados. 661 testes passando. Action items criados.
 - 2026-03-24: Addressed code review findings — 4 itens resolvidos (1 MEDIUM, 3 LOW). 663 testes passando. Build OK.
+- 2026-03-24: Code Review R2 — Todos os 4 findings de R1 validados. 663 testes passando. BankLogo commitado no CategoryCard. Story → done.
 
 ### File List
 
