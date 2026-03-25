@@ -1054,6 +1054,44 @@
   }
   .method-brand-master::before { left: 3px; background: #EB001B; }
   .method-brand-master::after { right: 3px; background: #F79E1B; }
+
+  /* Bank badges */
+  .bank-badge { display: inline-flex; align-items: center; justify-content: center; height: 16px; padding: 0 4px; border-radius: 4px; font-size: 8px; font-weight: 700; flex-shrink: 0; vertical-align: middle; margin-right: 4px; border: 1px solid rgba(0,0,0,0.06); }
+  .bank-badge-itau   { background: #003399; color: #FFFFFF; }
+  .bank-badge-nubank { background: #820AD1; color: #FFFFFF; }
+  .bank-badge-bb     { background: #FFFF00; color: #003882; }
+
+  /* Classification sections */
+  .classification-section { margin-bottom: 32px; }
+  .classification-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg) var(--radius-lg) 0 0; border-bottom: none; }
+  .classification-header-left { display: flex; align-items: center; gap: 12px; }
+  .classification-emoji { font-size: 20px; }
+  .classification-name { font-size: 16px; font-weight: 700; color: var(--text-primary); }
+  .classification-budget { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; margin-left: 4px; }
+  .classification-actions { display: flex; gap: 8px; }
+  .classification-section .categories-table { border-radius: 0 0 var(--radius-lg) var(--radius-lg); border-top: 1px solid var(--border); }
+  .classification-section .add-btn-row { margin-top: 8px; margin-bottom: 0; }
+  .classification-empty { padding: 24px; text-align: center; color: var(--text-tertiary); font-size: 13px; font-style: italic; background: var(--surface); border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+
+  /* Subcategories config (v2) */
+  .subcategories-config { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+  .subcat-row { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); }
+  .subcat-name { font-size: 13px; font-weight: 500; color: var(--text-primary); min-width: 120px; }
+  .subcat-fields { display: flex; align-items: center; gap: 8px; flex: 1; }
+  .method-select-wrapper { display: inline-flex; align-items: center; gap: 4px; }
+  .subcat-method-select { padding: 4px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-family: inherit; color: var(--text-secondary); background: var(--bg); }
+  .subcat-budget-input { width: 120px; padding: 4px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-family: inherit; color: var(--text-primary); text-align: right; font-variant-numeric: tabular-nums; }
+  .budget-unallocated { margin-top: 8px; padding: 8px 12px; background: var(--bg); border-radius: var(--radius-md); font-size: 12px; color: var(--text-tertiary); }
+  .remove-sub-btn { cursor: pointer; color: var(--text-tertiary); font-size: 16px; line-height: 1; background: none; border: none; padding: 4px; }
+  .remove-sub-btn:hover { color: var(--critical); }
+
+  /* Mobile classification sections */
+  .m-classification-section { margin-bottom: 16px; }
+  .m-classification-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--primary-light); border: 1px solid var(--border); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+  .m-classification-header-left { display: flex; align-items: center; gap: 8px; }
+  .m-classification-name { font-size: 14px; font-weight: 700; color: var(--primary); }
+  .m-classification-budget { font-size: 11px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .m-classification-section .m-cat-list { border-radius: 0 0 var(--radius-lg) var(--radius-lg); border-top: none; }
 </style>
 </head>
 <body>
@@ -1111,194 +1149,323 @@
       <button class="tab-btn" data-tab="3">Preferencias</button>
     </div>
 
-    <!-- ====== TAB 1: CATEGORIAS ====== -->
+    <!-- ====== TAB 1: CATEGORIAS (Modelo v2 — Classificações customizáveis) ====== -->
     <div class="tab-panel active" id="tab-0">
-      <table class="categories-table">
-        <thead>
-          <tr>
-            <th style="width:50px"></th>
-            <th>Nome</th>
-            <th>Orcamento/mes</th>
-            <th>Pagamento padrao</th>
-            <th>Essencialidade</th>
-            <th style="width:100px">Acoes</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Row 1 -->
-          <tr id="cat-row-0">
-            <td class="cat-emoji">&#x1F6D2;</td>
-            <td class="cat-name">Supermercado</td>
-            <td class="cat-budget">R$ 3.000,00</td>
-            <td class="cat-payment"><span class="method-brand method-brand-visa">VISA</span> Latam Pass (a vista)</td>
-            <td><span class="badge badge-essential">Essencial</span></td>
-            <td><button class="btn-edit" title="Editar" onclick="toggleEdit(0)">&#x270F;&#xFE0F;</button></td>
-          </tr>
-          <!-- Edit Row 1 (expanded) -->
-          <tr class="edit-row active" id="edit-row-0">
-            <td colspan="6">
-              <div class="edit-form">
-                <div class="edit-form-grid">
-                  <div class="form-group">
-                    <label>Nome</label>
-                    <input type="text" value="Supermercado">
-                  </div>
-                  <div class="form-group">
-                    <label>Emoji</label>
-                    <div style="display:flex; gap:8px; flex-wrap:wrap; padding-top:4px;">
-                      <span style="font-size:24px; cursor:pointer; padding:4px 8px; border:2px solid var(--primary); border-radius:var(--radius-sm); background:var(--primary-light);">&#x1F6D2;</span>
-                      <span style="font-size:24px; cursor:pointer; padding:4px 8px; border:1px solid var(--border); border-radius:var(--radius-sm);">&#x1F34E;</span>
-                      <span style="font-size:24px; cursor:pointer; padding:4px 8px; border:1px solid var(--border); border-radius:var(--radius-sm);">&#x1F6D2;</span>
-                      <span style="font-size:24px; cursor:pointer; padding:4px 8px; border:1px solid var(--border); border-radius:var(--radius-sm);">&#x1F6CD;</span>
-                      <span style="font-size:24px; cursor:pointer; padding:4px 8px; border:1px solid var(--border); border-radius:var(--radius-sm);">&#x1F37D;</span>
+
+      <!-- ── Classificação 1: Essenciais fixos ── -->
+      <div class="classification-section">
+        <div class="classification-header">
+          <div class="classification-header-left">
+            <span class="classification-emoji">&#x1F4CA;</span>
+            <span class="classification-name">Essenciais fixos</span>
+            <span class="classification-budget">&mdash; R$ 6.000,00/mês</span>
+          </div>
+          <div class="classification-actions">
+            <button class="btn-edit" onclick="toggleClassEdit(0)">&#x270F;&#xFE0F; Editar</button>
+          </div>
+        </div>
+        <table class="categories-table">
+          <thead>
+            <tr>
+              <th style="width:50px"></th>
+              <th>Nome</th>
+              <th>Orcamento/mês</th>
+              <th style="width:100px">Subcategorias</th>
+              <th style="width:80px">Acoes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="cat-row-0">
+              <td class="cat-emoji">&#x1F3E0;</td>
+              <td class="cat-name">Moradia</td>
+              <td class="cat-budget">R$ 4.000,00</td>
+              <td style="color:var(--text-secondary); font-size:13px;">4 subcategorias</td>
+              <td><button class="btn-edit" title="Editar" onclick="toggleEdit(0)">&#x270F;&#xFE0F;</button></td>
+            </tr>
+            <tr class="edit-row" id="edit-row-0">
+              <td colspan="5">
+                <div class="edit-form">
+                  <div class="edit-form-grid">
+                    <div class="form-group">
+                      <label>Nome</label>
+                      <input type="text" value="Moradia">
+                    </div>
+                    <div class="form-group">
+                      <label>Emoji</label>
+                      <div style="display:flex; gap:8px; flex-wrap:wrap; padding-top:4px;">
+                        <span style="font-size:24px; cursor:pointer; padding:4px 8px; border:2px solid var(--primary); border-radius:var(--radius-sm); background:var(--primary-light);">&#x1F3E0;</span>
+                        <span style="font-size:24px; cursor:pointer; padding:4px 8px; border:1px solid var(--border); border-radius:var(--radius-sm);">&#x1F3E2;</span>
+                        <span style="font-size:24px; cursor:pointer; padding:4px 8px; border:1px solid var(--border); border-radius:var(--radius-sm);">&#x1F3D8;</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label>Orcamento mensal</label>
+                      <input type="text" value="R$ 4.000,00" inputmode="numeric">
                     </div>
                   </div>
-                  <div class="form-group">
-                    <label>Orcamento mensal</label>
-                    <input type="text" value="R$ 3.000,00">
-                  </div>
-                  <div class="form-group">
-                    <label>Pagamento padrao</label>
-                    <select>
-                      <option selected>Latam Pass Visa (a vista)</option>
-                      <option>Pao de Acucar Master (a vista)</option>
-                      <option>Uniclass Visa (parcelado)</option>
-                      <option>PDA Visa (a vista)</option>
-                      <option>Debito Itau</option>
-                      <option>Debito Nubank</option>
-                      <option>Debito BB</option>
-                    </select>
-                  </div>
-                  <div class="form-group" style="grid-column: 1 / -1;">
-                    <label>Essencialidade</label>
-                    <div class="radio-group">
-                      <label class="radio-label">
-                        <input type="radio" name="essenc-0" checked> Essencial
-                      </label>
-                      <label class="radio-label">
-                        <input type="radio" name="essenc-0"> Qualidade de Vida
-                      </label>
-                      <label class="radio-label">
-                        <input type="radio" name="essenc-0"> Nao Essencial
-                      </label>
-                      <label class="radio-label">
-                        <input type="radio" name="essenc-0"> Investimento
-                      </label>
-                    </div>
-                  </div>
-                  <div class="form-group" style="grid-column: 1 / -1;">
+                  <div class="form-group" style="margin-bottom:20px;">
                     <label>Subcategorias</label>
-                    <div class="subcategories-list">
-                      <span class="subcategory-tag">Hortifruti <span class="remove-sub">&times;</span></span>
-                      <span class="subcategory-tag">Acougue <span class="remove-sub">&times;</span></span>
-                      <span class="subcategory-tag">Padaria <span class="remove-sub">&times;</span></span>
-                      <span class="subcategory-tag">Limpeza <span class="remove-sub">&times;</span></span>
-                      <span class="subcategory-tag">Higiene <span class="remove-sub">&times;</span></span>
-                      <span class="subcategory-tag" style="border-style:dashed; color:var(--primary); cursor:pointer;">+ Adicionar</span>
+                    <div class="subcategories-config">
+                      <div class="subcat-row">
+                        <span class="subcat-name">Aluguel</span>
+                        <div class="subcat-fields">
+                          <div class="method-select-wrapper">
+                            <span class="bank-badge bank-badge-itau">Itaú</span>
+                            <select class="subcat-method-select"><option selected>Débito Itaú</option><option>Latam Pass Visa</option><option>PDA Visa</option></select>
+                          </div>
+                          <input class="subcat-budget-input" type="text" value="R$ 2.200,00" inputmode="numeric">
+                        </div>
+                        <button class="remove-sub-btn">&times;</button>
+                      </div>
+                      <div class="subcat-row">
+                        <span class="subcat-name">Condomínio</span>
+                        <div class="subcat-fields">
+                          <div class="method-select-wrapper">
+                            <span class="bank-badge bank-badge-itau">Itaú</span>
+                            <select class="subcat-method-select"><option selected>Débito Itaú</option><option>Latam Pass Visa</option></select>
+                          </div>
+                          <input class="subcat-budget-input" type="text" value="R$ 800,00" inputmode="numeric">
+                        </div>
+                        <button class="remove-sub-btn">&times;</button>
+                      </div>
+                      <div class="subcat-row">
+                        <span class="subcat-name">Luz</span>
+                        <div class="subcat-fields">
+                          <div class="method-select-wrapper">
+                            <span class="bank-badge bank-badge-itau">Itaú</span>
+                            <select class="subcat-method-select"><option selected>Débito Itaú</option><option>Latam Pass Visa</option></select>
+                          </div>
+                          <input class="subcat-budget-input" type="text" placeholder="Orcamento (opcional)" inputmode="numeric">
+                        </div>
+                        <button class="remove-sub-btn">&times;</button>
+                      </div>
+                      <div class="subcat-row">
+                        <span class="subcat-name">Internet</span>
+                        <div class="subcat-fields">
+                          <div class="method-select-wrapper">
+                            <span class="method-brand method-brand-visa">VISA</span>
+                            <select class="subcat-method-select"><option selected>PDA Visa</option><option>Latam Pass Visa</option><option>Débito Itaú</option></select>
+                          </div>
+                          <input class="subcat-budget-input" type="text" value="R$ 158,00" inputmode="numeric">
+                        </div>
+                        <button class="remove-sub-btn">&times;</button>
+                      </div>
+                      <div class="subcat-row" style="border-style:dashed; border-color:var(--primary); color:var(--primary); cursor:pointer; justify-content:center; font-size:13px; font-weight:500; padding:8px;">
+                        + Adicionar subcategoria
+                      </div>
+                    </div>
+                    <div class="budget-unallocated">
+                      Não alocado dentro de Moradia: <strong style="color: var(--text-secondary);">R$ 842,00</strong>
+                      <span style="font-size: 10px;">(R$ 4.000,00 − R$ 2.200,00 − R$ 800,00 − R$ 158,00)</span>
                     </div>
                   </div>
+                  <div class="edit-actions">
+                    <button class="btn-danger" onclick="toggleEdit(0)">Excluir</button>
+                    <button class="btn-secondary" onclick="toggleEdit(0)">Cancelar</button>
+                    <button class="btn-primary" onclick="toggleEdit(0)">Salvar</button>
+                  </div>
                 </div>
-                <div class="edit-actions">
-                  <button class="btn-danger" onclick="toggleEdit(0)">Excluir</button>
-                  <button class="btn-secondary" onclick="toggleEdit(0)">Cancelar</button>
-                  <button class="btn-primary" onclick="toggleEdit(0)">Salvar</button>
+              </td>
+            </tr>
+            <tr id="cat-row-1">
+              <td class="cat-emoji">&#x1F4F1;</td>
+              <td class="cat-name">Assinaturas</td>
+              <td class="cat-budget">R$ 200,00</td>
+              <td style="color:var(--text-secondary); font-size:13px;">2 subcategorias</td>
+              <td><button class="btn-edit" title="Editar" onclick="toggleEdit(1)">&#x270F;&#xFE0F;</button></td>
+            </tr>
+            <tr class="edit-row" id="edit-row-1"><td colspan="5"><div class="edit-form"><div class="edit-form-grid"><div class="form-group"><label>Nome</label><input type="text" value="Assinaturas"></div><div class="form-group"><label>Orcamento mensal</label><input type="text" value="R$ 200,00" inputmode="numeric"></div></div><div class="form-group" style="margin-bottom:20px;"><label>Subcategorias</label><div class="subcategories-config"><div class="subcat-row"><span class="subcat-name">Streaming</span><div class="subcat-fields"><div class="method-select-wrapper"><span class="method-brand method-brand-visa">VISA</span><select class="subcat-method-select"><option selected>Latam Pass Visa</option><option>PDA Visa</option></select></div><input class="subcat-budget-input" type="text" placeholder="Orcamento (opcional)" inputmode="numeric"></div><button class="remove-sub-btn">&times;</button></div><div class="subcat-row"><span class="subcat-name">Apps</span><div class="subcat-fields"><div class="method-select-wrapper"><span class="method-brand method-brand-visa">VISA</span><select class="subcat-method-select"><option selected>Latam Pass Visa</option><option>PDA Visa</option></select></div><input class="subcat-budget-input" type="text" placeholder="Orcamento (opcional)" inputmode="numeric"></div><button class="remove-sub-btn">&times;</button></div></div></div><div class="edit-actions"><button class="btn-danger" onclick="toggleEdit(1)">Excluir</button><button class="btn-secondary" onclick="toggleEdit(1)">Cancelar</button><button class="btn-primary" onclick="toggleEdit(1)">Salvar</button></div></div></td></tr>
+          </tbody>
+        </table>
+        <div class="add-btn-row">
+          <button class="btn-secondary" style="font-size:13px;">+ Adicionar categoria</button>
+        </div>
+      </div>
+
+      <!-- ── Classificação 2: Essenciais variáveis ── -->
+      <div class="classification-section">
+        <div class="classification-header">
+          <div class="classification-header-left">
+            <span class="classification-emoji">&#x1F4CA;</span>
+            <span class="classification-name">Essenciais variáveis</span>
+            <span class="classification-budget">&mdash; R$ 8.000,00/mês</span>
+          </div>
+          <div class="classification-actions">
+            <button class="btn-edit" onclick="toggleClassEdit(1)">&#x270F;&#xFE0F; Editar</button>
+          </div>
+        </div>
+        <table class="categories-table">
+          <thead><tr><th style="width:50px"></th><th>Nome</th><th>Orcamento/mês</th><th style="width:100px">Subcategorias</th><th style="width:80px">Acoes</th></tr></thead>
+          <tbody>
+            <tr id="cat-row-2">
+              <td class="cat-emoji">&#x1F37D;</td>
+              <td class="cat-name">Alimentação</td>
+              <td class="cat-budget">R$ 5.500,00</td>
+              <td style="color:var(--text-secondary); font-size:13px;">3 subcategorias</td>
+              <td><button class="btn-edit" title="Editar" onclick="toggleEdit(2)">&#x270F;&#xFE0F;</button></td>
+            </tr>
+            <!-- Edit Row: Alimentação (expanded — exemplo principal do modelo v2) -->
+            <tr class="edit-row active" id="edit-row-2">
+              <td colspan="5">
+                <div class="edit-form">
+                  <div class="edit-form-grid">
+                    <div class="form-group">
+                      <label>Nome</label>
+                      <input type="text" value="Alimentação">
+                    </div>
+                    <div class="form-group">
+                      <label>Emoji</label>
+                      <div style="display:flex; gap:8px; flex-wrap:wrap; padding-top:4px;">
+                        <span style="font-size:24px; cursor:pointer; padding:4px 8px; border:2px solid var(--primary); border-radius:var(--radius-sm); background:var(--primary-light);">&#x1F37D;</span>
+                        <span style="font-size:24px; cursor:pointer; padding:4px 8px; border:1px solid var(--border); border-radius:var(--radius-sm);">&#x1F6D2;</span>
+                        <span style="font-size:24px; cursor:pointer; padding:4px 8px; border:1px solid var(--border); border-radius:var(--radius-sm);">&#x1F34E;</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label>Orcamento mensal</label>
+                      <input type="text" value="R$ 5.500,00" inputmode="numeric">
+                    </div>
+                  </div>
+                  <div class="form-group" style="margin-bottom:20px;">
+                    <label>Subcategorias</label>
+                    <div class="subcategories-config">
+                      <div class="subcat-row">
+                        <span class="subcat-name">Supermercado</span>
+                        <div class="subcat-fields">
+                          <div class="method-select-wrapper">
+                            <span class="method-brand method-brand-visa">VISA</span>
+                            <select class="subcat-method-select"><option selected>Latam Pass Visa</option><option>Pão de Açúcar Master</option><option>PDA Visa</option><option>Débito Itaú</option><option>Débito Nubank</option></select>
+                          </div>
+                          <input class="subcat-budget-input" type="text" value="R$ 3.000,00" inputmode="numeric">
+                        </div>
+                        <button class="remove-sub-btn">&times;</button>
+                      </div>
+                      <div class="subcat-row">
+                        <span class="subcat-name">Restaurante trabalho</span>
+                        <div class="subcat-fields">
+                          <div class="method-select-wrapper">
+                            <span class="method-brand method-brand-visa">VISA</span>
+                            <select class="subcat-method-select"><option>Latam Pass Visa</option><option>Pão de Açúcar Master</option><option selected>PDA Visa</option><option>Débito Itaú</option></select>
+                          </div>
+                          <input class="subcat-budget-input" type="text" value="R$ 1.500,00" inputmode="numeric">
+                        </div>
+                        <button class="remove-sub-btn">&times;</button>
+                      </div>
+                      <div class="subcat-row">
+                        <span class="subcat-name">Feira/Hortifruti</span>
+                        <div class="subcat-fields">
+                          <div class="method-select-wrapper">
+                            <span class="method-brand method-brand-visa">VISA</span>
+                            <select class="subcat-method-select"><option selected>Latam Pass Visa</option><option>Pão de Açúcar Master</option><option>PDA Visa</option><option>Débito Itaú</option></select>
+                          </div>
+                          <input class="subcat-budget-input" type="text" value="R$ 500,00" inputmode="numeric">
+                        </div>
+                        <button class="remove-sub-btn">&times;</button>
+                      </div>
+                      <div class="subcat-row" style="border-style:dashed; border-color:var(--primary); color:var(--primary); cursor:pointer; justify-content:center; font-size:13px; font-weight:500; padding:8px;">
+                        + Adicionar subcategoria
+                      </div>
+                    </div>
+                    <div class="budget-unallocated">
+                      Não alocado dentro de Alimentação: <strong style="color: var(--text-secondary);">R$ 500,00</strong>
+                      <span style="font-size: 10px;">(R$ 5.500,00 − R$ 3.000,00 − R$ 1.500,00 − R$ 500,00)</span>
+                    </div>
+                  </div>
+                  <div class="edit-actions">
+                    <button class="btn-danger" onclick="toggleEdit(2)">Excluir</button>
+                    <button class="btn-secondary" onclick="toggleEdit(2)">Cancelar</button>
+                    <button class="btn-primary" onclick="toggleEdit(2)">Salvar</button>
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
+              </td>
+            </tr>
+            <tr id="cat-row-3">
+              <td class="cat-emoji">&#x1F697;</td>
+              <td class="cat-name">Transporte</td>
+              <td class="cat-budget">R$ 1.500,00</td>
+              <td style="color:var(--text-secondary); font-size:13px;">4 subcategorias</td>
+              <td><button class="btn-edit" title="Editar" onclick="toggleEdit(3)">&#x270F;&#xFE0F;</button></td>
+            </tr>
+            <tr class="edit-row" id="edit-row-3"><td colspan="5"><div class="edit-form"><div class="edit-form-grid"><div class="form-group"><label>Nome</label><input type="text" value="Transporte"></div><div class="form-group"><label>Orcamento mensal</label><input type="text" value="R$ 1.500,00" inputmode="numeric"></div></div><div class="form-group" style="margin-bottom:20px;"><label>Subcategorias</label><div class="subcategories-config"><div class="subcat-row"><span class="subcat-name">Gasolina</span><div class="subcat-fields"><div class="method-select-wrapper"><span class="method-brand method-brand-visa">VISA</span><select class="subcat-method-select"><option selected>Latam Pass Visa</option><option>PDA Visa</option><option>Débito Itaú</option></select></div><input class="subcat-budget-input" type="text" value="R$ 600,00" inputmode="numeric"></div><button class="remove-sub-btn">&times;</button></div><div class="subcat-row"><span class="subcat-name">Estacionamento</span><div class="subcat-fields"><div class="method-select-wrapper"><span class="method-brand method-brand-visa">VISA</span><select class="subcat-method-select"><option>Latam Pass Visa</option><option selected>PDA Visa</option><option>Débito Itaú</option></select></div><input class="subcat-budget-input" type="text" value="R$ 300,00" inputmode="numeric"></div><button class="remove-sub-btn">&times;</button></div><div class="subcat-row"><span class="subcat-name">Pedágio</span><div class="subcat-fields"><div class="method-select-wrapper"><span class="bank-badge bank-badge-itau">Itaú</span><select class="subcat-method-select"><option selected>Débito Itaú (ConectCar)</option><option>Latam Pass Visa</option></select></div><input class="subcat-budget-input" type="text" value="R$ 200,00" inputmode="numeric"></div><button class="remove-sub-btn">&times;</button></div><div class="subcat-row"><span class="subcat-name">Manutenção</span><div class="subcat-fields"><div class="method-select-wrapper"><span class="method-brand method-brand-visa">VISA</span><select class="subcat-method-select"><option>Latam Pass Visa</option><option selected>PDA Visa</option><option>Débito Itaú</option></select></div><input class="subcat-budget-input" type="text" value="R$ 400,00" inputmode="numeric"></div><button class="remove-sub-btn">&times;</button></div></div></div><div class="edit-actions"><button class="btn-danger" onclick="toggleEdit(3)">Excluir</button><button class="btn-secondary" onclick="toggleEdit(3)">Cancelar</button><button class="btn-primary" onclick="toggleEdit(3)">Salvar</button></div></div></td></tr>
+          </tbody>
+        </table>
+        <div class="add-btn-row"><button class="btn-secondary" style="font-size:13px;">+ Adicionar categoria</button></div>
+      </div>
 
-          <!-- Row 2 -->
-          <tr id="cat-row-1">
-            <td class="cat-emoji">&#x26FD;</td>
-            <td class="cat-name">Gasolina</td>
-            <td class="cat-budget">R$ 600,00</td>
-            <td class="cat-payment"><span class="method-brand method-brand-visa">VISA</span> PDA (a vista)</td>
-            <td><span class="badge badge-essential">Essencial</span></td>
-            <td><button class="btn-edit" title="Editar" onclick="toggleEdit(1)">&#x270F;&#xFE0F;</button></td>
-          </tr>
-          <tr class="edit-row" id="edit-row-1"><td colspan="6"><div class="edit-form"><div class="edit-form-grid"><div class="form-group"><label>Nome</label><input type="text" value="Gasolina"></div><div class="form-group"><label>Orcamento mensal</label><input type="text" value="R$ 600,00"></div><div class="form-group"><label>Pagamento padrao</label><select><option>Latam Pass Visa (a vista)</option><option selected>PDA Visa (a vista)</option><option>Debito Itau</option></select></div><div class="form-group"><label>Essencialidade</label><div class="radio-group"><label class="radio-label"><input type="radio" name="essenc-1" checked> Essencial</label><label class="radio-label"><input type="radio" name="essenc-1"> Qualidade de Vida</label><label class="radio-label"><input type="radio" name="essenc-1"> Nao Essencial</label></div></div></div><div class="edit-actions"><button class="btn-danger" onclick="toggleEdit(1)">Excluir</button><button class="btn-secondary" onclick="toggleEdit(1)">Cancelar</button><button class="btn-primary" onclick="toggleEdit(1)">Salvar</button></div></div></td></tr>
+      <!-- ── Classificação 3: Qualidade de vida ── -->
+      <div class="classification-section">
+        <div class="classification-header">
+          <div class="classification-header-left">
+            <span class="classification-emoji">&#x1F4CA;</span>
+            <span class="classification-name">Qualidade de vida</span>
+            <span class="classification-budget">&mdash; R$ 4.000,00/mês</span>
+          </div>
+          <div class="classification-actions"><button class="btn-edit" onclick="toggleClassEdit(2)">&#x270F;&#xFE0F; Editar</button></div>
+        </div>
+        <table class="categories-table">
+          <thead><tr><th style="width:50px"></th><th>Nome</th><th>Orcamento/mês</th><th style="width:100px">Subcategorias</th><th style="width:80px">Acoes</th></tr></thead>
+          <tbody>
+            <tr><td class="cat-emoji">&#x1F354;</td><td class="cat-name">Restaurante</td><td class="cat-budget">R$ 2.000,00</td><td style="color:var(--text-secondary); font-size:13px;">3 subcategorias</td><td><button class="btn-edit" title="Editar">&#x270F;&#xFE0F;</button></td></tr>
+            <tr><td class="cat-emoji">&#x2708;&#xFE0F;</td><td class="cat-name">Viagem</td><td class="cat-budget">R$ 2.000,00</td><td style="color:var(--text-secondary); font-size:13px;">4 subcategorias</td><td><button class="btn-edit" title="Editar">&#x270F;&#xFE0F;</button></td></tr>
+          </tbody>
+        </table>
+        <div class="add-btn-row"><button class="btn-secondary" style="font-size:13px;">+ Adicionar categoria</button></div>
+      </div>
 
-          <!-- Row 3 -->
-          <tr id="cat-row-2">
-            <td class="cat-emoji">&#x1F37D;</td>
-            <td class="cat-name">Restaurante</td>
-            <td class="cat-budget">R$ 2.500,00</td>
-            <td class="cat-payment"><span class="method-brand method-brand-visa">VISA</span> Latam Pass (a vista)</td>
-            <td><span class="badge badge-quality">Qualidade de Vida</span></td>
-            <td><button class="btn-edit" title="Editar" onclick="toggleEdit(2)">&#x270F;&#xFE0F;</button></td>
-          </tr>
-          <tr class="edit-row" id="edit-row-2"><td colspan="6"><div class="edit-form"><div class="edit-form-grid"><div class="form-group"><label>Nome</label><input type="text" value="Restaurante"></div><div class="form-group"><label>Orcamento mensal</label><input type="text" value="R$ 2.500,00"></div><div class="form-group"><label>Pagamento padrao</label><select><option selected>Latam Pass Visa (a vista)</option><option>PDA Visa (a vista)</option><option>Debito Itau</option></select></div><div class="form-group"><label>Essencialidade</label><div class="radio-group"><label class="radio-label"><input type="radio" name="essenc-2"> Essencial</label><label class="radio-label"><input type="radio" name="essenc-2" checked> Qualidade de Vida</label><label class="radio-label"><input type="radio" name="essenc-2"> Nao Essencial</label></div></div></div><div class="edit-actions"><button class="btn-danger" onclick="toggleEdit(2)">Excluir</button><button class="btn-secondary" onclick="toggleEdit(2)">Cancelar</button><button class="btn-primary" onclick="toggleEdit(2)">Salvar</button></div></div></td></tr>
+      <!-- ── Classificação 4: Investimentos ── -->
+      <div class="classification-section">
+        <div class="classification-header">
+          <div class="classification-header-left">
+            <span class="classification-emoji">&#x1F4CA;</span>
+            <span class="classification-name">Investimentos</span>
+          </div>
+          <div class="classification-actions"><button class="btn-edit" onclick="toggleClassEdit(3)">&#x270F;&#xFE0F; Editar</button></div>
+        </div>
+        <table class="categories-table">
+          <thead><tr><th style="width:50px"></th><th>Nome</th><th>Orcamento/mês</th><th style="width:100px">Subcategorias</th><th style="width:80px">Acoes</th></tr></thead>
+          <tbody>
+            <tr><td class="cat-emoji">&#x1F393;</td><td class="cat-name">Educação</td><td class="cat-budget">R$ 2.800,00</td><td style="color:var(--text-secondary); font-size:13px;">2 subcategorias</td><td><button class="btn-edit" title="Editar">&#x270F;&#xFE0F;</button></td></tr>
+          </tbody>
+        </table>
+        <div class="add-btn-row"><button class="btn-secondary" style="font-size:13px;">+ Adicionar categoria</button></div>
+      </div>
 
-          <!-- Row 4 -->
-          <tr id="cat-row-3">
-            <td class="cat-emoji">&#x1F3E0;</td>
-            <td class="cat-name">Moradia</td>
-            <td class="cat-budget">R$ 2.200,00</td>
-            <td class="cat-payment"><span class="method-brand method-brand-visa">VISA</span> Debito Itau</td>
-            <td><span class="badge badge-essential">Essencial</span></td>
-            <td><button class="btn-edit" title="Editar" onclick="toggleEdit(3)">&#x270F;&#xFE0F;</button></td>
-          </tr>
-          <tr class="edit-row" id="edit-row-3"><td colspan="6"><div class="edit-form"><div class="edit-form-grid"><div class="form-group"><label>Nome</label><input type="text" value="Moradia"></div><div class="form-group"><label>Orcamento mensal</label><input type="text" value="R$ 2.200,00"></div><div class="form-group"><label>Pagamento padrao</label><select><option>Latam Pass Visa (a vista)</option><option selected>Debito Itau</option><option>Debito Nubank</option></select></div><div class="form-group"><label>Essencialidade</label><div class="radio-group"><label class="radio-label"><input type="radio" name="essenc-3" checked> Essencial</label><label class="radio-label"><input type="radio" name="essenc-3"> Qualidade de Vida</label><label class="radio-label"><input type="radio" name="essenc-3"> Nao Essencial</label></div></div></div><div class="edit-actions"><button class="btn-danger" onclick="toggleEdit(3)">Excluir</button><button class="btn-secondary" onclick="toggleEdit(3)">Cancelar</button><button class="btn-primary" onclick="toggleEdit(3)">Salvar</button></div></div></td></tr>
+      <!-- ── Classificação 5: Proteção ── -->
+      <div class="classification-section">
+        <div class="classification-header">
+          <div class="classification-header-left">
+            <span class="classification-emoji">&#x1F6E1;&#xFE0F;</span>
+            <span class="classification-name">Proteção</span>
+          </div>
+          <div class="classification-actions"><button class="btn-edit" onclick="toggleClassEdit(4)">&#x270F;&#xFE0F; Editar</button></div>
+        </div>
+        <table class="categories-table">
+          <thead><tr><th style="width:50px"></th><th>Nome</th><th>Orcamento/mês</th><th style="width:100px">Subcategorias</th><th style="width:80px">Acoes</th></tr></thead>
+          <tbody>
+            <tr><td class="cat-emoji">&#x1F6E1;&#xFE0F;</td><td class="cat-name">Seguros</td><td class="cat-budget">R$ 500,00</td><td style="color:var(--text-secondary); font-size:13px;">2 subcategorias</td><td><button class="btn-edit" title="Editar">&#x270F;&#xFE0F;</button></td></tr>
+          </tbody>
+        </table>
+        <div class="add-btn-row"><button class="btn-secondary" style="font-size:13px;">+ Adicionar categoria</button></div>
+      </div>
 
-          <!-- Row 5 -->
-          <tr id="cat-row-4">
-            <td class="cat-emoji">&#x1F393;</td>
-            <td class="cat-name">Educacao</td>
-            <td class="cat-budget">R$ 2.800,00</td>
-            <td class="cat-payment"><span class="method-brand method-brand-visa">VISA</span> Debito Itau</td>
-            <td><span class="badge badge-essential">Essencial</span></td>
-            <td><button class="btn-edit" title="Editar" onclick="toggleEdit(4)">&#x270F;&#xFE0F;</button></td>
-          </tr>
-          <tr class="edit-row" id="edit-row-4"><td colspan="6"><div class="edit-form"><div class="edit-form-grid"><div class="form-group"><label>Nome</label><input type="text" value="Educacao"></div><div class="form-group"><label>Orcamento mensal</label><input type="text" value="R$ 2.800,00"></div><div class="form-group"><label>Pagamento padrao</label><select><option selected>Debito Itau</option><option>Debito Nubank</option><option>Latam Pass Visa (a vista)</option></select></div><div class="form-group"><label>Essencialidade</label><div class="radio-group"><label class="radio-label"><input type="radio" name="essenc-4" checked> Essencial</label><label class="radio-label"><input type="radio" name="essenc-4"> Qualidade de Vida</label><label class="radio-label"><input type="radio" name="essenc-4"> Nao Essencial</label></div></div></div><div class="edit-actions"><button class="btn-danger" onclick="toggleEdit(4)">Excluir</button><button class="btn-secondary" onclick="toggleEdit(4)">Cancelar</button><button class="btn-primary" onclick="toggleEdit(4)">Salvar</button></div></div></td></tr>
+      <!-- ── Classificação 6: Imprevistos ── -->
+      <div class="classification-section">
+        <div class="classification-header">
+          <div class="classification-header-left">
+            <span class="classification-emoji">&#x26A0;&#xFE0F;</span>
+            <span class="classification-name">Imprevistos</span>
+            <span class="classification-budget">&mdash; R$ 1.000,00/mês</span>
+          </div>
+          <div class="classification-actions"><button class="btn-edit" onclick="toggleClassEdit(5)">&#x270F;&#xFE0F; Editar</button></div>
+        </div>
+        <div class="classification-empty">
+          Sem categorias pré-definidas — crie quando surgir um imprevisto
+        </div>
+        <div class="add-btn-row"><button class="btn-secondary" style="font-size:13px;">+ Adicionar categoria</button></div>
+      </div>
 
-          <!-- Row 6 -->
-          <tr id="cat-row-5">
-            <td class="cat-emoji">&#x1F4F1;</td>
-            <td class="cat-name">Internet/Tel</td>
-            <td class="cat-budget">R$ 158,00</td>
-            <td class="cat-payment"><span class="method-brand method-brand-master"></span> Debito Nubank</td>
-            <td><span class="badge badge-essential">Essencial</span></td>
-            <td><button class="btn-edit" title="Editar" onclick="toggleEdit(5)">&#x270F;&#xFE0F;</button></td>
-          </tr>
-          <tr class="edit-row" id="edit-row-5"><td colspan="6"><div class="edit-form"><div class="edit-form-grid"><div class="form-group"><label>Nome</label><input type="text" value="Internet/Tel"></div><div class="form-group"><label>Orcamento mensal</label><input type="text" value="R$ 158,00"></div><div class="form-group"><label>Pagamento padrao</label><select><option>Debito Itau</option><option selected>Debito Nubank</option><option>Latam Pass Visa (a vista)</option></select></div><div class="form-group"><label>Essencialidade</label><div class="radio-group"><label class="radio-label"><input type="radio" name="essenc-5" checked> Essencial</label><label class="radio-label"><input type="radio" name="essenc-5"> Qualidade de Vida</label><label class="radio-label"><input type="radio" name="essenc-5"> Nao Essencial</label></div></div></div><div class="edit-actions"><button class="btn-danger" onclick="toggleEdit(5)">Excluir</button><button class="btn-secondary" onclick="toggleEdit(5)">Cancelar</button><button class="btn-primary" onclick="toggleEdit(5)">Salvar</button></div></div></td></tr>
-
-          <!-- Row 7 -->
-          <tr id="cat-row-6">
-            <td class="cat-emoji">&#x1F697;</td>
-            <td class="cat-name">Transporte</td>
-            <td class="cat-budget">R$ 500,00</td>
-            <td class="cat-payment"><span class="method-brand method-brand-visa">VISA</span> Debito Itau</td>
-            <td><span class="badge badge-quality">Qualidade de Vida</span></td>
-            <td><button class="btn-edit" title="Editar" onclick="toggleEdit(6)">&#x270F;&#xFE0F;</button></td>
-          </tr>
-          <tr class="edit-row" id="edit-row-6"><td colspan="6"><div class="edit-form"><div class="edit-form-grid"><div class="form-group"><label>Nome</label><input type="text" value="Transporte"></div><div class="form-group"><label>Orcamento mensal</label><input type="text" value="R$ 500,00"></div><div class="form-group"><label>Pagamento padrao</label><select><option>Latam Pass Visa (a vista)</option><option>PDA Visa (a vista)</option><option selected>Debito Itau</option></select></div><div class="form-group"><label>Essencialidade</label><div class="radio-group"><label class="radio-label"><input type="radio" name="essenc-6"> Essencial</label><label class="radio-label"><input type="radio" name="essenc-6" checked> Qualidade de Vida</label><label class="radio-label"><input type="radio" name="essenc-6"> Nao Essencial</label></div></div></div><div class="edit-actions"><button class="btn-danger" onclick="toggleEdit(6)">Excluir</button><button class="btn-secondary" onclick="toggleEdit(6)">Cancelar</button><button class="btn-primary" onclick="toggleEdit(6)">Salvar</button></div></div></td></tr>
-
-          <!-- Row 8 -->
-          <tr id="cat-row-7">
-            <td class="cat-emoji">&#x1F4E6;</td>
-            <td class="cat-name">Compras</td>
-            <td class="cat-budget">R$ 2.000,00</td>
-            <td class="cat-payment"><span class="method-brand method-brand-visa">VISA</span> Uniclass (parcelado)</td>
-            <td><span class="badge badge-non-essential">Nao Essencial</span></td>
-            <td><button class="btn-edit" title="Editar" onclick="toggleEdit(7)">&#x270F;&#xFE0F;</button></td>
-          </tr>
-          <tr class="edit-row" id="edit-row-7"><td colspan="6"><div class="edit-form"><div class="edit-form-grid"><div class="form-group"><label>Nome</label><input type="text" value="Compras"></div><div class="form-group"><label>Orcamento mensal</label><input type="text" value="R$ 2.000,00"></div><div class="form-group"><label>Pagamento padrao</label><select><option>Latam Pass Visa (a vista)</option><option>PDA Visa (a vista)</option><option selected>Uniclass Visa (parcelado)</option></select></div><div class="form-group"><label>Essencialidade</label><div class="radio-group"><label class="radio-label"><input type="radio" name="essenc-7"> Essencial</label><label class="radio-label"><input type="radio" name="essenc-7"> Qualidade de Vida</label><label class="radio-label"><input type="radio" name="essenc-7" checked> Nao Essencial</label></div></div></div><div class="edit-actions"><button class="btn-danger" onclick="toggleEdit(7)">Excluir</button><button class="btn-secondary" onclick="toggleEdit(7)">Cancelar</button><button class="btn-primary" onclick="toggleEdit(7)">Salvar</button></div></div></td></tr>
-
-          <!-- Row 9 -->
-          <tr id="cat-row-8">
-            <td class="cat-emoji">&#x1F389;</td>
-            <td class="cat-name">Lazer</td>
-            <td class="cat-budget">R$ 800,00</td>
-            <td class="cat-payment"><span class="method-brand method-brand-visa">VISA</span> Latam Pass</td>
-            <td><span class="badge badge-non-essential">Nao Essencial</span></td>
-            <td><button class="btn-edit" title="Editar" onclick="toggleEdit(8)">&#x270F;&#xFE0F;</button></td>
-          </tr>
-          <tr class="edit-row" id="edit-row-8"><td colspan="6"><div class="edit-form"><div class="edit-form-grid"><div class="form-group"><label>Nome</label><input type="text" value="Lazer"></div><div class="form-group"><label>Orcamento mensal</label><input type="text" value="R$ 800,00"></div><div class="form-group"><label>Pagamento padrao</label><select><option selected>Latam Pass Visa (a vista)</option><option>PDA Visa (a vista)</option><option>Uniclass Visa (parcelado)</option></select></div><div class="form-group"><label>Essencialidade</label><div class="radio-group"><label class="radio-label"><input type="radio" name="essenc-8"> Essencial</label><label class="radio-label"><input type="radio" name="essenc-8"> Qualidade de Vida</label><label class="radio-label"><input type="radio" name="essenc-8" checked> Nao Essencial</label></div></div></div><div class="edit-actions"><button class="btn-danger" onclick="toggleEdit(8)">Excluir</button><button class="btn-secondary" onclick="toggleEdit(8)">Cancelar</button><button class="btn-primary" onclick="toggleEdit(8)">Salvar</button></div></div></td></tr>
-        </tbody>
-      </table>
-
-      <div class="add-btn-row">
-        <button class="btn-primary">+ Adicionar categoria</button>
+      <div class="add-btn-row" style="margin-top:24px;">
+        <button class="btn-primary">+ Adicionar classificação</button>
       </div>
     </div>
 
@@ -1642,7 +1809,7 @@
               <div class="m-item-icon">&#x1F3F7;</div>
               <div>
                 <div class="m-item-name">Categorias</div>
-                <div class="m-item-count">9 categorias</div>
+                <div class="m-item-count">6 classificações</div>
               </div>
             </div>
             <span class="m-item-arrow">&#x203A;</span>
@@ -1684,115 +1851,116 @@
         </div>
       </div>
 
-      <!-- MOBILE: Categories detail -->
+      <!-- MOBILE: Categories detail (Modelo v2 — agrupado por classificação) -->
       <div id="m-categories" style="display:none;">
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
           <button style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--primary); padding:4px;" onclick="showMobileSection('nav')">&#x2190;</button>
           <span style="font-size:16px; font-weight:600;">Categorias</span>
         </div>
-        <div class="m-cat-list">
-          <div class="m-cat-item">
-            <span class="m-cat-emoji">&#x1F6D2;</span>
-            <div class="m-cat-info">
-              <div class="m-cat-name">Supermercado</div>
-              <div class="m-cat-meta">
-                <span>R$ 3.000,00/mês</span>
-                <span class="badge badge-essential" style="font-size:10px; padding:1px 6px;">Essencial</span>
+
+        <!-- Classificação: Essenciais fixos -->
+        <div class="m-classification-section">
+          <div class="m-classification-header">
+            <div class="m-classification-header-left">
+              <span style="font-size:16px;">&#x1F4CA;</span>
+              <div>
+                <div class="m-classification-name">Essenciais fixos</div>
+                <div class="m-classification-budget">R$ 6.000,00/mês</div>
               </div>
             </div>
             <button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button>
           </div>
-          <div class="m-cat-item">
-            <span class="m-cat-emoji">&#x26FD;</span>
-            <div class="m-cat-info">
-              <div class="m-cat-name">Gasolina</div>
-              <div class="m-cat-meta">
-                <span>R$ 600,00/mês</span>
-                <span class="badge badge-essential" style="font-size:10px; padding:1px 6px;">Essencial</span>
-              </div>
-            </div>
-            <button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button>
-          </div>
-          <div class="m-cat-item">
-            <span class="m-cat-emoji">&#x1F37D;</span>
-            <div class="m-cat-info">
-              <div class="m-cat-name">Restaurante</div>
-              <div class="m-cat-meta">
-                <span>R$ 2.500,00/mês</span>
-                <span class="badge badge-quality" style="font-size:10px; padding:1px 6px;">Qualidade</span>
-              </div>
-            </div>
-            <button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button>
-          </div>
-          <div class="m-cat-item">
-            <span class="m-cat-emoji">&#x1F3E0;</span>
-            <div class="m-cat-info">
-              <div class="m-cat-name">Moradia</div>
-              <div class="m-cat-meta">
-                <span>R$ 2.200,00/mês</span>
-                <span class="badge badge-essential" style="font-size:10px; padding:1px 6px;">Essencial</span>
-              </div>
-            </div>
-            <button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button>
-          </div>
-          <div class="m-cat-item">
-            <span class="m-cat-emoji">&#x1F393;</span>
-            <div class="m-cat-info">
-              <div class="m-cat-name">Educacao</div>
-              <div class="m-cat-meta">
-                <span>R$ 2.800,00/mês</span>
-                <span class="badge badge-essential" style="font-size:10px; padding:1px 6px;">Essencial</span>
-              </div>
-            </div>
-            <button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button>
-          </div>
-          <div class="m-cat-item">
-            <span class="m-cat-emoji">&#x1F4F1;</span>
-            <div class="m-cat-info">
-              <div class="m-cat-name">Internet/Tel</div>
-              <div class="m-cat-meta">
-                <span>R$ 158,00/mês</span>
-                <span class="badge badge-essential" style="font-size:10px; padding:1px 6px;">Essencial</span>
-              </div>
-            </div>
-            <button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button>
-          </div>
-          <div class="m-cat-item">
-            <span class="m-cat-emoji">&#x1F697;</span>
-            <div class="m-cat-info">
-              <div class="m-cat-name">Transporte</div>
-              <div class="m-cat-meta">
-                <span>R$ 500,00/mês</span>
-                <span class="badge badge-quality" style="font-size:10px; padding:1px 6px;">Qualidade</span>
-              </div>
-            </div>
-            <button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button>
-          </div>
-          <div class="m-cat-item">
-            <span class="m-cat-emoji">&#x1F4E6;</span>
-            <div class="m-cat-info">
-              <div class="m-cat-name">Compras</div>
-              <div class="m-cat-meta">
-                <span>R$ 2.000,00/mês</span>
-                <span class="badge badge-non-essential" style="font-size:10px; padding:1px 6px;">Nao Essencial</span>
-              </div>
-            </div>
-            <button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button>
-          </div>
-          <div class="m-cat-item">
-            <span class="m-cat-emoji">&#x1F389;</span>
-            <div class="m-cat-info">
-              <div class="m-cat-name">Lazer</div>
-              <div class="m-cat-meta">
-                <span>R$ 800,00/mês</span>
-                <span class="badge badge-non-essential" style="font-size:10px; padding:1px 6px;">Nao Essencial</span>
-              </div>
-            </div>
-            <button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button>
+          <div class="m-cat-list">
+            <div class="m-cat-item"><span class="m-cat-emoji">&#x1F3E0;</span><div class="m-cat-info"><div class="m-cat-name">Moradia</div><div class="m-cat-meta"><span>R$ 4.000,00/mês</span><span style="font-size:10px; color:var(--text-tertiary);">4 subcategorias</span></div></div><button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button></div>
+            <div class="m-cat-item"><span class="m-cat-emoji">&#x1F4F1;</span><div class="m-cat-info"><div class="m-cat-name">Assinaturas</div><div class="m-cat-meta"><span>R$ 200,00/mês</span><span style="font-size:10px; color:var(--text-tertiary);">2 subcategorias</span></div></div><button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button></div>
           </div>
         </div>
+
+        <!-- Classificação: Essenciais variáveis -->
+        <div class="m-classification-section">
+          <div class="m-classification-header">
+            <div class="m-classification-header-left">
+              <span style="font-size:16px;">&#x1F4CA;</span>
+              <div>
+                <div class="m-classification-name">Essenciais variáveis</div>
+                <div class="m-classification-budget">R$ 8.000,00/mês</div>
+              </div>
+            </div>
+            <button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button>
+          </div>
+          <div class="m-cat-list">
+            <div class="m-cat-item"><span class="m-cat-emoji">&#x1F37D;</span><div class="m-cat-info"><div class="m-cat-name">Alimentação</div><div class="m-cat-meta"><span>R$ 5.500,00/mês</span><span style="font-size:10px; color:var(--text-tertiary);">3 subcategorias</span></div></div><button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button></div>
+            <div class="m-cat-item"><span class="m-cat-emoji">&#x1F697;</span><div class="m-cat-info"><div class="m-cat-name">Transporte</div><div class="m-cat-meta"><span>R$ 1.500,00/mês</span><span style="font-size:10px; color:var(--text-tertiary);">4 subcategorias</span></div></div><button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button></div>
+          </div>
+        </div>
+
+        <!-- Classificação: Qualidade de vida -->
+        <div class="m-classification-section">
+          <div class="m-classification-header">
+            <div class="m-classification-header-left">
+              <span style="font-size:16px;">&#x1F4CA;</span>
+              <div>
+                <div class="m-classification-name">Qualidade de vida</div>
+                <div class="m-classification-budget">R$ 4.000,00/mês</div>
+              </div>
+            </div>
+            <button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button>
+          </div>
+          <div class="m-cat-list">
+            <div class="m-cat-item"><span class="m-cat-emoji">&#x1F354;</span><div class="m-cat-info"><div class="m-cat-name">Restaurante</div><div class="m-cat-meta"><span>R$ 2.000,00/mês</span><span style="font-size:10px; color:var(--text-tertiary);">3 subcategorias</span></div></div><button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button></div>
+            <div class="m-cat-item"><span class="m-cat-emoji">&#x2708;&#xFE0F;</span><div class="m-cat-info"><div class="m-cat-name">Viagem</div><div class="m-cat-meta"><span>R$ 2.000,00/mês</span><span style="font-size:10px; color:var(--text-tertiary);">4 subcategorias</span></div></div><button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button></div>
+          </div>
+        </div>
+
+        <!-- Classificação: Investimentos -->
+        <div class="m-classification-section">
+          <div class="m-classification-header">
+            <div class="m-classification-header-left">
+              <span style="font-size:16px;">&#x1F4CA;</span>
+              <div><div class="m-classification-name">Investimentos</div></div>
+            </div>
+            <button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button>
+          </div>
+          <div class="m-cat-list">
+            <div class="m-cat-item"><span class="m-cat-emoji">&#x1F393;</span><div class="m-cat-info"><div class="m-cat-name">Educação</div><div class="m-cat-meta"><span>R$ 2.800,00/mês</span><span style="font-size:10px; color:var(--text-tertiary);">2 subcategorias</span></div></div><button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button></div>
+          </div>
+        </div>
+
+        <!-- Classificação: Proteção -->
+        <div class="m-classification-section">
+          <div class="m-classification-header">
+            <div class="m-classification-header-left">
+              <span style="font-size:16px;">&#x1F6E1;&#xFE0F;</span>
+              <div><div class="m-classification-name">Proteção</div></div>
+            </div>
+            <button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button>
+          </div>
+          <div class="m-cat-list">
+            <div class="m-cat-item"><span class="m-cat-emoji">&#x1F6E1;&#xFE0F;</span><div class="m-cat-info"><div class="m-cat-name">Seguros</div><div class="m-cat-meta"><span>R$ 500,00/mês</span><span style="font-size:10px; color:var(--text-tertiary);">2 subcategorias</span></div></div><button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button></div>
+          </div>
+        </div>
+
+        <!-- Classificação: Imprevistos -->
+        <div class="m-classification-section">
+          <div class="m-classification-header">
+            <div class="m-classification-header-left">
+              <span style="font-size:16px;">&#x26A0;&#xFE0F;</span>
+              <div>
+                <div class="m-classification-name">Imprevistos</div>
+                <div class="m-classification-budget">R$ 1.000,00/mês</div>
+              </div>
+            </div>
+            <button class="m-cat-edit-btn">&#x270F;&#xFE0F;</button>
+          </div>
+          <div class="m-cat-list">
+            <div class="m-cat-item" style="justify-content:center; color:var(--text-tertiary); font-size:12px; font-style:italic;">
+              Sem categorias — crie quando surgir
+            </div>
+          </div>
+        </div>
+
         <div style="margin-top:12px;">
-          <button class="btn-primary" style="width:100%; justify-content:center; font-size:13px; padding:10px;">+ Adicionar categoria</button>
+          <button class="btn-primary" style="width:100%; justify-content:center; font-size:13px; padding:10px;">+ Adicionar classificação</button>
         </div>
       </div>
 

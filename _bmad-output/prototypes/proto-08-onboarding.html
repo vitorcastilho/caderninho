@@ -965,6 +965,69 @@
       margin: 0;
     }
 
+    /* ── Bank Logo Variants (AI-6) ── */
+    .item-card-icon.bank-nubank { background: #820AD1; color: #FFFFFF; }
+    .item-card-icon.bank-itau   { background: #003399; color: #FFFFFF; }
+    .item-card-icon.bank-bb     { background: #FFFF00; color: #003882; }
+
+    /* ── Method Select Badges (AI-7) ── */
+    .method-select-wrapper {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .bank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 4px;
+      font-size: 8px;
+      font-weight: 700;
+      flex-shrink: 0;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .bank-badge-itau { background: #003399; color: #FFFFFF; }
+    .bank-badge-nubank { background: #820AD1; color: #FFFFFF; }
+    .method-brand {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 4px;
+      font-size: 8px;
+      font-weight: 700;
+      flex-shrink: 0;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .method-brand-visa { background: #1A1F71; color: #FFFFFF; }
+    .method-brand-master {
+      background: #252525;
+      position: relative;
+      overflow: hidden;
+      width: 24px;
+    }
+    .method-brand-master::before,
+    .method-brand-master::after {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .method-brand-master::before {
+      left: 2px;
+      background: #EB001B;
+    }
+    .method-brand-master::after {
+      right: 2px;
+      background: #F79E1B;
+    }
+
     /* ── Responsive ── */
     @media (max-width: 1400px) {
       .showcase { gap: 20px; }
@@ -1034,7 +1097,7 @@
 
           <div class="item-list">
             <div class="item-card">
-              <div class="item-card-icon">Nu</div>
+              <div class="item-card-icon bank-nubank">Nu</div>
               <div class="item-card-info">
                 <div class="item-card-name">Nubank</div>
                 <div class="item-card-detail">Saldo: R$ 8.500,00</div>
@@ -1045,7 +1108,7 @@
               </div>
             </div>
             <div class="item-card">
-              <div class="item-card-icon">It</div>
+              <div class="item-card-icon bank-itau">Itaú</div>
               <div class="item-card-info">
                 <div class="item-card-name">Itaú</div>
                 <div class="item-card-detail">Saldo: R$ 6.200,00</div>
@@ -1056,7 +1119,7 @@
               </div>
             </div>
             <div class="item-card">
-              <div class="item-card-icon">BB</div>
+              <div class="item-card-icon bank-bb">BB</div>
               <div class="item-card-info">
                 <div class="item-card-name">BB</div>
                 <div class="item-card-detail">Saldo: R$ 4.500,00</div>
@@ -1236,14 +1299,17 @@
                 </div>
                 <div class="category-payment">
                   <span class="category-payment-label">Método:</span>
-                  <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
-                    <option>Selecionar...</option>
-                    <option selected>Latam Pass Visa</option>
-                    <option>Nubank Master</option>
-                    <option>Itaú Débito</option>
-                    <option>PIX</option>
-                    <option>Dinheiro</option>
-                  </select>
+                  <span class="method-select-wrapper">
+                    <span class="method-brand method-brand-visa">VISA</span>
+                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
+                      <option>Selecionar...</option>
+                      <option selected>Latam Pass Visa</option>
+                      <option>Nubank Master</option>
+                      <option>Itaú Débito</option>
+                      <option>PIX</option>
+                      <option>Dinheiro</option>
+                    </select>
+                  </span>
                 </div>
               </div>
 
@@ -1259,14 +1325,17 @@
                 </div>
                 <div class="category-payment">
                   <span class="category-payment-label">Método:</span>
-                  <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
-                    <option>Selecionar...</option>
-                    <option>Latam Pass Visa</option>
-                    <option>Nubank Master</option>
-                    <option selected>Itaú Débito</option>
-                    <option>PIX</option>
-                    <option>Dinheiro</option>
-                  </select>
+                  <span class="method-select-wrapper">
+                    <span class="bank-badge bank-badge-itau">Itaú</span>
+                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
+                      <option>Selecionar...</option>
+                      <option>Latam Pass Visa</option>
+                      <option>Nubank Master</option>
+                      <option selected>Itaú Débito</option>
+                      <option>PIX</option>
+                      <option>Dinheiro</option>
+                    </select>
+                  </span>
                 </div>
               </div>
 
@@ -1282,14 +1351,17 @@
                 </div>
                 <div class="category-payment">
                   <span class="category-payment-label">Método:</span>
-                  <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
-                    <option>Selecionar...</option>
-                    <option>Latam Pass Visa</option>
-                    <option>Nubank Master</option>
-                    <option selected>Itaú Débito</option>
-                    <option>PIX</option>
-                    <option>Dinheiro</option>
-                  </select>
+                  <span class="method-select-wrapper">
+                    <span class="bank-badge bank-badge-itau">Itaú</span>
+                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
+                      <option>Selecionar...</option>
+                      <option>Latam Pass Visa</option>
+                      <option>Nubank Master</option>
+                      <option selected>Itaú Débito</option>
+                      <option>PIX</option>
+                      <option>Dinheiro</option>
+                    </select>
+                  </span>
                 </div>
               </div>
 
@@ -1305,14 +1377,17 @@
                 </div>
                 <div class="category-payment">
                   <span class="category-payment-label">Método:</span>
-                  <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
-                    <option>Selecionar...</option>
-                    <option selected>Latam Pass Visa</option>
-                    <option>Nubank Master</option>
-                    <option>Itaú Débito</option>
-                    <option>PIX</option>
-                    <option>Dinheiro</option>
-                  </select>
+                  <span class="method-select-wrapper">
+                    <span class="method-brand method-brand-visa">VISA</span>
+                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
+                      <option>Selecionar...</option>
+                      <option selected>Latam Pass Visa</option>
+                      <option>Nubank Master</option>
+                      <option>Itaú Débito</option>
+                      <option>PIX</option>
+                      <option>Dinheiro</option>
+                    </select>
+                  </span>
                 </div>
               </div>
 
@@ -1328,14 +1403,17 @@
                 </div>
                 <div class="category-payment">
                   <span class="category-payment-label">Método:</span>
-                  <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
-                    <option>Selecionar...</option>
-                    <option selected>Latam Pass Visa</option>
-                    <option>Nubank Master</option>
-                    <option>Itaú Débito</option>
-                    <option>PIX</option>
-                    <option>Dinheiro</option>
-                  </select>
+                  <span class="method-select-wrapper">
+                    <span class="method-brand method-brand-visa">VISA</span>
+                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
+                      <option>Selecionar...</option>
+                      <option selected>Latam Pass Visa</option>
+                      <option>Nubank Master</option>
+                      <option>Itaú Débito</option>
+                      <option>PIX</option>
+                      <option>Dinheiro</option>
+                    </select>
+                  </span>
                 </div>
               </div>
             </div>
@@ -1356,14 +1434,17 @@
                 </div>
                 <div class="category-payment">
                   <span class="category-payment-label">Método:</span>
-                  <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
-                    <option>Selecionar...</option>
-                    <option selected>Nubank Master</option>
-                    <option>Latam Pass Visa</option>
-                    <option>Itaú Débito</option>
-                    <option>PIX</option>
-                    <option>Dinheiro</option>
-                  </select>
+                  <span class="method-select-wrapper">
+                    <span class="method-brand method-brand-master"></span>
+                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
+                      <option>Selecionar...</option>
+                      <option selected>Nubank Master</option>
+                      <option>Latam Pass Visa</option>
+                      <option>Itaú Débito</option>
+                      <option>PIX</option>
+                      <option>Dinheiro</option>
+                    </select>
+                  </span>
                 </div>
               </div>
             </div>
@@ -1482,14 +1563,17 @@
                   </div>
                   <div class="desktop-category-payment-row">
                     <span class="desktop-category-payment-label">Método:</span>
-                    <select class="desktop-select">
-                      <option>Selecionar...</option>
-                      <option selected>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option>Itaú Débito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
+                    <span class="method-select-wrapper">
+                      <span class="method-brand method-brand-visa">VISA</span>
+                      <select class="desktop-select">
+                        <option>Selecionar...</option>
+                        <option selected>Latam Pass Visa</option>
+                        <option>Nubank Master</option>
+                        <option>Itaú Débito</option>
+                        <option>PIX</option>
+                        <option>Dinheiro</option>
+                      </select>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1505,14 +1589,17 @@
                   </div>
                   <div class="desktop-category-payment-row">
                     <span class="desktop-category-payment-label">Método:</span>
-                    <select class="desktop-select">
-                      <option>Selecionar...</option>
-                      <option>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option selected>Itaú Débito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
+                    <span class="method-select-wrapper">
+                      <span class="bank-badge bank-badge-itau">Itaú</span>
+                      <select class="desktop-select">
+                        <option>Selecionar...</option>
+                        <option>Latam Pass Visa</option>
+                        <option>Nubank Master</option>
+                        <option selected>Itaú Débito</option>
+                        <option>PIX</option>
+                        <option>Dinheiro</option>
+                      </select>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1528,14 +1615,17 @@
                   </div>
                   <div class="desktop-category-payment-row">
                     <span class="desktop-category-payment-label">Método:</span>
-                    <select class="desktop-select">
-                      <option>Selecionar...</option>
-                      <option>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option selected>Itaú Débito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
+                    <span class="method-select-wrapper">
+                      <span class="bank-badge bank-badge-itau">Itaú</span>
+                      <select class="desktop-select">
+                        <option>Selecionar...</option>
+                        <option>Latam Pass Visa</option>
+                        <option>Nubank Master</option>
+                        <option selected>Itaú Débito</option>
+                        <option>PIX</option>
+                        <option>Dinheiro</option>
+                      </select>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1551,14 +1641,17 @@
                   </div>
                   <div class="desktop-category-payment-row">
                     <span class="desktop-category-payment-label">Método:</span>
-                    <select class="desktop-select">
-                      <option>Selecionar...</option>
-                      <option selected>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option>Itaú Débito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
+                    <span class="method-select-wrapper">
+                      <span class="method-brand method-brand-visa">VISA</span>
+                      <select class="desktop-select">
+                        <option>Selecionar...</option>
+                        <option selected>Latam Pass Visa</option>
+                        <option>Nubank Master</option>
+                        <option>Itaú Débito</option>
+                        <option>PIX</option>
+                        <option>Dinheiro</option>
+                      </select>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1574,14 +1667,17 @@
                   </div>
                   <div class="desktop-category-payment-row">
                     <span class="desktop-category-payment-label">Método:</span>
-                    <select class="desktop-select">
-                      <option>Selecionar...</option>
-                      <option selected>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option>Itaú Débito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
+                    <span class="method-select-wrapper">
+                      <span class="method-brand method-brand-visa">VISA</span>
+                      <select class="desktop-select">
+                        <option>Selecionar...</option>
+                        <option selected>Latam Pass Visa</option>
+                        <option>Nubank Master</option>
+                        <option>Itaú Débito</option>
+                        <option>PIX</option>
+                        <option>Dinheiro</option>
+                      </select>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1600,14 +1696,17 @@
                   </div>
                   <div class="desktop-category-payment-row">
                     <span class="desktop-category-payment-label">Método:</span>
-                    <select class="desktop-select">
-                      <option>Selecionar...</option>
-                      <option selected>Nubank Master</option>
-                      <option>Latam Pass Visa</option>
-                      <option>Itaú Débito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
+                    <span class="method-select-wrapper">
+                      <span class="method-brand method-brand-master"></span>
+                      <select class="desktop-select">
+                        <option>Selecionar...</option>
+                        <option selected>Nubank Master</option>
+                        <option>Latam Pass Visa</option>
+                        <option>Itaú Débito</option>
+                        <option>PIX</option>
+                        <option>Dinheiro</option>
+                      </select>
+                    </span>
                   </div>
                 </div>
               </div>

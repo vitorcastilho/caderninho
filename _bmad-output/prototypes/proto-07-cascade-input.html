@@ -1121,11 +1121,11 @@
       </div>
     </div>
 
-    <!-- ──── STATE 3: Detalhes + Impacto ──── -->
+    <!-- ──── STATE 3a: Pagamento à Vista ──── -->
     <div class="phone-column">
       <div class="phone-label">
-        Estado 3: Detalhes + Impacto
-        <span>Estabelecimento, pagamento e prévia</span>
+        Estado 3a: Pagamento à Vista
+        <span>Estabelecimento, pagamento e prévia de impacto</span>
       </div>
       <div class="phone-frame">
         <div class="phone-notch"></div>
@@ -1187,6 +1187,105 @@
                   <span style="color: var(--attention);">Resta R$ 878,00</span>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──── STATE 3b: Parcelamento no Cartão ──── -->
+    <div class="phone-column">
+      <div class="phone-label">
+        Estado 3b: Parcelamento no Cartão
+        <span>Quando o usuário seleciona cartão de crédito, o roller de parcelas aparece</span>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="overlay"></div>
+          <div class="bottom-sheet" style="height: 590px;">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+              <span class="sheet-title">Novo Gasto</span>
+              <button class="sheet-close" title="Fechar">&#10005;</button>
+            </div>
+
+            <div class="bottom-sheet-scroll">
+              <div class="summary-bar">
+                <span class="summary-amount">R$ 87,00</span>
+                <span class="summary-sep">·</span>
+                <span class="summary-cat">&#x1F6D2; Supermercado</span>
+              </div>
+
+              <div class="step-indicator" style="justify-content: center; padding: 8px 0;">
+                <div class="step-dot done"></div>
+                <div class="step-dot done"></div>
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+              </div>
+
+              <div class="field-label">Onde?</div>
+              <div class="chips-row">
+                <div class="chip-sm selected">Pão de Açúcar</div>
+                <div class="chip-sm">Extra</div>
+                <div class="chip-sm">Assaí</div>
+              </div>
+
+              <div class="field-label">Pagamento</div>
+              <div class="chips-row" id="ccPaymentChips">
+                <div class="chip-sm selected"><span class="method-brand method-brand-master"></span>Nubank Master</div>
+                <div class="chip-sm"><span class="method-brand method-brand-visa">VISA</span>Latam Visa</div>
+                <div class="chip-sm"><span class="method-brand method-brand-visa">VISA</span>Itaú Débito</div>
+                <div class="chip-sm">PIX</div>
+              </div>
+
+              <div class="field-label">Parcelas</div>
+              <div class="installment-section">
+                <div class="installment-roller">
+                  <div class="roller-fade-left"></div>
+                  <div class="roller-fade-right"></div>
+                  <div class="roller-highlight"></div>
+                  <div class="roller-track" id="installmentTrack">
+                    <span class="roller-item far" data-parcelas="0" data-valor="87,00" data-meses="Mar 2026">À vista</span>
+                    <span class="roller-item near" data-parcelas="1" data-valor="87,00" data-meses="Abr 2026">1x</span>
+                    <span class="roller-item selected" data-parcelas="2" data-valor="43,50" data-meses="Abr e Mai 2026">2x</span>
+                    <span class="roller-item near" data-parcelas="3" data-valor="29,00" data-meses="Abr a Jun 2026">3x</span>
+                    <span class="roller-item far" data-parcelas="4" data-valor="21,75" data-meses="Abr a Jul 2026">4x</span>
+                  </div>
+                </div>
+              </div>
+              <div class="installment-result">
+                <div class="installment-result-main" id="installmentResultMain">2x de R$ 43,50</div>
+                <div class="installment-result-sub" id="installmentResultSub">Abr e Mai 2026</div>
+              </div>
+
+              <div class="impact-preview" style="margin-top: 12px;">
+                <div class="impact-row">
+                  <span class="impact-label">Limite Nubank</span>
+                  <span>
+                    <span class="impact-value">R$ 8.500,00</span>
+                    <span class="impact-arrow">&rarr;</span>
+                    <span class="impact-value">R$ 8.413,00</span>
+                  </span>
+                </div>
+                <div class="budget-bar-container">
+                  <div class="budget-bar-label">Supermercado</div>
+                  <div class="budget-bar-track">
+                    <div class="budget-bar-fill ok animated-bar" style="width: 70.4%;"></div>
+                  </div>
+                  <div class="budget-bar-values">
+                    <span>R$ 2.079,00 / R$ 3.000,00</span>
+                    <span style="color: var(--attention);">Resta R$ 921,00</span>
+                  </div>
+                </div>
+                <div class="installment-impact-note">
+                  Comprometimento total no cartão: R$ 87,00
+                </div>
+              </div>
+            </div>
+
+            <div class="bottom-sheet-footer">
+              <button class="btn-confirm" id="btnConfirmCC">&#10003; Confirmar 2x R$ 43,50</button>
             </div>
           </div>
         </div>
@@ -1381,108 +1480,6 @@
     </div>
   </div>
 
-  <!-- ════════════════════════════════════════════ -->
-  <!-- BONUS: CREDIT CARD VARIATION                 -->
-  <!-- ════════════════════════════════════════════ -->
-  <hr class="section-divider">
-
-  <div class="section-header">
-    <h2>Bonus — Variação Cartão de Crédito (Parcelamento)</h2>
-    <p>Roller picker horizontal de parcelas aparece ao selecionar pagamento com cartão</p>
-  </div>
-
-  <div class="phone-row">
-    <div class="phone-column">
-      <div class="phone-label">
-        Parcelamento
-        <span>Roller picker horizontal de parcelas</span>
-      </div>
-      <div class="phone-frame">
-        <div class="phone-notch"></div>
-        <div class="phone-screen">
-          <div class="overlay"></div>
-          <div class="bottom-sheet" style="height: 590px;">
-            <div class="sheet-handle"></div>
-            <div class="sheet-header">
-              <span class="sheet-title">Novo Gasto</span>
-              <button class="sheet-close" title="Fechar">&#10005;</button>
-            </div>
-
-            <div class="bottom-sheet-scroll">
-              <div class="summary-bar">
-                <span class="summary-amount">R$ 87,00</span>
-                <span class="summary-sep">·</span>
-                <span class="summary-cat">&#x1F6D2; Supermercado</span>
-              </div>
-
-              <div class="field-label">Onde?</div>
-              <div class="chips-row">
-                <div class="chip-sm selected">Pão de Açúcar</div>
-                <div class="chip-sm">Extra</div>
-                <div class="chip-sm">Assaí</div>
-              </div>
-
-              <div class="field-label">Pagamento</div>
-              <div class="chips-row" id="ccPaymentChips">
-                <div class="chip-sm selected"><span class="method-brand method-brand-master"></span>Nubank Master</div>
-                <div class="chip-sm"><span class="method-brand method-brand-visa">VISA</span>Latam Visa</div>
-                <div class="chip-sm"><span class="method-brand method-brand-visa">VISA</span>Itaú Débito</div>
-                <div class="chip-sm">PIX</div>
-              </div>
-
-              <div class="field-label">Parcelas</div>
-              <div class="installment-section">
-                <div class="installment-roller">
-                  <div class="roller-fade-left"></div>
-                  <div class="roller-fade-right"></div>
-                  <div class="roller-highlight"></div>
-                  <div class="roller-track" id="installmentTrack">
-                    <span class="roller-item far" data-parcelas="0" data-valor="87,00" data-meses="Mar 2026">À vista</span>
-                    <span class="roller-item near" data-parcelas="1" data-valor="87,00" data-meses="Abr 2026">1x</span>
-                    <span class="roller-item selected" data-parcelas="2" data-valor="43,50" data-meses="Abr e Mai 2026">2x</span>
-                    <span class="roller-item near" data-parcelas="3" data-valor="29,00" data-meses="Abr a Jun 2026">3x</span>
-                    <span class="roller-item far" data-parcelas="4" data-valor="21,75" data-meses="Abr a Jul 2026">4x</span>
-                  </div>
-                </div>
-              </div>
-              <div class="installment-result">
-                <div class="installment-result-main" id="installmentResultMain">2x de R$ 43,50</div>
-                <div class="installment-result-sub" id="installmentResultSub">Abr e Mai 2026</div>
-              </div>
-
-              <div class="impact-preview" style="margin-top: 12px;">
-                <div class="impact-row">
-                  <span class="impact-label">Limite Nubank</span>
-                  <span>
-                    <span class="impact-value">R$ 8.500,00</span>
-                    <span class="impact-arrow">&rarr;</span>
-                    <span class="impact-value">R$ 8.413,00</span>
-                  </span>
-                </div>
-                <div class="budget-bar-container">
-                  <div class="budget-bar-label">Supermercado</div>
-                  <div class="budget-bar-track">
-                    <div class="budget-bar-fill ok animated-bar" style="width: 70.4%;"></div>
-                  </div>
-                  <div class="budget-bar-values">
-                    <span>R$ 2.079,00 / R$ 3.000,00</span>
-                    <span style="color: var(--attention);">Resta R$ 921,00</span>
-                  </div>
-                </div>
-                <div class="installment-impact-note">
-                  Comprometimento total no cartão: R$ 87,00
-                </div>
-              </div>
-            </div>
-
-            <div class="bottom-sheet-footer">
-              <button class="btn-confirm" id="btnConfirmCC">&#10003; Confirmar 2x R$ 43,50</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- ════════════════════════════════════════════ -->
   <!-- INTERACTIVE JAVASCRIPT                       -->

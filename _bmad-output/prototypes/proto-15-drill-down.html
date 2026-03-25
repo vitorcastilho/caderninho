@@ -680,6 +680,7 @@
     font-size: 13px;
     position: relative;
     z-index: 2;
+    overflow: hidden;
   }
 
   .desktop-list-placeholder {
@@ -1446,8 +1447,37 @@
         </div>
       </div>
 
-      <div class="desktop-chart-placeholder">
-        <span>Grafico de tendencia mensal</span>
+      <div class="desktop-chart-placeholder" style="flex-direction: column; align-items: stretch; padding: 16px 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Tendencia mensal</span>
+          <span style="font-size: 10px; color: var(--text-tertiary);">Ultimos 6 meses</span>
+        </div>
+        <div style="display: flex; align-items: flex-end; gap: 12px; flex: 1; padding-bottom: 4px;">
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div style="width:100%; height:65px; background:linear-gradient(180deg,#E0E7FF,#C7D2FE); border-radius:4px 4px 0 0;"></div>
+            <span style="font-size:9px; color:var(--text-tertiary);">Out</span>
+          </div>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div style="width:100%; height:80px; background:linear-gradient(180deg,#E0E7FF,#C7D2FE); border-radius:4px 4px 0 0;"></div>
+            <span style="font-size:9px; color:var(--text-tertiary);">Nov</span>
+          </div>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div style="width:100%; height:72px; background:linear-gradient(180deg,#E0E7FF,#C7D2FE); border-radius:4px 4px 0 0;"></div>
+            <span style="font-size:9px; color:var(--text-tertiary);">Dez</span>
+          </div>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div style="width:100%; height:90px; background:linear-gradient(180deg,#E0E7FF,#C7D2FE); border-radius:4px 4px 0 0;"></div>
+            <span style="font-size:9px; color:var(--text-tertiary);">Jan</span>
+          </div>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div style="width:100%; height:75px; background:linear-gradient(180deg,#E0E7FF,#C7D2FE); border-radius:4px 4px 0 0;"></div>
+            <span style="font-size:9px; color:var(--text-tertiary);">Fev</span>
+          </div>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div style="width:100%; height:100px; background:linear-gradient(180deg,#4F46E5,#6366F1); border-radius:4px 4px 0 0;"></div>
+            <span style="font-size:9px; color:var(--primary); font-weight:600;">Mar</span>
+          </div>
+        </div>
       </div>
 
       <div class="desktop-list-placeholder">

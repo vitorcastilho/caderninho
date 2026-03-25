@@ -256,7 +256,6 @@
       border-radius: var(--radius-card);
       padding: 14px 20px;
       margin-bottom: 24px;
-      position: relative;
     }
     .banner-alert-icon {
       width: 36px;
@@ -301,9 +300,6 @@
       background: #2563EB;
     }
     .banner-dismiss {
-      position: absolute;
-      top: 8px;
-      right: 8px;
       background: none;
       border: none;
       color: var(--info-text);
@@ -313,6 +309,8 @@
       border-radius: 4px;
       line-height: 0;
       transition: opacity var(--transition);
+      flex-shrink: 0;
+      margin-left: 4px;
     }
     .banner-dismiss:hover { opacity: 1; }
     .banner-dismiss svg { width: 14px; height: 14px; }
@@ -941,6 +939,24 @@
     }
     .method-brand-master::before { left: 3px; background: #EB001B; }
     .method-brand-master::after { right: 3px; background: #F79E1B; }
+
+    /* Bank Badges */
+    .bank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 4px;
+      font-size: 8px;
+      font-weight: 700;
+      flex-shrink: 0;
+      vertical-align: middle;
+      margin-right: 4px;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .bank-badge-itau   { background: #003399; color: #FFFFFF; }
+    .bank-badge-nubank { background: #820AD1; color: #FFFFFF; }
   </style>
 </head>
 <body>
@@ -1050,7 +1066,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
         <div class="banner-alert-text">
-          <strong>Amanhã vence: Internet R$158,00</strong>
+          <strong>Amanhã vence: Internet R$ 158,00</strong>
         </div>
         <button class="banner-alert-action" onclick="markInternetPaid()">Marcar como pago</button>
         <button class="banner-dismiss" onclick="dismissBanner()" aria-label="Fechar">
@@ -1096,9 +1112,9 @@
               <span class="item-name">Aluguel</span>
               <span class="item-value">R$ 1.800,00</span>
               <span class="item-meta">
-                Pago em 01/03
+                <span class="bank-badge bank-badge-itau">Itaú</span> Conta Itaú
                 <span class="item-meta-separator"></span>
-                Conta Itaú
+                Pago em 01/03
               </span>
             </div>
             <span class="status-badge paid">Pago</span>
@@ -1119,9 +1135,9 @@
               <span class="item-name">Energia</span>
               <span class="item-value">R$ 320,00</span>
               <span class="item-meta">
-                Pago em 05/03
+                <span class="bank-badge bank-badge-nubank">Nu</span> Conta Nubank
                 <span class="item-meta-separator"></span>
-                Conta Nubank
+                Pago em 05/03
               </span>
             </div>
             <span class="status-badge paid">Pago</span>
@@ -1142,9 +1158,9 @@
               <span class="item-name">Streaming</span>
               <span class="item-value">R$ 45,00</span>
               <span class="item-meta">
-                Pago em 01/03
+                <span class="bank-badge bank-badge-nubank">Nu</span> Conta Nubank
                 <span class="item-meta-separator"></span>
-                Conta Nubank
+                Pago em 01/03
               </span>
             </div>
             <span class="status-badge paid">Pago</span>
@@ -1279,7 +1295,7 @@
               <span class="item-name">iCloud</span>
               <span class="item-value">R$ 12,00</span>
               <span class="item-meta">
-                PDA
+                <span class="method-brand method-brand-visa">VISA</span> PDA
                 <span class="item-meta-separator"></span>
                 Ciclo Mar
               </span>
@@ -1418,9 +1434,9 @@
               <span class="item-name">Seguro carro</span>
               <span class="item-value">R$ 230,00</span>
               <span class="item-meta">
-                Vence 25/03
+                <span class="bank-badge bank-badge-itau">Itaú</span> Débito
                 <span class="item-meta-separator"></span>
-                Débito
+                Vence 25/03
               </span>
             </div>
             <span class="status-badge pending">Pendente</span>
@@ -1560,7 +1576,7 @@
                   <div class="m-item-check"></div>
                   <div class="m-item-info">
                     <div class="m-item-name">Seguro carro</div>
-                    <div class="m-item-detail">Vence 25/03 · Débito</div>
+                    <div class="m-item-detail"><span class="bank-badge bank-badge-itau">Itaú</span> Débito · Vence 25/03</div>
                   </div>
                   <div class="m-item-right">
                     <div class="m-item-value">R$ 230,00</div>
@@ -1595,7 +1611,7 @@
                   </div>
                   <div class="m-item-info">
                     <div class="m-item-name">Aluguel</div>
-                    <div class="m-item-detail">Pago 01/03 · Itaú</div>
+                    <div class="m-item-detail"><span class="bank-badge bank-badge-itau">Itaú</span> Conta Itaú · Pago 01/03</div>
                   </div>
                   <div class="m-item-right">
                     <div class="m-item-value">R$ 1.800,00</div>
@@ -1621,7 +1637,7 @@
                   </div>
                   <div class="m-item-info">
                     <div class="m-item-name">Energia</div>
-                    <div class="m-item-detail">Pago 05/03 · Nubank</div>
+                    <div class="m-item-detail"><span class="bank-badge bank-badge-nubank">Nu</span> Conta Nubank · Pago 05/03</div>
                   </div>
                   <div class="m-item-right">
                     <div class="m-item-value">R$ 320,00</div>
@@ -1634,7 +1650,7 @@
                   </div>
                   <div class="m-item-info">
                     <div class="m-item-name">Streaming</div>
-                    <div class="m-item-detail">Pago 01/03 · Nubank</div>
+                    <div class="m-item-detail"><span class="bank-badge bank-badge-nubank">Nu</span> Conta Nubank · Pago 01/03</div>
                   </div>
                   <div class="m-item-right">
                     <div class="m-item-value">R$ 45,00</div>
@@ -1673,7 +1689,7 @@
                   </div>
                   <div class="m-item-info">
                     <div class="m-item-name">iCloud</div>
-                    <div class="m-item-detail">PDA · Ciclo Mar</div>
+                    <div class="m-item-detail"><span class="method-brand method-brand-visa">VISA</span> PDA · Ciclo Mar</div>
                   </div>
                   <div class="m-item-right">
                     <div class="m-item-value">R$ 12,00</div>
@@ -1686,7 +1702,7 @@
                   </div>
                   <div class="m-item-info">
                     <div class="m-item-name">Streaming</div>
-                    <div class="m-item-detail">Pago 01/03 · Nubank</div>
+                    <div class="m-item-detail"><span class="bank-badge bank-badge-nubank">Nu</span> Conta Nubank · Pago 01/03</div>
                   </div>
                   <div class="m-item-right">
                     <div class="m-item-value">R$ 45,00</div>

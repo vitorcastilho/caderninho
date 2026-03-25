@@ -614,7 +614,7 @@
 
     .gauge-svg {
       width: 160px;
-      height: 100px;
+      height: 110px;
       overflow: visible;
     }
 
@@ -783,6 +783,22 @@
     }
     .method-brand-master::before { left: 3px; background: #EB001B; }
     .method-brand-master::after { right: 3px; background: #F79E1B; }
+
+    .bank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 4px;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      flex-shrink: 0;
+      vertical-align: middle;
+      margin-right: 4px;
+    }
+    .bank-badge-itau { background: #003399; color: #FFFFFF; }
   </style>
 </head>
 <body>
@@ -1094,7 +1110,7 @@
           </div>
           <div class="card-body">
             <div class="gauge-container">
-              <svg class="gauge-svg" viewBox="0 0 160 100">
+              <svg class="gauge-svg" viewBox="0 0 160 110">
                 <!-- Background arc -->
                 <path d="M 15 90 A 65 65 0 0 1 145 90"
                       fill="none" stroke="#E7E5E4" stroke-width="12" stroke-linecap="round" />
@@ -1103,7 +1119,7 @@
                       fill="none" stroke="url(#gaugeGradient)" stroke-width="12" stroke-linecap="round"
                       stroke-dasharray="204" stroke-dashoffset="65" />
                 <!-- Percentage text -->
-                <text x="80" y="78" text-anchor="middle" class="gauge-label-center">68,00%</text>
+                <text x="80" y="108" text-anchor="middle" class="gauge-label-center">68,00%</text>
                 <defs>
                   <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                     <stop offset="0%" stop-color="#22C55E" />
@@ -1214,7 +1230,7 @@
                 </div>
                 <div class="txn-right">
                   <div class="txn-amount">R$ 32,00</div>
-                  <div class="txn-meta">Débito &middot; Ontem</div>
+                  <div class="txn-meta"><span class="bank-badge bank-badge-itau">Itaú</span>Débito &middot; Ontem</div>
                 </div>
               </li>
               <li class="txn-item">
