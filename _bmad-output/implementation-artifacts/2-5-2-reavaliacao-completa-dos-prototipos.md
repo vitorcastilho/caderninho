@@ -1,6 +1,6 @@
 # Story 2.5.2: Reavaliação Completa dos Protótipos
 
-Status: review
+Status: ready-for-dev
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
