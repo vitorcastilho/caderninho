@@ -53,15 +53,26 @@ development_status:
   epic-1-retrospective: optional
 
   # Epic 2: Estrutura Financeira e Categorizacao
-  epic-2: in-progress
+  epic-2: done
   2-1-cadastro-e-gestao-de-contas-bancarias: done
   2-2-cadastro-e-gestao-de-cartoes-de-credito-estrutura: done
   2-3-cadastro-de-investimentos-e-fontes-de-receita: done
   2-4-categorias-subcategorias-e-classificacoes-de-essencialidade: done
   2-5-configuracao-de-metodo-de-pagamento-padrao-por-categoria: done
-  2-6-onboarding-setup-inicial-guiado: review
+  2-6-onboarding-setup-inicial-guiado: done
   2-7-auditoria-visual-design-system: done
-  epic-2-retrospective: optional
+  epic-2-retrospective: done
+
+  # Epic 2.5: Design System, Component Library e Auditoria Visual
+  epic-2-5: in-progress
+  2-5-1-decisoes-de-produto-e-ajustes-de-modelo: done
+  2-5-2-reavaliacao-completa-dos-prototipos: backlog
+  2-5-3-unificacao-do-design-system: backlog
+  2-5-4-auditoria-visual-exaustiva: backlog
+  2-5-5-component-library-extracao-de-compostos: backlog
+  2-5-6-component-library-componentes-novos-epic-3: backlog
+  2-5-7-enforcement-e-workflow: backlog
+  epic-2-5-retrospective: optional
 
   # Epic 3: Registro e Gestao de Transacoes
   epic-3: backlog

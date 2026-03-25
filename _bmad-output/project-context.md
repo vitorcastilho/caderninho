@@ -285,6 +285,7 @@ console.log(JSON.stringify({
 - **Next.js 16 async APIs**: `const { id } = await params` — não mais síncrono
 - **Next.js 16 proxy.ts**: middleware agora é `proxy.ts`, não `middleware.ts`
 - **Drizzle snake↔camel**: DB usa `amount_cents`, TS usa `amountCents` — mapear explicitamente: `amountCents: integer('amount_cents')`
+- **Drizzle migrations**: SEMPRE usar `npx drizzle-kit generate` para criar migrations. NUNCA criar arquivos `.sql` manualmente — o drizzle-kit só aplica migrations registradas no `meta/_journal.json` com snapshot correspondente. Arquivo `.sql` solto é silenciosamente ignorado pelo `drizzle-kit migrate`.
 
 **Precisão financeira — Edge cases:**
 

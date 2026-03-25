@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/client/utils/utils';
 
+import { BankLogo } from '@/client/components/ui/bank-logo';
 import { Button } from '@/client/components/ui/button';
 import { CreditCardBrandBadge } from '@/client/components/ui/credit-card-brand-badge';
 import {
@@ -41,6 +42,8 @@ interface Subcategory {
   id: string;
   name: string;
   categoryId: string;
+  defaultPaymentMethodType: string | null;
+  defaultPaymentMethodId: string | null;
   status: 'active' | 'archived';
 }
 
@@ -94,8 +97,12 @@ function resolvePaymentMethodDisplay(
   }
   const account = bankAccounts.find((a) => a.id === id);
   if (!account) return null;
-  if (type === 'debit') return `\u{1F3E6} ${account.bank} - Débito`;
-  return `\u{1F4F1} ${account.bank} - Pix`;
+  return (
+    <span className="inline-flex items-center gap-1">
+      <BankLogo bank={account.bank} size="sm" />
+      <span>{account.bank} - {type === 'debit' ? 'Débito' : 'Pix'}</span>
+    </span>
+  );
 }
 
 export function CategoryCard({
@@ -264,13 +271,25 @@ export function CategoryCard({
       {/* Subcategories — Level 3 do padrão "Lista Colapsável" do DS */}
       {expanded && (
         <>
-          {activeSubcategories.map((sub) => (
+          {activeSubcategories.map((sub) => {
+            const subPaymentDisplay = resolvePaymentMethodDisplay(
+              sub.defaultPaymentMethodType,
+              sub.defaultPaymentMethodId,
+              bankAccounts,
+              creditCards,
+            );
+            return (
             <div
               key={sub.id}
               className="group/sub flex items-center gap-3 border-b border-border bg-card py-3 pr-4 pl-16 transition-colors last:border-b-0 hover:bg-muted/30"
             >
               <div className="size-1 shrink-0 rounded-full bg-muted-foreground/60" />
               <span className="flex-1 text-sm">{sub.name}</span>
+              {subPaymentDisplay && (
+                <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                  {subPaymentDisplay}
+                </span>
+              )}
               <div className="flex gap-1 opacity-0 transition-opacity group-hover/sub:opacity-100">
                 <Button
                   variant="ghost"
@@ -291,7 +310,8 @@ export function CategoryCard({
                 </Button>
               </div>
             </div>
-          ))}
+            );
+          })}
 
           {archivedSubcategories.length > 0 && (
             <div className="border-b border-border px-4 py-2 pl-16 last:border-b-0">

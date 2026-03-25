@@ -44,6 +44,8 @@ interface Subcategory {
   id: string;
   name: string;
   categoryId: string;
+  defaultPaymentMethodType: string | null;
+  defaultPaymentMethodId: string | null;
   status: 'active' | 'archived';
 }
 
@@ -97,7 +99,13 @@ export function CategoryTree({
     defaultPaymentMethodId: string | null;
   } | null>(null);
   const [creatingSubcategoryForCategory, setCreatingSubcategoryForCategory] = useState<string | null>(null);
-  const [editingSubcategory, setEditingSubcategory] = useState<{ id: string; name: string } | null>(null);
+  const [editingSubcategory, setEditingSubcategory] = useState<{
+    id: string;
+    name: string;
+    categoryId: string;
+    defaultPaymentMethodType: string | null;
+    defaultPaymentMethodId: string | null;
+  } | null>(null);
 
   const refreshData = useCallback(() => {
     startTransition(async () => {
@@ -301,12 +309,16 @@ export function CategoryTree({
       <Dialog open={!!creatingSubcategoryForCategory} onOpenChange={(open) => !open && setCreatingSubcategoryForCategory(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Nova Subcategoria</DialogTitle>
+            <DialogTitle>
+              Criar subcategoria para {categories.find((c) => c.id === creatingSubcategoryForCategory)?.name}
+            </DialogTitle>
           </DialogHeader>
           {creatingSubcategoryForCategory && (
             <SubcategoryForm
               mode="create"
               categoryId={creatingSubcategoryForCategory}
+              bankAccounts={bankAccounts}
+              creditCards={creditCards}
               onSuccess={() => {
                 setCreatingSubcategoryForCategory(null);
                 refreshData();
@@ -321,12 +333,16 @@ export function CategoryTree({
       <Dialog open={!!editingSubcategory} onOpenChange={(open) => !open && setEditingSubcategory(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Editar Subcategoria</DialogTitle>
+            <DialogTitle>
+              Editar subcategoria de {categories.find((c) => c.id === editingSubcategory?.categoryId)?.name}
+            </DialogTitle>
           </DialogHeader>
           {editingSubcategory && (
             <SubcategoryForm
               mode="edit"
               defaultValues={editingSubcategory}
+              bankAccounts={bankAccounts}
+              creditCards={creditCards}
               onSuccess={() => {
                 setEditingSubcategory(null);
                 refreshData();
@@ -375,7 +391,13 @@ export function CategoryTree({
                     })
                   }
                   onAddSubcategory={(categoryId) => setCreatingSubcategoryForCategory(categoryId)}
-                  onEditSubcategory={(sub) => setEditingSubcategory({ id: sub.id, name: sub.name })}
+                  onEditSubcategory={(sub) => setEditingSubcategory({
+                      id: sub.id,
+                      name: sub.name,
+                      categoryId: sub.categoryId,
+                      defaultPaymentMethodType: sub.defaultPaymentMethodType,
+                      defaultPaymentMethodId: sub.defaultPaymentMethodId,
+                    })}
                   onStatusChange={refreshData}
                 />
               ))}
@@ -418,7 +440,13 @@ export function CategoryTree({
                         })
                       }
                       onAddSubcategory={(categoryId) => setCreatingSubcategoryForCategory(categoryId)}
-                      onEditSubcategory={(sub) => setEditingSubcategory({ id: sub.id, name: sub.name })}
+                      onEditSubcategory={(sub) => setEditingSubcategory({
+                      id: sub.id,
+                      name: sub.name,
+                      categoryId: sub.categoryId,
+                      defaultPaymentMethodType: sub.defaultPaymentMethodType,
+                      defaultPaymentMethodId: sub.defaultPaymentMethodId,
+                    })}
                       onStatusChange={refreshData}
                     />
                   ))}

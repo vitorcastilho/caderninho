@@ -44,6 +44,8 @@ const sampleSubcategory = {
   categoryId: '550e8400-e29b-41d4-a716-446655440001',
   status: 'active' as const,
   organizationId: 'org-123',
+  defaultPaymentMethodType: null,
+  defaultPaymentMethodId: null,
   createdAt: new Date('2026-01-01'),
   updatedAt: new Date('2026-01-01'),
 };
@@ -61,6 +63,8 @@ describe('DrizzleSubcategoryRepository', () => {
         id: sampleSubcategory.id,
         name: sampleSubcategory.name,
         categoryId: sampleSubcategory.categoryId,
+        defaultPaymentMethodType: null,
+        defaultPaymentMethodId: null,
         organizationId: sampleSubcategory.organizationId,
       });
 

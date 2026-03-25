@@ -6,6 +6,7 @@ import { Pencil } from 'lucide-react';
 
 import { createBankAccountAction, updateBankAccountAction, archiveBankAccountAction } from '@/server/actions/bank-account.actions';
 import { centsToDisplayValue, displayValueToCents } from '@/client/utils/currency-input';
+import { BankLogo } from '@/client/components/ui/bank-logo';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
 
@@ -108,9 +109,7 @@ export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAd
               key={account.id}
               className="flex items-center gap-2.5 rounded-md border border-stone-200 bg-stone-50 px-3 py-2.5 transition-colors hover:border-stone-300"
             >
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-sm font-semibold text-indigo-600">
-                {account.bank.slice(0, 2)}
-              </div>
+              <BankLogo bank={account.bank} size="md" />
               <div className="flex-1 min-w-0">
                 <div className="text-[13px] font-semibold text-stone-900">{account.name}</div>
                 <div className="text-[11px] text-stone-500">

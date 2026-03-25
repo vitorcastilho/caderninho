@@ -33,6 +33,8 @@ export const createSubcategoryAction = withAuth(async (session, input: unknown) 
 
   return createSubcategory(subcategoryDeps, {
     ...validation.data,
+    defaultPaymentMethodType: validation.data.defaultPaymentMethodType ?? null,
+    defaultPaymentMethodId: validation.data.defaultPaymentMethodId ?? null,
     organizationId,
     userId: session.user.id,
   });

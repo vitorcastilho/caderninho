@@ -27,6 +27,8 @@ export const categoryDeps = {
 export const subcategoryDeps = {
   repository: subcategoryRepository,
   categoryRepository,
+  bankAccountRepository,
+  creditCardRepository,
   auditLogger: logAudit,
 };
 
