@@ -747,86 +747,53 @@
       margin-bottom: 4px;
     }
 
-    /* ── Installment Roller Picker (scroll-wheel style) ── */
+    /* ── Installment Pill Strip ── */
     .installment-section {
       padding: 0 20px;
     }
 
-    .installment-roller {
-      position: relative;
-      width: 100%;
+    .installment-strip {
+      display: flex;
+      align-items: center;
       height: 44px;
       border: 1px solid var(--border);
       border-radius: 12px;
-      overflow: hidden;
       background: var(--surface);
+      overflow: hidden;
     }
 
-    .roller-fade-left {
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 40px;
-      background: linear-gradient(to right, var(--surface), transparent);
-      z-index: 2;
-      pointer-events: none;
-    }
-
-    .roller-fade-right {
-      position: absolute;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      width: 40px;
-      background: linear-gradient(to left, var(--surface), transparent);
-      z-index: 2;
-      pointer-events: none;
-    }
-
-    .roller-highlight {
-      position: absolute;
-      left: 50%;
-      top: 4px;
-      bottom: 4px;
-      width: 48px;
-      transform: translateX(-50%);
-      background: var(--primary-light);
-      border-radius: 8px;
-      border: 1px solid var(--primary);
-      z-index: 1;
-      transition: none;
-    }
-
-    .roller-track {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+    .installment-item {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 16px;
-      z-index: 3;
-    }
-
-    .roller-item {
+      height: 100%;
       font-size: 13px;
+      font-weight: 500;
       color: var(--text-tertiary);
       cursor: pointer;
       transition: all 200ms ease;
       user-select: none;
       white-space: nowrap;
+      border: none;
+      background: none;
+      padding: 0 4px;
     }
 
-    .roller-item.far { opacity: 0.3; }
-    .roller-item.near { opacity: 0.5; }
-    .roller-item.selected {
-      font-size: 15px;
+    .installment-item:hover:not(.selected) {
+      color: var(--text-secondary);
+      background: var(--bg);
+    }
+
+    .installment-item.selected {
+      background: var(--primary);
+      color: #FFFFFF;
       font-weight: 600;
-      color: var(--primary);
-      opacity: 1;
+      font-size: 14px;
+      border-radius: 8px;
+      margin: 4px;
+      height: calc(100% - 8px);
+      flex: 1.1;
     }
 
     .installment-result {
@@ -1241,17 +1208,12 @@
 
               <div class="field-label">Parcelas</div>
               <div class="installment-section">
-                <div class="installment-roller">
-                  <div class="roller-fade-left"></div>
-                  <div class="roller-fade-right"></div>
-                  <div class="roller-highlight"></div>
-                  <div class="roller-track" id="installmentTrack">
-                    <span class="roller-item far" data-parcelas="0" data-valor="87,00" data-meses="Mar 2026">À vista</span>
-                    <span class="roller-item near" data-parcelas="1" data-valor="87,00" data-meses="Abr 2026">1x</span>
-                    <span class="roller-item selected" data-parcelas="2" data-valor="43,50" data-meses="Abr e Mai 2026">2x</span>
-                    <span class="roller-item near" data-parcelas="3" data-valor="29,00" data-meses="Abr a Jun 2026">3x</span>
-                    <span class="roller-item far" data-parcelas="4" data-valor="21,75" data-meses="Abr a Jul 2026">4x</span>
-                  </div>
+                <div class="installment-strip" id="installmentStrip">
+                  <button class="installment-item" data-parcelas="0" data-valor="87,00" data-meses="Mar 2026">À vista</button>
+                  <button class="installment-item" data-parcelas="1" data-valor="87,00" data-meses="Abr 2026">1x</button>
+                  <button class="installment-item selected" data-parcelas="2" data-valor="43,50" data-meses="Abr e Mai 2026">2x</button>
+                  <button class="installment-item" data-parcelas="3" data-valor="29,00" data-meses="Abr a Jun 2026">3x</button>
+                  <button class="installment-item" data-parcelas="4" data-valor="21,75" data-meses="Abr a Jul 2026">4x</button>
                 </div>
               </div>
               <div class="installment-result">
@@ -1510,31 +1472,22 @@
     setupChipSelection('desktopStoreChips', false);
 
     // ── Installment Roller Picker ──
-    const installmentTrack = document.getElementById('installmentTrack');
+    const installmentTrack = document.getElementById('installmentStrip');
     const resultMain = document.getElementById('installmentResultMain');
     const resultSub = document.getElementById('installmentResultSub');
     const btnConfirmCC = document.getElementById('btnConfirmCC');
 
-    if (installmentTrack) {
-      const rollerItems = installmentTrack.querySelectorAll('.roller-item');
-      rollerItems.forEach((item, idx) => {
-        item.addEventListener('click', () => {
-          // Clear all distance classes
-          rollerItems.forEach(i => i.classList.remove('selected', 'near', 'far'));
-          // Set selected
+    var installmentStrip = document.getElementById('installmentStrip');
+    if (installmentStrip) {
+      var items = installmentStrip.querySelectorAll('.installment-item');
+      items.forEach(function(item) {
+        item.addEventListener('click', function() {
+          items.forEach(function(i) { i.classList.remove('selected'); });
           item.classList.add('selected');
-          // Set near/far based on distance from selected
-          rollerItems.forEach((i, iIdx) => {
-            if (i === item) return;
-            const dist = Math.abs(iIdx - idx);
-            if (dist === 1) i.classList.add('near');
-            else i.classList.add('far');
-          });
-          // Update result text
-          const parcelas = item.dataset.parcelas;
-          const valor = item.dataset.valor;
-          const meses = item.dataset.meses;
-          const label = item.textContent.trim();
+          var parcelas = item.dataset.parcelas;
+          var valor = item.dataset.valor;
+          var meses = item.dataset.meses;
+          var label = item.textContent.trim();
           if (resultMain) {
             resultMain.textContent = label === 'À vista'
               ? 'R$ ' + valor + ' à vista'
