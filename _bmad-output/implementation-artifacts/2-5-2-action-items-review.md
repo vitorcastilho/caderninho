@@ -710,9 +710,530 @@ Cada item aparece 2 vezes (desktop + mobile). Buscar e corrigir TODAS as ocorrê
 
 ---
 
+## AI-12: Melhorar layout da tabela "Parcelas Ativas" (desktop) no proto-12
+
+**Severidade:** MEDIUM
+**Arquivo:** `_bmad-output/prototypes/proto-12-credit-card.html`
+**Problema:** A tabela "Parcelas Ativas" fica dentro do `.left-column` de um grid `1fr 1fr` (`.two-columns`, linha 374). Com 6 colunas (Compra, Total, Parcela, Restam, Mensal, Término), o conteúdo fica espremido. A seção "Linha do tempo das parcelas" logo abaixo também sofre com a largura restrita.
+
+### O que mudar
+
+**1. Mover o card "Parcelas Ativas" + Timeline para fora do `.two-columns` grid, tornando-o full-width.**
+
+**Estrutura ATUAL (linhas ~1287-1616):**
+```html
+<div class="two-columns">
+  <div class="left-column">
+    <!-- Fatura Atual (card) -->
+    <!-- Parcelas Ativas (card) ← ESPREMIDO AQUI -->
+  </div>
+  <div class="right-column">
+    <!-- Transações do Ciclo Atual (card) -->
+    <!-- Projeção de Faturas (card) -->
+  </div>
+</div>
+```
+
+**Estrutura DESEJADA:**
+```html
+<div class="two-columns">
+  <div class="left-column">
+    <!-- Fatura Atual (card) -->
+  </div>
+  <div class="right-column">
+    <!-- Transações do Ciclo Atual (card) -->
+    <!-- Projeção de Faturas (card) -->
+  </div>
+</div>
+
+<!-- Parcelas Ativas — full width abaixo das duas colunas -->
+<div class="content-card" style="margin-top: 24px;">
+  <!-- card-header + card-body da tabela Parcelas Ativas -->
+  <!-- Timeline das parcelas -->
+</div>
+```
+
+**2. Na prática, cortar o card "Parcelas Ativas" (linhas 1437-1511) do `.left-column` e colar APÓS o `</div>` que fecha `.two-columns` (linha 1616).**
+
+**3. Adicionar `style="margin-top: 24px;"` no card reposicionado** para manter o espaçamento visual consistente.
+
+**4. Remover a coluna "Restam"** — é redundante (pode ser calculada a partir de "Parcela"). Reduzir de 6 para 5 colunas:
+
+```html
+<!-- ANTES (6 colunas): -->
+<tr><th>Compra</th><th>Total</th><th>Parcela</th><th>Restam</th><th>Mensal</th><th>Termino</th></tr>
+<tr><td>Fotos</td><td>R$ 1.710,00</td><td class="secondary">8/10</td><td class="secondary">2</td><td>R$ 171,00</td><td class="secondary">Mai 2026</td></tr>
+
+<!-- DEPOIS (5 colunas): -->
+<tr><th>Compra</th><th>Total</th><th>Parcela</th><th>Mensal</th><th>Termino</th></tr>
+<tr><td>Fotos</td><td>R$ 1.710,00</td><td class="secondary">8/10</td><td>R$ 171,00</td><td class="secondary">Mai 2026</td></tr>
+```
+
+Aplicar a remoção da coluna "Restam" nas 3 linhas de dados (Fotos, Amazon, Óculos).
+
+### O que NÃO mudar
+
+- O card "Fatura Atual" permanece no `.left-column`
+- Os cards "Transações do Ciclo Atual" e "Projeção de Faturas" permanecem no `.right-column`
+- O conteúdo interno do card (timeline, barras) permanece igual
+- Nenhuma alteração de CSS necessária — o card já usa `width: 100%` da tabela
+
+---
+
+## AI-13: Melhorar visualização mobile de "Parcelas" no proto-12
+
+**Severidade:** MEDIUM
+**Arquivo:** `_bmad-output/prototypes/proto-12-credit-card.html`
+**Problema:** A aba "Parcelas" mobile (linhas 1744-1772) usa cards genéricos com `.m-installment-card` — apenas o nome da compra e um grid 2x2 com texto. Comparado ao desktop (tabela + timeline visual + barras coloridas), o mobile parece pouco planejado e não comunica progresso visualmente.
+
+### O que mudar
+
+**1. Adicionar barra de progresso visual dentro de cada `.m-installment-card`:**
+
+Após o `.m-inst-details`, adicionar:
+```html
+<div class="m-inst-progress" style="margin-top: 8px;">
+  <div class="m-inst-progress-track" style="height: 4px; background: #F5F5F4; border-radius: 2px; overflow: hidden;">
+    <div class="m-inst-progress-fill" style="height: 100%; width: 80%; background: linear-gradient(90deg, #6366F1, #818CF8); border-radius: 2px;"></div>
+  </div>
+  <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+    <span style="font-size: 10px; color: var(--text-tertiary);">Progresso: 8/10</span>
+    <span style="font-size: 10px; color: var(--positive-text); font-weight: 600;">Faltam 2</span>
+  </div>
+</div>
+```
+
+**Calcular a largura (width) de cada barra:**
+
+| Compra | Parcela | Width da barra | Cor |
+|--------|---------|---------------|-----|
+| Fotos | 8/10 | `80%` | `linear-gradient(90deg, #6366F1, #818CF8)` (roxo — mesma cor da `.bar-fotos` desktop) |
+| Amazon | 2/3 | `66%` | `linear-gradient(90deg, #F59E0B, #FBBF24)` (amarelo — mesma cor da `.bar-amazon` desktop) |
+| Óculos | 4/12 | `33%` | `linear-gradient(90deg, #14B8A6, #2DD4BF)` (verde — mesma cor da `.bar-oculos` desktop) |
+
+**2. Destacar o valor mensal** — tornar mais proeminente:
+
+```html
+<!-- ANTES: -->
+<div>Mensal: <span class="m-inst-val">R$ 171,00</span></div>
+
+<!-- DEPOIS: -->
+<div style="font-size: 13px;">Mensal: <span class="m-inst-val" style="font-size: 15px;">R$ 171,00</span></div>
+```
+
+**3. Adicionar info "libera limite"** — mesma info que a timeline do desktop:
+
+Após a barra de progresso, adicionar em cada card:
+```html
+<div style="font-size: 10px; color: var(--text-secondary); margin-top: 4px;">
+  ↓ Libera R$ 171,00/mês a partir de Mai 2026
+</div>
+```
+
+Valores por card:
+- Fotos: `↓ Libera R$ 171,00/mês a partir de Mai 2026`
+- Amazon: `↓ Libera R$ 250,00/mês a partir de Abr 2026`
+- Óculos: `↓ Libera R$ 100,00/mês a partir de Nov 2026`
+
+### O que NÃO mudar
+
+- A estrutura `.m-installment-card` permanece (não trocar por tabela)
+- O grid 2x2 com Total/Parcela/Mensal/Término permanece
+- O tab switching JS permanece igual
+
+---
+
+## AI-14: Adicionar badge de bandeira/banco ao lado do select "Pagamento padrão" no proto-14
+
+**Severidade:** MEDIUM
+**Arquivo:** `_bmad-output/prototypes/proto-14-settings.html`
+**Problema:** No formulário de edição de categoria (edit-row expandido), o campo "Pagamento padrão" é um `<select>` puro sem badge visual ao lado. A tabela na view de leitura JÁ mostra os badges (ex: `[VISA] Latam Pass (à vista)`), mas ao clicar em editar, o dropdown perde o indicador visual.
+
+### Contexto
+
+HTML `<select><option>` não suporta HTML inline nas opções. A solução é a mesma do AI-7: adicionar um badge ao LADO do select, fora dele.
+
+### O que mudar
+
+**1. Adicionar CSS de `.method-select-wrapper`** (após as definições de `.method-brand` por volta da linha 1056):
+
+```css
+.method-select-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.bank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 4px;
+  font-size: 8px;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.bank-badge-itau   { background: #003399; color: #FFFFFF; }
+.bank-badge-nubank { background: #820AD1; color: #FFFFFF; }
+.bank-badge-bb     { background: #FFFF00; color: #003882; }
+```
+
+**2. Edit-row 0 (Supermercado) — linha 1160-1170:**
+
+```html
+<!-- ANTES: -->
+<div class="form-group">
+  <label>Pagamento padrao</label>
+  <select>
+    <option selected>Latam Pass Visa (a vista)</option>
+    <option>Pao de Acucar Master (a vista)</option>
+    <option>Uniclass Visa (parcelado)</option>
+    <option>PDA Visa (a vista)</option>
+    <option>Debito Itau</option>
+    <option>Debito Nubank</option>
+    <option>Debito BB</option>
+  </select>
+</div>
+
+<!-- DEPOIS: -->
+<div class="form-group">
+  <label>Pagamento padrao</label>
+  <div class="method-select-wrapper">
+    <span class="method-brand method-brand-visa">VISA</span>
+    <select>
+      <option selected>Latam Pass Visa (a vista)</option>
+      <option>Pao de Acucar Master (a vista)</option>
+      <option>Uniclass Visa (parcelado)</option>
+      <option>PDA Visa (a vista)</option>
+      <option>Debito Itau</option>
+      <option>Debito Nubank</option>
+      <option>Debito BB</option>
+    </select>
+  </div>
+</div>
+```
+
+**3. Aplicar o mesmo padrão nos edit-rows 1 a 8** (linhas 1219, 1230, 1241, 1252, 1263, 1274, 1285, 1296 — estão em linhas minificadas):
+
+O badge exibido deve refletir a `<option selected>`:
+
+| Edit-row | Categoria | Opção selecionada | Badge |
+|----------|-----------|-------------------|-------|
+| 0 | Supermercado | Latam Pass Visa (a vista) | `method-brand-visa` → VISA |
+| 1 | Gasolina | PDA Visa (a vista) | `method-brand-visa` → VISA |
+| 2 | Restaurante | Latam Pass Visa (a vista) | `method-brand-visa` → VISA |
+| 3 | Moradia | Debito Itau | `bank-badge-itau` → Itaú |
+| 4 | Educação | Debito Itau | `bank-badge-itau` → Itaú |
+| 5 | Internet/Tel | Debito Nubank | `bank-badge-nubank` → Nu |
+| 6 | Transporte | Debito Itau | `bank-badge-itau` → Itaú |
+| 7 | Compras | Uniclass Visa (parcelado) | `method-brand-visa` → VISA |
+| 8 | Lazer | Latam Pass Visa (a vista) | `method-brand-visa` → VISA |
+
+**Nota:** O badge é estático no protótipo HTML. Na implementação real, o badge atualizará dinamicamente quando o usuário trocar a opção do select.
+
+### Correção adicional: Badges de "Débito" na tabela
+
+Na tabela de leitura, as linhas com "Débito" mostram badge de CARTÃO onde deveriam mostrar badge de BANCO:
+
+**Linha 1237** — Moradia:
+```
+ANTES:  <td class="cat-payment"><span class="method-brand method-brand-visa">VISA</span> Debito Itau</td>
+DEPOIS: <td class="cat-payment"><span class="bank-badge bank-badge-itau">Itaú</span> Debito Itau</td>
+```
+
+**Linha 1248** — Educação:
+```
+ANTES:  <td class="cat-payment"><span class="method-brand method-brand-visa">VISA</span> Debito Itau</td>
+DEPOIS: <td class="cat-payment"><span class="bank-badge bank-badge-itau">Itaú</span> Debito Itau</td>
+```
+
+**Linha 1259** — Internet/Tel:
+```
+ANTES:  <td class="cat-payment"><span class="method-brand method-brand-master"></span> Debito Nubank</td>
+DEPOIS: <td class="cat-payment"><span class="bank-badge bank-badge-nubank">Nu</span> Debito Nubank</td>
+```
+
+**Linha 1270** — Transporte:
+```
+ANTES:  <td class="cat-payment"><span class="method-brand method-brand-visa">VISA</span> Debito Itau</td>
+DEPOIS: <td class="cat-payment"><span class="bank-badge bank-badge-itau">Itaú</span> Debito Itau</td>
+```
+
+### O que NÃO mudar
+
+- Os badges de CARTÃO nas linhas de cartão de crédito (Latam Pass, PDA, Uniclass) — estes estão corretos com `method-brand-visa`
+- O layout da tabela e do formulário de edição permanece igual
+- Não mexer na versão mobile das categorias (os cards mobile não mostram método)
+
+---
+
+## AI-15: Adicionar configuração de método de pagamento por subcategoria no proto-14
+
+**Severidade:** HIGH
+**Arquivo:** `_bmad-output/prototypes/proto-14-settings.html`
+**Problema:** Na Story 2.5.1, ficou decidido que **subcategorias agora têm método de pagamento configurável próprio** (podem herdar da categoria pai ou ter um método diferente). O protótipo proto-14 não reflete essa decisão — as subcategorias aparecem como tags simples sem nenhuma opção de método de pagamento.
+
+### Situação ATUAL (linhas 1189-1198)
+
+```html
+<div class="form-group" style="grid-column: 1 / -1;">
+  <label>Subcategorias</label>
+  <div class="subcategories-list">
+    <span class="subcategory-tag">Hortifruti <span class="remove-sub">&times;</span></span>
+    <span class="subcategory-tag">Acougue <span class="remove-sub">&times;</span></span>
+    <span class="subcategory-tag">Padaria <span class="remove-sub">&times;</span></span>
+    <span class="subcategory-tag">Limpeza <span class="remove-sub">&times;</span></span>
+    <span class="subcategory-tag">Higiene <span class="remove-sub">&times;</span></span>
+    <span class="subcategory-tag" style="border-style:dashed; color:var(--primary); cursor:pointer;">+ Adicionar</span>
+  </div>
+</div>
+```
+
+### Situação DESEJADA
+
+Cada subcategoria deve mostrar seu método de pagamento (ou "Herdar" quando usa o da categoria pai). O layout muda de tags inline para uma mini-lista com subcategoria + método:
+
+```html
+<div class="form-group" style="grid-column: 1 / -1;">
+  <label>Subcategorias</label>
+  <div class="subcategories-config">
+    <div class="subcat-row">
+      <span class="subcat-name">Hortifruti</span>
+      <select class="subcat-method-select">
+        <option selected>Herdar (Latam Pass Visa)</option>
+        <option>Pao de Acucar Master</option>
+        <option>PDA Visa</option>
+        <option>Debito Itau</option>
+        <option>Debito Nubank</option>
+      </select>
+      <span class="remove-sub" style="cursor:pointer; color:var(--text-tertiary); font-size:16px;">&times;</span>
+    </div>
+    <div class="subcat-row">
+      <span class="subcat-name">Acougue</span>
+      <select class="subcat-method-select">
+        <option selected>Herdar (Latam Pass Visa)</option>
+        <option>Pao de Acucar Master</option>
+        <option>PDA Visa</option>
+        <option>Debito Itau</option>
+        <option>Debito Nubank</option>
+      </select>
+      <span class="remove-sub" style="cursor:pointer; color:var(--text-tertiary); font-size:16px;">&times;</span>
+    </div>
+    <div class="subcat-row">
+      <span class="subcat-name">Padaria</span>
+      <select class="subcat-method-select">
+        <option>Herdar (Latam Pass Visa)</option>
+        <option selected>Pao de Acucar Master</option>
+        <option>PDA Visa</option>
+        <option>Debito Itau</option>
+        <option>Debito Nubank</option>
+      </select>
+      <span class="remove-sub" style="cursor:pointer; color:var(--text-tertiary); font-size:16px;">&times;</span>
+    </div>
+    <div class="subcat-row">
+      <span class="subcat-name">Limpeza</span>
+      <select class="subcat-method-select">
+        <option selected>Herdar (Latam Pass Visa)</option>
+        <option>Pao de Acucar Master</option>
+        <option>PDA Visa</option>
+        <option>Debito Itau</option>
+        <option>Debito Nubank</option>
+      </select>
+      <span class="remove-sub" style="cursor:pointer; color:var(--text-tertiary); font-size:16px;">&times;</span>
+    </div>
+    <div class="subcat-row">
+      <span class="subcat-name">Higiene</span>
+      <select class="subcat-method-select">
+        <option selected>Herdar (Latam Pass Visa)</option>
+        <option>Pao de Acucar Master</option>
+        <option>PDA Visa</option>
+        <option>Debito Itau</option>
+        <option>Debito Nubank</option>
+      </select>
+      <span class="remove-sub" style="cursor:pointer; color:var(--text-tertiary); font-size:16px;">&times;</span>
+    </div>
+    <div class="subcat-row" style="border-style:dashed; border-color:var(--primary); color:var(--primary); cursor:pointer; justify-content:center; font-size:13px; font-weight:500; padding:8px;">
+      + Adicionar subcategoria
+    </div>
+  </div>
+</div>
+```
+
+### CSS necessário
+
+Adicionar ao `<style>` do proto-14:
+
+```css
+.subcategories-config {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.subcat-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.subcat-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  min-width: 100px;
+}
+
+.subcat-method-select {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--text-secondary);
+  background: var(--bg);
+}
+
+.subcat-method-select:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+```
+
+### Dados do protótipo
+
+Para o exemplo "Supermercado" (pagamento padrão = Latam Pass Visa), mostrar:
+- Hortifruti: **Herdar (Latam Pass Visa)** — selecionado
+- Açougue: **Herdar (Latam Pass Visa)** — selecionado
+- Padaria: **Pão de Açúcar Master** — exemplo de subcategoria com método diferente
+- Limpeza: **Herdar (Latam Pass Visa)** — selecionado
+- Higiene: **Herdar (Latam Pass Visa)** — selecionado
+
+**A ideia:** "Padaria" usa cartão Pão de Açúcar (faz sentido — desconto no supermercado Pão de Açúcar), enquanto as outras subcategorias herdam o Latam Pass da categoria pai.
+
+### O que NÃO mudar
+
+- As subcategorias dos outros edit-rows (1-8) não precisam ter essa granularidade — a maioria deles nem tem subcategorias no protótipo atual. Apenas o edit-row 0 (Supermercado) que já está expandido precisa dessa mudança.
+- A tabela de leitura (não expandida) permanece igual.
+
+---
+
+## AI-16: Adicionar gráfico de tendência mensal na seção desktop do proto-15
+
+**Severidade:** MEDIUM
+**Arquivo:** `_bmad-output/prototypes/proto-15-drill-down.html`
+**Problema:** Na seção desktop (linhas 1449-1451), o painel esquerdo do dashboard mostra apenas um placeholder vazio:
+```html
+<div class="desktop-chart-placeholder">
+  <span>Grafico de tendencia mensal</span>
+</div>
+```
+Esse é um retângulo cinza com texto centralizado "Grafico de tendencia mensal". Deveria ter um mini gráfico de barras (similar ao padrão usado em outros protótipos, como o bar chart do proto-12 e o mini-chart do próprio proto-15 mobile).
+
+### O que mudar
+
+**1. Substituir o conteúdo do `.desktop-chart-placeholder` (linhas 1449-1451):**
+
+```html
+<!-- ANTES: -->
+<div class="desktop-chart-placeholder">
+  <span>Grafico de tendencia mensal</span>
+</div>
+
+<!-- DEPOIS: -->
+<div class="desktop-chart-placeholder" style="flex-direction: column; align-items: stretch; padding: 16px 20px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+    <span style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Tendência mensal</span>
+    <span style="font-size: 10px; color: var(--text-tertiary);">Últimos 6 meses</span>
+  </div>
+  <div style="display: flex; align-items: flex-end; gap: 12px; flex: 1; padding-bottom: 4px;">
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+      <div style="width:100%; height:65px; background:linear-gradient(180deg,#E0E7FF,#C7D2FE); border-radius:4px 4px 0 0;"></div>
+      <span style="font-size:9px; color:var(--text-tertiary);">Out</span>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+      <div style="width:100%; height:80px; background:linear-gradient(180deg,#E0E7FF,#C7D2FE); border-radius:4px 4px 0 0;"></div>
+      <span style="font-size:9px; color:var(--text-tertiary);">Nov</span>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+      <div style="width:100%; height:72px; background:linear-gradient(180deg,#E0E7FF,#C7D2FE); border-radius:4px 4px 0 0;"></div>
+      <span style="font-size:9px; color:var(--text-tertiary);">Dez</span>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+      <div style="width:100%; height:90px; background:linear-gradient(180deg,#E0E7FF,#C7D2FE); border-radius:4px 4px 0 0;"></div>
+      <span style="font-size:9px; color:var(--text-tertiary);">Jan</span>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+      <div style="width:100%; height:75px; background:linear-gradient(180deg,#E0E7FF,#C7D2FE); border-radius:4px 4px 0 0;"></div>
+      <span style="font-size:9px; color:var(--text-tertiary);">Fev</span>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+      <div style="width:100%; height:100px; background:linear-gradient(180deg,#4F46E5,#6366F1); border-radius:4px 4px 0 0;"></div>
+      <span style="font-size:9px; color:var(--primary); font-weight:600;">Mar</span>
+    </div>
+  </div>
+</div>
+```
+
+**2. Atualizar o CSS do `.desktop-chart-placeholder` (linha 671):**
+
+```css
+/* ANTES: */
+.desktop-chart-placeholder {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  font-size: 13px;
+  position: relative;
+  z-index: 2;
+}
+
+/* DEPOIS: */
+.desktop-chart-placeholder {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  font-size: 13px;
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+}
+```
+
+(Única mudança no CSS: adicionar `overflow: hidden` para as barras não vazarem do border-radius.)
+
+### Design visual
+
+O gráfico mostra 6 barras (Out-Mar) com alturas proporcionais simulando tendência de gastos. O mês atual (Mar) usa a cor primária (indigo) e as barras anteriores usam indigo claro (`#C7D2FE`/`#E0E7FF`). A barra de março é a mais alta (100px) indicando que o mês atual é o de maior gasto, consistente com os dados do drill-down (R$ 15.880,00).
+
+### O que NÃO mudar
+
+- O `.desktop-left::after` overlay semitransparente permanece — o gráfico ficará levemente esmaecido (intencional, mostra que o dashboard está "dimmed" enquanto o side panel está ativo)
+- O side panel direito permanece igual
+- A posição do gráfico no layout permanece a mesma
+
+---
+
 ## Checklist de Validação
 
-Após executar os 11 action items, o dev deve verificar:
+Após executar os 16 action items, o dev deve verificar:
 
 - [ ] AI-1: Abrir proto-03 no browser → sidebar mostra `✎ Caderninho` (e não `✐`)
 - [ ] AI-2: Abrir proto-04 no browser → na seção "Entidades" (desktop E mobile), TODOS os 4 cartões mostram badge de bandeira (Latam Pass = VISA, Pão de Açúcar = Mastercard, Uniclass = VISA, PDA = VISA)
@@ -725,3 +1246,8 @@ Após executar os 11 action items, o dev deve verificar:
 - [ ] AI-9: Abrir proto-10 no browser → banner "Amanhã vence" tem X, botão e ícone alinhados sem sobreposição; valor mostra "R$ 158,00" com espaço
 - [ ] AI-10: Abrir proto-10 no browser → item "iCloud" mostra badge `[VISA] PDA · Ciclo Mar`
 - [ ] AI-11: Abrir proto-10 no browser → itens de Débito Automático mostram badge do banco; itens Manual com Débito mostram badge do banco; padrão `[Badge] Método • Info temporal` consistente em todas as seções
+- [ ] AI-12: Abrir proto-12 no browser → card "Parcelas Ativas" é full-width abaixo das duas colunas, tabela com 5 colunas (sem "Restam"), não espremido
+- [ ] AI-13: Abrir proto-12 no browser → aba "Parcelas" mobile mostra barra de progresso colorida em cada card + info "libera limite"
+- [ ] AI-14: Abrir proto-14 no browser → edit-form "Pagamento padrão" mostra badge ao lado do select; tabela mostra badge de BANCO para itens "Débito" (não badge de cartão)
+- [ ] AI-15: Abrir proto-14 no browser → subcategorias no edit-form mostram dropdown de método individual com opção "Herdar" + possibilidade de método diferente
+- [ ] AI-16: Abrir proto-15 no browser → seção desktop mostra gráfico de barras real (6 meses, mês atual em indigo) em vez de placeholder texto
