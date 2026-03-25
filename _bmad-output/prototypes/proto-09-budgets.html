@@ -548,6 +548,13 @@
     .tm-block.sz-xxs .tm-percent { display: none; }
     .tm-block.sz-xxs .tm-bar-wrap { display: none; }
     .tm-block.sz-xxs .tm-method { display: none; }
+    .tm-block.sz-xxs .tm-hint { display: none; }
+    .tm-block.sz-xs .tm-hint { display: none; }
+
+    .tm-hint {
+      position: absolute; bottom: 8px; right: 10px;
+      font-size: 9px; opacity: 0.45;
+    }
 
     /* Color themes */
     .tm-positive { background: linear-gradient(145deg, #C6F6D5, #9AE6B4); color: #14532D; }
@@ -558,8 +565,12 @@
     .tm-attention .tm-bar-fill { background: #CA8A04; }
     .tm-alert { background: linear-gradient(145deg, #FED7AA, #FDBA74); color: #7C2D12; }
     .tm-alert .tm-bar-fill { background: #EA580C; }
+    .tm-critical { background: linear-gradient(145deg, #FECACA, #FCA5A5); color: #7F1D1D; }
+    .tm-critical .tm-bar-fill { background: #DC2626; }
     .tm-neutral { background: linear-gradient(145deg, #DDD6FE, #C4B5FD); color: #312E81; }
     .tm-neutral .tm-bar-fill { background: #7C3AED; }
+    .tm-neutral-light { background: linear-gradient(145deg, #E0E7FF, #C7D2FE); color: #312E81; }
+    .tm-neutral-light .tm-bar-fill { background: #4F46E5; }
 
     /* Tooltip */
     .tm-tooltip {
@@ -1274,26 +1285,26 @@
     <div class="summary-bar">
       <div class="summary-item">
         <span class="summary-label">Gasto</span>
-        <span class="summary-value">R$ 9.930,00</span>
+        <span class="summary-value">R$ 13.130,00</span>
       </div>
       <div class="summary-divider"></div>
       <div class="summary-item">
         <span class="summary-label">Orçado</span>
-        <span class="summary-value">R$ 14.858,00</span>
+        <span class="summary-value">R$ 17.400,00</span>
       </div>
       <div class="summary-divider"></div>
       <div class="summary-item">
         <span class="summary-label">Disponível</span>
-        <span class="summary-value positive">R$ 4.928,00</span>
+        <span class="summary-value positive">R$ 4.270,00</span>
       </div>
       <div class="summary-divider"></div>
       <div class="summary-progress-wrap">
         <div class="summary-progress-header">
           <span class="summary-progress-label">Total utilizado</span>
-          <span class="summary-progress-pct">67,00%</span>
+          <span class="summary-progress-pct">75,00%</span>
         </div>
         <div class="summary-progress-bar">
-          <div class="summary-progress-fill" style="width: 67%; background: var(--positive);"></div>
+          <div class="summary-progress-fill" style="width: 75%; background: var(--positive);"></div>
         </div>
       </div>
     </div>
@@ -1304,37 +1315,10 @@
     <div class="view-panel active" id="view-visual">
       <div class="treemap-grid">
 
-        <!-- ── ESSENCIAIS ── -->
-        <div class="treemap-group-header">Essenciais</div>
+        <!-- ── ESSENCIAIS FIXOS ── -->
+        <div class="treemap-group-header">Essenciais Fixos</div>
 
-        <!-- Supermercado — large -->
-        <div class="treemap-card">
-          <div>
-            <div class="treemap-card-header">
-              <div class="treemap-card-icon-name">
-                <span class="treemap-card-emoji">🛒</span>
-                <span class="treemap-card-name">Supermercado</span>
-              </div>
-              <span class="treemap-card-badge badge-ok">Ok</span>
-            </div>
-            <div class="treemap-card-amounts">
-              <span class="treemap-card-spent">R$ 2.122,00</span>
-              <span class="treemap-card-total">/ R$ 3.000,00</span>
-            </div>
-            <div class="treemap-card-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
-          </div>
-          <div>
-            <div class="treemap-card-progress">
-              <div class="treemap-card-progress-fill" style="width: 70.7%; background: var(--positive);"></div>
-            </div>
-            <div class="treemap-card-footer">
-              <span class="treemap-card-rest">Resta R$ 878,00</span>
-              <span class="treemap-card-pct" style="color: var(--positive-text);">70,00%</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Escola — large -->
+        <!-- Escola — large/fixed -->
         <div class="treemap-card">
           <div>
             <div class="treemap-card-header">
@@ -1361,7 +1345,7 @@
           </div>
         </div>
 
-        <!-- Moradia — medium -->
+        <!-- Moradia — large/fixed -->
         <div class="treemap-card">
           <div>
             <div class="treemap-card-header">
@@ -1369,26 +1353,83 @@
                 <span class="treemap-card-emoji">🏠</span>
                 <span class="treemap-card-name">Moradia</span>
               </div>
-              <span class="treemap-card-badge badge-attention">Atenção</span>
+              <span class="treemap-card-badge badge-fixed">Fixo</span>
             </div>
             <div class="treemap-card-amounts">
-              <span class="treemap-card-spent">R$ 1.800,00</span>
+              <span class="treemap-card-spent">R$ 2.200,00</span>
               <span class="treemap-card-total">/ R$ 2.200,00</span>
             </div>
             <div class="treemap-card-method"><span class="method-brand method-brand-visa">VISA</span> Itaú Débito</div>
           </div>
           <div>
             <div class="treemap-card-progress">
-              <div class="treemap-card-progress-fill" style="width: 82%; background: var(--attention);"></div>
+              <div class="treemap-card-progress-fill" style="width: 100%; background: var(--primary);"></div>
             </div>
             <div class="treemap-card-footer">
-              <span class="treemap-card-rest">Resta R$ 400,00</span>
-              <span class="treemap-card-pct" style="color: var(--attention-text);">82,00%</span>
+              <span class="treemap-card-rest" style="color: var(--text-tertiary);">Custo fixo</span>
+              <span class="treemap-card-pct" style="color: var(--primary);">100,00%</span>
             </div>
           </div>
         </div>
 
-        <!-- Gasolina — small -->
+        <!-- Internet/Tel — small/fixed -->
+        <div class="treemap-card">
+          <div>
+            <div class="treemap-card-header">
+              <div class="treemap-card-icon-name">
+                <span class="treemap-card-emoji">🌐</span>
+                <span class="treemap-card-name">Internet/Tel</span>
+              </div>
+              <span class="treemap-card-badge badge-fixed">Fixo</span>
+            </div>
+            <div class="treemap-card-amounts">
+              <span class="treemap-card-spent">R$ 158,00</span>
+              <span class="treemap-card-total">/ R$ 158,00</span>
+            </div>
+            <div class="treemap-card-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
+          </div>
+          <div>
+            <div class="treemap-card-progress">
+              <div class="treemap-card-progress-fill" style="width: 100%; background: var(--primary);"></div>
+            </div>
+            <div class="treemap-card-footer">
+              <span class="treemap-card-rest" style="color: var(--text-tertiary);">Custo fixo</span>
+              <span class="treemap-card-pct" style="color: var(--primary);">100,00%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ESSENCIAIS VARIAVEIS ── -->
+        <div class="treemap-group-header">Essenciais Variáveis</div>
+
+        <!-- Supermercado -->
+        <div class="treemap-card">
+          <div>
+            <div class="treemap-card-header">
+              <div class="treemap-card-icon-name">
+                <span class="treemap-card-emoji">🛒</span>
+                <span class="treemap-card-name">Supermercado</span>
+              </div>
+              <span class="treemap-card-badge badge-ok">Ok</span>
+            </div>
+            <div class="treemap-card-amounts">
+              <span class="treemap-card-spent">R$ 2.122,00</span>
+              <span class="treemap-card-total">/ R$ 3.000,00</span>
+            </div>
+            <div class="treemap-card-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
+          </div>
+          <div>
+            <div class="treemap-card-progress">
+              <div class="treemap-card-progress-fill" style="width: 70.7%; background: var(--positive);"></div>
+            </div>
+            <div class="treemap-card-footer">
+              <span class="treemap-card-rest">Resta R$ 878,00</span>
+              <span class="treemap-card-pct" style="color: var(--positive-text);">71,00%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gasolina -->
         <div class="treemap-card">
           <div>
             <div class="treemap-card-header">
@@ -1415,7 +1456,7 @@
           </div>
         </div>
 
-        <!-- Transporte — small -->
+        <!-- Transporte -->
         <div class="treemap-card">
           <div>
             <div class="treemap-card-header">
@@ -1442,37 +1483,10 @@
           </div>
         </div>
 
-        <!-- Internet — small/fixed -->
-        <div class="treemap-card">
-          <div>
-            <div class="treemap-card-header">
-              <div class="treemap-card-icon-name">
-                <span class="treemap-card-emoji">🌐</span>
-                <span class="treemap-card-name">Internet</span>
-              </div>
-              <span class="treemap-card-badge badge-fixed">Fixo</span>
-            </div>
-            <div class="treemap-card-amounts">
-              <span class="treemap-card-spent">R$ 158,00</span>
-              <span class="treemap-card-total">/ R$ 158,00</span>
-            </div>
-            <div class="treemap-card-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
-          </div>
-          <div>
-            <div class="treemap-card-progress">
-              <div class="treemap-card-progress-fill" style="width: 100%; background: var(--primary);"></div>
-            </div>
-            <div class="treemap-card-footer">
-              <span class="treemap-card-rest" style="color: var(--text-tertiary);">Custo fixo</span>
-              <span class="treemap-card-pct" style="color: var(--primary);">100,00%</span>
-            </div>
-          </div>
-        </div>
-
         <!-- ── QUALIDADE DE VIDA ── -->
         <div class="treemap-group-header">Qualidade de Vida</div>
 
-        <!-- Restaurante — medium -->
+        <!-- Restaurante -->
         <div class="treemap-card">
           <div>
             <div class="treemap-card-header">
@@ -1499,13 +1513,13 @@
           </div>
         </div>
 
-        <!-- Outros — medium -->
+        <!-- Lazer -->
         <div class="treemap-card">
           <div>
             <div class="treemap-card-header">
               <div class="treemap-card-icon-name">
-                <span class="treemap-card-emoji">📦</span>
-                <span class="treemap-card-name">Outros</span>
+                <span class="treemap-card-emoji">🎮</span>
+                <span class="treemap-card-name">Lazer</span>
               </div>
               <span class="treemap-card-badge badge-ok">Ok</span>
             </div>
@@ -1521,7 +1535,37 @@
             </div>
             <div class="treemap-card-footer">
               <span class="treemap-card-rest">Resta R$ 1.550,00</span>
-              <span class="treemap-card-pct" style="color: var(--positive-text);">22,00%</span>
+              <span class="treemap-card-pct" style="color: var(--positive-text);">23,00%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── INVESTIMENTOS ── -->
+        <div class="treemap-group-header">Investimentos</div>
+
+        <!-- Educação -->
+        <div class="treemap-card">
+          <div>
+            <div class="treemap-card-header">
+              <div class="treemap-card-icon-name">
+                <span class="treemap-card-emoji">📚</span>
+                <span class="treemap-card-name">Educação</span>
+              </div>
+              <span class="treemap-card-badge badge-fixed">Fixo</span>
+            </div>
+            <div class="treemap-card-amounts">
+              <span class="treemap-card-spent">R$ 2.800,00</span>
+              <span class="treemap-card-total">/ R$ 2.800,00</span>
+            </div>
+            <div class="treemap-card-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
+          </div>
+          <div>
+            <div class="treemap-card-progress">
+              <div class="treemap-card-progress-fill" style="width: 100%; background: var(--primary);"></div>
+            </div>
+            <div class="treemap-card-footer">
+              <span class="treemap-card-rest" style="color: var(--text-tertiary);">Custo fixo</span>
+              <span class="treemap-card-pct" style="color: var(--primary);">100,00%</span>
             </div>
           </div>
         </div>
@@ -1546,8 +1590,8 @@
             </tr>
           </thead>
           <tbody>
-            <!-- ── ESSENCIAIS ── -->
-            <tr class="list-group-header"><td colspan="6">Essenciais</td></tr>
+            <!-- ── ESSENCIAIS FIXOS ── -->
+            <tr class="list-group-header"><td colspan="6">Essenciais Fixos</td></tr>
             <!-- Escola 100% -->
             <tr>
               <td>
@@ -1573,13 +1617,38 @@
               </td>
               <td><span class="list-status-badge badge-fixed">Fixo</span></td>
             </tr>
-            <!-- Internet 100% -->
+            <!-- Moradia 100% -->
+            <tr>
+              <td>
+                <div class="list-cat">
+                  <span class="list-cat-emoji">🏠</span>
+                  <div>
+                    <div class="list-cat-name">Moradia</div>
+                    <div class="list-cat-type">Custo fixo</div>
+                    <div class="list-cat-method"><span class="method-brand method-brand-visa">VISA</span> Itaú Débito</div>
+                  </div>
+                </div>
+              </td>
+              <td class="list-amount">R$ 2.200,00</td>
+              <td class="list-amount">R$ 2.200,00</td>
+              <td><span class="list-rest zero">R$ 0,00</span></td>
+              <td>
+                <div class="list-pct-bar">
+                  <div class="list-pct-track">
+                    <div class="list-pct-fill" style="width: 100%; background: var(--primary);"></div>
+                  </div>
+                  <span class="list-pct-text" style="color: var(--primary);">100,00%</span>
+                </div>
+              </td>
+              <td><span class="list-status-badge badge-fixed">Fixo</span></td>
+            </tr>
+            <!-- Internet/Tel 100% -->
             <tr>
               <td>
                 <div class="list-cat">
                   <span class="list-cat-emoji">🌐</span>
                   <div>
-                    <div class="list-cat-name">Internet</div>
+                    <div class="list-cat-name">Internet/Tel</div>
                     <div class="list-cat-type">Custo fixo</div>
                     <div class="list-cat-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
                   </div>
@@ -1598,32 +1667,10 @@
               </td>
               <td><span class="list-status-badge badge-fixed">Fixo</span></td>
             </tr>
-            <!-- Moradia 82% -->
-            <tr>
-              <td>
-                <div class="list-cat">
-                  <span class="list-cat-emoji">🏠</span>
-                  <div>
-                    <div class="list-cat-name">Moradia</div>
-                    <div class="list-cat-type">Variável</div>
-                    <div class="list-cat-method"><span class="method-brand method-brand-visa">VISA</span> Itaú Débito</div>
-                  </div>
-                </div>
-              </td>
-              <td class="list-amount">R$ 2.200,00</td>
-              <td class="list-amount">R$ 1.800,00</td>
-              <td><span class="list-rest ok">R$400</span></td>
-              <td>
-                <div class="list-pct-bar">
-                  <div class="list-pct-track">
-                    <div class="list-pct-fill" style="width: 82%; background: var(--attention);"></div>
-                  </div>
-                  <span class="list-pct-text" style="color: var(--attention-text);">82,00%</span>
-                </div>
-              </td>
-              <td><span class="list-status-badge badge-attention">&#9888;&#65039; Atenção</span></td>
-            </tr>
-            <!-- Supermercado 70% -->
+
+            <!-- ── ESSENCIAIS VARIAVEIS ── -->
+            <tr class="list-group-header"><td colspan="6">Essenciais Variáveis</td></tr>
+            <!-- Supermercado 71% -->
             <tr>
               <td>
                 <div class="list-cat">
@@ -1637,13 +1684,13 @@
               </td>
               <td class="list-amount">R$ 3.000,00</td>
               <td class="list-amount">R$ 2.122,00</td>
-              <td><span class="list-rest ok">R$878</span></td>
+              <td><span class="list-rest ok">R$ 878,00</span></td>
               <td>
                 <div class="list-pct-bar">
                   <div class="list-pct-track">
                     <div class="list-pct-fill" style="width: 70.7%; background: var(--positive);"></div>
                   </div>
-                  <span class="list-pct-text" style="color: var(--positive-text);">70,00%</span>
+                  <span class="list-pct-text" style="color: var(--positive-text);">71,00%</span>
                 </div>
               </td>
               <td><span class="list-status-badge badge-ok">&#9989; Ok</span></td>
@@ -1662,7 +1709,7 @@
               </td>
               <td class="list-amount">R$ 600,00</td>
               <td class="list-amount">R$ 420,00</td>
-              <td><span class="list-rest ok">R$180</span></td>
+              <td><span class="list-rest ok">R$ 180,00</span></td>
               <td>
                 <div class="list-pct-bar">
                   <div class="list-pct-track">
@@ -1687,7 +1734,7 @@
               </td>
               <td class="list-amount">R$ 500,00</td>
               <td class="list-amount">R$ 380,00</td>
-              <td><span class="list-rest ok">R$120</span></td>
+              <td><span class="list-rest ok">R$ 120,00</span></td>
               <td>
                 <div class="list-pct-bar">
                   <div class="list-pct-track">
@@ -1715,7 +1762,7 @@
               </td>
               <td class="list-amount">R$ 2.500,00</td>
               <td class="list-amount">R$ 1.800,00</td>
-              <td><span class="list-rest ok">R$700</span></td>
+              <td><span class="list-rest ok">R$ 700,00</span></td>
               <td>
                 <div class="list-pct-bar">
                   <div class="list-pct-track">
@@ -1726,13 +1773,13 @@
               </td>
               <td><span class="list-status-badge badge-ok">&#9989; Ok</span></td>
             </tr>
-            <!-- Outros 22% -->
+            <!-- Lazer 23% -->
             <tr>
               <td>
                 <div class="list-cat">
-                  <span class="list-cat-emoji">📦</span>
+                  <span class="list-cat-emoji">🎮</span>
                   <div>
-                    <div class="list-cat-name">Outros</div>
+                    <div class="list-cat-name">Lazer</div>
                     <div class="list-cat-type">Variável</div>
                     <div class="list-cat-method">Variado</div>
                   </div>
@@ -1740,30 +1787,58 @@
               </td>
               <td class="list-amount">R$ 2.000,00</td>
               <td class="list-amount">R$ 450,00</td>
-              <td><span class="list-rest ok">R$1.550</span></td>
+              <td><span class="list-rest ok">R$ 1.550,00</span></td>
               <td>
                 <div class="list-pct-bar">
                   <div class="list-pct-track">
                     <div class="list-pct-fill" style="width: 22.5%; background: var(--positive);"></div>
                   </div>
-                  <span class="list-pct-text" style="color: var(--positive-text);">22,00%</span>
+                  <span class="list-pct-text" style="color: var(--positive-text);">23,00%</span>
                 </div>
               </td>
               <td><span class="list-status-badge badge-ok">&#9989; Ok</span></td>
             </tr>
-          </tbody>
-          <tfoot>
+
+            <!-- ── INVESTIMENTOS ── -->
+            <tr class="list-group-header"><td colspan="6">Investimentos</td></tr>
+            <!-- Educação 100% -->
             <tr>
-              <td>Total (8 categorias)</td>
-              <td>R$ 14.858,00</td>
-              <td>R$ 9.930,00</td>
-              <td style="color: var(--positive-text);">R$ 4.928,00</td>
+              <td>
+                <div class="list-cat">
+                  <span class="list-cat-emoji">📚</span>
+                  <div>
+                    <div class="list-cat-name">Educação</div>
+                    <div class="list-cat-type">Custo fixo</div>
+                    <div class="list-cat-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
+                  </div>
+                </div>
+              </td>
+              <td class="list-amount">R$ 2.800,00</td>
+              <td class="list-amount">R$ 2.800,00</td>
+              <td><span class="list-rest zero">R$ 0,00</span></td>
               <td>
                 <div class="list-pct-bar">
                   <div class="list-pct-track">
-                    <div class="list-pct-fill" style="width: 67%; background: var(--positive);"></div>
+                    <div class="list-pct-fill" style="width: 100%; background: var(--primary);"></div>
                   </div>
-                  <span class="list-pct-text" style="color: var(--positive-text);">67,00%</span>
+                  <span class="list-pct-text" style="color: var(--primary);">100,00%</span>
+                </div>
+              </td>
+              <td><span class="list-status-badge badge-fixed">Fixo</span></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Total (10 categorias)</td>
+              <td>R$ 17.400,00</td>
+              <td>R$ 13.130,00</td>
+              <td style="color: var(--positive-text);">R$ 4.270,00</td>
+              <td>
+                <div class="list-pct-bar">
+                  <div class="list-pct-track">
+                    <div class="list-pct-fill" style="width: 75%; background: var(--positive);"></div>
+                  </div>
+                  <span class="list-pct-text" style="color: var(--positive-text);">75,00%</span>
                 </div>
               </td>
               <td></td>
@@ -1787,8 +1862,8 @@
           <div class="timeline-header-cell">Mai 2026</div>
           <div class="timeline-header-cell">Jun 2026</div>
 
-          <!-- ── ESSENCIAIS ── -->
-          <div class="timeline-group-header">Essenciais</div>
+          <!-- ── ESSENCIAIS FIXOS ── -->
+          <div class="timeline-group-header">Essenciais Fixos</div>
 
           <!-- Escola (recurring) -->
           <div class="timeline-cat-cell">
@@ -1835,6 +1910,99 @@
             </div>
           </div>
 
+          <!-- Moradia (recurring) -->
+          <div class="timeline-cat-cell">
+            <span class="timeline-cat-emoji">🏠</span> Moradia
+          </div>
+          <div class="timeline-data-cell current-col">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary);">
+                  <span class="timeline-bar-label">R$ 2.200,00</span>
+                </div>
+              </div>
+              <span class="timeline-amount">R$2.200 / R$ 2.200,00</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 2.200,00</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">R$ 2.200,00</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 2.200,00</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">R$ 2.200,00</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 2.200,00</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">R$ 2.200,00</span>
+            </div>
+          </div>
+
+          <!-- Internet/Tel (recurring) -->
+          <div class="timeline-cat-cell">
+            <span class="timeline-cat-emoji">🌐</span> Internet/Tel
+          </div>
+          <div class="timeline-data-cell current-col">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary);">
+                  <span class="timeline-bar-label">R$ 158,00</span>
+                </div>
+              </div>
+              <span class="timeline-amount">R$158 / R$ 158,00</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 158,00</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">R$ 158,00</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 158,00</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">R$ 158,00</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 158,00</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">R$ 158,00</span>
+            </div>
+          </div>
+
+          <!-- ── ESSENCIAIS VARIAVEIS ── -->
+          <div class="timeline-group-header">Essenciais Variáveis</div>
+
           <!-- Supermercado -->
           <div class="timeline-cat-cell">
             <span class="timeline-cat-emoji">🛒</span> Supermercado
@@ -1877,51 +2045,6 @@
                 </div>
               </div>
               <span class="timeline-amount projected">~R$ 2.500,00</span>
-            </div>
-          </div>
-
-          <!-- Moradia -->
-          <div class="timeline-cat-cell">
-            <span class="timeline-cat-emoji">🏠</span> Moradia
-          </div>
-          <div class="timeline-data-cell current-col">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 82%; background: var(--attention);">
-                  <span class="timeline-bar-label">R$ 1.800,00</span>
-                </div>
-              </div>
-              <span class="timeline-amount">R$1.800 / R$ 2.200,00</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 77%; background: var(--positive); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$ 1.700,00</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">~R$ 1.700,00</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 82%; background: var(--attention); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$ 1.800,00</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">~R$ 1.800,00</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 77%; background: var(--positive); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$ 1.700,00</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">~R$ 1.700,00</span>
             </div>
           </div>
 
@@ -2015,51 +2138,6 @@
             </div>
           </div>
 
-          <!-- Internet (recurring) -->
-          <div class="timeline-cat-cell">
-            <span class="timeline-cat-emoji">🌐</span> Internet
-          </div>
-          <div class="timeline-data-cell current-col">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary);">
-                  <span class="timeline-bar-label">R$ 158,00</span>
-                </div>
-              </div>
-              <span class="timeline-amount">R$158 / R$ 158,00</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$ 158,00</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">R$ 158,00</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$ 158,00</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">R$ 158,00</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$ 158,00</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">R$ 158,00</span>
-            </div>
-          </div>
-
           <!-- ── QUALIDADE DE VIDA ── -->
           <div class="timeline-group-header">Qualidade de Vida</div>
 
@@ -2108,9 +2186,9 @@
             </div>
           </div>
 
-          <!-- Outros -->
+          <!-- Lazer -->
           <div class="timeline-cat-cell">
-            <span class="timeline-cat-emoji">📦</span> Outros
+            <span class="timeline-cat-emoji">🎮</span> Lazer
           </div>
           <div class="timeline-data-cell current-col">
             <div class="timeline-bar-wrap">
@@ -2153,26 +2231,74 @@
             </div>
           </div>
 
+          <!-- ── INVESTIMENTOS ── -->
+          <div class="timeline-group-header">Investimentos</div>
+
+          <!-- Educação (recurring) -->
+          <div class="timeline-cat-cell">
+            <span class="timeline-cat-emoji">📚</span> Educação
+          </div>
+          <div class="timeline-data-cell current-col">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary);">
+                  <span class="timeline-bar-label">R$ 2.800,00</span>
+                </div>
+              </div>
+              <span class="timeline-amount">R$2.800 / R$ 2.800,00</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 2.800,00</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">R$ 2.800,00</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 2.800,00</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">R$ 2.800,00</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 2.800,00</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">R$ 2.800,00</span>
+            </div>
+          </div>
+
           <!-- Total Row -->
           <div class="timeline-row timeline-total-row">
             <div class="timeline-cat-cell" style="border-top: 2px solid var(--border); border-bottom: none; font-weight: 700; font-size: 14px;">
               Total
             </div>
             <div class="timeline-data-cell current-col" style="border-top: 2px solid var(--border); border-bottom: none;">
-              <div style="font-weight: 700; font-size: 14px; color: var(--text-primary); margin-bottom: 4px;">R$ 9.930,00 / R$ 14.858,00</div>
-              <span class="timeline-margin-pos">+R$ 4.928,00 disponível</span>
+              <div style="font-weight: 700; font-size: 14px; color: var(--text-primary); margin-bottom: 4px;">R$ 13.130,00 / R$ 17.400,00</div>
+              <span class="timeline-margin-pos">+R$ 4.270,00 disponível</span>
             </div>
             <div class="timeline-data-cell" style="border-top: 2px solid var(--border); border-bottom: none;">
-              <div style="font-weight: 700; font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;">~R$ 10.758,00 / R$ 14.858,00</div>
-              <span class="timeline-margin-pos">+R$ 4.100,00 projetado</span>
+              <div style="font-weight: 700; font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;">~R$ 14.058,00 / R$ 17.400,00</div>
+              <span class="timeline-margin-pos">+R$ 3.342,00 projetado</span>
             </div>
             <div class="timeline-data-cell" style="border-top: 2px solid var(--border); border-bottom: none;">
-              <div style="font-weight: 700; font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;">~R$ 10.488,00 / R$ 14.858,00</div>
-              <span class="timeline-margin-pos">+R$ 4.370,00 projetado</span>
+              <div style="font-weight: 700; font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;">~R$ 13.688,00 / R$ 17.400,00</div>
+              <span class="timeline-margin-pos">+R$ 3.712,00 projetado</span>
             </div>
             <div class="timeline-data-cell" style="border-top: 2px solid var(--border); border-bottom: none;">
-              <div style="font-weight: 700; font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;">~R$ 10.938,00 / R$ 14.858,00</div>
-              <span class="timeline-margin-pos">+R$ 3.920,00 projetado</span>
+              <div style="font-weight: 700; font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;">~R$ 14.438,00 / R$ 17.400,00</div>
+              <span class="timeline-margin-pos">+R$ 2.962,00 projetado</span>
             </div>
           </div>
 
@@ -2207,11 +2333,11 @@
       <div class="treemap-real-meta">
         <div>
           <div class="tm-breadcrumb" id="tm-breadcrumb">
-            <span class="tm-bc-current" id="tm-bc-title">Por Essencialidade</span>
+            <span class="tm-bc-current" id="tm-bc-title">Por Classificação</span>
           </div>
-          <h3 id="tm-mapa-title">Distribuição dos Gastos</h3>
+          <h3 id="tm-mapa-title">Distribuição por Classificação</h3>
         </div>
-        <div class="treemap-real-total" id="tm-mapa-total">Total do mês: <strong>R$ 9.930,00</strong> de R$14.858</div>
+        <div class="treemap-real-total" id="tm-mapa-total">Total do mês: <strong>R$ 13.130,00</strong> de R$ 17.400,00</div>
       </div>
       <div class="treemap-real-legend">
         <div class="treemap-real-legend-item"><div class="treemap-real-legend-dot" style="background:#4ADE80;"></div>Dentro do orçamento</div>
@@ -2250,14 +2376,14 @@
       <div class="mob-summary">
         <div class="mob-summary-row">
           <span class="mob-summary-label">Gasto / Orçado</span>
-          <span class="mob-summary-value">R$ 9.930,00 <span style="color: var(--text-tertiary); font-weight: 500;">/ R$ 14.858,00</span></span>
+          <span class="mob-summary-value">R$ 13.130,00 <span style="color: var(--text-tertiary); font-weight: 500;">/ R$ 17.400,00</span></span>
         </div>
         <div class="mob-progress-bar">
-          <div class="mob-progress-fill" style="width: 67%; background: var(--positive);"></div>
+          <div class="mob-progress-fill" style="width: 75%; background: var(--positive);"></div>
         </div>
         <div style="display: flex; justify-content: space-between; margin-top: 6px;">
-          <span style="font-size: 12px; color: var(--positive-text); font-weight: 600;">Resta R$ 4.928,00</span>
-          <span style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">67,00%</span>
+          <span style="font-size: 12px; color: var(--positive-text); font-weight: 600;">Resta R$ 4.270,00</span>
+          <span style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">75,00%</span>
         </div>
       </div>
 
@@ -2270,8 +2396,8 @@
       <!-- Mobile Cards View -->
       <div class="mob-view-panel active" id="mob-view-cards">
 
-      <!-- ── ESSENCIAIS ── -->
-      <div class="mob-group-header">Essenciais</div>
+      <!-- ── ESSENCIAIS FIXOS ── -->
+      <div class="mob-group-header">Essenciais Fixos</div>
 
       <!-- Escola -->
       <div class="mob-card">
@@ -2292,6 +2418,47 @@
         <div class="mob-card-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
       </div>
 
+      <!-- Moradia -->
+      <div class="mob-card">
+        <div class="mob-card-top">
+          <div class="mob-card-left">
+            <span class="mob-card-emoji">🏠</span>
+            <span class="mob-card-name">Moradia</span>
+          </div>
+          <div class="mob-card-amounts">R$2.200 <span>/ R$ 2.200,00</span></div>
+        </div>
+        <div class="mob-card-bar">
+          <div class="mob-card-bar-fill" style="width: 100%; background: var(--primary);"></div>
+        </div>
+        <div class="mob-card-bottom">
+          <span class="mob-card-rest" style="color: var(--text-tertiary);">Custo fixo</span>
+          <span class="mob-card-pct" style="color: var(--primary);">100,00%</span>
+        </div>
+        <div class="mob-card-method"><span class="method-brand method-brand-visa">VISA</span> Itaú Débito</div>
+      </div>
+
+      <!-- Internet/Tel -->
+      <div class="mob-card">
+        <div class="mob-card-top">
+          <div class="mob-card-left">
+            <span class="mob-card-emoji">🌐</span>
+            <span class="mob-card-name">Internet/Tel</span>
+          </div>
+          <div class="mob-card-amounts">R$158 <span>/ R$ 158,00</span></div>
+        </div>
+        <div class="mob-card-bar">
+          <div class="mob-card-bar-fill" style="width: 100%; background: var(--primary);"></div>
+        </div>
+        <div class="mob-card-bottom">
+          <span class="mob-card-rest" style="color: var(--text-tertiary);">Custo fixo</span>
+          <span class="mob-card-pct" style="color: var(--primary);">100,00%</span>
+        </div>
+        <div class="mob-card-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
+      </div>
+
+      <!-- ── ESSENCIAIS VARIAVEIS ── -->
+      <div class="mob-group-header">Essenciais Variáveis</div>
+
       <!-- Supermercado -->
       <div class="mob-card">
         <div class="mob-card-top">
@@ -2306,28 +2473,9 @@
         </div>
         <div class="mob-card-bottom">
           <span class="mob-card-rest">Resta R$ 878,00</span>
-          <span class="mob-card-pct" style="color: var(--positive-text);">70,00%</span>
+          <span class="mob-card-pct" style="color: var(--positive-text);">71,00%</span>
         </div>
         <div class="mob-card-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
-      </div>
-
-      <!-- Moradia -->
-      <div class="mob-card">
-        <div class="mob-card-top">
-          <div class="mob-card-left">
-            <span class="mob-card-emoji">🏠</span>
-            <span class="mob-card-name">Moradia</span>
-          </div>
-          <div class="mob-card-amounts">R$1.800 <span>/ R$ 2.200,00</span></div>
-        </div>
-        <div class="mob-card-bar">
-          <div class="mob-card-bar-fill" style="width: 82%; background: var(--attention);"></div>
-        </div>
-        <div class="mob-card-bottom">
-          <span class="mob-card-rest">Resta R$ 400,00</span>
-          <span class="mob-card-pct" style="color: var(--attention-text);">82,00%</span>
-        </div>
-        <div class="mob-card-method"><span class="method-brand method-brand-visa">VISA</span> Itaú Débito</div>
       </div>
 
       <!-- Gasolina -->
@@ -2368,25 +2516,6 @@
         <div class="mob-card-method"><span class="method-brand method-brand-visa">VISA</span> Itaú Débito</div>
       </div>
 
-      <!-- Internet -->
-      <div class="mob-card">
-        <div class="mob-card-top">
-          <div class="mob-card-left">
-            <span class="mob-card-emoji">🌐</span>
-            <span class="mob-card-name">Internet</span>
-          </div>
-          <div class="mob-card-amounts">R$158 <span>/ R$ 158,00</span></div>
-        </div>
-        <div class="mob-card-bar">
-          <div class="mob-card-bar-fill" style="width: 100%; background: var(--primary);"></div>
-        </div>
-        <div class="mob-card-bottom">
-          <span class="mob-card-rest" style="color: var(--text-tertiary);">Custo fixo</span>
-          <span class="mob-card-pct" style="color: var(--primary);">100,00%</span>
-        </div>
-        <div class="mob-card-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
-      </div>
-
       <!-- ── QUALIDADE DE VIDA ── -->
       <div class="mob-group-header">Qualidade de Vida</div>
 
@@ -2409,12 +2538,12 @@
         <div class="mob-card-method"><span class="method-brand method-brand-master"></span> Nubank Master</div>
       </div>
 
-      <!-- Outros -->
+      <!-- Lazer -->
       <div class="mob-card">
         <div class="mob-card-top">
           <div class="mob-card-left">
-            <span class="mob-card-emoji">📦</span>
-            <span class="mob-card-name">Outros</span>
+            <span class="mob-card-emoji">🎮</span>
+            <span class="mob-card-name">Lazer</span>
           </div>
           <div class="mob-card-amounts">R$450 <span>/ R$ 2.000,00</span></div>
         </div>
@@ -2423,9 +2552,31 @@
         </div>
         <div class="mob-card-bottom">
           <span class="mob-card-rest">Resta R$ 1.550,00</span>
-          <span class="mob-card-pct" style="color: var(--positive-text);">22,00%</span>
+          <span class="mob-card-pct" style="color: var(--positive-text);">23,00%</span>
         </div>
         <div class="mob-card-method">Variado</div>
+      </div>
+
+      <!-- ── INVESTIMENTOS ── -->
+      <div class="mob-group-header">Investimentos</div>
+
+      <!-- Educação -->
+      <div class="mob-card">
+        <div class="mob-card-top">
+          <div class="mob-card-left">
+            <span class="mob-card-emoji">📚</span>
+            <span class="mob-card-name">Educação</span>
+          </div>
+          <div class="mob-card-amounts">R$2.800 <span>/ R$ 2.800,00</span></div>
+        </div>
+        <div class="mob-card-bar">
+          <div class="mob-card-bar-fill" style="width: 100%; background: var(--primary);"></div>
+        </div>
+        <div class="mob-card-bottom">
+          <span class="mob-card-rest" style="color: var(--text-tertiary);">Custo fixo</span>
+          <span class="mob-card-pct" style="color: var(--primary);">100,00%</span>
+        </div>
+        <div class="mob-card-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
       </div>
 
       </div><!-- /mob-view-cards -->
@@ -2435,7 +2586,7 @@
         <div class="tm-breadcrumb" id="mob-tm-breadcrumb" style="margin-bottom: 6px;">
           <span class="tm-bc-current" style="font-size: 11px;">Mar 2026</span>
         </div>
-        <div id="mob-tm-info" style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px;">Total: <strong style="color: var(--text-primary);">R$ 9.930,00</strong> de R$14.858</div>
+        <div id="mob-tm-info" style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px;">Total: <strong style="color: var(--text-primary);">R$ 13.130,00</strong> de R$ 17.400,00</div>
         <div class="mob-treemap-area" id="mob-treemap-mapa"></div>
         <div class="treemap-real-legend" style="margin-top: 10px; flex-wrap: wrap; gap: 8px;">
           <div class="treemap-real-legend-item"><div class="treemap-real-legend-dot" style="background:#4ADE80;"></div>Ok</div>
@@ -2627,41 +2778,55 @@
   }
   function hideTmTooltip() { tooltipEl.style.display = 'none'; }
 
-  // ── Budget Data — Level 2 (categories) ──
-  var essenciaisData = [
-    { name: 'Supermercado', value: 2122, budget: 3000, method: 'Latam Pass Visa', theme: 'tm-positive',
-      tooltip: { name: 'Supermercado', rows: [['Orçamento','R$ 3.000,00'],['Gasto','R$ 2.122,00'],['Resta','R$ 878,00'],['Uso','70,00%']], hint: 'Latam Pass Visa' }},
-    { name: 'Escola', value: 2800, budget: 2800, method: 'Latam Pass Visa', theme: 'tm-neutral',
-      tooltip: { name: 'Escola', rows: [['Orçamento','R$ 2.800,00'],['Gasto','R$ 2.800,00'],['Resta','R$ 0,00'],['Uso','100,00%']], hint: 'Custo fixo · Latam Pass Visa' }},
-    { name: 'Moradia', value: 1800, budget: 2200, method: 'Itaú Débito', theme: 'tm-attention',
-      tooltip: { name: 'Moradia', rows: [['Orçamento','R$ 2.200,00'],['Gasto','R$ 1.800,00'],['Resta','R$ 400,00'],['Uso','82,00%']], hint: 'Itaú Débito' }},
-    { name: 'Gasolina', value: 420, budget: 600, method: 'Itaú Débito', theme: 'tm-positive',
-      tooltip: { name: 'Gasolina', rows: [['Orçamento','R$ 600,00'],['Gasto','R$ 420,00'],['Resta','R$ 180,00'],['Uso','70,00%']], hint: 'Itaú Débito' }},
-    { name: 'Transporte', value: 380, budget: 500, method: 'Itaú Débito', theme: 'tm-positive',
-      tooltip: { name: 'Transporte', rows: [['Orçamento','R$ 500,00'],['Gasto','R$ 380,00'],['Resta','R$ 120,00'],['Uso','76,00%']], hint: 'Itaú Débito' }},
-    { name: 'Internet', value: 158, budget: 158, method: 'Latam Pass Visa', theme: 'tm-neutral',
-      tooltip: { name: 'Internet', rows: [['Orçamento','R$ 158,00'],['Gasto','R$ 158,00'],['Resta','R$ 0,00'],['Uso','100,00%']], hint: 'Custo fixo · Latam Pass Visa' }}
+  // ── Level 1 — Classificações ──
+  var level1Data = [
+    { name: 'Essenciais Fixos', value: 5158, budget: 6000, theme: 'tm-attention', drillKey: 'fixos',
+      hint: 'Toque para explorar',
+      tooltip: { name: 'Essenciais Fixos', rows: [['Orçamento','R$ 6.000,00'],['Gasto','R$ 5.158,00'],['Resta','R$ 842,00'],['Uso','86%'],['Categorias','3']], hint: 'Clique para ver categorias' }},
+    { name: 'Essenciais Variáveis', value: 2922, budget: 4100, theme: 'tm-positive', drillKey: 'variaveis',
+      hint: 'Toque para explorar',
+      tooltip: { name: 'Essenciais Variáveis', rows: [['Orçamento','R$ 4.100,00'],['Gasto','R$ 2.922,00'],['Resta','R$ 1.178,00'],['Uso','71%'],['Categorias','3']], hint: 'Clique para ver categorias' }},
+    { name: 'Qualidade de Vida', value: 2250, budget: 4500, theme: 'tm-positive-deep', drillKey: 'qualidade',
+      hint: 'Toque para explorar',
+      tooltip: { name: 'Qualidade de Vida', rows: [['Orçamento','R$ 4.500,00'],['Gasto','R$ 2.250,00'],['Resta','R$ 2.250,00'],['Uso','50%'],['Categorias','2']], hint: 'Clique para ver categorias' }},
+    { name: 'Investimentos', value: 2800, budget: 2800, theme: 'tm-neutral', drillKey: 'investimentos',
+      hint: 'Toque para explorar',
+      tooltip: { name: 'Investimentos', rows: [['Orçamento','R$ 2.800,00'],['Gasto','R$ 2.800,00'],['Resta','R$ 0,00'],['Uso','100%'],['Categorias','1']], hint: 'Clique para ver categorias' }}
+  ];
+
+  // ── Level 2 — Categorias por classificação ──
+  var fixosData = [
+    { name: 'Moradia', value: 2200, budget: 2200, theme: 'tm-neutral',
+      tooltip: { name: 'Moradia', rows: [['Orçamento','R$ 2.200,00'],['Gasto','R$ 2.200,00'],['Resta','R$ 0,00'],['Uso','100%']], hint: 'Custo fixo · Itaú Débito' }},
+    { name: 'Escola', value: 2800, budget: 2800, theme: 'tm-neutral',
+      tooltip: { name: 'Escola', rows: [['Orçamento','R$ 2.800,00'],['Gasto','R$ 2.800,00'],['Resta','R$ 0,00'],['Uso','100%']], hint: 'Custo fixo · Latam Pass Visa' }},
+    { name: 'Internet/Tel', value: 158, budget: 158, theme: 'tm-neutral',
+      tooltip: { name: 'Internet/Tel', rows: [['Orçamento','R$ 158,00'],['Gasto','R$ 158,00'],['Resta','R$ 0,00'],['Uso','100%']], hint: 'Custo fixo · Latam Pass Visa' }}
+  ];
+
+  var variaveisData = [
+    { name: 'Supermercado', value: 2122, budget: 3000, theme: 'tm-positive',
+      tooltip: { name: 'Supermercado', rows: [['Orçamento','R$ 3.000,00'],['Gasto','R$ 2.122,00'],['Resta','R$ 878,00'],['Uso','71%']], hint: 'Latam Pass Visa' }},
+    { name: 'Gasolina', value: 420, budget: 600, theme: 'tm-positive',
+      tooltip: { name: 'Gasolina', rows: [['Orçamento','R$ 600,00'],['Gasto','R$ 420,00'],['Resta','R$ 180,00'],['Uso','70%']], hint: 'Itaú Débito' }},
+    { name: 'Transporte', value: 380, budget: 500, theme: 'tm-positive',
+      tooltip: { name: 'Transporte', rows: [['Orçamento','R$ 500,00'],['Gasto','R$ 380,00'],['Resta','R$ 120,00'],['Uso','76%']], hint: 'Itaú Débito' }}
   ];
 
   var qualidadeData = [
-    { name: 'Restaurante', value: 1800, budget: 2500, method: 'Nubank Master', theme: 'tm-positive',
-      tooltip: { name: 'Restaurante', rows: [['Orçamento','R$ 2.500,00'],['Gasto','R$ 1.800,00'],['Resta','R$ 700,00'],['Uso','72,00%']], hint: 'Nubank Master' }},
-    { name: 'Outros', value: 450, budget: 2000, method: 'Variado', theme: 'tm-positive-deep',
-      tooltip: { name: 'Outros', rows: [['Orçamento','R$ 2.000,00'],['Gasto','R$ 450,00'],['Resta','R$ 1.550,00'],['Uso','22,00%']], hint: 'Variado' }}
+    { name: 'Restaurante', value: 1800, budget: 2500, theme: 'tm-positive',
+      tooltip: { name: 'Restaurante', rows: [['Orçamento','R$ 2.500,00'],['Gasto','R$ 1.800,00'],['Resta','R$ 700,00'],['Uso','72%']], hint: 'Nubank Master' }},
+    { name: 'Lazer', value: 450, budget: 2000, theme: 'tm-positive-deep',
+      tooltip: { name: 'Lazer', rows: [['Orçamento','R$ 2.000,00'],['Gasto','R$ 450,00'],['Resta','R$ 1.550,00'],['Uso','23%']], hint: 'Variado' }}
   ];
 
-  // ── Level 1 (classification groups) ──
-  var level1Data = [
-    { name: 'Essenciais', value: 7680, budget: 9258, theme: 'tm-attention', drillKey: 'essenciais',
-      hint: 'Toque para explorar',
-      tooltip: { name: 'Essenciais', rows: [['Orçamento','R$ 9.258,00'],['Gasto','R$ 7.680,00'],['Resta','R$ 1.578,00'],['Uso','83,00%'],['Categorias','6']], hint: 'Clique para ver categorias' }},
-    { name: 'Qualidade de Vida', value: 2250, budget: 4500, theme: 'tm-positive-deep', drillKey: 'qualidade',
-      hint: 'Toque para explorar',
-      tooltip: { name: 'Qualidade de Vida', rows: [['Orçamento','R$ 4.500,00'],['Gasto','R$ 2.250,00'],['Resta','R$ 2.250,00'],['Uso','50,00%'],['Categorias','2']], hint: 'Clique para ver categorias' }}
+  var investimentosData = [
+    { name: 'Educação', value: 2800, budget: 2800, theme: 'tm-neutral',
+      tooltip: { name: 'Educação', rows: [['Orçamento','R$ 2.800,00'],['Gasto','R$ 2.800,00'],['Resta','R$ 0,00'],['Uso','100%']], hint: 'Latam Pass Visa' }}
   ];
 
-  var drillMap = { essenciais: essenciaisData, qualidade: qualidadeData };
-  var drillLabels = { essenciais: 'Essenciais', qualidade: 'Qualidade de Vida' };
+  var drillMap = { fixos: fixosData, variaveis: variaveisData, qualidade: qualidadeData, investimentos: investimentosData };
+  var drillLabels = { fixos: 'Essenciais Fixos', variaveis: 'Essenciais Variáveis', qualidade: 'Qualidade de Vida', investimentos: 'Investimentos' };
   var currentLevel = 'root';
   var currentKey = null;
 
@@ -2685,8 +2850,8 @@
 
     if (level === 'root') {
       bcEl.innerHTML = '<span class="tm-bc-current">Mar 2026</span>';
-      titleEl.textContent = 'Distribuição por Essencialidade';
-      totalEl.innerHTML = 'Total do mês: <strong>R$ 9.930,00</strong> de R$14.858';
+      titleEl.textContent = 'Distribuição por Classificação';
+      totalEl.innerHTML = 'Total do mês: <strong>R$ 13.130,00</strong> de R$ 17.400,00';
     } else {
       var label = drillLabels[key];
       var groupTotal = data.reduce(function(s,i){return s+i.value;},0);
@@ -2696,7 +2861,7 @@
         '<span class="tm-bc-current">' + label + '</span>' +
         '<span class="tm-bc-link" style="margin-left:auto;font-size:11px;" onclick="renderBudgetTreemap(\'root\')">← Voltar</span>';
       titleEl.textContent = label + ' — ' + formatBRL(groupTotal);
-      totalEl.innerHTML = Math.round(groupTotal/groupBudget*100) + ',00% do orçamento de <strong>' + formatBRL(groupBudget) + '</strong>';
+      totalEl.innerHTML = Math.round(groupTotal/groupBudget*100) + '% do orçamento de <strong>' + formatBRL(groupBudget) + '</strong>';
     }
 
     var rect = container.getBoundingClientRect();
@@ -2728,10 +2893,8 @@
         html += '</div>';
       }
 
-      if (b.hint && b.w > 100 && b.h > 70) {
-        html += '<div class="tm-method">' + b.hint + ' →</div>';
-      } else if (b.method && b.w > 100 && b.h > 70) {
-        html += '<div class="tm-method">' + b.method + '</div>';
+      if (b.hint && b.w > 120 && b.h > 90) {
+        html += '<div class="tm-hint">' + b.hint + '</div>';
       }
 
       el.innerHTML = html;
@@ -2775,6 +2938,7 @@
     var container = document.getElementById('mob-treemap-mapa');
     if (!container) return;
     container.innerHTML = '';
+    container.style.minHeight = '280px';
 
     var data = (level === 'root') ? level1Data : drillMap[key];
     if (!data) return;
@@ -2785,7 +2949,7 @@
 
     if (level === 'root') {
       bcEl.innerHTML = '<span class="tm-bc-current" style="font-size:11px;">Mar 2026</span>';
-      infoEl.innerHTML = 'Total: <strong style="color:var(--text-primary);">R$ 9.930,00</strong> de R$14.858';
+      infoEl.innerHTML = 'Total: <strong style="color:var(--text-primary);">R$ 13.130,00</strong> de R$ 17.400,00';
     } else {
       var label = drillLabels[key];
       var groupTotal = data.reduce(function(s,i){return s+i.value;},0);
@@ -2794,7 +2958,7 @@
         '<span class="tm-bc-sep">›</span>' +
         '<span class="tm-bc-current" style="font-size:11px;">' + label + '</span>' +
         '<span class="tm-bc-link" style="margin-left:auto;font-size:10px;" onclick="renderMobileTreemap(\'root\')">← Voltar</span>';
-      infoEl.innerHTML = formatBRL(groupTotal) + ' de <strong style="color:var(--text-primary);">' + formatBRL(groupBudget) + '</strong> · ' + Math.round(groupTotal/groupBudget*100) + ',00%';
+      infoEl.innerHTML = formatBRL(groupTotal) + ' de <strong style="color:var(--text-primary);">' + formatBRL(groupBudget) + '</strong> · ' + Math.round(groupTotal/groupBudget*100) + '%';
     }
 
     var rect = container.getBoundingClientRect();
@@ -2822,6 +2986,10 @@
         html += '<div class="tm-bar-wrap">';
         html += '<div class="tm-bar"><div class="tm-bar-fill" style="width:' + used + '%"></div></div>';
         html += '</div>';
+      }
+
+      if (b.hint && b.w > 100 && b.h > 70) {
+        html += '<div class="tm-hint">' + b.hint + '</div>';
       }
 
       el.innerHTML = html;
