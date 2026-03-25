@@ -26,7 +26,12 @@
     --critical: #DC2626;
     --critical-bg: #FEE2E2;
     --critical-text: #991B1B;
-    --sidebar-width: 240px;
+    --sidebar-width: 220px;
+    --primary-fg: #FFFFFF;
+    --radius-button: 8px;
+    --radius-card: 12px;
+    --border-hover: #D6D3D1;
+    --primary-light: #EEF2FF;
     --radius-sm: 6px;
     --radius-md: 10px;
     --radius-lg: 14px;
@@ -43,12 +48,14 @@
 
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-variant-numeric: tabular-nums;
     background: var(--bg);
     color: var(--text-primary);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
+
+  /* ── Tabular Nums ── */
+  .item-value, .margin-value, .cut-item-saving, .cut-total-value, .mobile-margin-badge span { font-variant-numeric: tabular-nums; }
 
   /* ── SIDEBAR ── */
   .sidebar {
@@ -94,9 +101,9 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 12px;
+    padding: 8px 12px;
     border-radius: var(--radius-sm);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     color: var(--text-secondary);
     cursor: pointer;
@@ -215,7 +222,7 @@
   }
 
   .range-btn {
-    padding: 6px 14px;
+    padding: 8px 16px;
     font-size: 13px;
     font-weight: 500;
     color: var(--text-secondary);
@@ -247,7 +254,7 @@
     gap: 20px;
     align-items: center;
     margin-bottom: 16px;
-    padding: 10px 14px;
+    padding: 12px 16px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
@@ -259,7 +266,7 @@
   .legend-item {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
 
   .legend-swatch {
@@ -393,7 +400,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     min-height: 120px;
   }
 
@@ -423,7 +430,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 6px;
+    gap: 8px;
   }
 
   .item-card.fixed {
@@ -610,7 +617,7 @@
     border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
   }
 
   .form-group {
@@ -707,7 +714,7 @@
   .cut-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
   }
 
   .cut-item {
@@ -870,7 +877,7 @@
 
   .mobile-range-btn {
     flex: 1;
-    padding: 6px 8px;
+    padding: 8px 8px;
     font-size: 12px;
     font-weight: 500;
     color: var(--text-secondary);
@@ -967,7 +974,7 @@
   }
 
   .mobile-month-footer {
-    padding: 6px 8px;
+    padding: 8px 8px;
     border-top: 1px solid var(--border);
   }
 
@@ -1096,7 +1103,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 72px;
+    height: 56px;
     background: var(--surface);
     border-top: 1px solid var(--border);
     display: flex;
@@ -1153,39 +1160,51 @@
 
 <!-- ════ SIDEBAR ════ -->
 <aside class="sidebar">
-  <div class="sidebar-logo">
-    <h1>Caderninho</h1>
-    <span>Finanças pessoais</span>
-  </div>
-  <nav class="sidebar-nav">
-    <a class="nav-item" href="#">
-      <span class="nav-icon">&#9633;</span> Dashboard
+  <div class="sidebar-logo" style="padding:20px 16px 16px;font-size:16px;font-weight:700;color:var(--primary);letter-spacing:-0.01em;">✎ Caderninho</div>
+  <div style="height:1px;background:var(--border);margin:4px 16px;"></div>
+
+  <div style="padding:16px 16px 8px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-tertiary);">Navegação</div>
+  <nav class="sidebar-nav" style="list-style:none;padding:0 8px;display:flex;flex-direction:column;gap:2px;">
+    <a class="nav-item" href="#" style="font-size:13px;">
+      <svg style="width:18px;height:18px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> Dashboard
     </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">&#8644;</span> Transações
+    <a class="nav-item" href="#" style="font-size:13px;">
+      <svg style="width:18px;height:18px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg> Orçamentos
     </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">&#9041;</span> Cartões
+    <a class="nav-item" href="#" style="font-size:13px;">
+      <svg style="width:18px;height:18px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Checklist
     </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">&#9783;</span> Categorias
-    </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">&#128200;</span> Relatórios
-    </a>
-    <a class="nav-item active" href="#">
-      <span class="nav-icon">&#128197;</span> Projeção
-    </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">&#9881;</span> Ajustes
+    <a class="nav-item active" href="#" style="font-size:13px;">
+      <svg style="width:18px;height:18px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Projeção
     </a>
   </nav>
-  <div class="sidebar-footer">
-    <div class="user-pill">
-      <div class="user-avatar">VC</div>
-      <div class="user-info">
-        <div class="user-name">Vitor C.</div>
-        <div class="user-email">vitor@email.com</div>
+  <div style="height:1px;background:var(--border);margin:4px 16px;"></div>
+
+  <div style="padding:16px 16px 8px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-tertiary);">Configurações</div>
+  <nav style="list-style:none;padding:0 8px;display:flex;flex-direction:column;gap:2px;">
+    <a class="nav-item" href="#" style="font-size:13px;">
+      <svg style="width:18px;height:18px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/></svg> Contas
+    </a>
+    <a class="nav-item" href="#" style="font-size:13px;">
+      <svg style="width:18px;height:18px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Cartões
+    </a>
+    <a class="nav-item" href="#" style="font-size:13px;">
+      <svg style="width:18px;height:18px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Investimentos
+    </a>
+    <a class="nav-item" href="#" style="font-size:13px;">
+      <svg style="width:18px;height:18px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Receitas
+    </a>
+    <a class="nav-item" href="#" style="font-size:13px;">
+      <svg style="width:18px;height:18px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg> Categorias
+    </a>
+  </nav>
+
+  <div class="sidebar-footer" style="margin-top:auto;padding:12px;border-top:1px solid var(--border);">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:32px;height:32px;border-radius:50%;background:var(--primary);color:#FFF;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;">V</div>
+      <div style="display:flex;flex-direction:column;">
+        <span style="font-size:13px;font-weight:600;color:var(--text-primary);">Vitor</span>
+        <span style="font-size:11px;color:var(--text-tertiary);">Administrador</span>
       </div>
     </div>
   </div>
@@ -1252,7 +1271,7 @@
         </div>
         <div class="form-group">
           <label>Quanto custa?</label>
-          <input type="text" value="R$ 3.500" placeholder="R$ 0,00">
+          <input type="text" value="R$ 3.500,00" placeholder="R$ 0,00">
         </div>
         <div class="form-group">
           <label>Quando?</label>
@@ -1265,16 +1284,16 @@
       <div class="sim-result" id="simResult">
         <div class="result-verdict">&#10003; Viável com ajustes</div>
         <p class="result-instruction">
-          Economize <strong>R$ 945/mês</strong> nos próximos <strong>4 meses</strong> para alcançar sua meta de <strong>R$ 3.500</strong> em Junho 2026.
+          Economize <strong>R$ 945,00/mês</strong> nos próximos <strong>4 meses</strong> para alcançar sua meta de <strong>R$ 3.500,00</strong> em Junho 2026.
         </p>
         <div class="cut-section-title">De onde cortar:</div>
         <div class="cut-list">
           <div class="cut-item">
             <div class="cut-item-header">
               <span class="cut-item-name">Restaurante</span>
-              <span class="cut-item-saving">-R$ 750/mês</span>
+              <span class="cut-item-saving">-R$ 750,00/mês</span>
             </div>
-            <div class="cut-item-detail">Atual R$ 2.500 → reduzir 30%</div>
+            <div class="cut-item-detail">Atual R$ 2.500,00 → reduzir 30,00%</div>
             <div class="cut-bar-track">
               <div class="cut-bar-fill restaurante"></div>
             </div>
@@ -1282,9 +1301,9 @@
           <div class="cut-item">
             <div class="cut-item-header">
               <span class="cut-item-name">Delivery</span>
-              <span class="cut-item-saving">-R$ 180/mês</span>
+              <span class="cut-item-saving">-R$ 180,00/mês</span>
             </div>
-            <div class="cut-item-detail">Atual R$ 900 → reduzir 20%</div>
+            <div class="cut-item-detail">Atual R$ 900,00 → reduzir 20,00%</div>
             <div class="cut-bar-track">
               <div class="cut-bar-fill delivery"></div>
             </div>
@@ -1292,9 +1311,9 @@
           <div class="cut-item">
             <div class="cut-item-header">
               <span class="cut-item-name">Compras pessoais</span>
-              <span class="cut-item-saving">-R$ 75/mês</span>
+              <span class="cut-item-saving">-R$ 75,00/mês</span>
             </div>
-            <div class="cut-item-detail">Atual R$ 500 → reduzir 15%</div>
+            <div class="cut-item-detail">Atual R$ 500,00 → reduzir 15,00%</div>
             <div class="cut-bar-track">
               <div class="cut-bar-fill pessoais"></div>
             </div>
@@ -1302,9 +1321,9 @@
         </div>
         <div class="cut-total">
           <span class="cut-total-label">Total possível</span>
-          <span class="cut-total-value">R$ 1.005/mês</span>
+          <span class="cut-total-value">R$ 1.005,00/mês</span>
         </div>
-        <div class="cut-total-note">R$ 60 acima do necessário — folga para imprevistos</div>
+        <div class="cut-total-note">R$ 60,00 acima do necessário — folga para imprevistos</div>
       </div>
     </div>
   </div>
@@ -1343,21 +1362,21 @@
               <div class="mobile-month-body">
                 <div class="mobile-item fixed">
                   <span class="item-name">Escola</span>
-                  <span class="item-value">R$2.800</span>
+                  <span class="item-value">R$ 2.800,00</span>
                 </div>
                 <div class="mobile-item fixed">
                   <span class="item-name">Aluguel</span>
-                  <span class="item-value">R$1.800</span>
+                  <span class="item-value">R$ 1.800,00</span>
                 </div>
                 <div class="mobile-item fixed">
                   <span class="item-name">Supermercado</span>
-                  <span class="item-value">~R$3.000</span>
+                  <span class="item-value">~R$ 3.000,00</span>
                 </div>
               </div>
               <div class="mobile-month-footer">
                 <div class="mobile-margin-badge positive">
                   <span>Margem</span>
-                  <span>R$750</span>
+                  <span>R$ 750,00</span>
                 </div>
               </div>
             </div>
@@ -1370,21 +1389,21 @@
               <div class="mobile-month-body">
                 <div class="mobile-item fixed">
                   <span class="item-name">Escola</span>
-                  <span class="item-value">R$2.800</span>
+                  <span class="item-value">R$ 2.800,00</span>
                 </div>
                 <div class="mobile-item fixed">
                   <span class="item-name">Aluguel</span>
-                  <span class="item-value">R$1.800</span>
+                  <span class="item-value">R$ 1.800,00</span>
                 </div>
                 <div class="mobile-item fixed">
                   <span class="item-name">Fotos 9/10</span>
-                  <span class="item-value">R$171</span>
+                  <span class="item-value">R$ 171,00</span>
                 </div>
               </div>
               <div class="mobile-month-footer">
                 <div class="mobile-margin-badge positive">
                   <span>Margem</span>
-                  <span>R$920</span>
+                  <span>R$ 920,00</span>
                 </div>
               </div>
             </div>
@@ -1397,21 +1416,21 @@
               <div class="mobile-month-body">
                 <div class="mobile-item fixed">
                   <span class="item-name">Escola</span>
-                  <span class="item-value">R$2.800</span>
+                  <span class="item-value">R$ 2.800,00</span>
                 </div>
                 <div class="mobile-item draggable-item">
                   <span class="item-name">Seguro Carro</span>
-                  <span class="item-value">R$2.800</span>
+                  <span class="item-value">R$ 2.800,00</span>
                 </div>
                 <div class="mobile-item draggable-item">
                   <span class="item-name">Troca Óleo</span>
-                  <span class="item-value">R$500</span>
+                  <span class="item-value">R$ 500,00</span>
                 </div>
               </div>
               <div class="mobile-month-footer">
                 <div class="mobile-margin-badge negative">
                   <span>Margem</span>
-                  <span>-R$1.600</span>
+                  <span>-R$ 1.600,00</span>
                 </div>
               </div>
             </div>
@@ -1424,21 +1443,21 @@
               <div class="mobile-month-body">
                 <div class="mobile-item fixed">
                   <span class="item-name">Escola</span>
-                  <span class="item-value">R$2.800</span>
+                  <span class="item-value">R$ 2.800,00</span>
                 </div>
                 <div class="mobile-item draggable-item">
                   <span class="item-name">Rematrícula</span>
-                  <span class="item-value">R$1.200</span>
+                  <span class="item-value">R$ 1.200,00</span>
                 </div>
                 <div class="mobile-item draggable-item">
                   <span class="item-name">Mat. Escolar</span>
-                  <span class="item-value">R$1.500</span>
+                  <span class="item-value">R$ 1.500,00</span>
                 </div>
               </div>
               <div class="mobile-month-footer">
                 <div class="mobile-margin-badge negative">
                   <span>Margem</span>
-                  <span>-R$780</span>
+                  <span>-R$ 780,00</span>
                 </div>
               </div>
             </div>
@@ -1457,7 +1476,7 @@
             <div class="mobile-form-row">
               <div class="mobile-form-group">
                 <label>Quanto custa?</label>
-                <input type="text" value="R$ 3.500">
+                <input type="text" value="R$ 3.500,00">
               </div>
               <div class="mobile-form-group">
                 <label>Quando?</label>
@@ -1470,15 +1489,15 @@
             <div class="mobile-result-verdict">&#10003; Viável com ajustes</div>
             <div class="mobile-cut-item">
               <span class="mobile-cut-name">Restaurante -30%</span>
-              <span class="mobile-cut-saving">-R$750</span>
+              <span class="mobile-cut-saving">-R$ 750,00</span>
             </div>
             <div class="mobile-cut-item">
               <span class="mobile-cut-name">Delivery -20%</span>
-              <span class="mobile-cut-saving">-R$180</span>
+              <span class="mobile-cut-saving">-R$ 180,00</span>
             </div>
             <div class="mobile-cut-item">
               <span class="mobile-cut-name">Compras -15%</span>
-              <span class="mobile-cut-saving">-R$75</span>
+              <span class="mobile-cut-saving">-R$ 75,00</span>
             </div>
             <div style="padding: 6px 10px; background: var(--primary-light); border-radius: 4px; font-size: 12px; font-weight: 700; color: var(--primary); text-align: center; margin-top: 4px;">
               Total: R$ 1.005/mês
@@ -1491,24 +1510,24 @@
       <!-- Bottom Nav -->
       <div class="bottom-nav">
         <div class="bottom-nav-item">
-          <span class="bottom-nav-icon">&#9633;</span>
-          <span>Início</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          <span>Dashboard</span>
         </div>
         <div class="bottom-nav-item">
-          <span class="bottom-nav-icon">&#8644;</span>
-          <span>Transações</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          <span>Cartões</span>
+        </div>
+        <div class="bottom-nav-item">
+          <div style="width:48px;height:48px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#FFFFFF;font-size:24px;font-weight:300;margin-top:-16px;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);">+</div>
+          <span>Registrar</span>
+        </div>
+        <div class="bottom-nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <span>Checklist</span>
         </div>
         <div class="bottom-nav-item active">
-          <span class="bottom-nav-icon">&#128197;</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
           <span>Projeção</span>
-        </div>
-        <div class="bottom-nav-item">
-          <span class="bottom-nav-icon">&#128200;</span>
-          <span>Relatórios</span>
-        </div>
-        <div class="bottom-nav-item">
-          <span class="bottom-nav-icon">&#8943;</span>
-          <span>Mais</span>
         </div>
       </div>
     </div><!-- /phone-frame -->
@@ -1584,7 +1603,7 @@ function buildMonthsData(count) {
 
     // Freed badge for June (index 3)
     if (i === 3) {
-      data.freedBadge = 'Libera R$171/mês';
+      data.freedBadge = 'Libera R$ 171,00/mês';
     }
 
     // Calculate margins
@@ -1663,7 +1682,7 @@ function renderTimeline() {
         card.className = 'item-card fixed';
         card.innerHTML = `
           <span class="item-name">${item.name}</span>
-          <span class="item-value">R$${item.value.toLocaleString('pt-BR')}</span>
+          <span class="item-value">R$ ${item.value.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
         `;
         body.appendChild(card);
       });
@@ -1681,7 +1700,7 @@ function renderTimeline() {
         card.className = 'item-card variable';
         card.innerHTML = `
           <span class="item-name">${item.name}</span>
-          <span class="item-value">${item.approx ? '<span class="item-approx">~</span>' : ''}R$${item.value.toLocaleString('pt-BR')}</span>
+          <span class="item-value">${item.approx ? '<span class="item-approx">~</span>' : ''}R$ ${item.value.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
         `;
         body.appendChild(card);
       });
@@ -1700,7 +1719,7 @@ function renderTimeline() {
         card.innerHTML = `
           <span class="item-name">${item.name}</span>
           <span class="${item.isLast ? 'finished-tag' : 'installment-tag'}">${item.installment}</span>
-          <span class="item-value">R$${item.value}</span>
+          <span class="item-value">R$ ${item.value.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
         `;
         body.appendChild(card);
       });
@@ -1730,7 +1749,7 @@ function renderTimeline() {
         card.innerHTML = `
           <span class="drag-handle" title="Arraste para mover">&#8801;</span>
           <span class="item-name">${item.name}</span>
-          <span class="item-value">R$${item.value.toLocaleString('pt-BR')}</span>
+          <span class="item-value">R$ ${item.value.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
         `;
 
         card.addEventListener('dragstart', handleDragStart);
@@ -1751,7 +1770,7 @@ function renderTimeline() {
     footer.innerHTML = `
       <div class="margin-badge ${isPositive ? 'positive' : 'negative'}">
         <span class="margin-label">Margem</span>
-        <span class="margin-value">${isPositive ? '' : '-'}R$${marginAbs.toLocaleString('pt-BR')}</span>
+        <span class="margin-value">${isPositive ? '' : '-'}R$ ${marginAbs.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
       </div>
       ${extraText}
     `;

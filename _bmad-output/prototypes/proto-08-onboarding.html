@@ -20,11 +20,13 @@
       --primary: #4F46E5;
       --primary-hover: #4338CA;
       --primary-light: #EEF2FF;
+      --primary-fg: #FFFFFF;
       --positive: #22C55E;
       --positive-bg: #DCFCE7;
       --positive-text: #166534;
+      --radius-button: 8px;
       --radius-card: 12px;
-      --radius-input: 6px;
+      --radius-input: 8px;
       --radius-badge: 100px;
       --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
       --shadow-card-lg: 0 2px 6px rgba(0,0,0,.06), 0 8px 32px rgba(0,0,0,.06);
@@ -36,11 +38,20 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-variant-numeric: tabular-nums;
       background: var(--bg);
       color: var(--text-primary);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ── Tabular nums (only for numeric values) ── */
+    .tabular-nums,
+    .item-card-detail,
+    .category-budget-input,
+    .desktop-budget-input,
+    .summary-value,
+    .summary-total-value {
+      font-variant-numeric: tabular-nums;
     }
 
     /* ── Page Header ── */
@@ -54,7 +65,7 @@
       font-size: 24px;
       font-weight: 700;
       color: var(--text-primary);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .page-header p {
       font-size: 15px;
@@ -130,7 +141,7 @@
       height: 8px;
       background: #374151;
       border-radius: 50%;
-      top: 7px;
+      top: 8px;
       right: 24px;
     }
 
@@ -160,11 +171,11 @@
       display: flex;
       align-items: center;
       padding: 0 12px;
-      gap: 6px;
+      gap: 8px;
     }
     .desktop-toolbar-dot {
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background: var(--border-hover);
     }
@@ -211,7 +222,7 @@
       background: var(--primary);
       color: #FFFFFF;
       border: none;
-      border-radius: var(--radius-input);
+      border-radius: var(--radius-button);
       font-family: inherit;
       font-size: 14px;
       font-weight: 600;
@@ -232,7 +243,7 @@
       background: var(--primary-light);
       color: var(--primary);
       border: 1px solid transparent;
-      border-radius: var(--radius-input);
+      border-radius: var(--radius-button);
       font-family: inherit;
       font-size: 14px;
       font-weight: 600;
@@ -249,11 +260,11 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      padding: 10px 16px;
+      padding: 12px 16px;
       background: transparent;
       color: var(--text-secondary);
       border: none;
-      border-radius: var(--radius-input);
+      border-radius: var(--radius-button);
       font-family: inherit;
       font-size: 13px;
       font-weight: 500;
@@ -269,13 +280,13 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 8px;
       width: 100%;
-      padding: 10px 16px;
+      padding: 12px 16px;
       background: transparent;
       color: var(--primary);
       border: 1px dashed var(--primary);
-      border-radius: var(--radius-input);
+      border-radius: var(--radius-button);
       font-family: inherit;
       font-size: 13px;
       font-weight: 500;
@@ -300,7 +311,7 @@
     }
     .form-input {
       width: 100%;
-      padding: 9px 12px;
+      padding: 8px 12px;
       border: 1px solid var(--border);
       border-radius: var(--radius-input);
       font-family: inherit;
@@ -318,7 +329,7 @@
       color: var(--text-tertiary);
     }
     .form-input-sm {
-      padding: 7px 10px;
+      padding: 8px 12px;
       font-size: 13px;
     }
 
@@ -332,7 +343,7 @@
 
     .form-select {
       width: 100%;
-      padding: 7px 10px;
+      padding: 8px 12px;
       border: 1px solid var(--border);
       border-radius: var(--radius-input);
       font-family: inherit;
@@ -344,7 +355,7 @@
       appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2378716C' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 10px center;
+      background-position: right 12px center;
       padding-right: 28px;
       transition: border-color var(--transition);
     }
@@ -377,11 +388,11 @@
     .item-card {
       display: flex;
       align-items: center;
-      padding: 10px 12px;
+      padding: 12px;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: var(--radius-input);
-      gap: 10px;
+      gap: 12px;
       transition: border-color var(--transition);
     }
     .item-card:hover {
@@ -475,7 +486,7 @@
     .item-card-detail {
       font-size: 11px;
       color: var(--text-secondary);
-      margin-top: 1px;
+      margin-top: 2px;
     }
     .item-card-actions {
       display: flex;
@@ -518,11 +529,11 @@
     .category-item {
       display: flex;
       flex-direction: column;
-      padding: 10px;
+      padding: 12px;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: var(--radius-input);
-      gap: 6px;
+      gap: 8px;
       transition: border-color var(--transition);
     }
     .category-item:hover {
@@ -549,7 +560,7 @@
     .category-budget {
       display: flex;
       align-items: center;
-      gap: 2px;
+      gap: 4px;
       flex-shrink: 0;
     }
     .category-budget-prefix {
@@ -558,7 +569,7 @@
     }
     .category-budget-input {
       width: 60px;
-      padding: 4px 6px;
+      padding: 4px 8px;
       border: 1px solid var(--border);
       border-radius: 4px;
       font-family: inherit;
@@ -582,7 +593,7 @@
     .category-payment {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       padding-left: 32px;
     }
     .category-payment-label {
@@ -593,7 +604,7 @@
 
     /* ── Classification Groups ── */
     .classification-group {
-      margin-bottom: 14px;
+      margin-bottom: 16px;
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -604,9 +615,9 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: var(--primary);
-      padding: 6px 0 4px;
+      padding: 8px 0 4px;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     .desktop-classification-group {
@@ -618,9 +629,9 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: var(--primary);
-      padding: 8px 0 6px;
+      padding: 8px 0 8px;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       grid-column: 1 / -1;
     }
 
@@ -730,7 +741,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 6px 0;
+      padding: 8px 0;
       font-size: 13px;
       color: var(--text-primary);
     }
@@ -741,7 +752,7 @@
       width: 24px;
       height: 24px;
       background: var(--primary-light);
-      border-radius: 6px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -757,7 +768,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 16px;
+      padding: 12px 16px;
       background: var(--positive-bg);
       border: 1px solid #BBF7D0;
       border-radius: var(--radius-input);
@@ -777,7 +788,7 @@
       margin-top: auto;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
     }
 
     /* ── Desktop Category Grid ── */
@@ -806,7 +817,7 @@
     .desktop-category-item {
       display: flex;
       align-items: center;
-      padding: 14px 16px;
+      padding: 16px;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: var(--radius-card);
@@ -828,7 +839,7 @@
       font-size: 14px;
       font-weight: 600;
       color: var(--text-primary);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .desktop-category-budget-row {
       display: flex;
@@ -841,7 +852,7 @@
     }
     .desktop-budget-input {
       width: 80px;
-      padding: 5px 8px;
+      padding: 4px 8px;
       border: 1px solid var(--border);
       border-radius: 4px;
       font-family: inherit;
@@ -864,7 +875,7 @@
     .desktop-category-payment-row {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       margin-top: 8px;
     }
     .desktop-category-payment-label {
@@ -873,7 +884,7 @@
       white-space: nowrap;
     }
     .desktop-select {
-      padding: 5px 8px;
+      padding: 4px 8px;
       border: 1px solid var(--border);
       border-radius: 4px;
       font-family: inherit;
@@ -885,8 +896,8 @@
       appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%2378716C' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 6px center;
-      padding-right: 22px;
+      background-position: right 8px center;
+      padding-right: 24px;
       transition: border-color var(--transition);
     }
     .desktop-select:focus {
@@ -897,12 +908,12 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       padding: 20px 0 12px;
     }
     .desktop-progress-dot {
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background: var(--border);
       transition: background var(--transition), transform var(--transition);
@@ -922,7 +933,7 @@
     }
     .desktop-btn {
       padding: 12px 32px;
-      border-radius: var(--radius-input);
+      border-radius: var(--radius-button);
       font-family: inherit;
       font-size: 14px;
       font-weight: 600;
@@ -964,7 +975,7 @@
 
   <!-- Page Header -->
   <header class="page-header">
-    <h1>Prototipo 08 — Onboarding</h1>
+    <h1>Protótipo 08 — Onboarding</h1>
     <p>Setup inicial progressivo — ~5 minutos</p>
   </header>
 
@@ -991,7 +1002,7 @@
             <div class="welcome-illustration">&#128202;</div>
             <div class="welcome-title">Bem-vindo ao Caderninho!</div>
             <div class="welcome-desc">
-              Vamos configurar o basico para voce comecar. Leva cerca de 5 minutos.
+              Vamos configurar o básico para você começar. Leva cerca de 5 minutos.
             </div>
           </div>
 
@@ -1003,23 +1014,23 @@
               <div class="progress-dot"></div>
               <div class="progress-dot"></div>
             </div>
-            <button class="btn-primary">Comecar</button>
-            <button class="btn-ghost">Ja tenho um convite</button>
+            <button class="btn-primary">Começar</button>
+            <button class="btn-ghost">Já tenho um convite</button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- ═══════════════════════════════════════ -->
-    <!-- STEP 2 — Contas Bancarias -->
+    <!-- STEP 2 — Contas Bancárias -->
     <!-- ═══════════════════════════════════════ -->
     <div class="showcase-column">
       <div class="showcase-column-label">Etapa 2 de 5</div>
       <div class="phone-frame">
         <div class="phone-notch"></div>
         <div class="phone-content">
-          <div class="step-title">Suas contas bancarias</div>
-          <div class="step-subtitle">Adicione as contas que voce usa no dia a dia</div>
+          <div class="step-title">Suas contas bancárias</div>
+          <div class="step-subtitle">Adicione as contas que você usa no dia a dia</div>
 
           <div class="item-list">
             <div class="item-card">
@@ -1036,7 +1047,7 @@
             <div class="item-card">
               <div class="item-card-icon">It</div>
               <div class="item-card-info">
-                <div class="item-card-name">Itau</div>
+                <div class="item-card-name">Itaú</div>
                 <div class="item-card-detail">Saldo: R$ 6.200,00</div>
               </div>
               <div class="item-card-actions">
@@ -1082,7 +1093,7 @@
               <div class="progress-dot"></div>
               <div class="progress-dot"></div>
             </div>
-            <button class="btn-primary">Proximo</button>
+            <button class="btn-primary">Próximo</button>
             <button class="btn-ghost">Pular</button>
           </div>
         </div>
@@ -1090,47 +1101,47 @@
     </div>
 
     <!-- ═══════════════════════════════════════ -->
-    <!-- STEP 3 — Cartoes de Credito -->
+    <!-- STEP 3 — Cartões de Crédito -->
     <!-- ═══════════════════════════════════════ -->
     <div class="showcase-column">
       <div class="showcase-column-label">Etapa 3 de 5</div>
       <div class="phone-frame">
         <div class="phone-notch"></div>
         <div class="phone-content">
-          <div class="step-title">Seus cartoes de credito</div>
-          <div class="step-subtitle">Cadastre seus cartoes para controlar as faturas</div>
+          <div class="step-title">Seus cartões de crédito</div>
+          <div class="step-subtitle">Cadastre seus cartões para controlar as faturas</div>
 
           <div class="item-list">
             <div class="item-card" style="flex-direction: column; align-items: flex-start; gap: 4px;">
-              <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+              <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
                 <div class="card-brand card-brand-visa">VISA</div>
                 <div class="item-card-info">
                   <div class="item-card-name">Latam Pass Visa</div>
-                  <div class="item-card-detail">Limite: R$ 10.000 &middot; Credito</div>
+                  <div class="item-card-detail">Limite: R$ 10.000,00 &middot; Crédito</div>
                 </div>
                 <div class="item-card-actions">
                   <button class="item-card-action check">&#10003;</button>
                   <button class="item-card-action remove">&#10005;</button>
                 </div>
               </div>
-              <div style="font-size: 11px; color: var(--text-tertiary); padding-left: 50px;">
+              <div style="font-size: 11px; color: var(--text-tertiary); padding-left: 52px;">
                 Fecha dia 7 &middot; Vence dia 15
               </div>
             </div>
 
             <div class="item-card" style="flex-direction: column; align-items: flex-start; gap: 4px;">
-              <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+              <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
                 <div class="card-brand card-brand-master"></div>
                 <div class="item-card-info">
-                  <div class="item-card-name">Pao de Acucar</div>
-                  <div class="item-card-detail">Limite: R$ 5.000 &middot; Credito</div>
+                  <div class="item-card-name">Pão de Açúcar</div>
+                  <div class="item-card-detail">Limite: R$ 5.000,00 &middot; Crédito</div>
                 </div>
                 <div class="item-card-actions">
                   <button class="item-card-action check">&#10003;</button>
                   <button class="item-card-action remove">&#10005;</button>
                 </div>
               </div>
-              <div style="font-size: 11px; color: var(--text-tertiary); padding-left: 50px;">
+              <div style="font-size: 11px; color: var(--text-tertiary); padding-left: 52px;">
                 Fecha dia 3 &middot; Vence dia 10
               </div>
             </div>
@@ -1138,15 +1149,15 @@
 
           <!-- Add form -->
           <div class="add-form">
-            <div class="add-form-title">Adicionar cartao</div>
+            <div class="add-form-title">Adicionar cartão</div>
             <div class="form-group">
-              <label class="form-label">Nome do cartao</label>
+              <label class="form-label">Nome do cartão</label>
               <input type="text" class="form-input form-input-sm" placeholder="Ex: Nubank Mastercard" />
             </div>
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">Bandeira</label>
-                <select class="form-select" style="font-size: 12px; padding: 6px 8px;">
+                <select class="form-select" style="font-size: 12px; padding: 8px;">
                   <option>Selecionar...</option>
                   <option>Visa</option>
                   <option>Mastercard</option>
@@ -1157,10 +1168,10 @@
               </div>
               <div class="form-group">
                 <label class="form-label">Tipo</label>
-                <select class="form-select" style="font-size: 12px; padding: 6px 8px;">
-                  <option>Credito</option>
-                  <option>Debito</option>
-                  <option>Credito + Debito</option>
+                <select class="form-select" style="font-size: 12px; padding: 8px;">
+                  <option>Crédito</option>
+                  <option>Débito</option>
+                  <option>Crédito + Débito</option>
                 </select>
               </div>
             </div>
@@ -1180,7 +1191,7 @@
             </div>
           </div>
 
-          <button class="btn-add">+ Adicionar cartao</button>
+          <button class="btn-add">+ Adicionar cartão</button>
 
           <div class="bottom-actions">
             <div class="progress-dots">
@@ -1190,7 +1201,7 @@
               <div class="progress-dot"></div>
               <div class="progress-dot"></div>
             </div>
-            <button class="btn-primary">Proximo</button>
+            <button class="btn-primary">Próximo</button>
             <button class="btn-ghost">Pular</button>
           </div>
         </div>
@@ -1198,7 +1209,7 @@
     </div>
 
     <!-- ═══════════════════════════════════════ -->
-    <!-- STEP 4 — Categorias e Orcamentos -->
+    <!-- STEP 4 — Categorias e Orçamentos -->
     <!-- ═══════════════════════════════════════ -->
     <div class="showcase-column">
       <div class="showcase-column-label">Etapa 4 de 5</div>
@@ -1219,17 +1230,17 @@
                   <span class="category-name">Supermercado</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="3.000" />
-                    <span class="category-budget-suffix">/ mes</span>
+                    <input type="text" class="category-budget-input" value="3.000,00" />
+                    <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
                 <div class="category-payment">
                   <span class="category-payment-label">Método:</span>
-                  <select class="form-select" style="font-size: 11px; padding: 3px 22px 3px 6px; flex: 1;">
+                  <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
                     <option>Selecionar...</option>
                     <option selected>Latam Pass Visa</option>
                     <option>Nubank Master</option>
-                    <option>Itau Debito</option>
+                    <option>Itaú Débito</option>
                     <option>PIX</option>
                     <option>Dinheiro</option>
                   </select>
@@ -1242,17 +1253,17 @@
                   <span class="category-name">Moradia</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="2.200" />
-                    <span class="category-budget-suffix">/ mes</span>
+                    <input type="text" class="category-budget-input" value="2.200,00" />
+                    <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
                 <div class="category-payment">
                   <span class="category-payment-label">Método:</span>
-                  <select class="form-select" style="font-size: 11px; padding: 3px 22px 3px 6px; flex: 1;">
+                  <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
                     <option>Selecionar...</option>
                     <option>Latam Pass Visa</option>
                     <option>Nubank Master</option>
-                    <option selected>Itau Debito</option>
+                    <option selected>Itaú Débito</option>
                     <option>PIX</option>
                     <option>Dinheiro</option>
                   </select>
@@ -1265,17 +1276,17 @@
                   <span class="category-name">Gasolina</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="600" />
-                    <span class="category-budget-suffix">/ mes</span>
+                    <input type="text" class="category-budget-input" value="600,00" />
+                    <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
                 <div class="category-payment">
                   <span class="category-payment-label">Método:</span>
-                  <select class="form-select" style="font-size: 11px; padding: 3px 22px 3px 6px; flex: 1;">
+                  <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
                     <option>Selecionar...</option>
                     <option>Latam Pass Visa</option>
                     <option>Nubank Master</option>
-                    <option selected>Itau Debito</option>
+                    <option selected>Itaú Débito</option>
                     <option>PIX</option>
                     <option>Dinheiro</option>
                   </select>
@@ -1288,17 +1299,17 @@
                   <span class="category-name">Internet/Tel</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="158" />
-                    <span class="category-budget-suffix">/ mes</span>
+                    <input type="text" class="category-budget-input" value="158,00" />
+                    <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
                 <div class="category-payment">
                   <span class="category-payment-label">Método:</span>
-                  <select class="form-select" style="font-size: 11px; padding: 3px 22px 3px 6px; flex: 1;">
+                  <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
                     <option>Selecionar...</option>
                     <option selected>Latam Pass Visa</option>
                     <option>Nubank Master</option>
-                    <option>Itau Debito</option>
+                    <option>Itaú Débito</option>
                     <option>PIX</option>
                     <option>Dinheiro</option>
                   </select>
@@ -1308,20 +1319,20 @@
               <div class="category-item">
                 <div class="category-item-top">
                   <span class="category-emoji">&#127891;</span>
-                  <span class="category-name">Educacao</span>
+                  <span class="category-name">Educação</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="2.800" />
-                    <span class="category-budget-suffix">/ mes</span>
+                    <input type="text" class="category-budget-input" value="2.800,00" />
+                    <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
                 <div class="category-payment">
                   <span class="category-payment-label">Método:</span>
-                  <select class="form-select" style="font-size: 11px; padding: 3px 22px 3px 6px; flex: 1;">
+                  <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
                     <option>Selecionar...</option>
                     <option selected>Latam Pass Visa</option>
                     <option>Nubank Master</option>
-                    <option>Itau Debito</option>
+                    <option>Itaú Débito</option>
                     <option>PIX</option>
                     <option>Dinheiro</option>
                   </select>
@@ -1339,17 +1350,17 @@
                   <span class="category-name">Restaurante</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="2.500" />
-                    <span class="category-budget-suffix">/ mes</span>
+                    <input type="text" class="category-budget-input" value="2.500,00" />
+                    <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
                 <div class="category-payment">
                   <span class="category-payment-label">Método:</span>
-                  <select class="form-select" style="font-size: 11px; padding: 3px 22px 3px 6px; flex: 1;">
+                  <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
                     <option>Selecionar...</option>
                     <option selected>Nubank Master</option>
                     <option>Latam Pass Visa</option>
-                    <option>Itau Debito</option>
+                    <option>Itaú Débito</option>
                     <option>PIX</option>
                     <option>Dinheiro</option>
                   </select>
@@ -1368,7 +1379,7 @@
               <div class="progress-dot active"></div>
               <div class="progress-dot"></div>
             </div>
-            <button class="btn-primary">Proximo</button>
+            <button class="btn-primary">Próximo</button>
             <button class="btn-ghost">Pular</button>
           </div>
         </div>
@@ -1387,23 +1398,23 @@
             <div class="done-icon">&#10003;</div>
             <div class="done-title">Tudo configurado!</div>
             <div class="done-desc">
-              Agora e so comecar a registrar.<br />Cada gasto leva ~5 segundos.
+              Agora é só começar a registrar.<br />Cada gasto leva ~5 segundos.
             </div>
 
             <div class="summary-list">
               <div class="summary-item">
                 <div class="summary-icon">&#127974;</div>
-                <span>Contas bancarias</span>
+                <span>Contas bancárias</span>
                 <span class="summary-value">3</span>
               </div>
               <div class="summary-item">
                 <div class="summary-icon">&#128179;</div>
-                <span>Cartoes de credito</span>
+                <span>Cartões de crédito</span>
                 <span class="summary-value">2</span>
               </div>
               <div class="summary-item">
                 <div class="summary-icon">&#128202;</div>
-                <span>Categorias com orcamento</span>
+                <span>Categorias com orçamento</span>
                 <span class="summary-value">6</span>
               </div>
             </div>
@@ -1423,7 +1434,7 @@
               <div class="progress-dot active"></div>
             </div>
             <button class="btn-primary">Ir para o Dashboard</button>
-            <button class="btn-secondary">Convidar alguem</button>
+            <button class="btn-secondary">Convidar alguém</button>
           </div>
         </div>
       </div>
@@ -1437,8 +1448,8 @@
   <!-- DESKTOP VERSION — Step 4 -->
   <!-- ═══════════════════════════════════════ -->
   <div class="section-header">
-    <h2>Versao Desktop (Etapa 4)</h2>
-    <p>Categorias e orcamentos com layout mais espacoso</p>
+    <h2>Versão Desktop (Etapa 4)</h2>
+    <p>Categorias e orçamentos com layout mais espaçoso</p>
   </div>
 
   <div class="showcase">
@@ -1466,8 +1477,8 @@
                   <div class="desktop-category-name">Supermercado</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="3.000" />
-                    <span class="desktop-category-budget-suffix">/ mes</span>
+                    <input type="text" class="desktop-budget-input" value="3.000,00" />
+                    <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
                   <div class="desktop-category-payment-row">
                     <span class="desktop-category-payment-label">Método:</span>
@@ -1475,7 +1486,7 @@
                       <option>Selecionar...</option>
                       <option selected>Latam Pass Visa</option>
                       <option>Nubank Master</option>
-                      <option>Itau Debito</option>
+                      <option>Itaú Débito</option>
                       <option>PIX</option>
                       <option>Dinheiro</option>
                     </select>
@@ -1489,8 +1500,8 @@
                   <div class="desktop-category-name">Moradia</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="2.200" />
-                    <span class="desktop-category-budget-suffix">/ mes</span>
+                    <input type="text" class="desktop-budget-input" value="2.200,00" />
+                    <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
                   <div class="desktop-category-payment-row">
                     <span class="desktop-category-payment-label">Método:</span>
@@ -1498,7 +1509,7 @@
                       <option>Selecionar...</option>
                       <option>Latam Pass Visa</option>
                       <option>Nubank Master</option>
-                      <option selected>Itau Debito</option>
+                      <option selected>Itaú Débito</option>
                       <option>PIX</option>
                       <option>Dinheiro</option>
                     </select>
@@ -1512,8 +1523,8 @@
                   <div class="desktop-category-name">Gasolina</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="600" />
-                    <span class="desktop-category-budget-suffix">/ mes</span>
+                    <input type="text" class="desktop-budget-input" value="600,00" />
+                    <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
                   <div class="desktop-category-payment-row">
                     <span class="desktop-category-payment-label">Método:</span>
@@ -1521,7 +1532,7 @@
                       <option>Selecionar...</option>
                       <option>Latam Pass Visa</option>
                       <option>Nubank Master</option>
-                      <option selected>Itau Debito</option>
+                      <option selected>Itaú Débito</option>
                       <option>PIX</option>
                       <option>Dinheiro</option>
                     </select>
@@ -1535,8 +1546,8 @@
                   <div class="desktop-category-name">Internet/Tel</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="158" />
-                    <span class="desktop-category-budget-suffix">/ mes</span>
+                    <input type="text" class="desktop-budget-input" value="158,00" />
+                    <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
                   <div class="desktop-category-payment-row">
                     <span class="desktop-category-payment-label">Método:</span>
@@ -1544,7 +1555,7 @@
                       <option>Selecionar...</option>
                       <option selected>Latam Pass Visa</option>
                       <option>Nubank Master</option>
-                      <option>Itau Debito</option>
+                      <option>Itaú Débito</option>
                       <option>PIX</option>
                       <option>Dinheiro</option>
                     </select>
@@ -1555,11 +1566,11 @@
               <div class="desktop-category-item">
                 <span class="desktop-category-emoji">&#127891;</span>
                 <div class="desktop-category-info">
-                  <div class="desktop-category-name">Educacao</div>
+                  <div class="desktop-category-name">Educação</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="2.800" />
-                    <span class="desktop-category-budget-suffix">/ mes</span>
+                    <input type="text" class="desktop-budget-input" value="2.800,00" />
+                    <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
                   <div class="desktop-category-payment-row">
                     <span class="desktop-category-payment-label">Método:</span>
@@ -1567,7 +1578,7 @@
                       <option>Selecionar...</option>
                       <option selected>Latam Pass Visa</option>
                       <option>Nubank Master</option>
-                      <option>Itau Debito</option>
+                      <option>Itaú Débito</option>
                       <option>PIX</option>
                       <option>Dinheiro</option>
                     </select>
@@ -1584,8 +1595,8 @@
                   <div class="desktop-category-name">Restaurante</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="2.500" />
-                    <span class="desktop-category-budget-suffix">/ mes</span>
+                    <input type="text" class="desktop-budget-input" value="2.500,00" />
+                    <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
                   <div class="desktop-category-payment-row">
                     <span class="desktop-category-payment-label">Método:</span>
@@ -1593,7 +1604,7 @@
                       <option>Selecionar...</option>
                       <option selected>Nubank Master</option>
                       <option>Latam Pass Visa</option>
-                      <option>Itau Debito</option>
+                      <option>Itaú Débito</option>
                       <option>PIX</option>
                       <option>Dinheiro</option>
                     </select>
@@ -1615,7 +1626,7 @@
 
             <div class="desktop-bottom-actions">
               <button class="desktop-btn desktop-btn-ghost">Pular</button>
-              <button class="desktop-btn desktop-btn-primary">Proximo</button>
+              <button class="desktop-btn desktop-btn-primary">Próximo</button>
             </div>
           </div>
         </div>

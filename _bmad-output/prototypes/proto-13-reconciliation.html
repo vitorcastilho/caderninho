@@ -42,8 +42,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-variant-numeric: tabular-nums;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       background: var(--bg);
       color: var(--text-primary);
       -webkit-font-smoothing: antialiased;
@@ -73,55 +72,22 @@
     .app-layout {
       display: flex;
       min-height: calc(100vh - 94px);
+      margin-left: 220px;
     }
 
     /* ── Sidebar ── */
-    .sidebar {
-      width: var(--sidebar-width);
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      padding: 24px 0;
-      flex-shrink: 0;
-    }
-    .sidebar-logo {
-      padding: 0 20px 24px;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .sidebar-logo span {
-      width: 28px;
-      height: 28px;
-      background: var(--primary);
-      color: #fff;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-    }
-    .sidebar nav { display: flex; flex-direction: column; gap: 2px; }
-    .sidebar a {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 20px;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      text-decoration: none;
-      transition: all var(--transition);
-    }
-    .sidebar a:hover { background: var(--bg); color: var(--text-primary); }
-    .sidebar a.active {
-      background: var(--primary-light);
-      color: var(--primary);
-      font-weight: 600;
-    }
-    .sidebar a .icon { width: 20px; text-align: center; font-size: 16px; }
+    .sidebar { width: 220px; height: 100vh; position: fixed; left: 0; top: 0; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+    .sidebar-logo { display: flex; align-items: center; padding: 20px 16px 16px; }
+    .sidebar-logo-icon, .sidebar-logo-text { font-size: 16px; font-weight: 700; color: var(--primary); }
+    .sidebar-separator { height: 1px; background: var(--border); margin: 4px 16px; }
+    .sidebar-section-label { padding: 16px 16px 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); }
+    .sidebar-items { list-style: none; margin: 0; padding: 0 8px; display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-secondary); text-decoration: none; }
+    .sidebar-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+    .sidebar-item:hover { background: var(--bg); color: var(--text-primary); }
+    .sidebar-icon { width: 18px; height: 18px; flex-shrink: 0; }
+    .sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding: 12px; }
+    .sidebar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #FFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
 
     /* ── Main Content ── */
     .main-content {
@@ -152,7 +118,7 @@
     .badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       padding: 4px 12px;
       border-radius: var(--radius-badge);
       font-size: 12px;
@@ -195,6 +161,7 @@
       font-size: 26px;
       font-weight: 700;
       color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
     }
     .summary-card .value.editable-value {
       display: flex;
@@ -389,7 +356,7 @@
     /* Action buttons */
     .row-actions {
       display: flex;
-      gap: 6px;
+      gap: 8px;
       justify-content: flex-end;
     }
     .btn-sm {
@@ -437,7 +404,7 @@
     .inline-edit {
       display: none;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
     .inline-edit.active { display: inline-flex; }
     .inline-edit input {
@@ -509,6 +476,7 @@
     .diff-counter .diff-value {
       font-size: 18px;
       font-weight: 700;
+      font-variant-numeric: tabular-nums;
       transition: all 300ms ease;
     }
     .diff-counter .diff-value.critical { color: var(--critical); }
@@ -530,7 +498,7 @@
       font-weight: 600;
       color: var(--positive-text);
       background: var(--positive-bg);
-      padding: 6px 14px;
+      padding: 8px 16px;
       border-radius: var(--radius-badge);
     }
     .balanced-msg.visible { display: inline-flex; }
@@ -538,7 +506,7 @@
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      gap: 6px;
+      gap: 8px;
     }
     .btn-confirm {
       padding: 10px 28px;
@@ -705,7 +673,7 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .m-tx-desc {
       font-size: 14px;
@@ -906,16 +874,34 @@
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-logo">
-        <span>C</span> Caderninho
+        <span class="sidebar-logo-icon">&#x270E;</span>
+        <span class="sidebar-logo-text">Caderninho</span>
       </div>
-      <nav>
-        <a href="#"><span class="icon">&#x1F3E0;</span> Início</a>
-        <a href="#"><span class="icon">&#x1F4B3;</span> Cartões</a>
-        <a href="#"><span class="icon">&#x1F4CA;</span> Dashboard</a>
-        <a href="#" class="active"><span class="icon">&#x1F4CB;</span> Faturas</a>
-        <a href="#"><span class="icon">&#x2705;</span> Checklist</a>
-        <a href="#"><span class="icon">&#x2699;</span> Ajustes</a>
-      </nav>
+      <div class="sidebar-section-label">Navegação</div>
+      <ul class="sidebar-items">
+        <li><a class="sidebar-item" href="#">Dashboard</a></li>
+        <li><a class="sidebar-item" href="#">Orçamentos</a></li>
+        <li><a class="sidebar-item" href="#">Checklist</a></li>
+        <li><a class="sidebar-item" href="#">Projeção</a></li>
+      </ul>
+      <div class="sidebar-separator"></div>
+      <div class="sidebar-section-label">Configurações</div>
+      <ul class="sidebar-items">
+        <li><a class="sidebar-item" href="#">Contas</a></li>
+        <li><a class="sidebar-item active" href="#">Cartões</a></li>
+        <li><a class="sidebar-item" href="#">Investimentos</a></li>
+        <li><a class="sidebar-item" href="#">Receitas</a></li>
+        <li><a class="sidebar-item" href="#">Categorias</a></li>
+      </ul>
+      <div class="sidebar-footer">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="sidebar-avatar">V</div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Vitor</div>
+            <div style="font-size:11px;color:var(--text-tertiary);">Administrador</div>
+          </div>
+        </div>
+      </div>
     </aside>
 
     <!-- Main Content -->
@@ -933,7 +919,7 @@
       <div class="summary-cards">
         <div class="summary-card">
           <div class="label">Estimativa do app</div>
-          <div class="value" id="estimateValue">R$4.200,00</div>
+          <div class="value" id="estimateValue">R$ 4.200,00</div>
           <div class="diff-note">Baseado nas transações registradas</div>
         </div>
         <div class="summary-card">
@@ -946,7 +932,7 @@
         </div>
         <div class="summary-card">
           <div class="label">Diferença</div>
-          <div class="value critical" id="diffCardValue">R$150,00</div>
+          <div class="value critical" id="diffCardValue">R$ 150,00</div>
           <div class="diff-note critical" id="diffCardNote">Necessita resolução</div>
         </div>
       </div>
@@ -1000,15 +986,15 @@
             <div class="m-summary">
               <div class="m-summary-card">
                 <div class="m-label">Estimativa</div>
-                <div class="m-value">R$4.200</div>
+                <div class="m-value" style="font-variant-numeric:tabular-nums;">R$ 4.200,00</div>
               </div>
               <div class="m-summary-card">
                 <div class="m-label">Fatura real</div>
-                <div class="m-value">R$4.350</div>
+                <div class="m-value" style="font-variant-numeric:tabular-nums;">R$ 4.350,00</div>
               </div>
               <div class="m-summary-card">
                 <div class="m-label">Diferença</div>
-                <div class="m-value critical">R$150</div>
+                <div class="m-value critical" style="font-variant-numeric:tabular-nums;">R$ 150,00</div>
               </div>
             </div>
 
@@ -1025,8 +1011,8 @@
                   <div class="m-tx-date">10/02</div>
                 </div>
                 <div class="m-tx-values">
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$87,00</span></div>
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$87,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$ 87,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$ 87,00</span></div>
                   <span class="m-tx-status m-status-ok">Confere</span>
                 </div>
               </div>
@@ -1040,8 +1026,8 @@
                   <div class="m-tx-date">12/02</div>
                 </div>
                 <div class="m-tx-values">
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$180,00</span></div>
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$180,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$ 180,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$ 180,00</span></div>
                   <span class="m-tx-status m-status-ok">Confere</span>
                 </div>
               </div>
@@ -1055,8 +1041,8 @@
                   <div class="m-tx-date">15/02</div>
                 </div>
                 <div class="m-tx-values">
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$45,00</span></div>
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$45,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$ 45,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$ 45,00</span></div>
                   <span class="m-tx-status m-status-ok">Confere</span>
                 </div>
               </div>
@@ -1070,8 +1056,8 @@
                   <div class="m-tx-date">18/02</div>
                 </div>
                 <div class="m-tx-values">
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$250,00</span></div>
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$250,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$ 250,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$ 250,00</span></div>
                   <span class="m-tx-status m-status-ok">Confere</span>
                 </div>
               </div>
@@ -1085,8 +1071,8 @@
                   <div class="m-tx-date">20/02</div>
                 </div>
                 <div class="m-tx-values">
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$22,00</span></div>
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$22,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$ 22,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$ 22,00</span></div>
                   <span class="m-tx-status m-status-ok">Confere</span>
                 </div>
               </div>
@@ -1100,9 +1086,9 @@
                   <div class="m-tx-date">22/02</div>
                 </div>
                 <div class="m-tx-values">
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$32,00</span></div>
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$38,00</span></div>
-                  <span class="m-tx-status m-status-div">+R$6,00</span>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$ 32,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$ 38,00</span></div>
+                  <span class="m-tx-status m-status-div">+R$ 6,00</span>
                 </div>
               </div>
 
@@ -1115,8 +1101,8 @@
                   <div class="m-tx-date">25/02</div>
                 </div>
                 <div class="m-tx-values">
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$45,00</span></div>
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$45,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$ 45,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$ 45,00</span></div>
                   <span class="m-tx-status m-status-ok">Confere</span>
                 </div>
               </div>
@@ -1131,7 +1117,7 @@
                 </div>
                 <div class="m-tx-values">
                   <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">—</span></div>
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$67,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$ 67,00</span></div>
                   <span class="m-tx-status m-status-miss">Registrar</span>
                 </div>
               </div>
@@ -1145,7 +1131,7 @@
                   <div class="m-tx-date">01/03</div>
                 </div>
                 <div class="m-tx-values">
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$15,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$ 15,00</span></div>
                   <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">—</span></div>
                   <span class="m-tx-status m-status-extra">Mover ciclo</span>
                 </div>
@@ -1160,16 +1146,16 @@
             <div class="m-footer-content">
               <div class="m-footer-diff">
                 <span class="m-footer-diff-label">Diferença restante</span>
-                <span class="m-footer-diff-value">R$150,00</span>
+                <span class="m-footer-diff-value">R$ 150,00</span>
               </div>
-              <button class="m-btn-confirm" disabled>Confirmar R$4.350,00</button>
+              <button class="m-btn-confirm" disabled>Confirmar R$ 4.350,00</button>
             </div>
-            <div class="m-bottom-nav">
-              <a class="m-nav-item" href="#"><span class="m-nav-icon">&#x1F3E0;</span>Início</a>
-              <a class="m-nav-item" href="#"><span class="m-nav-icon">&#x1F4B3;</span>Cartões</a>
-              <a class="m-nav-item active" href="#"><span class="m-nav-icon">&#x1F4CB;</span>Faturas</a>
+            <div class="m-bottom-nav" style="height:56px;">
+              <a class="m-nav-item" href="#"><span class="m-nav-icon">&#x1F4CA;</span>Dashboard</a>
+              <a class="m-nav-item active" href="#"><span class="m-nav-icon">&#x1F4B3;</span>Cartões</a>
+              <a class="m-nav-item" href="#" style="position:relative;"><span class="m-nav-icon" style="width:48px;height:48px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;margin-top:-16px;box-shadow:0 4px 12px rgba(79,70,229,0.3);">+</span></a>
               <a class="m-nav-item" href="#"><span class="m-nav-icon">&#x2705;</span>Checklist</a>
-              <a class="m-nav-item" href="#"><span class="m-nav-icon">&#x2699;</span>Ajustes</a>
+              <a class="m-nav-item" href="#"><span class="m-nav-icon">&#x1F4C8;</span>Projeção</a>
             </div>
           </div>
         </div>
@@ -1182,13 +1168,13 @@
     <div class="footer-left">
       <div class="diff-counter">
         <span class="diff-label">Diferença restante:</span>
-        <span class="diff-value critical" id="footerDiffValue">R$150,00</span>
+        <span class="diff-value critical" id="footerDiffValue">R$ 150,00</span>
       </div>
       <span class="progress-counter" id="progressCounter"><strong>7</strong> de <strong>9</strong> transações conferidas</span>
       <span class="balanced-msg" id="balancedMsg">Fatura equilibrada!</span>
     </div>
     <div class="footer-right">
-      <button class="btn-confirm" id="btnConfirm" disabled>Confirmar Fatura R$4.350,00</button>
+      <button class="btn-confirm" id="btnConfirm" disabled>Confirmar Fatura R$ 4.350,00</button>
       <span class="confirm-note">Ao confirmar, a fatura será adicionada como conta a pagar no Checklist (vence 15/03)</span>
     </div>
   </div>
@@ -1210,14 +1196,14 @@
       { id: 9, date: '01/03', desc: 'Padaria', cat: 'Alimentação', appVal: 1500, fatVal: 0, status: 'extra', checked: false },
     ];
 
-    const ESTIMATE = 420000; // R$4.200,00 in cents
-    let faturaReal = 435000;  // R$4.350,00 in cents
+    const ESTIMATE = 420000; // R$ 4.200,00 in cents
+    let faturaReal = 435000;  // R$ 4.350,00 in cents
 
     // ── Helpers ──
     function formatBRL(cents) {
       const abs = Math.abs(cents);
       const str = (abs / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      return (cents < 0 ? '-' : '') + 'R$' + str;
+      return (cents < 0 ? '-' : '') + 'R$ ' + str;
     }
 
     function formatBRLShort(cents) {

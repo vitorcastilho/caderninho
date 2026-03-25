@@ -20,6 +20,7 @@
       --primary: #4F46E5;
       --primary-hover: #4338CA;
       --primary-light: #EEF2FF;
+      --primary-fg: #FFFFFF;
       --positive: #22C55E;
       --positive-bg: #DCFCE7;
       --positive-text: #166534;
@@ -30,7 +31,8 @@
       --critical-bg: #FEE2E2;
       --critical-text: #991B1B;
       --radius-card: 12px;
-      --radius-input: 6px;
+      --radius-button: 8px;
+      --radius-input: 8px;
       --radius-badge: 100px;
       --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
       --shadow-card-hover: 0 2px 6px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.06);
@@ -43,12 +45,27 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-variant-numeric: tabular-nums;
       background: var(--bg);
       color: var(--text-primary);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       line-height: 1.5;
+    }
+
+
+    /* ── Tabular Nums (seletivo) ── */
+    .metric-value,
+    .fatura-total,
+    .tx-amount,
+    .rt-value,
+    .bar-value,
+    .m-metric-value,
+    .m-fatura-total,
+    .m-tx-amount,
+    .m-inst-val,
+    .installments-table tbody td,
+    .timeline-annotation {
+      font-variant-numeric: tabular-nums;
     }
 
     /* ── Page Title Header ── */
@@ -120,7 +137,7 @@
     .sidebar-nav li a {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       padding: 8px 12px;
       border-radius: 8px;
       font-size: 13px;
@@ -154,7 +171,7 @@
       color: #fff;
       font-size: 11px;
       font-weight: 600;
-      padding: 1px 7px;
+      padding: 2px 8px;
       border-radius: var(--radius-badge);
       line-height: 1.5;
     }
@@ -165,7 +182,7 @@
       border-top: 1px solid var(--border);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .user-avatar {
@@ -327,7 +344,7 @@
       font-size: 12px;
       font-weight: 500;
       color: var(--text-secondary);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     .metric-card .metric-value {
@@ -345,7 +362,7 @@
       font-weight: 600;
       padding: 2px 8px;
       border-radius: var(--radius-badge);
-      margin-top: 6px;
+      margin-top: 8px;
     }
 
     .metric-badge.attention {
@@ -371,7 +388,7 @@
     }
 
     .card-header {
-      padding: 18px 20px 14px;
+      padding: 16px 20px 16px;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -401,7 +418,7 @@
       gap: 8px;
       background: var(--attention-bg);
       color: var(--attention-text);
-      padding: 10px 14px;
+      padding: 12px 16px;
       border-radius: 8px;
       font-size: 12px;
       font-weight: 600;
@@ -438,7 +455,7 @@
     .transaction-item {
       display: flex;
       align-items: center;
-      padding: 10px 8px;
+      padding: 12px 8px;
       border-radius: 8px;
       transition: background var(--transition);
       cursor: pointer;
@@ -529,12 +546,12 @@
     .tx-badge {
       display: inline-flex;
       align-items: center;
-      gap: 3px;
+      gap: 4px;
       font-size: 10px;
       font-weight: 600;
-      padding: 1px 6px;
+      padding: 2px 8px;
       border-radius: var(--radius-badge);
-      margin-left: 6px;
+      margin-left: 8px;
     }
 
     .tx-badge.last-installment {
@@ -551,9 +568,9 @@
     .btn-reconcile {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       margin-top: 16px;
-      padding: 10px 18px;
+      padding: 12px 20px;
       background: var(--primary);
       color: #fff;
       border: none;
@@ -593,7 +610,7 @@
     }
 
     .installments-table tbody td {
-      padding: 10px 10px;
+      padding: 12px 12px;
       border-bottom: 1px solid #F5F5F4;
       color: var(--text-primary);
       font-weight: 500;
@@ -615,14 +632,14 @@
       font-size: 12px;
       font-weight: 600;
       color: var(--text-secondary);
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     .timeline-bar-item {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
+      gap: 12px;
+      margin-bottom: 12px;
     }
 
     .timeline-bar-label {
@@ -681,7 +698,7 @@
       display: flex;
       align-items: baseline;
       gap: 8px;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     .running-total .rt-value {
@@ -758,7 +775,7 @@
       transform: translateX(-50%);
       background: var(--text-primary);
       color: #fff;
-      padding: 6px 10px;
+      padding: 8px 12px;
       border-radius: 6px;
       font-size: 11px;
       font-weight: 600;
@@ -782,7 +799,7 @@
     }
 
     .chart-trend {
-      margin-top: 14px;
+      margin-top: 16px;
       font-size: 12px;
       color: var(--positive-text);
       background: var(--positive-bg);
@@ -803,7 +820,7 @@
       font-size: 14px;
       font-weight: 700;
       color: var(--text-secondary);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       text-transform: uppercase;
       letter-spacing: 0.06em;
     }
@@ -840,7 +857,7 @@
     .phone-screen {
       height: calc(100% - 28px);
       overflow-y: auto;
-      padding-bottom: 72px;
+      padding-bottom: 56px;
     }
 
     /* ── Mobile Card Hero ── */
@@ -934,15 +951,15 @@
     .m-metrics {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 12px;
       padding: 0 16px 16px;
     }
 
     .m-metric {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 14px;
+      border-radius: 12px;
+      padding: 12px 16px;
     }
 
     .m-metric .m-metric-label {
@@ -1009,7 +1026,7 @@
     .m-warning-banner {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       background: var(--attention-bg);
       color: var(--attention-text);
       padding: 8px 12px;
@@ -1074,15 +1091,15 @@
     /* ── Mobile Installments ── */
     .m-installment-card {
       background: var(--bg);
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 10px;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
     }
 
     .m-installment-card .m-inst-name {
       font-size: 13px;
       font-weight: 600;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     .m-installment-card .m-inst-details {
@@ -1104,7 +1121,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 64px;
+      height: 56px;
       background: var(--surface);
       border-top: 1px solid var(--border);
       display: flex;
@@ -1118,7 +1135,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 3px;
+      gap: 4px;
       text-decoration: none;
       font-size: 10px;
       font-weight: 500;
@@ -1198,39 +1215,31 @@
 
   <!-- ── Sidebar ── -->
   <aside class="sidebar">
-    <div class="sidebar-logo">Caderninho</div>
+    <div class="sidebar-logo"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px;"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>Caderninho</div>
     <div class="sidebar-separator"></div>
 
-    <div class="sidebar-section-label">Principal</div>
+    <div class="sidebar-section-label">Navegacao</div>
     <ul class="sidebar-nav">
-      <li><a href="#"><span class="nav-icon">&#9776;</span> Dashboard</a></li>
-      <li><a href="#"><span class="nav-icon">&#8644;</span> Transacoes</a></li>
-      <li><a href="#"><span class="nav-icon">&#128176;</span> Orcamento</a></li>
+      <li><a href="#"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span> Dashboard</a></li>
+      <li><a href="#"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> Orcamentos</a></li>
+      <li><a href="#"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg></span> Checklist</a></li>
+      <li><a href="#"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></svg></span> Projecao</a></li>
     </ul>
 
-    <div class="sidebar-section-label">Contas</div>
+    <div class="sidebar-section-label">Configuracoes</div>
     <ul class="sidebar-nav">
-      <li><a href="#"><span class="nav-icon">&#127970;</span> Nubank C/C</a></li>
-      <li><a href="#"><span class="nav-icon">&#127970;</span> Itau C/C</a></li>
-    </ul>
-
-    <div class="sidebar-section-label">Cartoes</div>
-    <ul class="sidebar-nav">
-      <li><a href="#" class="active"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</a></li>
-      <li><a href="#"><span class="method-brand method-brand-master"></span> Nubank Mastercard</a></li>
-    </ul>
-
-    <div class="sidebar-section-label">Outros</div>
-    <ul class="sidebar-nav">
-      <li><a href="#"><span class="nav-icon">&#128200;</span> Relatorios</a></li>
-      <li><a href="#"><span class="nav-icon">&#9881;</span> Configuracoes</a></li>
+      <li><a href="#"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span> Contas</a></li>
+      <li><a href="#" class="active"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span> Cartoes</a></li>
+      <li><a href="#"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/><path d="m18 2 4 4-4 4"/><path d="M2 6h1.9c1.5 0 2.9.9 3.6 2.2"/><path d="M22 18h-5.9c-1.3 0-2.6-.7-3.3-1.8l-.5-.8"/><path d="m18 14 4 4-4 4"/></svg></span> Investimentos</a></li>
+      <li><a href="#"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg></span> Receitas</a></li>
+      <li><a href="#"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg></span> Categorias</a></li>
     </ul>
 
     <div class="sidebar-bottom">
-      <div class="user-avatar">VC</div>
+      <div class="user-avatar">V</div>
       <div class="user-info">
-        <span class="user-name">Vitor Castilho</span>
-        <span class="user-role">Conta pessoal</span>
+        <span class="user-name">Vitor</span>
+        <span class="user-role">Administrador</span>
       </div>
     </div>
   </aside>
@@ -1256,19 +1265,19 @@
       <div class="metrics-row">
         <div class="metric-card">
           <div class="metric-label">Limite Total</div>
-          <div class="metric-value">R$ 10.000</div>
+          <div class="metric-value">R$ 10.000,00</div>
         </div>
         <div class="metric-card">
           <div class="metric-label">Utilizado</div>
-          <div class="metric-value critical">R$ 7.180</div>
+          <div class="metric-value critical">R$ 7.180,00</div>
         </div>
         <div class="metric-card">
           <div class="metric-label">Disponivel</div>
-          <div class="metric-value positive">R$ 2.820</div>
+          <div class="metric-value positive">R$ 2.820,00</div>
         </div>
         <div class="metric-card">
           <div class="metric-label">Fatura Estimada Mar</div>
-          <div class="metric-value">R$ 4.200</div>
+          <div class="metric-value">R$ 4.200,00</div>
           <span class="metric-badge attention">estimativa</span>
         </div>
       </div>
@@ -1445,26 +1454,26 @@
               <tbody>
                 <tr>
                   <td>Fotos</td>
-                  <td>R$ 1.710</td>
+                  <td>R$ 1.710,00</td>
                   <td class="secondary">8/10</td>
                   <td class="secondary">2</td>
-                  <td>R$ 171</td>
+                  <td>R$ 171,00</td>
                   <td class="secondary">Mai 2026</td>
                 </tr>
                 <tr>
                   <td>Amazon</td>
-                  <td>R$ 750</td>
+                  <td>R$ 750,00</td>
                   <td class="secondary">2/3</td>
                   <td class="secondary">1</td>
-                  <td>R$ 250</td>
+                  <td>R$ 250,00</td>
                   <td class="secondary">Abr 2026</td>
                 </tr>
                 <tr>
                   <td>Oculos</td>
-                  <td>R$ 1.200</td>
+                  <td>R$ 1.200,00</td>
                   <td class="secondary">4/12</td>
                   <td class="secondary">8</td>
-                  <td>R$ 100</td>
+                  <td>R$ 100,00</td>
                   <td class="secondary">Nov 2026</td>
                 </tr>
               </tbody>
@@ -1479,7 +1488,7 @@
                 <div class="timeline-bar-track">
                   <div class="timeline-bar-fill bar-fotos" style="width: 25%;">Mai</div>
                 </div>
-                <div class="timeline-annotation">libera R$ 171/mes</div>
+                <div class="timeline-annotation">libera R$ 171,00/mes</div>
               </div>
 
               <div class="timeline-bar-item">
@@ -1487,7 +1496,7 @@
                 <div class="timeline-bar-track">
                   <div class="timeline-bar-fill bar-amazon" style="width: 12%;">Abr</div>
                 </div>
-                <div class="timeline-annotation">libera R$ 250/mes</div>
+                <div class="timeline-annotation">libera R$ 250,00/mes</div>
               </div>
 
               <div class="timeline-bar-item">
@@ -1495,7 +1504,7 @@
                 <div class="timeline-bar-track">
                   <div class="timeline-bar-fill bar-oculos" style="width: 90%;">Nov</div>
                 </div>
-                <div class="timeline-annotation">libera R$ 100/mes</div>
+                <div class="timeline-annotation">libera R$ 100,00/mes</div>
               </div>
             </div>
           </div>
@@ -1636,19 +1645,19 @@
           <div class="m-metrics">
             <div class="m-metric">
               <div class="m-metric-label">Limite Total</div>
-              <div class="m-metric-value">R$ 10.000</div>
+              <div class="m-metric-value">R$ 10.000,00</div>
             </div>
             <div class="m-metric">
               <div class="m-metric-label">Utilizado</div>
-              <div class="m-metric-value critical">R$ 7.180</div>
+              <div class="m-metric-value critical">R$ 7.180,00</div>
             </div>
             <div class="m-metric">
               <div class="m-metric-label">Disponivel</div>
-              <div class="m-metric-value positive">R$ 2.820</div>
+              <div class="m-metric-value positive">R$ 2.820,00</div>
             </div>
             <div class="m-metric">
               <div class="m-metric-label">Fatura Mar</div>
-              <div class="m-metric-value">R$ 4.200</div>
+              <div class="m-metric-value">R$ 4.200,00</div>
             </div>
           </div>
 
@@ -1736,27 +1745,27 @@
             <div class="m-installment-card">
               <div class="m-inst-name">Fotos</div>
               <div class="m-inst-details">
-                <div>Total: <span class="m-inst-val">R$ 1.710</span></div>
+                <div>Total: <span class="m-inst-val">R$ 1.710,00</span></div>
                 <div>Parcela: <span class="m-inst-val">8/10</span></div>
-                <div>Mensal: <span class="m-inst-val">R$ 171</span></div>
+                <div>Mensal: <span class="m-inst-val">R$ 171,00</span></div>
                 <div>Termino: <span class="m-inst-val">Mai 2026</span></div>
               </div>
             </div>
             <div class="m-installment-card">
               <div class="m-inst-name">Amazon</div>
               <div class="m-inst-details">
-                <div>Total: <span class="m-inst-val">R$ 750</span></div>
+                <div>Total: <span class="m-inst-val">R$ 750,00</span></div>
                 <div>Parcela: <span class="m-inst-val">2/3</span></div>
-                <div>Mensal: <span class="m-inst-val">R$ 250</span></div>
+                <div>Mensal: <span class="m-inst-val">R$ 250,00</span></div>
                 <div>Termino: <span class="m-inst-val">Abr 2026</span></div>
               </div>
             </div>
             <div class="m-installment-card">
               <div class="m-inst-name">Oculos</div>
               <div class="m-inst-details">
-                <div>Total: <span class="m-inst-val">R$ 1.200</span></div>
+                <div>Total: <span class="m-inst-val">R$ 1.200,00</span></div>
                 <div>Parcela: <span class="m-inst-val">4/12</span></div>
-                <div>Mensal: <span class="m-inst-val">R$ 100</span></div>
+                <div>Mensal: <span class="m-inst-val">R$ 100,00</span></div>
                 <div>Termino: <span class="m-inst-val">Nov 2026</span></div>
               </div>
             </div>
@@ -1814,24 +1823,24 @@
         <!-- Mobile Bottom Nav -->
         <div class="m-bottom-nav">
           <a href="#" class="m-nav-item">
-            <span class="m-nav-icon">&#9776;</span>
-            <span>Inicio</span>
-          </a>
-          <a href="#" class="m-nav-item">
-            <span class="m-nav-icon">&#8644;</span>
-            <span>Transacoes</span>
+            <span class="m-nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
+            <span>Dashboard</span>
           </a>
           <a href="#" class="m-nav-item active">
-            <span class="m-nav-icon">&#128179;</span>
+            <span class="m-nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
             <span>Cartoes</span>
           </a>
-          <a href="#" class="m-nav-item">
-            <span class="m-nav-icon">&#128200;</span>
-            <span>Relatorios</span>
+          <a href="#" class="m-nav-item m-nav-fab">
+            <span class="m-nav-fab-btn" style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:var(--primary);color:#FFFFFF;margin-top:-16px;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg></span>
+            <span style="font-size:10px;">Registrar</span>
           </a>
           <a href="#" class="m-nav-item">
-            <span class="m-nav-icon">&#9881;</span>
-            <span>Mais</span>
+            <span class="m-nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+            <span>Checklist</span>
+          </a>
+          <a href="#" class="m-nav-item">
+            <span class="m-nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></svg></span>
+            <span>Projecao</span>
           </a>
         </div>
       </div>
@@ -1861,7 +1870,7 @@
 
       const valLabel = document.createElement('div');
       valLabel.className = 'bar-value';
-      valLabel.textContent = 'R$ ' + d.value.toLocaleString('pt-BR');
+      valLabel.textContent = 'R$ ' + d.value.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
       const bar = document.createElement('div');
       bar.className = 'bar-rect ' + d.type;

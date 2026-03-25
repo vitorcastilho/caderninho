@@ -19,6 +19,7 @@
     --primary: #4F46E5;
     --primary-hover: #4338CA;
     --primary-light: #EEF2FF;
+    --primary-fg: #FFFFFF;
     --positive: #22C55E;
     --positive-bg: #DCFCE7;
     --positive-text: #166534;
@@ -30,6 +31,8 @@
     --critical: #DC2626;
     --critical-bg: #FEE2E2;
     --critical-text: #991B1B;
+    --radius-button: 8px;
+    --radius-card: 12px;
   }
 
   * {
@@ -51,6 +54,19 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Tabular nums (only for numeric values) */
+  .tabular-nums,
+  .exception-value,
+  .big-number,
+  .budget-remaining,
+  .tank-label,
+  .bill-date,
+  .bill-value,
+  .bills-summary,
+  [data-numeric] {
+    font-variant-numeric: tabular-nums;
+  }
+
   /* Page title */
   .page-title {
     text-align: center;
@@ -62,7 +78,7 @@
     font-size: 24px;
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
 
   .page-title p {
@@ -108,7 +124,7 @@
   .status-bar .icons {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
 
   .status-bar .icons svg {
@@ -120,7 +136,7 @@
   /* Header */
   .header {
     background: var(--surface);
-    padding: 0 20px 14px;
+    padding: 0 20px 16px;
     border-bottom: 1px solid var(--border);
     flex-shrink: 0;
     position: sticky;
@@ -131,7 +147,7 @@
   .header-greeting {
     font-size: 13px;
     color: var(--text-secondary);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     font-weight: 400;
   }
 
@@ -219,16 +235,16 @@
     gap: 8px;
     background: var(--positive-bg);
     color: var(--positive-text);
-    padding: 8px 14px;
+    padding: 8px 16px;
     border-radius: 100px;
     font-size: 14px;
     font-weight: 600;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
 
   .status-badge .check {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     background: var(--positive);
     border-radius: 50%;
     display: flex;
@@ -238,8 +254,8 @@
   }
 
   .status-badge .check svg {
-    width: 11px;
-    height: 11px;
+    width: 12px;
+    height: 12px;
     fill: white;
   }
 
@@ -254,7 +270,7 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    padding: 10px 0;
+    padding: 12px 0;
     border-top: 1px solid var(--border);
   }
 
@@ -278,7 +294,6 @@
     font-size: 14px;
     font-weight: 600;
     color: var(--text-primary);
-    font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
 
@@ -287,7 +302,6 @@
     font-size: 32px;
     font-weight: 700;
     color: var(--positive-text);
-    font-variant-numeric: tabular-nums;
     line-height: 1.1;
     margin-bottom: 4px;
   }
@@ -295,16 +309,16 @@
   .big-number-context {
     font-size: 12px;
     color: var(--text-secondary);
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
 
   .tank-gauge {
     width: 100%;
-    height: 10px;
+    height: 12px;
     background: #F5F5F4;
     border-radius: 100px;
     overflow: hidden;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     position: relative;
   }
 
@@ -317,13 +331,12 @@
   .tank-labels {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
 
   .tank-label {
     font-size: 11px;
     color: var(--text-tertiary);
-    font-variant-numeric: tabular-nums;
   }
 
   .card-link {
@@ -355,7 +368,7 @@
 
   /* Card 3: Orcamentos */
   .budget-item {
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
 
   .budget-item:last-of-type {
@@ -366,7 +379,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
 
   .budget-name {
@@ -375,7 +388,7 @@
     color: var(--text-primary);
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
 
   .budget-emoji {
@@ -388,7 +401,6 @@
     font-size: 13px;
     font-weight: 600;
     color: var(--text-secondary);
-    font-variant-numeric: tabular-nums;
   }
 
   .budget-bar {
@@ -414,7 +426,7 @@
   }
 
   .budgets-footer {
-    margin-top: 14px;
+    margin-top: 16px;
     padding-top: 12px;
     border-top: 1px solid var(--border);
   }
@@ -424,7 +436,7 @@
     background: var(--primary-light);
     border: 1px solid #C7D2FE;
     border-radius: 8px;
-    padding: 10px 12px;
+    padding: 12px;
     margin-bottom: 12px;
     display: flex;
     align-items: center;
@@ -451,10 +463,6 @@
     color: var(--primary);
   }
 
-  .next-bill-banner-text span {
-    font-variant-numeric: tabular-nums;
-  }
-
   .bill-list {
     list-style: none;
   }
@@ -477,7 +485,6 @@
     color: var(--text-secondary);
     width: 48px;
     flex-shrink: 0;
-    font-variant-numeric: tabular-nums;
   }
 
   .bill-name {
@@ -491,8 +498,7 @@
     font-size: 14px;
     font-weight: 600;
     color: var(--text-primary);
-    font-variant-numeric: tabular-nums;
-    margin-right: 6px;
+    margin-right: 8px;
   }
 
   .bill-status {
@@ -505,7 +511,6 @@
     font-size: 12px;
     color: var(--text-tertiary);
     margin-top: 8px;
-    font-variant-numeric: tabular-nums;
   }
 
   /* Card 5: Da pra */
@@ -520,11 +525,11 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
 
   .chip {
-    padding: 7px 14px;
+    padding: 8px 16px;
     border-radius: 100px;
     background: var(--bg);
     border: 1px solid var(--border);
@@ -549,9 +554,9 @@
   .ghost-button {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 10px 20px;
-    border-radius: 10px;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 12px;
     border: 1px solid var(--primary);
     background: transparent;
     color: var(--primary);
@@ -581,7 +586,7 @@
     transform: translateX(2px);
   }
 
-  /* Bottom navigation */
+  /* Bottom navigation (canonico) */
   .bottom-nav {
     position: absolute;
     bottom: 0;
@@ -591,128 +596,78 @@
     background: var(--surface);
     border-top: 1px solid var(--border);
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-around;
-    padding: 0 8px;
     z-index: 20;
   }
 
-  .nav-item {
+  .bottom-nav-item {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 2px;
-    cursor: pointer;
-    padding: 4px 12px;
-    transition: all 0.15s ease;
-    text-decoration: none;
-    position: relative;
-  }
-
-  .nav-item .nav-icon {
-    width: 22px;
-    height: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
+    padding: 8px 0;
     color: var(--text-tertiary);
-    transition: color 0.15s ease;
-  }
-
-  .nav-item .nav-icon svg {
-    width: 22px;
-    height: 22px;
-    fill: none;
-    stroke: var(--text-tertiary);
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    transition: stroke 0.15s ease;
-  }
-
-  .nav-item .nav-label {
     font-size: 10px;
     font-weight: 500;
-    color: var(--text-tertiary);
+    text-decoration: none;
     transition: color 0.15s ease;
   }
 
-  .nav-item.active .nav-icon svg {
-    stroke: var(--primary);
-    stroke-width: 2.5;
-  }
-
-  .nav-item.active .nav-label {
+  .bottom-nav-item.active {
     color: var(--primary);
-    font-weight: 600;
   }
 
-  .nav-item:not(.active):not(.fab-item):hover .nav-icon svg {
-    stroke: var(--text-secondary);
-  }
-
-  .nav-item:not(.active):not(.fab-item):hover .nav-label {
+  .bottom-nav-item:not(.active):hover {
     color: var(--text-secondary);
   }
 
+  .bottom-nav-item svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .bottom-nav-item.active svg {
+    stroke-width: 2.5;
+  }
+
   /* FAB */
-  .fab-item {
+  .bottom-nav-fab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     position: relative;
     top: -12px;
+    text-decoration: none;
   }
 
-  .fab {
+  .bottom-nav-fab svg {
     width: 48px;
     height: 48px;
+    padding: 12px;
     background: var(--primary);
+    color: #FFFFFF;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .fab:hover {
-    background: var(--primary-hover);
-    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
-    transform: scale(1.05);
-  }
-
-  .fab:active {
-    transform: scale(0.97);
-  }
-
-  .fab svg {
-    width: 24px;
-    height: 24px;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
     fill: none;
     stroke: white;
     stroke-width: 2.5;
     stroke-linecap: round;
+    cursor: pointer;
+    transition: all 0.2s ease;
   }
 
-  /* Tabular nums utility */
-  [data-numeric] {
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* Selection */
-  ::selection {
-    background: var(--primary-light);
-    color: var(--primary);
-  }
-
-  /* Month cycling animation */
-  .month-text {
-    display: inline-block;
-    transition: opacity 0.15s ease;
-  }
-
-  .month-text.fade {
-    opacity: 0.3;
+  .bottom-nav-fab svg:hover {
+    background: var(--primary-hover);
+    box-shadow: 0 12px 20px -3px rgba(0,0,0,0.15);
+    transform: scale(1.05);
   }
 
   /* Inline Card Brand Icons */
@@ -722,7 +677,7 @@
     justify-content: center;
     width: 26px;
     height: 16px;
-    border-radius: 3px;
+    border-radius: 4px;
     flex-shrink: 0;
     vertical-align: middle;
     margin-right: 4px;
@@ -752,6 +707,22 @@
   }
   .method-brand-master::before { left: 3px; background: #EB001B; }
   .method-brand-master::after { right: 3px; background: #F79E1B; }
+
+  /* Selection */
+  ::selection {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+
+  /* Month cycling animation */
+  .month-text {
+    display: inline-block;
+    transition: opacity 0.15s ease;
+  }
+
+  .month-text.fade {
+    opacity: 0.3;
+  }
 </style>
 </head>
 <body>
@@ -817,14 +788,14 @@
           <div class="exception-name">Viagem São Paulo</div>
           <div class="exception-context">Decisão de fevereiro</div>
         </div>
-        <div class="exception-value">R$ 9.000</div>
+        <div class="exception-value">R$ 9.000,00</div>
       </div>
       <div class="exception-item">
         <div>
           <div class="exception-name">Motor do carro</div>
           <div class="exception-context">Imprevisto</div>
         </div>
-        <div class="exception-value">R$ 1.400</div>
+        <div class="exception-value">R$ 1.400,00</div>
       </div>
     </div>
 
@@ -837,8 +808,8 @@
         <div class="tank-gauge-fill" id="tank-fill" style="width: 0%; background: linear-gradient(90deg, #22C55E 0%, #4ADE80 60%, #EAB308 100%);"></div>
       </div>
       <div class="tank-labels">
-        <span class="tank-label">Usado: R$ 12.680</span>
-        <span class="tank-label">Renda: R$ 13.000</span>
+        <span class="tank-label">Usado: R$ 12.680,00</span>
+        <span class="tank-label">Renda: R$ 13.000,00</span>
       </div>
       <a href="#" class="card-link">
         Toque para ver composição
@@ -852,8 +823,8 @@
 
       <div class="budget-item">
         <div class="budget-header">
-          <span class="budget-name"><span class="budget-emoji">🛒</span> Supermercado</span>
-          <span class="budget-remaining">R$ 878 restam</span>
+          <span class="budget-name"><span class="budget-emoji">&#128722;</span> Supermercado</span>
+          <span class="budget-remaining">R$ 878,00 restam</span>
         </div>
         <div class="budget-bar">
           <div class="budget-bar-fill green" id="bar-super" style="width: 0%;" data-target="41"></div>
@@ -862,8 +833,8 @@
 
       <div class="budget-item">
         <div class="budget-header">
-          <span class="budget-name"><span class="budget-emoji">⛽</span> Gasolina</span>
-          <span class="budget-remaining">R$ 180 restam</span>
+          <span class="budget-name"><span class="budget-emoji">&#9981;</span> Gasolina</span>
+          <span class="budget-remaining">R$ 180,00 restam</span>
         </div>
         <div class="budget-bar">
           <div class="budget-bar-fill yellow" id="bar-gas" style="width: 0%;" data-target="55"></div>
@@ -872,8 +843,8 @@
 
       <div class="budget-item">
         <div class="budget-header">
-          <span class="budget-name"><span class="budget-emoji">🍽</span> Restaurante</span>
-          <span class="budget-remaining">R$ 700 restam</span>
+          <span class="budget-name"><span class="budget-emoji">&#127869;</span> Restaurante</span>
+          <span class="budget-remaining">R$ 700,00 restam</span>
         </div>
         <div class="budget-bar">
           <div class="budget-bar-fill green" id="bar-rest" style="width: 0%;" data-target="30"></div>
@@ -893,31 +864,31 @@
       <div class="card-title">Próximas contas</div>
       <div class="next-bill-banner">
         <span class="next-bill-banner-dot"></span>
-        <span class="next-bill-banner-text">Amanhã: Internet <span>R$ 158</span></span>
+        <span class="next-bill-banner-text">Amanhã: Internet <span class="tabular-nums">R$ 158,00</span></span>
       </div>
       <ul class="bill-list">
         <li class="bill-item">
           <span class="bill-date">13/03</span>
           <span class="bill-name">Internet</span>
-          <span class="bill-value">R$ 158</span>
-          <span class="bill-status" title="Pendente">⏳</span>
+          <span class="bill-value">R$ 158,00</span>
+          <span class="bill-status" title="Pendente">&#9203;</span>
         </li>
         <li class="bill-item">
           <span class="bill-date">20/03</span>
           <span class="bill-name">Faxineira</span>
-          <span class="bill-value">R$ 250</span>
+          <span class="bill-value">R$ 250,00</span>
           <span class="bill-status"></span>
         </li>
         <li class="bill-item">
           <span class="bill-date">22/03</span>
           <span class="bill-name">Energia</span>
-          <span class="bill-value">R$ 320</span>
+          <span class="bill-value">R$ 320,00</span>
           <span class="bill-status"></span>
         </li>
         <li class="bill-item">
           <span class="bill-date">25/03</span>
           <span class="bill-name"><span class="method-brand method-brand-visa">VISA</span>Fatura Latam</span>
-          <span class="bill-value">R$ 4.200</span>
+          <span class="bill-value">R$ 4.200,00</span>
           <span class="bill-status"></span>
         </li>
       </ul>
@@ -941,36 +912,26 @@
 
   </div>
 
-  <!-- Bottom Navigation -->
+  <!-- Bottom Navigation (Canônico) -->
   <div class="bottom-nav">
-    <a class="nav-item active" href="#">
-      <span class="nav-icon">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-      </span>
-      <span class="nav-label">Dashboard</span>
+    <a class="bottom-nav-item active" href="#">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      <span>Dashboard</span>
     </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">
-        <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="15" y2="18"/></svg>
-      </span>
-      <span class="nav-label">Orçamentos</span>
+    <a class="bottom-nav-item" href="#">
+      <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      <span>Cartões</span>
     </a>
-    <a class="nav-item fab-item" href="#">
-      <div class="fab">
-        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      </div>
+    <a class="bottom-nav-fab" href="#">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">
-        <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-      </span>
-      <span class="nav-label">Checklist</span>
+    <a class="bottom-nav-item" href="#">
+      <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span>Checklist</span>
     </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">
-        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </span>
-      <span class="nav-label">Projeção</span>
+    <a class="bottom-nav-item" href="#">
+      <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      <span>Projeção</span>
     </a>
   </div>
 
@@ -1019,7 +980,7 @@
   animateBars();
 
   // Bottom nav active state
-  const navItems = document.querySelectorAll('.nav-item:not(.fab-item)');
+  const navItems = document.querySelectorAll('.bottom-nav-item');
   navItems.forEach(item => {
     item.addEventListener('click', (e) => {
       e.preventDefault();
