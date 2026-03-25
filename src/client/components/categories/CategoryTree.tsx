@@ -102,6 +102,7 @@ export function CategoryTree({
   const [editingSubcategory, setEditingSubcategory] = useState<{
     id: string;
     name: string;
+    categoryId: string;
     defaultPaymentMethodType: string | null;
     defaultPaymentMethodId: string | null;
   } | null>(null);
@@ -308,7 +309,9 @@ export function CategoryTree({
       <Dialog open={!!creatingSubcategoryForCategory} onOpenChange={(open) => !open && setCreatingSubcategoryForCategory(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Nova Subcategoria</DialogTitle>
+            <DialogTitle>
+              Criar subcategoria para {categories.find((c) => c.id === creatingSubcategoryForCategory)?.name}
+            </DialogTitle>
           </DialogHeader>
           {creatingSubcategoryForCategory && (
             <SubcategoryForm
@@ -330,7 +333,9 @@ export function CategoryTree({
       <Dialog open={!!editingSubcategory} onOpenChange={(open) => !open && setEditingSubcategory(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Editar Subcategoria</DialogTitle>
+            <DialogTitle>
+              Editar subcategoria de {categories.find((c) => c.id === editingSubcategory?.categoryId)?.name}
+            </DialogTitle>
           </DialogHeader>
           {editingSubcategory && (
             <SubcategoryForm
@@ -389,6 +394,7 @@ export function CategoryTree({
                   onEditSubcategory={(sub) => setEditingSubcategory({
                       id: sub.id,
                       name: sub.name,
+                      categoryId: sub.categoryId,
                       defaultPaymentMethodType: sub.defaultPaymentMethodType,
                       defaultPaymentMethodId: sub.defaultPaymentMethodId,
                     })}
@@ -437,6 +443,7 @@ export function CategoryTree({
                       onEditSubcategory={(sub) => setEditingSubcategory({
                       id: sub.id,
                       name: sub.name,
+                      categoryId: sub.categoryId,
                       defaultPaymentMethodType: sub.defaultPaymentMethodType,
                       defaultPaymentMethodId: sub.defaultPaymentMethodId,
                     })}
