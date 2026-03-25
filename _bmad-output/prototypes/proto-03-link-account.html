@@ -106,6 +106,21 @@
   .sidebar-user-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
   .sidebar-user-role { font-size: 11px; color: var(--text-tertiary); }
 
+  /* Breadcrumb */
+  .breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--text-tertiary);
+    margin-bottom: 16px;
+  }
+  .breadcrumb a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .breadcrumb a:hover { color: var(--primary); }
+  .breadcrumb .bc-sep { color: var(--text-tertiary); }
+  .breadcrumb .bc-current { color: var(--text-primary); font-weight: 500; }
+
   /* --- Main Content --- */
   .main-content {
     flex: 1;
@@ -623,6 +638,12 @@
 
   <!-- Main Content -->
   <main class="main-content">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a href="#">Contas</a>
+      <span class="bc-sep">&#8250;</span>
+      <span class="bc-current">Vincular Conta</span>
+    </div>
     <h1 class="main-title">Usuarios e Contas Vinculadas</h1>
     <p class="main-subtitle">Gerencie quem tem acesso ao seu Caderninho</p>
 
