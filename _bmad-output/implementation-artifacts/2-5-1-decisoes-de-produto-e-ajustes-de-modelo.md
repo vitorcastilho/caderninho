@@ -83,7 +83,7 @@ Esta story implementa 3 decisões de produto documentadas na retrospectiva do É
 - [x] Task 1: Criar migration para adicionar campos à tabela subcategories (AC: #1, #2)
   - [x] 1.1: Adicionar `default_payment_method_type text` à tabela `subcategories`
   - [x] 1.2: Adicionar `default_payment_method_id text` à tabela `subcategories`
-  - [x] 1.3: Arquivo: `src/server/infrastructure/database/migrations/0011_*.sql`
+  - [x] 1.3: Arquivo: `src/server/infrastructure/database/migrations/0011_same_ultimo.sql`
 
 - [x] Task 2: Atualizar schema Drizzle da tabela subcategories (AC: #1)
   - [x] 2.1: Adicionar campos `defaultPaymentMethodType` e `defaultPaymentMethodId` em `src/server/infrastructure/database/schema/subcategories.ts`
@@ -318,7 +318,7 @@ Nenhum problema encontrado durante a implementação.
 ### File List
 
 **Novos:**
-- `src/server/infrastructure/database/migrations/0011_subcategory_payment_method.sql`
+- `src/server/infrastructure/database/migrations/0011_same_ultimo.sql`
 - `src/client/components/ui/bank-logo.tsx`
 - `src/client/components/ui/bank-logo.test.tsx`
 
