@@ -796,6 +796,281 @@
       gap: 8px;
     }
 
+    /* ── Desktop Welcome Screen ── */
+    .desktop-welcome-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 0 40px;
+    }
+    .desktop-welcome-logo {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .desktop-welcome-illustration {
+      width: 100px;
+      height: 100px;
+      background: var(--primary-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      margin: 28px 0;
+    }
+    .desktop-welcome-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+    .desktop-welcome-desc {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 380px;
+    }
+
+    /* ── Desktop Item Grid (accounts / cards) ── */
+    .desktop-item-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .desktop-item-card {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      gap: 12px;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      position: relative;
+      cursor: pointer;
+    }
+    .desktop-item-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-card);
+    }
+    .desktop-item-card.editing {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+    .desktop-item-card .item-card-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 15px;
+      border-radius: 10px;
+    }
+    .desktop-item-card .item-card-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .desktop-item-card .item-card-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .desktop-item-card .item-card-detail {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+    .desktop-item-card .item-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .desktop-item-card .item-card-action {
+      width: 28px;
+      height: 28px;
+      font-size: 13px;
+    }
+
+    /* ── Desktop Credit Card items ── */
+    .desktop-credit-card {
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      gap: 8px;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      position: relative;
+      cursor: pointer;
+    }
+    .desktop-credit-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-card);
+    }
+    .desktop-credit-card-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+    .desktop-credit-card .card-brand {
+      width: 44px;
+      height: 28px;
+    }
+    .desktop-credit-card .item-card-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .desktop-credit-card .item-card-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .desktop-credit-card .item-card-detail {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+    .desktop-credit-card-sub {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      padding-left: 56px;
+    }
+    .desktop-credit-card .item-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .desktop-credit-card .item-card-action {
+      width: 28px;
+      height: 28px;
+      font-size: 13px;
+    }
+
+    /* ── Desktop Add Form ── */
+    .desktop-add-form {
+      padding: 16px 20px;
+      background: var(--primary-light);
+      border: 1px solid #C7D2FE;
+      border-radius: var(--radius-card);
+      margin-bottom: 16px;
+    }
+    .desktop-add-form .add-form-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+    .desktop-add-form .form-row {
+      display: flex;
+      gap: 12px;
+    }
+    .desktop-add-form .form-row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* ── Desktop Done Screen ── */
+    .desktop-done-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 40px 0 20px;
+    }
+    .desktop-done-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--positive-bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+    .desktop-done-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+    .desktop-done-desc {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 28px;
+      max-width: 380px;
+    }
+    .desktop-summary-list {
+      width: 100%;
+      max-width: 460px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .desktop-summary-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+    .desktop-summary-item + .desktop-summary-item {
+      border-top: 1px solid var(--border);
+    }
+    .desktop-summary-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--primary-light);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .desktop-summary-value {
+      margin-left: auto;
+      font-weight: 600;
+      color: var(--primary);
+      font-variant-numeric: tabular-nums;
+    }
+    .desktop-summary-total {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 460px;
+      padding: 14px 20px;
+      background: var(--positive-bg);
+      border: 1px solid #BBF7D0;
+      border-radius: var(--radius-input);
+      margin-bottom: 16px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--positive-text);
+    }
+    .desktop-summary-total-value {
+      font-size: 18px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
     /* ── Desktop Category Grid ── */
     .desktop-card {
       width: 100%;
@@ -1161,6 +1436,7 @@
             </div>
             <button class="btn-primary">Próximo</button>
             <button class="btn-ghost">Pular</button>
+            <button class="btn-ghost">&#8592; Voltar</button>
           </div>
         </div>
       </div>
@@ -1269,6 +1545,7 @@
             </div>
             <button class="btn-primary">Próximo</button>
             <button class="btn-ghost">Pular</button>
+            <button class="btn-ghost">&#8592; Voltar</button>
           </div>
         </div>
       </div>
@@ -1465,6 +1742,7 @@
             </div>
             <button class="btn-primary">Próximo</button>
             <button class="btn-ghost">Pular</button>
+            <button class="btn-ghost">&#8592; Voltar</button>
           </div>
         </div>
       </div>
@@ -1519,12 +1797,354 @@
             </div>
             <button class="btn-primary">Ir para o Dashboard</button>
             <button class="btn-secondary">Convidar alguém</button>
+            <button class="btn-ghost">&#8592; Voltar</button>
           </div>
         </div>
       </div>
     </div>
 
   </div><!-- /showcase -->
+
+  <hr class="section-divider" />
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- DESKTOP VERSION — Step 1 -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="section-header">
+    <h2>Versão Desktop (Etapa 1)</h2>
+    <p>Tela de boas-vindas com logo e call-to-action centralizado</p>
+  </div>
+
+  <div class="showcase">
+    <div class="showcase-column">
+      <div class="showcase-column-label">Desktop &mdash; 800px</div>
+      <div class="desktop-frame">
+        <div class="desktop-toolbar">
+          <div class="desktop-toolbar-dot"></div>
+          <div class="desktop-toolbar-dot"></div>
+          <div class="desktop-toolbar-dot"></div>
+        </div>
+        <div class="desktop-content">
+          <div class="desktop-card">
+            <div class="desktop-welcome-screen">
+              <div class="desktop-welcome-logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/><path d="M8 11h8"/><path d="M8 7h6"/></svg>
+                Caderninho
+              </div>
+              <div class="desktop-welcome-illustration">&#128202;</div>
+              <div class="desktop-welcome-title">Bem-vindo ao Caderninho!</div>
+              <div class="desktop-welcome-desc">
+                Vamos configurar o básico para você começar. Leva cerca de 5 minutos.
+              </div>
+            </div>
+
+            <div class="desktop-progress-dots">
+              <div class="desktop-progress-dot active"></div>
+              <div class="desktop-progress-dot"></div>
+              <div class="desktop-progress-dot"></div>
+              <div class="desktop-progress-dot"></div>
+              <div class="desktop-progress-dot"></div>
+            </div>
+            <div class="desktop-bottom-actions">
+              <button class="desktop-btn desktop-btn-ghost">Já tenho um convite</button>
+              <button class="desktop-btn desktop-btn-primary">Começar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider" />
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- DESKTOP VERSION — Step 2 -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="section-header">
+    <h2>Versão Desktop (Etapa 2)</h2>
+    <p>Contas bancárias com grid de 2 colunas e edição inline</p>
+  </div>
+
+  <div class="showcase">
+    <div class="showcase-column">
+      <div class="showcase-column-label">Desktop &mdash; 800px</div>
+      <div class="desktop-frame">
+        <div class="desktop-toolbar">
+          <div class="desktop-toolbar-dot"></div>
+          <div class="desktop-toolbar-dot"></div>
+          <div class="desktop-toolbar-dot"></div>
+        </div>
+        <div class="desktop-content">
+          <div class="desktop-card">
+            <div class="desktop-step-title">Suas contas bancárias</div>
+            <div class="desktop-step-subtitle">Adicione as contas que você usa no dia a dia</div>
+
+            <div class="item-list desktop-item-grid">
+              <div class="item-card desktop-item-card">
+                <div class="item-card-icon bank-nubank">Nu</div>
+                <div class="item-card-info">
+                  <div class="item-card-name">Nubank</div>
+                  <div class="item-card-detail">Saldo: R$ 8.500,00</div>
+                </div>
+                <div class="item-card-actions">
+                  <button class="item-card-action check">&#10003;</button>
+                  <button class="item-card-action remove">&#10005;</button>
+                </div>
+              </div>
+
+              <div class="item-card desktop-item-card">
+                <div class="item-card-icon bank-itau">Itaú</div>
+                <div class="item-card-info">
+                  <div class="item-card-name">Itaú</div>
+                  <div class="item-card-detail">Saldo: R$ 6.200,00</div>
+                </div>
+                <div class="item-card-actions">
+                  <button class="item-card-action check">&#10003;</button>
+                  <button class="item-card-action remove">&#10005;</button>
+                </div>
+              </div>
+
+              <div class="item-card desktop-item-card">
+                <div class="item-card-icon bank-bb">BB</div>
+                <div class="item-card-info">
+                  <div class="item-card-name">BB</div>
+                  <div class="item-card-detail">Saldo: R$ 4.500,00</div>
+                </div>
+                <div class="item-card-actions">
+                  <button class="item-card-action check">&#10003;</button>
+                  <button class="item-card-action remove">&#10005;</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Add form (desktop) -->
+            <div class="add-form desktop-add-form" style="display: none;">
+              <div class="add-form-title">Adicionar conta</div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Nome do banco</label>
+                  <input type="text" class="form-input form-input-sm" placeholder="Ex: Bradesco" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Saldo atual</label>
+                  <input type="text" class="form-input form-input-sm" placeholder="R$ 0,00" />
+                </div>
+              </div>
+            </div>
+
+            <button class="btn-add" style="max-width: 280px;">+ Adicionar conta</button>
+
+            <div class="desktop-progress-dots">
+              <div class="desktop-progress-dot completed"></div>
+              <div class="desktop-progress-dot active"></div>
+              <div class="desktop-progress-dot"></div>
+              <div class="desktop-progress-dot"></div>
+              <div class="desktop-progress-dot"></div>
+            </div>
+            <div class="desktop-bottom-actions">
+              <button class="desktop-btn desktop-btn-ghost">&#8592; Voltar</button>
+              <button class="desktop-btn desktop-btn-ghost">Pular</button>
+              <button class="desktop-btn desktop-btn-primary">Próximo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider" />
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- DESKTOP VERSION — Step 3 -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="section-header">
+    <h2>Versão Desktop (Etapa 3)</h2>
+    <p>Cartões de crédito com grid de 2 colunas e detalhes expandidos</p>
+  </div>
+
+  <div class="showcase">
+    <div class="showcase-column">
+      <div class="showcase-column-label">Desktop &mdash; 800px</div>
+      <div class="desktop-frame">
+        <div class="desktop-toolbar">
+          <div class="desktop-toolbar-dot"></div>
+          <div class="desktop-toolbar-dot"></div>
+          <div class="desktop-toolbar-dot"></div>
+        </div>
+        <div class="desktop-content">
+          <div class="desktop-card">
+            <div class="desktop-step-title">Seus cartões de crédito</div>
+            <div class="desktop-step-subtitle">Cadastre seus cartões para controlar as faturas</div>
+
+            <div class="desktop-item-grid">
+              <div class="desktop-credit-card">
+                <div class="desktop-credit-card-top">
+                  <div class="card-brand card-brand-visa">VISA</div>
+                  <div class="item-card-info">
+                    <div class="item-card-name">Latam Pass Visa</div>
+                    <div class="item-card-detail">Limite: R$ 10.000,00 &middot; Crédito</div>
+                  </div>
+                  <div class="item-card-actions">
+                    <button class="item-card-action check">&#10003;</button>
+                    <button class="item-card-action remove">&#10005;</button>
+                  </div>
+                </div>
+                <div class="desktop-credit-card-sub">
+                  Fecha dia 7 &middot; Vence dia 15
+                </div>
+              </div>
+
+              <div class="desktop-credit-card">
+                <div class="desktop-credit-card-top">
+                  <div class="card-brand card-brand-master"></div>
+                  <div class="item-card-info">
+                    <div class="item-card-name">Pão de Açúcar</div>
+                    <div class="item-card-detail">Limite: R$ 5.000,00 &middot; Crédito</div>
+                  </div>
+                  <div class="item-card-actions">
+                    <button class="item-card-action check">&#10003;</button>
+                    <button class="item-card-action remove">&#10005;</button>
+                  </div>
+                </div>
+                <div class="desktop-credit-card-sub">
+                  Fecha dia 3 &middot; Vence dia 10
+                </div>
+              </div>
+            </div>
+
+            <!-- Add form (desktop) -->
+            <div class="add-form desktop-add-form" style="display: none;">
+              <div class="add-form-title">Adicionar cartão</div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Nome do cartão</label>
+                  <input type="text" class="form-input form-input-sm" placeholder="Ex: Nubank Mastercard" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Bandeira</label>
+                  <select class="form-select" style="font-size: 12px; padding: 8px;">
+                    <option>Selecionar...</option>
+                    <option>Visa</option>
+                    <option>Mastercard</option>
+                    <option>Elo</option>
+                    <option>Amex</option>
+                    <option>Hipercard</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Tipo</label>
+                  <select class="form-select" style="font-size: 12px; padding: 8px;">
+                    <option>Crédito</option>
+                    <option>Débito</option>
+                    <option>Crédito + Débito</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row" style="margin-top: 4px;">
+                <div class="form-group">
+                  <label class="form-label">Limite (R$)</label>
+                  <input type="text" class="form-input form-input-sm" placeholder="R$ 0,00" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Dia de fechamento</label>
+                  <input type="number" class="form-input form-input-sm" placeholder="Ex: 7" min="1" max="31" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Dia de vencimento</label>
+                  <input type="number" class="form-input form-input-sm" placeholder="Ex: 15" min="1" max="31" />
+                </div>
+              </div>
+            </div>
+
+            <button class="btn-add" style="max-width: 280px;">+ Adicionar cartão</button>
+
+            <div class="desktop-progress-dots">
+              <div class="desktop-progress-dot completed"></div>
+              <div class="desktop-progress-dot completed"></div>
+              <div class="desktop-progress-dot active"></div>
+              <div class="desktop-progress-dot"></div>
+              <div class="desktop-progress-dot"></div>
+            </div>
+            <div class="desktop-bottom-actions">
+              <button class="desktop-btn desktop-btn-ghost">&#8592; Voltar</button>
+              <button class="desktop-btn desktop-btn-ghost">Pular</button>
+              <button class="desktop-btn desktop-btn-primary">Próximo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider" />
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- DESKTOP VERSION — Step 5 -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="section-header">
+    <h2>Versão Desktop (Etapa 5)</h2>
+    <p>Tela de conclusão com resumo do que foi configurado</p>
+  </div>
+
+  <div class="showcase">
+    <div class="showcase-column">
+      <div class="showcase-column-label">Desktop &mdash; 800px</div>
+      <div class="desktop-frame">
+        <div class="desktop-toolbar">
+          <div class="desktop-toolbar-dot"></div>
+          <div class="desktop-toolbar-dot"></div>
+          <div class="desktop-toolbar-dot"></div>
+        </div>
+        <div class="desktop-content">
+          <div class="desktop-card">
+            <div class="desktop-done-screen">
+              <div class="desktop-done-icon">&#10003;</div>
+              <div class="desktop-done-title">Tudo configurado!</div>
+              <div class="desktop-done-desc">
+                Agora é só começar a registrar. Cada gasto leva ~5 segundos.
+              </div>
+
+              <div class="desktop-summary-list">
+                <div class="desktop-summary-item">
+                  <div class="desktop-summary-icon">&#127974;</div>
+                  <span>Contas bancárias</span>
+                  <span class="desktop-summary-value">3</span>
+                </div>
+                <div class="desktop-summary-item">
+                  <div class="desktop-summary-icon">&#128179;</div>
+                  <span>Cartões de crédito</span>
+                  <span class="desktop-summary-value">2</span>
+                </div>
+                <div class="desktop-summary-item">
+                  <div class="desktop-summary-icon">&#128202;</div>
+                  <span>Categorias com orçamento</span>
+                  <span class="desktop-summary-value">6</span>
+                </div>
+              </div>
+
+              <div class="desktop-summary-total">
+                <span>Saldo total</span>
+                <span class="desktop-summary-total-value">R$ 19.200,00</span>
+              </div>
+            </div>
+
+            <div class="desktop-progress-dots">
+              <div class="desktop-progress-dot completed"></div>
+              <div class="desktop-progress-dot completed"></div>
+              <div class="desktop-progress-dot completed"></div>
+              <div class="desktop-progress-dot completed"></div>
+              <div class="desktop-progress-dot active"></div>
+            </div>
+            <div class="desktop-bottom-actions">
+              <button class="desktop-btn desktop-btn-ghost">&#8592; Voltar</button>
+              <button class="desktop-btn desktop-btn-ghost">Convidar alguém</button>
+              <button class="desktop-btn desktop-btn-primary">Ir para o Dashboard</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <hr class="section-divider" />
 
@@ -1727,6 +2347,7 @@
             </div>
 
             <div class="desktop-bottom-actions">
+              <button class="desktop-btn desktop-btn-ghost">&#8592; Voltar</button>
               <button class="desktop-btn desktop-btn-ghost">Pular</button>
               <button class="desktop-btn desktop-btn-primary">Próximo</button>
             </div>
