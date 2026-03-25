@@ -93,125 +93,24 @@
     }
 
     /* ── Sidebar ── */
-    .sidebar {
-      width: var(--sidebar-width);
-      min-width: var(--sidebar-width);
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      position: sticky;
-      top: 0;
-      height: calc(100vh - 94px);
-      overflow-y: auto;
-    }
-
-    .sidebar-logo {
-      padding: 20px 16px 16px;
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--primary);
-      letter-spacing: -0.01em;
-    }
-
-    .sidebar-separator {
-      height: 1px;
-      background: var(--border);
-      margin: 4px 16px;
-    }
-
-    .sidebar-section-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text-tertiary);
-      padding: 16px 16px 8px;
-    }
-
-    .sidebar-nav {
-      list-style: none;
-      padding: 0 8px;
-    }
-
-    .sidebar-nav li a {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      text-decoration: none;
-      transition: background var(--transition), color var(--transition);
-    }
-
-    .sidebar-nav li a:hover {
-      background: var(--bg);
-      color: var(--text-primary);
-    }
-
-    .sidebar-nav li a.active {
-      background: var(--primary-light);
-      color: var(--primary);
-      font-weight: 600;
-    }
-
-    .sidebar-nav li a .nav-icon {
-      width: 18px;
-      text-align: center;
-      font-size: 14px;
-      flex-shrink: 0;
-    }
-
-    .nav-badge {
-      margin-left: auto;
-      background: var(--critical);
-      color: #fff;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: var(--radius-badge);
-      line-height: 1.5;
-    }
-
-    .sidebar-bottom {
-      margin-top: auto;
-      padding: 16px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .user-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: var(--primary);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-
-    .user-info {
-      display: flex;
-      flex-direction: column;
-    }
-    .user-info .user-name {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-    .user-info .user-role {
-      font-size: 11px;
-      color: var(--text-tertiary);
-    }
+    .sidebar { width: 220px; height: 100%; min-height: 820px; position: relative; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 40; flex-shrink: 0; }
+    .sidebar-logo { display: flex; align-items: center; padding: 20px 16px 16px; gap: 8px; }
+    .sidebar-logo-icon { color: var(--primary); display: flex; align-items: center; }
+    .sidebar-logo-text { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: var(--primary); }
+    .sidebar-separator { height: 1px; background: var(--border); margin: 4px 16px; }
+    .sidebar-nav { flex: 1; overflow-y: auto; }
+    .sidebar-section-label { padding: 16px 16px 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); }
+    .sidebar-items { list-style: none; margin: 0; padding: 0 8px; display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: all 150ms; cursor: pointer; }
+    .sidebar-item:hover { background: var(--bg); color: var(--text-primary); }
+    .sidebar-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+    .sidebar-icon { width: 18px; height: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .sidebar-icon svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding: 12px; }
+    .sidebar-user { display: flex; align-items: center; gap: 10px; }
+    .sidebar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+    .sidebar-user-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .sidebar-user-role { font-size: 11px; color: var(--text-tertiary); }
 
     /* ── Main Content ── */
     .main-content {
@@ -1115,41 +1014,16 @@
       color: var(--text-primary);
     }
 
-    /* ── Mobile Bottom Nav ── */
-    .m-bottom-nav {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 56px;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      padding: 0 8px;
-      z-index: 10;
-    }
-
-    .m-nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      text-decoration: none;
-      font-size: 10px;
-      font-weight: 500;
-      color: var(--text-tertiary);
-      transition: color var(--transition);
-    }
-
-    .m-nav-item.active {
-      color: var(--primary);
-    }
-
-    .m-nav-item .m-nav-icon {
-      font-size: 18px;
-    }
+    /* ── Bottom Nav ── */
+    .bottom-nav { position: relative; height: 56px; background: var(--surface); border-top: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-around; z-index: 50; }
+    .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px 0; min-height: 44px; color: var(--text-tertiary); text-decoration: none; font-size: 10px; font-weight: 500; cursor: pointer; }
+    .bottom-nav-item.active { color: var(--primary); }
+    .bottom-nav-icon { width: 20px; height: 20px; }
+    .bottom-nav-icon svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .bottom-nav-fab { display: flex; flex-direction: column; align-items: center; text-decoration: none; margin-top: -16px; }
+    .bottom-nav-fab-icon { width: 48px; height: 48px; background: var(--primary); color: #FFFFFF; border-radius: 50%; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; }
+    .bottom-nav-fab-icon svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .bottom-nav-fab-label { margin-top: 2px; font-size: 10px; font-weight: 500; color: var(--text-tertiary); }
 
     /* Inline Card Brand Icons */
     .method-brand {
@@ -1215,31 +1089,63 @@
 
   <!-- ── Sidebar ── -->
   <aside class="sidebar">
-    <div class="sidebar-logo"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px;"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>Caderninho</div>
+    <div class="sidebar-logo">
+      <span class="sidebar-logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/><path d="M8 11h8"/><path d="M8 7h6"/></svg></span>
+      <span class="sidebar-logo-text">Caderninho</span>
+    </div>
     <div class="sidebar-separator"></div>
-
-    <div class="sidebar-section-label">Navegacao</div>
-    <ul class="sidebar-nav">
-      <li><a href="#"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span> Dashboard</a></li>
-      <li><a href="#"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> Orcamentos</a></li>
-      <li><a href="#"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg></span> Checklist</a></li>
-      <li><a href="#"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></svg></span> Projecao</a></li>
-    </ul>
-
-    <div class="sidebar-section-label">Configuracoes</div>
-    <ul class="sidebar-nav">
-      <li><a href="#"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span> Contas</a></li>
-      <li><a href="#" class="active"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span> Cartoes</a></li>
-      <li><a href="#"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/><path d="m18 2 4 4-4 4"/><path d="M2 6h1.9c1.5 0 2.9.9 3.6 2.2"/><path d="M22 18h-5.9c-1.3 0-2.6-.7-3.3-1.8l-.5-.8"/><path d="m18 14 4 4-4 4"/></svg></span> Investimentos</a></li>
-      <li><a href="#"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg></span> Receitas</a></li>
-      <li><a href="#"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg></span> Categorias</a></li>
-    </ul>
-
-    <div class="sidebar-bottom">
-      <div class="user-avatar">V</div>
-      <div class="user-info">
-        <span class="user-name">Vitor</span>
-        <span class="user-role">Administrador</span>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Navegação</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
+          Dashboard
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"/><path d="M16 10h.01"/><path d="M2 8v1a2 2 0 0 0 2 2h1"/></svg></span>
+          Orçamentos
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span>
+          Checklist
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>
+          Projeção
+        </li>
+      </ul>
+      <div class="sidebar-separator"></div>
+      <div class="sidebar-section-label">Configurações</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M10 12h4"/><path d="M10 8h4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/></svg></span>
+          Contas
+        </li>
+        <li class="sidebar-item active">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
+          Cartões
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M10 18v-7"/><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></svg></span>
+          Investimentos
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>
+          Receitas
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z"/><path d="M2 7v6.172a2 2 0 0 0 .586 1.414l6.71 6.71a2.4 2.4 0 0 0 3.191.193"/><circle cx="10.5" cy="6.5" r=".5" fill="currentColor"/></svg></span>
+          Categorias
+        </li>
+      </ul>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">V</div>
+        <div>
+          <div class="sidebar-user-name">Vitor</div>
+          <div class="sidebar-user-role">Administrador</div>
+        </div>
       </div>
     </div>
   </aside>
@@ -1853,26 +1759,30 @@
         </div>
 
         <!-- Mobile Bottom Nav -->
-        <div class="m-bottom-nav">
-          <a href="#" class="m-nav-item">
-            <span class="m-nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
+        <div class="bottom-nav">
+          <a class="bottom-nav-item">
+            <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
             <span>Dashboard</span>
           </a>
-          <a href="#" class="m-nav-item active">
-            <span class="m-nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
-            <span>Cartoes</span>
+          <a class="bottom-nav-item active">
+            <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
+            <span>Cartões</span>
           </a>
-          <a href="#" class="m-nav-item m-nav-fab">
-            <span class="m-nav-fab-btn" style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:var(--primary);color:#FFFFFF;margin-top:-16px;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg></span>
-            <span style="font-size:10px;">Registrar</span>
+          <a class="bottom-nav-fab">
+            <span class="bottom-nav-fab-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>
+            <span class="bottom-nav-fab-label">Registrar</span>
           </a>
-          <a href="#" class="m-nav-item">
-            <span class="m-nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <a class="bottom-nav-item">
+            <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span>
             <span>Checklist</span>
           </a>
-          <a href="#" class="m-nav-item">
-            <span class="m-nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></svg></span>
-            <span>Projecao</span>
+          <a class="bottom-nav-item">
+            <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>
+            <span>Projeção</span>
+          </a>
+          <a class="bottom-nav-item">
+            <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg></span>
+            <span>Sair</span>
           </a>
         </div>
       </div>

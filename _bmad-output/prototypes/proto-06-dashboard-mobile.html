@@ -587,88 +587,15 @@
   }
 
   /* Bottom navigation (canonico) */
-  .bottom-nav {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 56px;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-around;
-    z-index: 20;
-  }
-
-  .bottom-nav-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    padding: 8px 0;
-    color: var(--text-tertiary);
-    font-size: 10px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: color 0.15s ease;
-  }
-
-  .bottom-nav-item.active {
-    color: var(--primary);
-  }
-
-  .bottom-nav-item:not(.active):hover {
-    color: var(--text-secondary);
-  }
-
-  .bottom-nav-item svg {
-    width: 22px;
-    height: 22px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .bottom-nav-item.active svg {
-    stroke-width: 2.5;
-  }
-
-  /* FAB */
-  .bottom-nav-fab {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    top: -12px;
-    text-decoration: none;
-  }
-
-  .bottom-nav-fab svg {
-    width: 48px;
-    height: 48px;
-    padding: 12px;
-    background: var(--primary);
-    color: #FFFFFF;
-    border-radius: 50%;
-    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-    fill: none;
-    stroke: white;
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .bottom-nav-fab svg:hover {
-    background: var(--primary-hover);
-    box-shadow: 0 12px 20px -3px rgba(0,0,0,0.15);
-    transform: scale(1.05);
-  }
+  .bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: 56px; background: var(--surface); border-top: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-around; z-index: 50; }
+  .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px 0; min-height: 44px; color: var(--text-tertiary); text-decoration: none; font-size: 10px; font-weight: 500; cursor: pointer; }
+  .bottom-nav-item.active { color: var(--primary); }
+  .bottom-nav-icon { width: 20px; height: 20px; }
+  .bottom-nav-icon svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .bottom-nav-fab { display: flex; flex-direction: column; align-items: center; text-decoration: none; margin-top: -16px; }
+  .bottom-nav-fab-icon { width: 48px; height: 48px; background: var(--primary); color: #FFFFFF; border-radius: 50%; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; }
+  .bottom-nav-fab-icon svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .bottom-nav-fab-label { margin-top: 2px; font-size: 10px; font-weight: 500; color: var(--text-tertiary); }
 
   /* Inline Card Brand Icons */
   .method-brand {
@@ -912,26 +839,30 @@
 
   </div>
 
-  <!-- Bottom Navigation (Canônico) -->
   <div class="bottom-nav">
-    <a class="bottom-nav-item active" href="#">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+    <a class="bottom-nav-item active">
+      <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
       <span>Dashboard</span>
     </a>
-    <a class="bottom-nav-item" href="#">
-      <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    <a class="bottom-nav-item">
+      <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
       <span>Cartões</span>
     </a>
-    <a class="bottom-nav-fab" href="#">
-      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    <a class="bottom-nav-fab">
+      <span class="bottom-nav-fab-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>
+      <span class="bottom-nav-fab-label">Registrar</span>
     </a>
-    <a class="bottom-nav-item" href="#">
-      <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    <a class="bottom-nav-item">
+      <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span>
       <span>Checklist</span>
     </a>
-    <a class="bottom-nav-item" href="#">
-      <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    <a class="bottom-nav-item">
+      <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>
       <span>Projeção</span>
+    </a>
+    <a class="bottom-nav-item">
+      <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg></span>
+      <span>Sair</span>
     </a>
   </div>
 
