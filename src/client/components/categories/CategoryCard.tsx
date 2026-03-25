@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/client/utils/utils';
 
+import { BankLogo } from '@/client/components/ui/bank-logo';
 import { Button } from '@/client/components/ui/button';
 import { CreditCardBrandBadge } from '@/client/components/ui/credit-card-brand-badge';
 import {
@@ -96,8 +97,12 @@ function resolvePaymentMethodDisplay(
   }
   const account = bankAccounts.find((a) => a.id === id);
   if (!account) return null;
-  if (type === 'debit') return `\u{1F3E6} ${account.bank} - Débito`;
-  return `\u{1F4F1} ${account.bank} - Pix`;
+  return (
+    <span className="inline-flex items-center gap-1">
+      <BankLogo bank={account.bank} size="sm" />
+      <span>{account.bank} - {type === 'debit' ? 'Débito' : 'Pix'}</span>
+    </span>
+  );
 }
 
 export function CategoryCard({
