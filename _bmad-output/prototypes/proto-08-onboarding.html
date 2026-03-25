@@ -397,6 +397,11 @@
     }
     .item-card:hover {
       border-color: var(--border-hover);
+      cursor: pointer;
+    }
+    .item-card.editing {
+      border-color: var(--primary);
+      background: var(--primary-light);
     }
     .item-card-icon {
       width: 32px;
@@ -1144,9 +1149,7 @@
             </div>
           </div>
 
-          <button class="btn-add" onclick="this.previousElementSibling.style.display = this.previousElementSibling.style.display === 'none' ? 'block' : 'none'">
-            + Adicionar conta
-          </button>
+          <button class="btn-add">+ Adicionar conta</button>
 
           <div class="bottom-actions">
             <div class="progress-dots">
@@ -1732,6 +1735,80 @@
       </div>
     </div>
   </div>
+
+<script>
+  // ── Edição de item: tap no card preenche o formulário ──
+  document.querySelectorAll('.item-card').forEach(function(card) {
+    card.addEventListener('click', function(e) {
+      // Não ativar edição se clicou nos botões de ação
+      if (e.target.closest('.item-card-actions')) return;
+
+      var list = card.closest('.item-list');
+      if (!list) return;
+      var form = list.nextElementSibling;
+      while (form && !form.classList.contains('add-form')) {
+        form = form.nextElementSibling;
+      }
+      if (!form) return;
+
+      // Toggle: se já está editando este card, cancelar
+      if (card.classList.contains('editing')) {
+        card.classList.remove('editing');
+        var title = form.querySelector('.add-form-title');
+        if (title) title.textContent = title.dataset.originalTitle || title.textContent;
+        form.querySelectorAll('input').forEach(function(i) { i.value = ''; });
+        form.style.display = 'none';
+        return;
+      }
+
+      // Limpar edição anterior
+      list.querySelectorAll('.item-card').forEach(function(c) { c.classList.remove('editing'); });
+
+      // Marcar este card como editando
+      card.classList.add('editing');
+      form.style.display = 'block';
+
+      var title = form.querySelector('.add-form-title');
+      if (title) {
+        if (!title.dataset.originalTitle) title.dataset.originalTitle = title.textContent;
+        var name = card.querySelector('.item-card-name');
+        title.textContent = 'Editar' + (name ? ' — ' + name.textContent : '');
+      }
+
+      // Preencher inputs com dados do card
+      var inputs = form.querySelectorAll('input[type="text"], input[type="number"]');
+      var name = card.querySelector('.item-card-name');
+      var detail = card.querySelector('.item-card-detail');
+
+      if (inputs[0] && name) inputs[0].value = name.textContent;
+      if (inputs[1] && detail) {
+        var match = detail.textContent.match(/R\$\s*([\d.,]+)/);
+        if (match) inputs[1].value = 'R$ ' + match[1];
+      }
+    });
+  });
+
+  // ── Toggle add form (btn-add) ──
+  document.querySelectorAll('.btn-add').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var form = btn.previousElementSibling;
+      while (form && !form.classList.contains('add-form')) {
+        form = form.previousElementSibling;
+      }
+      if (!form) return;
+
+      // Se estava em modo edição, limpar
+      var list = btn.closest('.phone-content, .desktop-step');
+      if (list) list.querySelectorAll('.item-card.editing').forEach(function(c) { c.classList.remove('editing'); });
+
+      var title = form.querySelector('.add-form-title');
+      if (title && title.dataset.originalTitle) title.textContent = title.dataset.originalTitle;
+      form.querySelectorAll('input').forEach(function(i) { i.value = ''; });
+
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    });
+  });
+</script>
 
 </body>
 </html>
