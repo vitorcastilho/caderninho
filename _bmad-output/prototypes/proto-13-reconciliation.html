@@ -42,8 +42,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-variant-numeric: tabular-nums;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       background: var(--bg);
       color: var(--text-primary);
       -webkit-font-smoothing: antialiased;
@@ -73,55 +72,46 @@
     .app-layout {
       display: flex;
       min-height: calc(100vh - 94px);
+      margin-left: 220px;
     }
 
     /* ── Sidebar ── */
-    .sidebar {
-      width: var(--sidebar-width);
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      padding: 24px 0;
-      flex-shrink: 0;
+    .sidebar { width: 220px; height: 100%; min-height: 820px; position: fixed; left: 0; top: 0; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 40; flex-shrink: 0; }
+    .sidebar-logo { display: flex; align-items: center; padding: 20px 16px 16px; gap: 8px; }
+    .sidebar-logo-icon { color: var(--primary); display: flex; align-items: center; }
+    .sidebar-logo-text { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: var(--primary); }
+    .sidebar-separator { height: 1px; background: var(--border); margin: 4px 16px; }
+    .sidebar-nav { flex: 1; overflow-y: auto; }
+    .sidebar-section-label { padding: 16px 16px 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); }
+    .sidebar-items { list-style: none; margin: 0; padding: 0 8px; display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: all 150ms; cursor: pointer; }
+    .sidebar-item:hover { background: var(--bg); color: var(--text-primary); }
+    .sidebar-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+    .sidebar-icon { width: 18px; height: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .sidebar-icon svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding: 12px; }
+    .sidebar-user { display: flex; align-items: center; gap: 10px; }
+    .sidebar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+    .sidebar-user-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .sidebar-user-role { font-size: 11px; color: var(--text-tertiary); }
+    .sidebar-logout { display: flex; align-items: center; gap: 10px; margin-top: 0; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 150ms; border: none; background: none; width: 100%; }
+    .sidebar-logout:hover { background: var(--bg); color: var(--text-primary); }
+    .sidebar-logout svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: var(--text-tertiary);
+      margin-bottom: 16px;
     }
-    .sidebar-logo {
-      padding: 0 20px 24px;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .sidebar-logo span {
-      width: 28px;
-      height: 28px;
-      background: var(--primary);
-      color: #fff;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-    }
-    .sidebar nav { display: flex; flex-direction: column; gap: 2px; }
-    .sidebar a {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 20px;
-      font-size: 14px;
-      font-weight: 500;
+    .breadcrumb a {
       color: var(--text-secondary);
       text-decoration: none;
-      transition: all var(--transition);
+      cursor: pointer;
     }
-    .sidebar a:hover { background: var(--bg); color: var(--text-primary); }
-    .sidebar a.active {
-      background: var(--primary-light);
-      color: var(--primary);
-      font-weight: 600;
-    }
-    .sidebar a .icon { width: 20px; text-align: center; font-size: 16px; }
+    .breadcrumb a:hover { color: var(--primary); }
+    .breadcrumb .bc-sep { color: var(--text-tertiary); }
+    .breadcrumb .bc-current { color: var(--text-primary); font-weight: 500; }
 
     /* ── Main Content ── */
     .main-content {
@@ -152,7 +142,7 @@
     .badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       padding: 4px 12px;
       border-radius: var(--radius-badge);
       font-size: 12px;
@@ -195,6 +185,7 @@
       font-size: 26px;
       font-weight: 700;
       color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
     }
     .summary-card .value.editable-value {
       display: flex;
@@ -389,7 +380,7 @@
     /* Action buttons */
     .row-actions {
       display: flex;
-      gap: 6px;
+      gap: 8px;
       justify-content: flex-end;
     }
     .btn-sm {
@@ -437,7 +428,7 @@
     .inline-edit {
       display: none;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
     .inline-edit.active { display: inline-flex; }
     .inline-edit input {
@@ -509,6 +500,7 @@
     .diff-counter .diff-value {
       font-size: 18px;
       font-weight: 700;
+      font-variant-numeric: tabular-nums;
       transition: all 300ms ease;
     }
     .diff-counter .diff-value.critical { color: var(--critical); }
@@ -530,7 +522,7 @@
       font-weight: 600;
       color: var(--positive-text);
       background: var(--positive-bg);
-      padding: 6px 14px;
+      padding: 8px 16px;
       border-radius: var(--radius-badge);
     }
     .balanced-msg.visible { display: inline-flex; }
@@ -538,7 +530,7 @@
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      gap: 6px;
+      gap: 8px;
     }
     .btn-confirm {
       padding: 10px 28px;
@@ -705,7 +697,7 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .m-tx-desc {
       font-size: 14px;
@@ -798,25 +790,16 @@
       font-family: inherit;
     }
 
-    /* Mobile Bottom Nav */
-    .m-bottom-nav {
-      display: flex;
-      border-top: 1px solid var(--border);
-      background: var(--surface);
-    }
-    .m-nav-item {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      padding: 8px 0;
-      font-size: 10px;
-      color: var(--text-tertiary);
-      text-decoration: none;
-    }
-    .m-nav-item.active { color: var(--primary); }
-    .m-nav-item .m-nav-icon { font-size: 18px; }
+    /* Bottom Nav */
+    .bottom-nav { position: relative; height: 56px; background: var(--surface); border-top: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-around; z-index: 50; }
+    .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px 0; min-height: 44px; color: var(--text-tertiary); text-decoration: none; font-size: 10px; font-weight: 500; cursor: pointer; }
+    .bottom-nav-item.active { color: var(--primary); }
+    .bottom-nav-icon { width: 20px; height: 20px; }
+    .bottom-nav-icon svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .bottom-nav-fab { display: flex; flex-direction: column; align-items: center; text-decoration: none; margin-top: -16px; }
+    .bottom-nav-fab-icon { width: 48px; height: 48px; background: var(--primary); color: #FFFFFF; border-radius: 50%; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; }
+    .bottom-nav-fab-icon svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .bottom-nav-fab-label { margin-top: 2px; font-size: 10px; font-weight: 500; color: var(--text-tertiary); }
 
     /* ── Toast ── */
     .toast {
@@ -906,20 +889,81 @@
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-logo">
-        <span>C</span> Caderninho
+        <span class="sidebar-logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/><path d="M8 11h8"/><path d="M8 7h6"/></svg></span>
+        <span class="sidebar-logo-text">Caderninho</span>
       </div>
-      <nav>
-        <a href="#"><span class="icon">&#x1F3E0;</span> Início</a>
-        <a href="#"><span class="icon">&#x1F4B3;</span> Cartões</a>
-        <a href="#"><span class="icon">&#x1F4CA;</span> Dashboard</a>
-        <a href="#" class="active"><span class="icon">&#x1F4CB;</span> Faturas</a>
-        <a href="#"><span class="icon">&#x2705;</span> Checklist</a>
-        <a href="#"><span class="icon">&#x2699;</span> Ajustes</a>
+      <div class="sidebar-separator"></div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section-label">Navegação</div>
+        <ul class="sidebar-items">
+          <li class="sidebar-item">
+            <span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
+            Dashboard
+          </li>
+          <li class="sidebar-item">
+            <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"/><path d="M16 10h.01"/><path d="M2 8v1a2 2 0 0 0 2 2h1"/></svg></span>
+            Orçamentos
+          </li>
+          <li class="sidebar-item">
+            <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span>
+            Checklist
+          </li>
+          <li class="sidebar-item">
+            <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>
+            Projeção
+          </li>
+        </ul>
+        <div class="sidebar-separator"></div>
+        <div class="sidebar-section-label">Configurações</div>
+        <ul class="sidebar-items">
+          <li class="sidebar-item">
+            <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M10 12h4"/><path d="M10 8h4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/></svg></span>
+            Contas
+          </li>
+          <li class="sidebar-item active">
+            <span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
+            Cartões
+          </li>
+          <li class="sidebar-item">
+            <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M10 18v-7"/><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></svg></span>
+            Investimentos
+          </li>
+          <li class="sidebar-item">
+            <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>
+            Receitas
+          </li>
+          <li class="sidebar-item">
+            <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z"/><path d="M2 7v6.172a2 2 0 0 0 .586 1.414l6.71 6.71a2.4 2.4 0 0 0 3.191.193"/><circle cx="10.5" cy="6.5" r=".5" fill="currentColor"/></svg></span>
+            Categorias
+          </li>
+        </ul>
       </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar">V</div>
+          <div>
+            <div class="sidebar-user-name">Vitor</div>
+            <div class="sidebar-user-role">Administrador</div>
+          </div>
+        </div>
+        <div class="sidebar-separator"></div>
+        <button class="sidebar-logout">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+          Sair
+        </button>
+      </div>
     </aside>
 
     <!-- Main Content -->
     <main class="main-content" id="mainContent">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="#">Cartões</a>
+        <span class="bc-sep">&#8250;</span>
+        <a href="#">Latam Pass Visa</a>
+        <span class="bc-sep">&#8250;</span>
+        <span class="bc-current">Reconciliar Fatura</span>
+      </div>
       <!-- Content Header -->
       <div class="content-header">
         <div class="content-header-top">
@@ -933,7 +977,7 @@
       <div class="summary-cards">
         <div class="summary-card">
           <div class="label">Estimativa do app</div>
-          <div class="value" id="estimateValue">R$4.200,00</div>
+          <div class="value" id="estimateValue">R$ 4.200,00</div>
           <div class="diff-note">Baseado nas transações registradas</div>
         </div>
         <div class="summary-card">
@@ -946,7 +990,7 @@
         </div>
         <div class="summary-card">
           <div class="label">Diferença</div>
-          <div class="value critical" id="diffCardValue">R$150,00</div>
+          <div class="value critical" id="diffCardValue">R$ 150,00</div>
           <div class="diff-note critical" id="diffCardNote">Necessita resolução</div>
         </div>
       </div>
@@ -1000,15 +1044,15 @@
             <div class="m-summary">
               <div class="m-summary-card">
                 <div class="m-label">Estimativa</div>
-                <div class="m-value">R$4.200</div>
+                <div class="m-value" style="font-variant-numeric:tabular-nums;">R$ 4.200,00</div>
               </div>
               <div class="m-summary-card">
                 <div class="m-label">Fatura real</div>
-                <div class="m-value">R$4.350</div>
+                <div class="m-value" style="font-variant-numeric:tabular-nums;">R$ 4.350,00</div>
               </div>
               <div class="m-summary-card">
                 <div class="m-label">Diferença</div>
-                <div class="m-value critical">R$150</div>
+                <div class="m-value critical" style="font-variant-numeric:tabular-nums;">R$ 150,00</div>
               </div>
             </div>
 
@@ -1025,8 +1069,8 @@
                   <div class="m-tx-date">10/02</div>
                 </div>
                 <div class="m-tx-values">
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$87,00</span></div>
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$87,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$ 87,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$ 87,00</span></div>
                   <span class="m-tx-status m-status-ok">Confere</span>
                 </div>
               </div>
@@ -1040,8 +1084,8 @@
                   <div class="m-tx-date">12/02</div>
                 </div>
                 <div class="m-tx-values">
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$180,00</span></div>
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$180,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$ 180,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$ 180,00</span></div>
                   <span class="m-tx-status m-status-ok">Confere</span>
                 </div>
               </div>
@@ -1055,8 +1099,8 @@
                   <div class="m-tx-date">15/02</div>
                 </div>
                 <div class="m-tx-values">
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$45,00</span></div>
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$45,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$ 45,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$ 45,00</span></div>
                   <span class="m-tx-status m-status-ok">Confere</span>
                 </div>
               </div>
@@ -1070,8 +1114,8 @@
                   <div class="m-tx-date">18/02</div>
                 </div>
                 <div class="m-tx-values">
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$250,00</span></div>
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$250,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$ 250,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$ 250,00</span></div>
                   <span class="m-tx-status m-status-ok">Confere</span>
                 </div>
               </div>
@@ -1085,8 +1129,8 @@
                   <div class="m-tx-date">20/02</div>
                 </div>
                 <div class="m-tx-values">
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$22,00</span></div>
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$22,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$ 22,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$ 22,00</span></div>
                   <span class="m-tx-status m-status-ok">Confere</span>
                 </div>
               </div>
@@ -1100,9 +1144,9 @@
                   <div class="m-tx-date">22/02</div>
                 </div>
                 <div class="m-tx-values">
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$32,00</span></div>
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$38,00</span></div>
-                  <span class="m-tx-status m-status-div">+R$6,00</span>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$ 32,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$ 38,00</span></div>
+                  <span class="m-tx-status m-status-div">+R$ 6,00</span>
                 </div>
               </div>
 
@@ -1115,8 +1159,8 @@
                   <div class="m-tx-date">25/02</div>
                 </div>
                 <div class="m-tx-values">
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$45,00</span></div>
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$45,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$ 45,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$ 45,00</span></div>
                   <span class="m-tx-status m-status-ok">Confere</span>
                 </div>
               </div>
@@ -1131,7 +1175,7 @@
                 </div>
                 <div class="m-tx-values">
                   <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">—</span></div>
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$67,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">R$ 67,00</span></div>
                   <span class="m-tx-status m-status-miss">Registrar</span>
                 </div>
               </div>
@@ -1145,7 +1189,7 @@
                   <div class="m-tx-date">01/03</div>
                 </div>
                 <div class="m-tx-values">
-                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$15,00</span></div>
+                  <div class="m-tx-val-group"><span class="m-tx-val-label">App</span><span class="m-tx-val">R$ 15,00</span></div>
                   <div class="m-tx-val-group"><span class="m-tx-val-label">Fatura</span><span class="m-tx-val">—</span></div>
                   <span class="m-tx-status m-status-extra">Mover ciclo</span>
                 </div>
@@ -1160,16 +1204,35 @@
             <div class="m-footer-content">
               <div class="m-footer-diff">
                 <span class="m-footer-diff-label">Diferença restante</span>
-                <span class="m-footer-diff-value">R$150,00</span>
+                <span class="m-footer-diff-value">R$ 150,00</span>
               </div>
-              <button class="m-btn-confirm" disabled>Confirmar R$4.350,00</button>
+              <button class="m-btn-confirm" disabled>Confirmar R$ 4.350,00</button>
             </div>
-            <div class="m-bottom-nav">
-              <a class="m-nav-item" href="#"><span class="m-nav-icon">&#x1F3E0;</span>Início</a>
-              <a class="m-nav-item" href="#"><span class="m-nav-icon">&#x1F4B3;</span>Cartões</a>
-              <a class="m-nav-item active" href="#"><span class="m-nav-icon">&#x1F4CB;</span>Faturas</a>
-              <a class="m-nav-item" href="#"><span class="m-nav-icon">&#x2705;</span>Checklist</a>
-              <a class="m-nav-item" href="#"><span class="m-nav-icon">&#x2699;</span>Ajustes</a>
+            <div class="bottom-nav" style="position:relative;">
+              <a class="bottom-nav-item">
+                <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
+                <span>Dashboard</span>
+              </a>
+              <a class="bottom-nav-item active">
+                <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
+                <span>Cartões</span>
+              </a>
+              <a class="bottom-nav-fab">
+                <span class="bottom-nav-fab-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>
+                <span class="bottom-nav-fab-label">Registrar</span>
+              </a>
+              <a class="bottom-nav-item">
+                <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span>
+                <span>Checklist</span>
+              </a>
+              <a class="bottom-nav-item">
+                <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>
+                <span>Projeção</span>
+              </a>
+              <a class="bottom-nav-item">
+                <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg></span>
+                <span>Sair</span>
+              </a>
             </div>
           </div>
         </div>
@@ -1182,13 +1245,13 @@
     <div class="footer-left">
       <div class="diff-counter">
         <span class="diff-label">Diferença restante:</span>
-        <span class="diff-value critical" id="footerDiffValue">R$150,00</span>
+        <span class="diff-value critical" id="footerDiffValue">R$ 150,00</span>
       </div>
       <span class="progress-counter" id="progressCounter"><strong>7</strong> de <strong>9</strong> transações conferidas</span>
       <span class="balanced-msg" id="balancedMsg">Fatura equilibrada!</span>
     </div>
     <div class="footer-right">
-      <button class="btn-confirm" id="btnConfirm" disabled>Confirmar Fatura R$4.350,00</button>
+      <button class="btn-confirm" id="btnConfirm" disabled>Confirmar Fatura R$ 4.350,00</button>
       <span class="confirm-note">Ao confirmar, a fatura será adicionada como conta a pagar no Checklist (vence 15/03)</span>
     </div>
   </div>
@@ -1210,14 +1273,14 @@
       { id: 9, date: '01/03', desc: 'Padaria', cat: 'Alimentação', appVal: 1500, fatVal: 0, status: 'extra', checked: false },
     ];
 
-    const ESTIMATE = 420000; // R$4.200,00 in cents
-    let faturaReal = 435000;  // R$4.350,00 in cents
+    const ESTIMATE = 420000; // R$ 4.200,00 in cents
+    let faturaReal = 435000;  // R$ 4.350,00 in cents
 
     // ── Helpers ──
     function formatBRL(cents) {
       const abs = Math.abs(cents);
       const str = (abs / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      return (cents < 0 ? '-' : '') + 'R$' + str;
+      return (cents < 0 ? '-' : '') + 'R$ ' + str;
     }
 
     function formatBRLShort(cents) {

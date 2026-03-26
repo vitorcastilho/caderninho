@@ -4,17 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Categorias — Protótipo UX v2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #fafafa;
-      --card-bg: #ffffff;
-      --border: #e5e5e5;
-      --text: #1a1a1a;
-      --text-secondary: #737373;
-      --text-muted: #a3a3a3;
-      --primary: #6d28d9;
-      --primary-light: #f3e8ff;
-      --primary-hover: #7c3aed;
+      --bg: #FAFAF9;
+      --card-bg: #FFFFFF;
+      --border: #E7E5E4;
+      --text: #1C1917;
+      --text-secondary: #78716C;
+      --text-muted: #A8A29E;
+      --primary: #4F46E5;
+      --primary-light: #EEF2FF;
+      --primary-hover: #4338CA;
       --destructive: #dc2626;
       --destructive-light: #fef2f2;
       --success: #16a34a;
@@ -29,7 +32,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.5;
@@ -144,7 +147,7 @@
       user-select: none;
     }
     .classification-header:hover {
-      background: #fafafa;
+      background: var(--bg);
     }
     .chevron {
       color: var(--text-muted);
@@ -166,7 +169,7 @@
     .classification-badge {
       font-size: 11px;
       color: var(--text-muted);
-      background: #f5f5f5;
+      background: #F5F5F4;
       padding: 2px 8px;
       border-radius: 10px;
     }
@@ -206,13 +209,13 @@
       color: var(--primary);
       padding: 5px 10px;
     }
-    .btn-secondary:hover { background: #ede0ff; }
+    .btn-secondary:hover { background: #E0E7FF; }
     .btn-ghost {
       background: none;
       color: var(--text-secondary);
       padding: 5px 8px;
     }
-    .btn-ghost:hover { background: #f5f5f5; color: var(--text); }
+    .btn-ghost:hover { background: #F5F5F4; color: var(--text); }
     .btn-destructive-ghost {
       background: none;
       color: var(--text-muted);
@@ -231,7 +234,7 @@
       cursor: pointer;
       font-size: 16px;
     }
-    .btn-icon:hover { background: #f5f5f5; color: var(--text-secondary); }
+    .btn-icon:hover { background: #F5F5F4; color: var(--text-secondary); }
 
     /* ========== CLASSIFICATION BODY ========== */
     .classification-body {
@@ -275,7 +278,7 @@
       padding: 10px 12px;
     }
     .category-row:hover {
-      background: #fafafa;
+      background: var(--bg);
     }
     .category-name {
       font-size: 13px;
@@ -294,7 +297,7 @@
       font-size: 12px;
       color: var(--text-secondary);
       font-variant-numeric: tabular-nums;
-      background: #f5f5f5;
+      background: #F5F5F4;
       padding: 2px 8px;
       border-radius: 4px;
     }
@@ -308,13 +311,13 @@
     /* ========== SUBCATEGORY ========== */
     .subcategories {
       padding: 0 12px 8px 28px;
-      border-top: 1px solid #f5f5f5;
+      border-top: 1px solid #F5F5F4;
     }
     .subcategory-row {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 5px 0;
+      gap: 8px;
+      padding: 4px 0;
     }
     .subcategory-dot {
       width: 4px;
@@ -402,7 +405,7 @@
       text-align: left;
       white-space: nowrap;
     }
-    .menu-item:hover { background: #f5f5f5; }
+    .menu-item:hover { background: #F5F5F4; }
     .menu-item.destructive { color: var(--destructive); }
     .menu-item.destructive:hover { background: var(--destructive-light); }
     .menu-separator {
@@ -915,7 +918,7 @@
         <div class="classification-actions">
           <button class="btn btn-secondary">+ Categoria</button>
           <div style="position: relative;">
-            <button class="btn-icon" style="background: #f5f5f5;">⚙</button>
+            <button class="btn-icon" style="background: #F5F5F4;">⚙</button>
             <!-- Menu dropdown aberto -->
             <div class="menu-dropdown">
               <button class="menu-item">Renomear</button>

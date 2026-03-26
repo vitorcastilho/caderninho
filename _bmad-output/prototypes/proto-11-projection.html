@@ -26,7 +26,12 @@
     --critical: #DC2626;
     --critical-bg: #FEE2E2;
     --critical-text: #991B1B;
-    --sidebar-width: 240px;
+    --sidebar-width: 220px;
+    --primary-fg: #FFFFFF;
+    --radius-button: 8px;
+    --radius-card: 12px;
+    --border-hover: #D6D3D1;
+    --primary-light: #EEF2FF;
     --radius-sm: 6px;
     --radius-md: 10px;
     --radius-lg: 14px;
@@ -43,129 +48,37 @@
 
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-variant-numeric: tabular-nums;
     background: var(--bg);
     color: var(--text-primary);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
 
+  /* ── Tabular Nums ── */
+  .item-value, .margin-value, .cut-item-saving, .cut-total-value, .mobile-margin-badge span { font-variant-numeric: tabular-nums; }
+
   /* ── SIDEBAR ── */
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: var(--sidebar-width);
-    height: 100vh;
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    z-index: 100;
-  }
-
-  .sidebar-logo {
-    padding: 20px 20px 16px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .sidebar-logo h1 {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: -0.3px;
-  }
-
-  .sidebar-logo span {
-    font-size: 12px;
-    color: var(--text-tertiary);
-    font-weight: 400;
-  }
-
-  .sidebar-nav {
-    flex: 1;
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .nav-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border-radius: var(--radius-sm);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: all 0.15s ease;
-    text-decoration: none;
-  }
-
-  .nav-item:hover {
-    background: var(--bg);
-    color: var(--text-primary);
-  }
-
-  .nav-item.active {
-    background: var(--primary-light);
-    color: var(--primary);
-    font-weight: 600;
-  }
-
-  .nav-icon {
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    flex-shrink: 0;
-  }
-
-  .sidebar-footer {
-    padding: 16px;
-    border-top: 1px solid var(--border);
-  }
-
-  .user-pill {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px;
-    border-radius: var(--radius-sm);
-  }
-
-  .user-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: var(--primary-light);
-    color: var(--primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 600;
-  }
-
-  .user-info {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .user-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-
-  .user-email {
-    font-size: 11px;
-    color: var(--text-tertiary);
-  }
+  .sidebar { width: 220px; height: 100%; min-height: 820px; position: fixed; top: 0; left: 0; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 40; flex-shrink: 0; }
+  .sidebar-logo { display: flex; align-items: center; padding: 20px 16px 16px; gap: 8px; }
+  .sidebar-logo-icon { color: var(--primary); display: flex; align-items: center; }
+  .sidebar-logo-text { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: var(--primary); }
+  .sidebar-separator { height: 1px; background: var(--border); margin: 4px 16px; }
+  .sidebar-nav { flex: 1; overflow-y: auto; }
+  .sidebar-section-label { padding: 16px 16px 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); }
+  .sidebar-items { list-style: none; margin: 0; padding: 0 8px; display: flex; flex-direction: column; gap: 2px; }
+  .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: all 150ms; cursor: pointer; }
+  .sidebar-item:hover { background: var(--bg); color: var(--text-primary); }
+  .sidebar-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+  .sidebar-icon { width: 18px; height: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .sidebar-icon svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding: 12px; }
+  .sidebar-user { display: flex; align-items: center; gap: 10px; }
+  .sidebar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+  .sidebar-user-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .sidebar-user-role { font-size: 11px; color: var(--text-tertiary); }
+  .sidebar-logout { display: flex; align-items: center; gap: 10px; margin-top: 0; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 150ms; border: none; background: none; width: 100%; }
+  .sidebar-logout:hover { background: var(--bg); color: var(--text-primary); }
+  .sidebar-logout svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
   /* ── MAIN ── */
   .main-content {
@@ -215,7 +128,7 @@
   }
 
   .range-btn {
-    padding: 6px 14px;
+    padding: 8px 16px;
     font-size: 13px;
     font-weight: 500;
     color: var(--text-secondary);
@@ -247,7 +160,7 @@
     gap: 20px;
     align-items: center;
     margin-bottom: 16px;
-    padding: 10px 14px;
+    padding: 12px 16px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
@@ -259,7 +172,7 @@
   .legend-item {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
 
   .legend-swatch {
@@ -393,7 +306,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     min-height: 120px;
   }
 
@@ -423,7 +336,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 6px;
+    gap: 8px;
   }
 
   .item-card.fixed {
@@ -610,7 +523,7 @@
     border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
   }
 
   .form-group {
@@ -707,7 +620,7 @@
   .cut-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
   }
 
   .cut-item {
@@ -870,7 +783,7 @@
 
   .mobile-range-btn {
     flex: 1;
-    padding: 6px 8px;
+    padding: 8px 8px;
     font-size: 12px;
     font-weight: 500;
     color: var(--text-secondary);
@@ -967,7 +880,7 @@
   }
 
   .mobile-month-footer {
-    padding: 6px 8px;
+    padding: 8px 8px;
     border-top: 1px solid var(--border);
   }
 
@@ -1091,41 +1004,15 @@
   }
 
   /* ── BOTTOM NAV ── */
-  .bottom-nav {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 72px;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    padding: 0 8px;
-    padding-bottom: 8px;
-  }
-
-  .bottom-nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    font-size: 10px;
-    font-weight: 500;
-    color: var(--text-tertiary);
-    cursor: pointer;
-    padding: 4px 8px;
-  }
-
-  .bottom-nav-item.active {
-    color: var(--primary);
-    font-weight: 600;
-  }
-
-  .bottom-nav-icon {
-    font-size: 20px;
-  }
+  .bottom-nav { position: relative; height: 56px; background: var(--surface); border-top: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-around; z-index: 50; }
+  .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px 0; min-height: 44px; color: var(--text-tertiary); text-decoration: none; font-size: 10px; font-weight: 500; cursor: pointer; }
+  .bottom-nav-item.active { color: var(--primary); }
+  .bottom-nav-icon { width: 20px; height: 20px; }
+  .bottom-nav-icon svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .bottom-nav-fab { display: flex; flex-direction: column; align-items: center; text-decoration: none; margin-top: -16px; }
+  .bottom-nav-fab-icon { width: 48px; height: 48px; background: var(--primary); color: #FFFFFF; border-radius: 50%; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; }
+  .bottom-nav-fab-icon svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .bottom-nav-fab-label { margin-top: 2px; font-size: 10px; font-weight: 500; color: var(--text-tertiary); }
 
   /* ── DIVIDER ── */
   .section-divider {
@@ -1154,40 +1041,68 @@
 <!-- ════ SIDEBAR ════ -->
 <aside class="sidebar">
   <div class="sidebar-logo">
-    <h1>Caderninho</h1>
-    <span>Finanças pessoais</span>
+    <span class="sidebar-logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/><path d="M8 11h8"/><path d="M8 7h6"/></svg></span>
+    <span class="sidebar-logo-text">Caderninho</span>
   </div>
+  <div class="sidebar-separator"></div>
   <nav class="sidebar-nav">
-    <a class="nav-item" href="#">
-      <span class="nav-icon">&#9633;</span> Dashboard
-    </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">&#8644;</span> Transações
-    </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">&#9041;</span> Cartões
-    </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">&#9783;</span> Categorias
-    </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">&#128200;</span> Relatórios
-    </a>
-    <a class="nav-item active" href="#">
-      <span class="nav-icon">&#128197;</span> Projeção
-    </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">&#9881;</span> Ajustes
-    </a>
+    <div class="sidebar-section-label">Navegação</div>
+    <ul class="sidebar-items">
+      <li class="sidebar-item">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
+        Dashboard
+      </li>
+      <li class="sidebar-item">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"/><path d="M16 10h.01"/><path d="M2 8v1a2 2 0 0 0 2 2h1"/></svg></span>
+        Orçamentos
+      </li>
+      <li class="sidebar-item">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span>
+        Checklist
+      </li>
+      <li class="sidebar-item active">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>
+        Projeção
+      </li>
+    </ul>
+    <div class="sidebar-separator"></div>
+    <div class="sidebar-section-label">Configurações</div>
+    <ul class="sidebar-items">
+      <li class="sidebar-item">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M10 12h4"/><path d="M10 8h4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/></svg></span>
+        Contas
+      </li>
+      <li class="sidebar-item">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
+        Cartões
+      </li>
+      <li class="sidebar-item">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M10 18v-7"/><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></svg></span>
+        Investimentos
+      </li>
+      <li class="sidebar-item">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>
+        Receitas
+      </li>
+      <li class="sidebar-item">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z"/><path d="M2 7v6.172a2 2 0 0 0 .586 1.414l6.71 6.71a2.4 2.4 0 0 0 3.191.193"/><circle cx="10.5" cy="6.5" r=".5" fill="currentColor"/></svg></span>
+        Categorias
+      </li>
+    </ul>
   </nav>
   <div class="sidebar-footer">
-    <div class="user-pill">
-      <div class="user-avatar">VC</div>
-      <div class="user-info">
-        <div class="user-name">Vitor C.</div>
-        <div class="user-email">vitor@email.com</div>
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">V</div>
+      <div>
+        <div class="sidebar-user-name">Vitor</div>
+        <div class="sidebar-user-role">Administrador</div>
       </div>
     </div>
+    <div class="sidebar-separator"></div>
+    <button class="sidebar-logout">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+      Sair
+    </button>
   </div>
 </aside>
 
@@ -1252,7 +1167,7 @@
         </div>
         <div class="form-group">
           <label>Quanto custa?</label>
-          <input type="text" value="R$ 3.500" placeholder="R$ 0,00">
+          <input type="text" value="R$ 3.500,00" placeholder="R$ 0,00">
         </div>
         <div class="form-group">
           <label>Quando?</label>
@@ -1265,16 +1180,16 @@
       <div class="sim-result" id="simResult">
         <div class="result-verdict">&#10003; Viável com ajustes</div>
         <p class="result-instruction">
-          Economize <strong>R$ 945/mês</strong> nos próximos <strong>4 meses</strong> para alcançar sua meta de <strong>R$ 3.500</strong> em Junho 2026.
+          Economize <strong>R$ 945,00/mês</strong> nos próximos <strong>4 meses</strong> para alcançar sua meta de <strong>R$ 3.500,00</strong> em Junho 2026.
         </p>
         <div class="cut-section-title">De onde cortar:</div>
         <div class="cut-list">
           <div class="cut-item">
             <div class="cut-item-header">
               <span class="cut-item-name">Restaurante</span>
-              <span class="cut-item-saving">-R$ 750/mês</span>
+              <span class="cut-item-saving">-R$ 750,00/mês</span>
             </div>
-            <div class="cut-item-detail">Atual R$ 2.500 → reduzir 30%</div>
+            <div class="cut-item-detail">Atual R$ 2.500,00 → reduzir 30,00%</div>
             <div class="cut-bar-track">
               <div class="cut-bar-fill restaurante"></div>
             </div>
@@ -1282,9 +1197,9 @@
           <div class="cut-item">
             <div class="cut-item-header">
               <span class="cut-item-name">Delivery</span>
-              <span class="cut-item-saving">-R$ 180/mês</span>
+              <span class="cut-item-saving">-R$ 180,00/mês</span>
             </div>
-            <div class="cut-item-detail">Atual R$ 900 → reduzir 20%</div>
+            <div class="cut-item-detail">Atual R$ 900,00 → reduzir 20,00%</div>
             <div class="cut-bar-track">
               <div class="cut-bar-fill delivery"></div>
             </div>
@@ -1292,9 +1207,9 @@
           <div class="cut-item">
             <div class="cut-item-header">
               <span class="cut-item-name">Compras pessoais</span>
-              <span class="cut-item-saving">-R$ 75/mês</span>
+              <span class="cut-item-saving">-R$ 75,00/mês</span>
             </div>
-            <div class="cut-item-detail">Atual R$ 500 → reduzir 15%</div>
+            <div class="cut-item-detail">Atual R$ 500,00 → reduzir 15,00%</div>
             <div class="cut-bar-track">
               <div class="cut-bar-fill pessoais"></div>
             </div>
@@ -1302,9 +1217,9 @@
         </div>
         <div class="cut-total">
           <span class="cut-total-label">Total possível</span>
-          <span class="cut-total-value">R$ 1.005/mês</span>
+          <span class="cut-total-value">R$ 1.005,00/mês</span>
         </div>
-        <div class="cut-total-note">R$ 60 acima do necessário — folga para imprevistos</div>
+        <div class="cut-total-note">R$ 60,00 acima do necessário — folga para imprevistos</div>
       </div>
     </div>
   </div>
@@ -1343,21 +1258,21 @@
               <div class="mobile-month-body">
                 <div class="mobile-item fixed">
                   <span class="item-name">Escola</span>
-                  <span class="item-value">R$2.800</span>
+                  <span class="item-value">R$ 2.800,00</span>
                 </div>
                 <div class="mobile-item fixed">
                   <span class="item-name">Aluguel</span>
-                  <span class="item-value">R$1.800</span>
+                  <span class="item-value">R$ 1.800,00</span>
                 </div>
                 <div class="mobile-item fixed">
                   <span class="item-name">Supermercado</span>
-                  <span class="item-value">~R$3.000</span>
+                  <span class="item-value">~R$ 3.000,00</span>
                 </div>
               </div>
               <div class="mobile-month-footer">
                 <div class="mobile-margin-badge positive">
                   <span>Margem</span>
-                  <span>R$750</span>
+                  <span>R$ 750,00</span>
                 </div>
               </div>
             </div>
@@ -1370,21 +1285,21 @@
               <div class="mobile-month-body">
                 <div class="mobile-item fixed">
                   <span class="item-name">Escola</span>
-                  <span class="item-value">R$2.800</span>
+                  <span class="item-value">R$ 2.800,00</span>
                 </div>
                 <div class="mobile-item fixed">
                   <span class="item-name">Aluguel</span>
-                  <span class="item-value">R$1.800</span>
+                  <span class="item-value">R$ 1.800,00</span>
                 </div>
                 <div class="mobile-item fixed">
                   <span class="item-name">Fotos 9/10</span>
-                  <span class="item-value">R$171</span>
+                  <span class="item-value">R$ 171,00</span>
                 </div>
               </div>
               <div class="mobile-month-footer">
                 <div class="mobile-margin-badge positive">
                   <span>Margem</span>
-                  <span>R$920</span>
+                  <span>R$ 920,00</span>
                 </div>
               </div>
             </div>
@@ -1397,21 +1312,21 @@
               <div class="mobile-month-body">
                 <div class="mobile-item fixed">
                   <span class="item-name">Escola</span>
-                  <span class="item-value">R$2.800</span>
+                  <span class="item-value">R$ 2.800,00</span>
                 </div>
                 <div class="mobile-item draggable-item">
                   <span class="item-name">Seguro Carro</span>
-                  <span class="item-value">R$2.800</span>
+                  <span class="item-value">R$ 2.800,00</span>
                 </div>
                 <div class="mobile-item draggable-item">
                   <span class="item-name">Troca Óleo</span>
-                  <span class="item-value">R$500</span>
+                  <span class="item-value">R$ 500,00</span>
                 </div>
               </div>
               <div class="mobile-month-footer">
                 <div class="mobile-margin-badge negative">
                   <span>Margem</span>
-                  <span>-R$1.600</span>
+                  <span>-R$ 1.600,00</span>
                 </div>
               </div>
             </div>
@@ -1424,21 +1339,21 @@
               <div class="mobile-month-body">
                 <div class="mobile-item fixed">
                   <span class="item-name">Escola</span>
-                  <span class="item-value">R$2.800</span>
+                  <span class="item-value">R$ 2.800,00</span>
                 </div>
                 <div class="mobile-item draggable-item">
                   <span class="item-name">Rematrícula</span>
-                  <span class="item-value">R$1.200</span>
+                  <span class="item-value">R$ 1.200,00</span>
                 </div>
                 <div class="mobile-item draggable-item">
                   <span class="item-name">Mat. Escolar</span>
-                  <span class="item-value">R$1.500</span>
+                  <span class="item-value">R$ 1.500,00</span>
                 </div>
               </div>
               <div class="mobile-month-footer">
                 <div class="mobile-margin-badge negative">
                   <span>Margem</span>
-                  <span>-R$780</span>
+                  <span>-R$ 780,00</span>
                 </div>
               </div>
             </div>
@@ -1457,7 +1372,7 @@
             <div class="mobile-form-row">
               <div class="mobile-form-group">
                 <label>Quanto custa?</label>
-                <input type="text" value="R$ 3.500">
+                <input type="text" value="R$ 3.500,00">
               </div>
               <div class="mobile-form-group">
                 <label>Quando?</label>
@@ -1470,15 +1385,15 @@
             <div class="mobile-result-verdict">&#10003; Viável com ajustes</div>
             <div class="mobile-cut-item">
               <span class="mobile-cut-name">Restaurante -30%</span>
-              <span class="mobile-cut-saving">-R$750</span>
+              <span class="mobile-cut-saving">-R$ 750,00</span>
             </div>
             <div class="mobile-cut-item">
               <span class="mobile-cut-name">Delivery -20%</span>
-              <span class="mobile-cut-saving">-R$180</span>
+              <span class="mobile-cut-saving">-R$ 180,00</span>
             </div>
             <div class="mobile-cut-item">
               <span class="mobile-cut-name">Compras -15%</span>
-              <span class="mobile-cut-saving">-R$75</span>
+              <span class="mobile-cut-saving">-R$ 75,00</span>
             </div>
             <div style="padding: 6px 10px; background: var(--primary-light); border-radius: 4px; font-size: 12px; font-weight: 700; color: var(--primary); text-align: center; margin-top: 4px;">
               Total: R$ 1.005/mês
@@ -1490,26 +1405,30 @@
 
       <!-- Bottom Nav -->
       <div class="bottom-nav">
-        <div class="bottom-nav-item">
-          <span class="bottom-nav-icon">&#9633;</span>
-          <span>Início</span>
-        </div>
-        <div class="bottom-nav-item">
-          <span class="bottom-nav-icon">&#8644;</span>
-          <span>Transações</span>
-        </div>
-        <div class="bottom-nav-item active">
-          <span class="bottom-nav-icon">&#128197;</span>
+        <a class="bottom-nav-item">
+          <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
+          <span>Dashboard</span>
+        </a>
+        <a class="bottom-nav-item">
+          <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
+          <span>Cartões</span>
+        </a>
+        <a class="bottom-nav-fab">
+          <span class="bottom-nav-fab-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>
+          <span class="bottom-nav-fab-label">Registrar</span>
+        </a>
+        <a class="bottom-nav-item">
+          <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span>
+          <span>Checklist</span>
+        </a>
+        <a class="bottom-nav-item active">
+          <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>
           <span>Projeção</span>
-        </div>
-        <div class="bottom-nav-item">
-          <span class="bottom-nav-icon">&#128200;</span>
-          <span>Relatórios</span>
-        </div>
-        <div class="bottom-nav-item">
-          <span class="bottom-nav-icon">&#8943;</span>
-          <span>Mais</span>
-        </div>
+        </a>
+        <a class="bottom-nav-item">
+          <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg></span>
+          <span>Sair</span>
+        </a>
       </div>
     </div><!-- /phone-frame -->
   </div><!-- /mobile-section -->
@@ -1584,7 +1503,7 @@ function buildMonthsData(count) {
 
     // Freed badge for June (index 3)
     if (i === 3) {
-      data.freedBadge = 'Libera R$171/mês';
+      data.freedBadge = 'Libera R$ 171,00/mês';
     }
 
     // Calculate margins
@@ -1663,7 +1582,7 @@ function renderTimeline() {
         card.className = 'item-card fixed';
         card.innerHTML = `
           <span class="item-name">${item.name}</span>
-          <span class="item-value">R$${item.value.toLocaleString('pt-BR')}</span>
+          <span class="item-value">R$ ${item.value.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
         `;
         body.appendChild(card);
       });
@@ -1681,7 +1600,7 @@ function renderTimeline() {
         card.className = 'item-card variable';
         card.innerHTML = `
           <span class="item-name">${item.name}</span>
-          <span class="item-value">${item.approx ? '<span class="item-approx">~</span>' : ''}R$${item.value.toLocaleString('pt-BR')}</span>
+          <span class="item-value">${item.approx ? '<span class="item-approx">~</span>' : ''}R$ ${item.value.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
         `;
         body.appendChild(card);
       });
@@ -1700,7 +1619,7 @@ function renderTimeline() {
         card.innerHTML = `
           <span class="item-name">${item.name}</span>
           <span class="${item.isLast ? 'finished-tag' : 'installment-tag'}">${item.installment}</span>
-          <span class="item-value">R$${item.value}</span>
+          <span class="item-value">R$ ${item.value.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
         `;
         body.appendChild(card);
       });
@@ -1730,7 +1649,7 @@ function renderTimeline() {
         card.innerHTML = `
           <span class="drag-handle" title="Arraste para mover">&#8801;</span>
           <span class="item-name">${item.name}</span>
-          <span class="item-value">R$${item.value.toLocaleString('pt-BR')}</span>
+          <span class="item-value">R$ ${item.value.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
         `;
 
         card.addEventListener('dragstart', handleDragStart);
@@ -1751,7 +1670,7 @@ function renderTimeline() {
     footer.innerHTML = `
       <div class="margin-badge ${isPositive ? 'positive' : 'negative'}">
         <span class="margin-label">Margem</span>
-        <span class="margin-value">${isPositive ? '' : '-'}R$${marginAbs.toLocaleString('pt-BR')}</span>
+        <span class="margin-value">${isPositive ? '' : '-'}R$ ${marginAbs.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
       </div>
       ${extraText}
     `;

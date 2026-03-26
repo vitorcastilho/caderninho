@@ -66,7 +66,8 @@ development_status:
   # Epic 2.5: Design System, Component Library e Auditoria Visual
   epic-2-5: in-progress
   2-5-1-decisoes-de-produto-e-ajustes-de-modelo: done
-  2-5-2-reavaliacao-completa-dos-prototipos: backlog
+  2-5-2-reavaliacao-completa-dos-prototipos: review
+  2-5-2b-atualizacao-prototipos-modelo-v2: backlog
   2-5-3-unificacao-do-design-system: backlog
   2-5-4-auditoria-visual-exaustiva: backlog
   2-5-5-component-library-extracao-de-compostos: backlog

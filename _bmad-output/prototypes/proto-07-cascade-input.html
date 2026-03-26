@@ -20,6 +20,7 @@
       --primary: #4F46E5;
       --primary-hover: #4338CA;
       --primary-light: #EEF2FF;
+      --primary-fg: #FFFFFF;
       --positive: #22C55E;
       --positive-bg: #DCFCE7;
       --positive-text: #166534;
@@ -27,10 +28,11 @@
       --attention-bg: #FEF9C3;
       --critical: #DC2626;
       --critical-bg: #FEE2E2;
+      --radius-button: 8px;
       --radius-card: 12px;
       --radius-input: 8px;
       --radius-badge: 100px;
-      --radius-chip: 10px;
+      --radius-chip: 12px;
       --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
       --shadow-card-lg: 0 2px 6px rgba(0,0,0,.06), 0 8px 32px rgba(0,0,0,.06);
       --shadow-sheet: -4px 0 24px rgba(0,0,0,.12);
@@ -42,12 +44,24 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-variant-numeric: tabular-nums;
       background: var(--bg);
       color: var(--text-primary);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       line-height: 1.5;
+    }
+
+    /* ── Tabular nums (only for numeric values) ── */
+    .tabular-nums,
+    .valor-amount,
+    .valor-input-field,
+    .summary-amount,
+    .impact-value,
+    .budget-bar-values,
+    .budget-remaining,
+    .confirm-amount,
+    .installment-result-main {
+      font-variant-numeric: tabular-nums;
     }
 
     /* ── Page Header ── */
@@ -61,7 +75,7 @@
       font-size: 24px;
       font-weight: 700;
       color: var(--text-primary);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .page-header p {
       font-size: 15px;
@@ -200,7 +214,7 @@
       height: 4px;
       background: var(--border);
       border-radius: 2px;
-      margin: 10px auto 0;
+      margin: 12px auto 0;
     }
 
     .sheet-header {
@@ -340,7 +354,7 @@
       font-weight: 500;
       color: var(--primary);
       background: var(--primary-light);
-      padding: 2px 8px;
+      padding: 4px 8px;
       border-radius: var(--radius-badge);
       white-space: nowrap;
       overflow: hidden;
@@ -356,7 +370,7 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--text-tertiary);
-      padding: 14px 20px 8px;
+      padding: 16px 20px 8px;
     }
 
     /* ── Chips Grid ── */
@@ -371,7 +385,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 10px 12px;
+      padding: 12px;
       border-radius: var(--radius-chip);
       border: 1px solid var(--border);
       background: var(--surface);
@@ -446,7 +460,7 @@
     /* ── Payment Selector ── */
     .payment-selector {
       margin: 0 20px;
-      padding: 10px 14px;
+      padding: 12px 16px;
       border-radius: var(--radius-input);
       border: 1px solid var(--border);
       background: var(--surface);
@@ -467,21 +481,21 @@
     .payment-detail {
       font-size: 11px;
       color: var(--text-tertiary);
-      margin-top: 1px;
+      margin-top: 2px;
     }
 
     .payment-arrow {
-      font-size: 10px;
+      font-size: 12px;
       color: var(--text-tertiary);
     }
 
     /* ── Impact Preview ── */
     .impact-preview {
-      margin: 14px 20px;
-      padding: 12px 14px;
+      margin: 16px 20px;
+      padding: 12px 16px;
       border-radius: var(--radius-input);
       background: var(--bg);
-      border-left: 3px solid var(--primary);
+      border-left: 4px solid var(--primary);
     }
 
     .impact-row {
@@ -526,16 +540,16 @@
     }
 
     .budget-bar-track {
-      height: 6px;
+      height: 8px;
       background: var(--border);
-      border-radius: 3px;
+      border-radius: 4px;
       overflow: hidden;
       position: relative;
     }
 
     .budget-bar-fill {
       height: 100%;
-      border-radius: 3px;
+      border-radius: 4px;
       transition: width 800ms cubic-bezier(.4, 0, .2, 1);
     }
 
@@ -548,7 +562,7 @@
       justify-content: space-between;
       font-size: 10px;
       color: var(--text-tertiary);
-      margin-top: 3px;
+      margin-top: 4px;
     }
 
     .budget-remaining {
@@ -563,7 +577,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      margin: 14px 20px;
+      margin: 16px 20px;
       padding: 0;
       height: 48px;
       border-radius: var(--radius-chip);
@@ -701,11 +715,11 @@
     }
 
     .desktop-sheet .impact-preview {
-      margin: 14px 24px;
+      margin: 16px 24px;
     }
 
     .desktop-sheet .btn-confirm {
-      margin: 14px 24px;
+      margin: 16px 24px;
       width: calc(100% - 48px);
     }
 
@@ -715,7 +729,7 @@
 
     .valor-input-field {
       width: 100%;
-      padding: 12px 14px;
+      padding: 12px 16px;
       border-radius: var(--radius-input);
       border: 2px solid var(--primary);
       background: var(--surface);
@@ -724,7 +738,6 @@
       font-weight: 700;
       color: var(--text-primary);
       outline: none;
-      font-variant-numeric: tabular-nums;
     }
 
     .valor-input-prefix {
@@ -734,98 +747,64 @@
       margin-bottom: 4px;
     }
 
-    /* ── Installment Roller Picker (scroll-wheel style) ── */
+    /* ── Installment Pill Strip ── */
     .installment-section {
       padding: 0 20px;
     }
 
-    .installment-roller {
-      position: relative;
-      width: 100%;
+    .installment-strip {
+      display: flex;
+      align-items: center;
       height: 44px;
       border: 1px solid var(--border);
       border-radius: 12px;
-      overflow: hidden;
       background: var(--surface);
+      overflow: hidden;
     }
 
-    .roller-fade-left {
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 40px;
-      background: linear-gradient(to right, var(--surface), transparent);
-      z-index: 2;
-      pointer-events: none;
-    }
-
-    .roller-fade-right {
-      position: absolute;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      width: 40px;
-      background: linear-gradient(to left, var(--surface), transparent);
-      z-index: 2;
-      pointer-events: none;
-    }
-
-    .roller-highlight {
-      position: absolute;
-      left: 50%;
-      top: 4px;
-      bottom: 4px;
-      width: 48px;
-      transform: translateX(-50%);
-      background: var(--primary-light);
-      border-radius: 6px;
-      border: 1px solid var(--primary);
-      z-index: 1;
-      transition: none;
-    }
-
-    .roller-track {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+    .installment-item {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 16px;
-      z-index: 3;
-    }
-
-    .roller-item {
+      height: 100%;
       font-size: 13px;
+      font-weight: 500;
       color: var(--text-tertiary);
       cursor: pointer;
       transition: all 200ms ease;
       user-select: none;
       white-space: nowrap;
+      border: none;
+      background: none;
+      padding: 0 4px;
     }
 
-    .roller-item.far { opacity: 0.3; }
-    .roller-item.near { opacity: 0.5; }
-    .roller-item.selected {
-      font-size: 15px;
+    .installment-item:hover:not(.selected) {
+      color: var(--text-secondary);
+      background: var(--bg);
+    }
+
+    .installment-item.selected {
+      background: var(--primary);
+      color: #FFFFFF;
       font-weight: 600;
-      color: var(--primary);
-      opacity: 1;
+      font-size: 14px;
+      border-radius: 8px;
+      margin: 4px;
+      height: calc(100% - 8px);
+      flex: 1.1;
     }
 
     .installment-result {
       text-align: center;
-      padding: 10px 20px 0;
+      padding: 12px 20px 0;
     }
 
     .installment-result-main {
       font-size: 14px;
       font-weight: 600;
       color: var(--text-primary);
-      font-variant-numeric: tabular-nums;
     }
 
     .installment-result-sub {
@@ -839,7 +818,7 @@
       color: var(--primary);
       font-style: italic;
       font-weight: 500;
-      margin-top: 6px;
+      margin-top: 8px;
     }
 
     /* ── Divider ── */
@@ -856,19 +835,19 @@
       align-items: center;
       gap: 4px;
       padding: 4px 8px;
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     .step-dot {
-      width: 6px;
-      height: 6px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background: var(--border);
     }
 
     .step-dot.active {
-      width: 18px;
-      border-radius: 3px;
+      width: 20px;
+      border-radius: 4px;
       background: var(--primary);
     }
 
@@ -920,14 +899,14 @@
 
     .dash-card-placeholder {
       background: var(--surface);
-      border-radius: 10px;
+      border-radius: 12px;
       border: 1px solid var(--border);
       padding: 16px;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     .dash-card-placeholder .line {
-      height: 10px;
+      height: 12px;
       border-radius: 4px;
       background: var(--border);
       margin-bottom: 8px;
@@ -941,7 +920,7 @@
       justify-content: center;
       width: 26px;
       height: 16px;
-      border-radius: 3px;
+      border-radius: 4px;
       flex-shrink: 0;
       vertical-align: middle;
       margin-right: 4px;
@@ -1017,7 +996,7 @@
             <div class="sheet-handle"></div>
             <div class="sheet-header">
               <span class="sheet-title">Novo Gasto</span>
-              <button class="sheet-close" title="Fechar">✕</button>
+              <button class="sheet-close" title="Fechar">&#10005;</button>
             </div>
 
             <div class="valor-display" style="padding-top: 32px; padding-bottom: 24px;">
@@ -1045,7 +1024,7 @@
               <button class="key" data-val="7">7</button>
               <button class="key" data-val="8">8</button>
               <button class="key" data-val="9">9</button>
-              <button class="key" data-val=",">,</button>
+              <button class="key" style="visibility: hidden;"></button>
               <button class="key" data-val="0">0</button>
               <button class="key backspace" data-val="back">&#9003;</button>
             </div>
@@ -1068,7 +1047,7 @@
             <div class="sheet-handle"></div>
             <div class="sheet-header">
               <span class="sheet-title">Novo Gasto</span>
-              <button class="sheet-close" title="Fechar">✕</button>
+              <button class="sheet-close" title="Fechar">&#10005;</button>
             </div>
 
             <div class="summary-bar">
@@ -1109,11 +1088,11 @@
       </div>
     </div>
 
-    <!-- ──── STATE 3: Detalhes + Impacto ──── -->
+    <!-- ──── STATE 3a: Pagamento à Vista ──── -->
     <div class="phone-column">
       <div class="phone-label">
-        Estado 3: Detalhes + Impacto
-        <span>Estabelecimento, pagamento e prévia</span>
+        Estado 3a: Pagamento à Vista
+        <span>Estabelecimento, pagamento e prévia de impacto</span>
       </div>
       <div class="phone-frame">
         <div class="phone-notch"></div>
@@ -1123,7 +1102,7 @@
             <div class="sheet-handle"></div>
             <div class="sheet-header">
               <span class="sheet-title">Novo Gasto</span>
-              <button class="sheet-close" title="Fechar">✕</button>
+              <button class="sheet-close" title="Fechar">&#10005;</button>
             </div>
 
             <div class="summary-bar">
@@ -1160,9 +1139,9 @@
               <div class="impact-row">
                 <span class="impact-label">Limite Latam</span>
                 <span>
-                  <span class="impact-value">R$ 4.213</span>
+                  <span class="impact-value">R$ 4.213,00</span>
                   <span class="impact-arrow">&rarr;</span>
-                  <span class="impact-value">R$ 4.126</span>
+                  <span class="impact-value">R$ 4.126,00</span>
                 </span>
               </div>
               <div class="budget-bar-container">
@@ -1171,10 +1150,104 @@
                   <div class="budget-bar-fill ok animated-bar" style="width: 73.7%;"></div>
                 </div>
                 <div class="budget-bar-values">
-                  <span>R$ 2.122 / R$ 3.000</span>
-                  <span style="color: var(--attention);">Resta R$ 878</span>
+                  <span>R$ 2.122,00 / R$ 3.000,00</span>
+                  <span style="color: var(--attention);">Resta R$ 878,00</span>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──── STATE 3b: Parcelamento no Cartão ──── -->
+    <div class="phone-column">
+      <div class="phone-label">
+        Estado 3b: Parcelamento no Cartão
+        <span>Quando o usuário seleciona cartão de crédito, o roller de parcelas aparece</span>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="overlay"></div>
+          <div class="bottom-sheet" style="height: 590px;">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+              <span class="sheet-title">Novo Gasto</span>
+              <button class="sheet-close" title="Fechar">&#10005;</button>
+            </div>
+
+            <div class="bottom-sheet-scroll">
+              <div class="summary-bar">
+                <span class="summary-amount">R$ 87,00</span>
+                <span class="summary-sep">·</span>
+                <span class="summary-cat">&#x1F6D2; Supermercado</span>
+              </div>
+
+              <div class="step-indicator" style="justify-content: center; padding: 8px 0;">
+                <div class="step-dot done"></div>
+                <div class="step-dot done"></div>
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+              </div>
+
+              <div class="field-label">Onde?</div>
+              <div class="chips-row">
+                <div class="chip-sm selected">Pão de Açúcar</div>
+                <div class="chip-sm">Extra</div>
+                <div class="chip-sm">Assaí</div>
+              </div>
+
+              <div class="field-label">Pagamento</div>
+              <div class="chips-row" id="ccPaymentChips">
+                <div class="chip-sm selected"><span class="method-brand method-brand-master"></span>Nubank Master</div>
+                <div class="chip-sm"><span class="method-brand method-brand-visa">VISA</span>Latam Visa</div>
+                <div class="chip-sm"><span class="method-brand method-brand-visa">VISA</span>Itaú Débito</div>
+                <div class="chip-sm">PIX</div>
+              </div>
+
+              <div class="field-label">Parcelas</div>
+              <div class="installment-section">
+                <div class="installment-strip" id="installmentStrip">
+                  <button class="installment-item" data-parcelas="0" data-valor="87,00" data-meses="Mar 2026">À vista</button>
+                  <button class="installment-item" data-parcelas="1" data-valor="87,00" data-meses="Abr 2026">1x</button>
+                  <button class="installment-item selected" data-parcelas="2" data-valor="43,50" data-meses="Abr e Mai 2026">2x</button>
+                  <button class="installment-item" data-parcelas="3" data-valor="29,00" data-meses="Abr a Jun 2026">3x</button>
+                  <button class="installment-item" data-parcelas="4" data-valor="21,75" data-meses="Abr a Jul 2026">4x</button>
+                </div>
+              </div>
+              <div class="installment-result">
+                <div class="installment-result-main" id="installmentResultMain">2x de R$ 43,50</div>
+                <div class="installment-result-sub" id="installmentResultSub">Abr e Mai 2026</div>
+              </div>
+
+              <div class="impact-preview" style="margin-top: 12px;">
+                <div class="impact-row">
+                  <span class="impact-label">Limite Nubank</span>
+                  <span>
+                    <span class="impact-value">R$ 8.500,00</span>
+                    <span class="impact-arrow">&rarr;</span>
+                    <span class="impact-value">R$ 8.413,00</span>
+                  </span>
+                </div>
+                <div class="budget-bar-container">
+                  <div class="budget-bar-label">Supermercado</div>
+                  <div class="budget-bar-track">
+                    <div class="budget-bar-fill ok animated-bar" style="width: 70.4%;"></div>
+                  </div>
+                  <div class="budget-bar-values">
+                    <span>R$ 2.079,00 / R$ 3.000,00</span>
+                    <span style="color: var(--attention);">Resta R$ 921,00</span>
+                  </div>
+                </div>
+                <div class="installment-impact-note">
+                  Comprometimento total no cartão: R$ 87,00
+                </div>
+              </div>
+            </div>
+
+            <div class="bottom-sheet-footer">
+              <button class="btn-confirm" id="btnConfirmCC">&#10003; Confirmar 2x R$ 43,50</button>
             </div>
           </div>
         </div>
@@ -1195,7 +1268,7 @@
             <div class="sheet-handle"></div>
             <div class="sheet-header">
               <span class="sheet-title">Confirmar Gasto</span>
-              <button class="sheet-close" title="Fechar">✕</button>
+              <button class="sheet-close" title="Fechar">&#10005;</button>
             </div>
 
             <div class="step-indicator" style="justify-content: center; padding: 4px 0 8px;">
@@ -1217,9 +1290,9 @@
               <div class="impact-row">
                 <span class="impact-label">Limite Latam</span>
                 <span>
-                  <span class="impact-value">R$ 4.213</span>
+                  <span class="impact-value">R$ 4.213,00</span>
                   <span class="impact-arrow">&rarr;</span>
-                  <span class="impact-value">R$ 4.126</span>
+                  <span class="impact-value">R$ 4.126,00</span>
                 </span>
               </div>
               <div class="budget-bar-container">
@@ -1228,8 +1301,8 @@
                   <div class="budget-bar-fill ok animated-bar" style="width: 73.7%;"></div>
                 </div>
                 <div class="budget-bar-values">
-                  <span>R$ 2.122 / R$ 3.000</span>
-                  <span style="color: var(--attention);">Resta R$ 878</span>
+                  <span>R$ 2.122,00 / R$ 3.000,00</span>
+                  <span style="color: var(--attention);">Resta R$ 878,00</span>
                 </div>
               </div>
             </div>
@@ -1291,7 +1364,7 @@
       <div class="desktop-sheet">
         <div class="sheet-header" style="flex-shrink: 0;">
           <span class="sheet-title" style="font-size: 18px;">Novo Gasto</span>
-          <button class="sheet-close" title="Fechar">✕</button>
+          <button class="sheet-close" title="Fechar">&#10005;</button>
         </div>
 
         <div class="desktop-sheet-scroll">
@@ -1344,9 +1417,9 @@
             <div class="impact-row">
               <span class="impact-label">Limite Latam</span>
               <span>
-                <span class="impact-value">R$ 4.213</span>
+                <span class="impact-value">R$ 4.213,00</span>
                 <span class="impact-arrow">&rarr;</span>
-                <span class="impact-value">R$ 4.126</span>
+                <span class="impact-value">R$ 4.126,00</span>
               </span>
             </div>
             <div class="budget-bar-container">
@@ -1355,122 +1428,20 @@
                 <div class="budget-bar-fill ok animated-bar" style="width: 73.7%;"></div>
               </div>
               <div class="budget-bar-values">
-                <span>R$ 2.122 / R$ 3.000</span>
-                <span style="color: var(--attention);">Resta R$ 878</span>
+                <span>R$ 2.122,00 / R$ 3.000,00</span>
+                <span style="color: var(--attention);">Resta R$ 878,00</span>
               </div>
             </div>
           </div>
         </div>
 
         <div class="desktop-sheet-footer">
-          <button class="btn-confirm" id="btnConfirmDesktop">✓ Confirmar</button>
+          <button class="btn-confirm" id="btnConfirmDesktop">&#10003; Confirmar</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ════════════════════════════════════════════ -->
-  <!-- BONUS: CREDIT CARD VARIATION                 -->
-  <!-- ════════════════════════════════════════════ -->
-  <hr class="section-divider">
-
-  <div class="section-header">
-    <h2>Bonus — Variação Cartão de Crédito (Parcelamento)</h2>
-    <p>Roller picker horizontal de parcelas aparece ao selecionar pagamento com cartão</p>
-  </div>
-
-  <div class="phone-row">
-    <div class="phone-column">
-      <div class="phone-label">
-        Parcelamento
-        <span>Roller picker horizontal de parcelas</span>
-      </div>
-      <div class="phone-frame">
-        <div class="phone-notch"></div>
-        <div class="phone-screen">
-          <div class="overlay"></div>
-          <div class="bottom-sheet" style="height: 590px;">
-            <div class="sheet-handle"></div>
-            <div class="sheet-header">
-              <span class="sheet-title">Novo Gasto</span>
-              <button class="sheet-close" title="Fechar">✕</button>
-            </div>
-
-            <div class="bottom-sheet-scroll">
-              <div class="summary-bar">
-                <span class="summary-amount">R$ 87,00</span>
-                <span class="summary-sep">·</span>
-                <span class="summary-cat">&#x1F6D2; Supermercado</span>
-              </div>
-
-              <div class="field-label">Onde?</div>
-              <div class="chips-row">
-                <div class="chip-sm selected">Pão de Açúcar</div>
-                <div class="chip-sm">Extra</div>
-                <div class="chip-sm">Assaí</div>
-              </div>
-
-              <div class="field-label">Pagamento</div>
-              <div class="chips-row" id="ccPaymentChips">
-                <div class="chip-sm selected"><span class="method-brand method-brand-master"></span>Nubank Master</div>
-                <div class="chip-sm"><span class="method-brand method-brand-visa">VISA</span>Latam Visa</div>
-                <div class="chip-sm"><span class="method-brand method-brand-visa">VISA</span>Itaú Débito</div>
-                <div class="chip-sm">PIX</div>
-              </div>
-
-              <div class="field-label">Parcelas</div>
-              <div class="installment-section">
-                <div class="installment-roller">
-                  <div class="roller-fade-left"></div>
-                  <div class="roller-fade-right"></div>
-                  <div class="roller-highlight"></div>
-                  <div class="roller-track" id="installmentTrack">
-                    <span class="roller-item far" data-parcelas="0" data-valor="87,00" data-meses="Mar 2026">À vista</span>
-                    <span class="roller-item near" data-parcelas="1" data-valor="87,00" data-meses="Abr 2026">1x</span>
-                    <span class="roller-item selected" data-parcelas="2" data-valor="43,50" data-meses="Abr e Mai 2026">2x</span>
-                    <span class="roller-item near" data-parcelas="3" data-valor="29,00" data-meses="Abr a Jun 2026">3x</span>
-                    <span class="roller-item far" data-parcelas="4" data-valor="21,75" data-meses="Abr a Jul 2026">4x</span>
-                  </div>
-                </div>
-              </div>
-              <div class="installment-result">
-                <div class="installment-result-main" id="installmentResultMain">2x de R$ 43,50</div>
-                <div class="installment-result-sub" id="installmentResultSub">Abr e Mai 2026</div>
-              </div>
-
-              <div class="impact-preview" style="margin-top: 10px;">
-                <div class="impact-row">
-                  <span class="impact-label">Limite Nubank</span>
-                  <span>
-                    <span class="impact-value">R$ 8.500</span>
-                    <span class="impact-arrow">→</span>
-                    <span class="impact-value">R$ 8.413</span>
-                  </span>
-                </div>
-                <div class="budget-bar-container">
-                  <div class="budget-bar-label">Supermercado</div>
-                  <div class="budget-bar-track">
-                    <div class="budget-bar-fill ok animated-bar" style="width: 70.4%;"></div>
-                  </div>
-                  <div class="budget-bar-values">
-                    <span>R$ 2.079 / R$ 3.000</span>
-                    <span style="color: var(--attention);">Resta R$ 921</span>
-                  </div>
-                </div>
-                <div class="installment-impact-note">
-                  Comprometimento total no cartão: R$ 87,00
-                </div>
-              </div>
-            </div>
-
-            <div class="bottom-sheet-footer">
-              <button class="btn-confirm" id="btnConfirmCC">✓ Confirmar 2x R$ 43,50</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- ════════════════════════════════════════════ -->
   <!-- INTERACTIVE JAVASCRIPT                       -->
@@ -1501,31 +1472,22 @@
     setupChipSelection('desktopStoreChips', false);
 
     // ── Installment Roller Picker ──
-    const installmentTrack = document.getElementById('installmentTrack');
+    const installmentTrack = document.getElementById('installmentStrip');
     const resultMain = document.getElementById('installmentResultMain');
     const resultSub = document.getElementById('installmentResultSub');
     const btnConfirmCC = document.getElementById('btnConfirmCC');
 
-    if (installmentTrack) {
-      const rollerItems = installmentTrack.querySelectorAll('.roller-item');
-      rollerItems.forEach((item, idx) => {
-        item.addEventListener('click', () => {
-          // Clear all distance classes
-          rollerItems.forEach(i => i.classList.remove('selected', 'near', 'far'));
-          // Set selected
+    var installmentStrip = document.getElementById('installmentStrip');
+    if (installmentStrip) {
+      var items = installmentStrip.querySelectorAll('.installment-item');
+      items.forEach(function(item) {
+        item.addEventListener('click', function() {
+          items.forEach(function(i) { i.classList.remove('selected'); });
           item.classList.add('selected');
-          // Set near/far based on distance from selected
-          rollerItems.forEach((i, iIdx) => {
-            if (i === item) return;
-            const dist = Math.abs(iIdx - idx);
-            if (dist === 1) i.classList.add('near');
-            else i.classList.add('far');
-          });
-          // Update result text
-          const parcelas = item.dataset.parcelas;
-          const valor = item.dataset.valor;
-          const meses = item.dataset.meses;
-          const label = item.textContent.trim();
+          var parcelas = item.dataset.parcelas;
+          var valor = item.dataset.valor;
+          var meses = item.dataset.meses;
+          var label = item.textContent.trim();
           if (resultMain) {
             resultMain.textContent = label === 'À vista'
               ? 'R$ ' + valor + ' à vista'
@@ -1533,9 +1495,9 @@
           }
           if (resultSub) resultSub.textContent = meses;
           if (btnConfirmCC) {
-            btnConfirmCC.textContent = label === 'À vista'
-              ? '✓ Confirmar R$ 87,00 à vista'
-              : '✓ Confirmar ' + parcelas + 'x R$ ' + valor;
+            btnConfirmCC.innerHTML = label === 'À vista'
+              ? '&#10003; Confirmar R$ 87,00 à vista'
+              : '&#10003; Confirmar ' + parcelas + 'x R$ ' + valor;
           }
         });
       });
@@ -1550,7 +1512,7 @@
     let currentValue = '';
 
     if (keypad && displayEl) {
-      keypad.querySelectorAll('.key').forEach(key => {
+      keypad.querySelectorAll('.key[data-val]').forEach(key => {
         key.addEventListener('click', () => {
           const val = key.dataset.val;
           if (val === 'back') {
@@ -1573,41 +1535,45 @@
     }
 
     function formatCurrency(raw) {
-      // Simple display: just show what was typed
-      if (raw.includes(',')) {
-        return raw;
-      }
-      return raw;
+      // Bank-style: digits only, comma auto-positions
+      const num = parseInt(raw, 10);
+      if (isNaN(num)) return '0,00';
+      const str = String(num).padStart(3, '0');
+      const intPart = str.slice(0, -2);
+      const decPart = str.slice(-2);
+      // Add thousands separator
+      const formatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      return formatted + ',' + decPart;
     }
 
     // ── Confirm button feedback ──
     function setupConfirmButton(btnId, originalText) {
       const btn = document.getElementById(btnId);
       if (btn) {
-        const origText = originalText || btn.textContent;
+        const origText = originalText || btn.innerHTML;
         btn.addEventListener('click', () => {
           btn.style.background = '#22C55E';
-          btn.textContent = '✓ Registrado!';
+          btn.innerHTML = '&#10003; Registrado!';
           setTimeout(() => {
             btn.style.background = '';
-            btn.textContent = origText;
+            btn.innerHTML = origText;
           }, 2000);
         });
       }
     }
 
-    setupConfirmButton('btnConfirm', '✓ Confirmar');
-    setupConfirmButton('btnConfirmDesktop', '✓ Confirmar');
+    setupConfirmButton('btnConfirm', '&#10003; Confirmar');
+    setupConfirmButton('btnConfirmDesktop', '&#10003; Confirmar');
 
     // CC confirm button (special: updates text dynamically)
     if (btnConfirmCC) {
       btnConfirmCC.addEventListener('click', () => {
-        const origText = btnConfirmCC.textContent;
+        const origText = btnConfirmCC.innerHTML;
         btnConfirmCC.style.background = '#22C55E';
-        btnConfirmCC.textContent = '✓ Registrado!';
+        btnConfirmCC.innerHTML = '&#10003; Registrado!';
         setTimeout(() => {
           btnConfirmCC.style.background = '';
-          btnConfirmCC.textContent = origText;
+          btnConfirmCC.innerHTML = origText;
         }, 2000);
       });
     }

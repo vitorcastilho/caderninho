@@ -34,8 +34,7 @@
   }
 
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-variant-numeric: tabular-nums;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     background: var(--bg);
     color: var(--text-primary);
     line-height: 1.5;
@@ -58,7 +57,7 @@
   .page-header .subtitle {
     font-size: 16px;
     color: var(--text-secondary);
-    margin-top: 6px;
+    margin-top: 8px;
     font-weight: 400;
   }
 
@@ -274,7 +273,8 @@
     margin-top: 2px;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    font-variant-numeric: tabular-nums;
   }
 
   .mini-card .card-value .tap-hint {
@@ -366,8 +366,8 @@
   .breakdown-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
+    gap: 12px;
+    padding: 12px 12px;
     border: 1px solid var(--border);
     border-radius: 10px;
     margin-bottom: 6px;
@@ -427,6 +427,7 @@
     font-size: 13px;
     font-weight: 700;
     color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
   }
 
   .breakdown-item .item-pct {
@@ -485,7 +486,7 @@
   }
 
   .sub-item .sub-meta {
-    font-size: 9px;
+    font-size: 10px;
     color: var(--text-tertiary);
   }
 
@@ -497,6 +498,7 @@
   .sub-item .sub-amount {
     font-size: 12px;
     font-weight: 700;
+    font-variant-numeric: tabular-nums;
   }
 
   .sub-item .sub-pct {
@@ -633,6 +635,7 @@
     font-size: 24px;
     font-weight: 700;
     margin-top: 4px;
+    font-variant-numeric: tabular-nums;
   }
 
   .desktop-card .dc-change {
@@ -677,6 +680,7 @@
     font-size: 13px;
     position: relative;
     z-index: 2;
+    overflow: hidden;
   }
 
   .desktop-list-placeholder {
@@ -879,6 +883,7 @@
     font-weight: 700;
     color: var(--text-primary);
     flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
   }
 
   .tree-pct {
@@ -1029,30 +1034,30 @@
         <!-- Saldo -->
         <div class="mini-card">
           <div class="card-label">Saldo consolidado</div>
-          <div class="card-value" style="font-size:18px;">R$24.320</div>
-          <div class="card-change positive-change">+2,1% vs fev</div>
+          <div class="card-value" style="font-size:18px;">R$ 24.320,00</div>
+          <div class="card-change positive-change">+2,10% vs fev</div>
         </div>
 
         <!-- Receitas -->
         <div class="mini-card">
           <div class="card-label">Receitas do mes</div>
-          <div class="card-value" style="font-size:18px;">R$22.500 <span class="tap-hint">--></span></div>
+          <div class="card-value" style="font-size:18px;">R$ 22.500,00 <span class="tap-hint">--></span></div>
           <div class="card-change positive-change">Salario + freelance</div>
         </div>
 
         <!-- Gastos — HIGHLIGHTED -->
         <div class="mini-card highlighted" style="position:relative;">
           <div class="card-label">Gastos do mes</div>
-          <div class="card-value">R$15.880 <span class="tap-hint">--></span></div>
-          <div class="card-change negative">+8,3% vs fev</div>
+          <div class="card-value">R$ 15.880,00 <span class="tap-hint">--></span></div>
+          <div class="card-change negative">+8,30% vs fev</div>
           <span class="tap-finger" style="bottom:8px;right:40px;">👆</span>
         </div>
 
         <!-- Investimentos -->
         <div class="mini-card">
           <div class="card-label">Investimentos</div>
-          <div class="card-value" style="font-size:18px;">R$142.800 <span class="tap-hint">--></span></div>
-          <div class="card-change positive-change">+1,4% este mes</div>
+          <div class="card-value" style="font-size:18px;">R$ 142.800,00 <span class="tap-hint">--></span></div>
+          <div class="card-change positive-change">+1,40% este mes</div>
         </div>
 
         <!-- Mini chart -->
@@ -1089,7 +1094,7 @@
         </div>
 
         <div class="screen-title">Gastos de Marco</div>
-        <div class="screen-total">Total: R$15.880,00</div>
+        <div class="screen-total">Total: R$ 15.880,00</div>
 
         <!-- Stacked bar overview -->
         <div style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin-bottom:16px;">
@@ -1108,8 +1113,8 @@
             </div>
           </div>
           <div class="item-values">
-            <div class="item-amount">R$9.580</div>
-            <div class="item-pct">60%</div>
+            <div class="item-amount">R$ 9.580,00</div>
+            <div class="item-pct">60,00%</div>
           </div>
           <div class="item-arrow">--></div>
         </div>
@@ -1124,8 +1129,8 @@
             </div>
           </div>
           <div class="item-values">
-            <div class="item-amount">R$4.800</div>
-            <div class="item-pct">30%</div>
+            <div class="item-amount">R$ 4.800,00</div>
+            <div class="item-pct">30,00%</div>
           </div>
           <div class="item-arrow" style="color:var(--primary);font-weight:700;">--></div>
           <span class="tap-finger" style="bottom:-4px;right:4px;font-size:18px;">👆</span>
@@ -1141,8 +1146,8 @@
             </div>
           </div>
           <div class="item-values">
-            <div class="item-amount">R$1.500</div>
-            <div class="item-pct">10%</div>
+            <div class="item-amount">R$ 1.500,00</div>
+            <div class="item-pct">10,00%</div>
           </div>
           <div class="item-arrow">--></div>
         </div>
@@ -1151,9 +1156,9 @@
         <div style="margin-top:16px;padding:10px 12px;background:var(--bg);border-radius:8px;">
           <div style="font-size:10px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Distribuicao ideal</div>
           <div style="display:flex;gap:12px;font-size:11px;color:var(--text-secondary);">
-            <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--positive);margin-right:4px;"></span>50-60%</span>
-            <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--primary);margin-right:4px;"></span>20-30%</span>
-            <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--text-tertiary);margin-right:4px;"></span>10-20%</span>
+            <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--positive);margin-right:4px;"></span>50,00-60,00%</span>
+            <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--primary);margin-right:4px;"></span>20,00-30,00%</span>
+            <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--text-tertiary);margin-right:4px;"></span>10,00-20,00%</span>
           </div>
         </div>
       </div>
@@ -1182,7 +1187,7 @@
         </div>
 
         <div class="screen-title">Qualidade de Vida</div>
-        <div class="screen-total">Total: R$4.800,00 -- 30% dos gastos</div>
+        <div class="screen-total">Total: R$ 4.800,00 -- 30,00% dos gastos</div>
 
         <!-- Categories -->
         <div class="breakdown-item highlighted-item">
@@ -1194,8 +1199,8 @@
             </div>
           </div>
           <div class="item-values">
-            <div class="item-amount">R$1.800</div>
-            <div class="item-pct">37,5%</div>
+            <div class="item-amount">R$ 1.800,00</div>
+            <div class="item-pct">37,50%</div>
           </div>
           <div class="item-arrow" style="color:var(--primary);font-weight:700;">--></div>
           <span class="tap-finger" style="bottom:-4px;right:4px;font-size:18px;">👆</span>
@@ -1210,8 +1215,8 @@
             </div>
           </div>
           <div class="item-values">
-            <div class="item-amount">R$900</div>
-            <div class="item-pct">18,8%</div>
+            <div class="item-amount">R$ 900,00</div>
+            <div class="item-pct">18,80%</div>
           </div>
           <div class="item-arrow">--></div>
         </div>
@@ -1225,8 +1230,8 @@
             </div>
           </div>
           <div class="item-values">
-            <div class="item-amount">R$750</div>
-            <div class="item-pct">15,6%</div>
+            <div class="item-amount">R$ 750,00</div>
+            <div class="item-pct">15,60%</div>
           </div>
           <div class="item-arrow">--></div>
         </div>
@@ -1240,8 +1245,8 @@
             </div>
           </div>
           <div class="item-values">
-            <div class="item-amount">R$650</div>
-            <div class="item-pct">13,5%</div>
+            <div class="item-amount">R$ 650,00</div>
+            <div class="item-pct">13,50%</div>
           </div>
           <div class="item-arrow">--></div>
         </div>
@@ -1255,8 +1260,8 @@
             </div>
           </div>
           <div class="item-values">
-            <div class="item-amount">R$400</div>
-            <div class="item-pct">8,3%</div>
+            <div class="item-amount">R$ 400,00</div>
+            <div class="item-pct">8,30%</div>
           </div>
           <div class="item-arrow">--></div>
         </div>
@@ -1270,8 +1275,8 @@
             </div>
           </div>
           <div class="item-values">
-            <div class="item-amount">R$300</div>
-            <div class="item-pct">6,3%</div>
+            <div class="item-amount">R$ 300,00</div>
+            <div class="item-pct">6,30%</div>
           </div>
           <div class="item-arrow">--></div>
         </div>
@@ -1303,7 +1308,7 @@
         </div>
 
         <div class="screen-title">🍽 Restaurante</div>
-        <div class="screen-total">Total: R$1.800,00 -- 37,5% de Q. Vida</div>
+        <div class="screen-total">Total: R$ 1.800,00 -- 37,50% de Q. Vida</div>
 
         <!-- Subcategories -->
         <div class="sub-section-label">Subcategorias</div>
@@ -1317,8 +1322,8 @@
             </div>
           </div>
           <div class="item-values">
-            <div class="item-amount" style="font-size:12px;">R$720</div>
-            <div class="item-pct">40%</div>
+            <div class="item-amount" style="font-size:12px;">R$ 720,00</div>
+            <div class="item-pct">40,00%</div>
           </div>
           <div class="item-arrow" style="color:var(--primary);font-size:10px;">▼</div>
         </div>
@@ -1334,8 +1339,8 @@
               <div class="sub-meta">12 transacoes</div>
             </div>
             <div class="sub-values">
-              <div class="sub-amount" style="color:var(--text-primary);">R$480</div>
-              <div class="sub-pct">67%</div>
+              <div class="sub-amount" style="color:var(--text-primary);">R$ 480,00</div>
+              <div class="sub-pct">67,00%</div>
             </div>
           </div>
 
@@ -1346,8 +1351,8 @@
               <div class="sub-meta">4 transacoes</div>
             </div>
             <div class="sub-values">
-              <div class="sub-amount" style="color:var(--text-primary);">R$160</div>
-              <div class="sub-pct">22%</div>
+              <div class="sub-amount" style="color:var(--text-primary);">R$ 160,00</div>
+              <div class="sub-pct">22,00%</div>
             </div>
           </div>
 
@@ -1358,8 +1363,8 @@
               <div class="sub-meta">3 transacoes</div>
             </div>
             <div class="sub-values">
-              <div class="sub-amount" style="color:var(--text-primary);">R$80</div>
-              <div class="sub-pct">11%</div>
+              <div class="sub-amount" style="color:var(--text-primary);">R$ 80,00</div>
+              <div class="sub-pct">11,00%</div>
             </div>
           </div>
         </div>
@@ -1373,8 +1378,8 @@
             </div>
           </div>
           <div class="item-values">
-            <div class="item-amount" style="font-size:12px;">R$630</div>
-            <div class="item-pct">35%</div>
+            <div class="item-amount" style="font-size:12px;">R$ 630,00</div>
+            <div class="item-pct">35,00%</div>
           </div>
           <div class="item-arrow">▶</div>
         </div>
@@ -1388,8 +1393,8 @@
             </div>
           </div>
           <div class="item-values">
-            <div class="item-amount" style="font-size:12px;">R$450</div>
-            <div class="item-pct">25%</div>
+            <div class="item-amount" style="font-size:12px;">R$ 450,00</div>
+            <div class="item-pct">25,00%</div>
           </div>
           <div class="item-arrow">▶</div>
         </div>
@@ -1397,8 +1402,8 @@
         <!-- INSIGHT CALLOUT -->
         <div class="insight-callout">
           <div class="insight-title">💡 Insight</div>
-          <div class="insight-line"><strong>R$480/mes no McDonald's = R$5.760/ano</strong></div>
-          <div class="insight-line">12 visitas este mes -- media de R$40 por visita</div>
+          <div class="insight-line"><strong>R$ 480,00/mes no McDonald's = R$ 5.760,00/ano</strong></div>
+          <div class="insight-line">12 visitas este mes -- media de R$ 40,00 por visita</div>
         </div>
       </div>
     </div>
@@ -1427,23 +1432,52 @@
       <div class="desktop-cards">
         <div class="desktop-card">
           <div class="dc-label">Saldo</div>
-          <div class="dc-value">R$24.320</div>
-          <div class="dc-change" style="color:var(--positive-text);">+2,1%</div>
+          <div class="dc-value">R$ 24.320,00</div>
+          <div class="dc-change" style="color:var(--positive-text);">+2,10%</div>
         </div>
         <div class="desktop-card dc-highlighted">
           <div class="dc-label">Gastos do mes</div>
-          <div class="dc-value" style="color:var(--primary);">R$15.880</div>
-          <div class="dc-change" style="color:var(--critical);">+8,3% vs fev</div>
+          <div class="dc-value" style="color:var(--primary);">R$ 15.880,00</div>
+          <div class="dc-change" style="color:var(--critical);">+8,30% vs fev</div>
         </div>
         <div class="desktop-card">
           <div class="dc-label">Receitas</div>
-          <div class="dc-value">R$22.500</div>
+          <div class="dc-value">R$ 22.500,00</div>
           <div class="dc-change" style="color:var(--positive-text);">Salario + freelance</div>
         </div>
       </div>
 
-      <div class="desktop-chart-placeholder">
-        <span>Grafico de tendencia mensal</span>
+      <div class="desktop-chart-placeholder" style="flex-direction: column; align-items: stretch; padding: 16px 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Tendencia mensal</span>
+          <span style="font-size: 10px; color: var(--text-tertiary);">Ultimos 6 meses</span>
+        </div>
+        <div style="display: flex; align-items: flex-end; gap: 12px; flex: 1; padding-bottom: 4px;">
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div style="width:100%; height:65px; background:linear-gradient(180deg,#E0E7FF,#C7D2FE); border-radius:4px 4px 0 0;"></div>
+            <span style="font-size:9px; color:var(--text-tertiary);">Out</span>
+          </div>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div style="width:100%; height:80px; background:linear-gradient(180deg,#E0E7FF,#C7D2FE); border-radius:4px 4px 0 0;"></div>
+            <span style="font-size:9px; color:var(--text-tertiary);">Nov</span>
+          </div>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div style="width:100%; height:72px; background:linear-gradient(180deg,#E0E7FF,#C7D2FE); border-radius:4px 4px 0 0;"></div>
+            <span style="font-size:9px; color:var(--text-tertiary);">Dez</span>
+          </div>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div style="width:100%; height:90px; background:linear-gradient(180deg,#E0E7FF,#C7D2FE); border-radius:4px 4px 0 0;"></div>
+            <span style="font-size:9px; color:var(--text-tertiary);">Jan</span>
+          </div>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div style="width:100%; height:75px; background:linear-gradient(180deg,#E0E7FF,#C7D2FE); border-radius:4px 4px 0 0;"></div>
+            <span style="font-size:9px; color:var(--text-tertiary);">Fev</span>
+          </div>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div style="width:100%; height:100px; background:linear-gradient(180deg,#4F46E5,#6366F1); border-radius:4px 4px 0 0;"></div>
+            <span style="font-size:9px; color:var(--primary); font-weight:600;">Mar</span>
+          </div>
+        </div>
       </div>
 
       <div class="desktop-list-placeholder">
@@ -1454,7 +1488,7 @@
             <div class="dli-name">McDonald's</div>
             <div class="dli-cat">Fast Food -- Restaurante</div>
           </div>
-          <div class="dli-amount" style="color:var(--critical);">-R$42</div>
+          <div class="dli-amount" style="color:var(--critical);">-R$ 42,00</div>
         </div>
         <div class="desktop-list-item">
           <div class="dli-icon">🚗</div>
@@ -1462,7 +1496,7 @@
             <div class="dli-name">Uber</div>
             <div class="dli-cat">Transporte -- Q. Vida</div>
           </div>
-          <div class="dli-amount" style="color:var(--critical);">-R$28</div>
+          <div class="dli-amount" style="color:var(--critical);">-R$ 28,00</div>
         </div>
         <div class="desktop-list-item">
           <div class="dli-icon">☕</div>
@@ -1470,7 +1504,7 @@
             <div class="dli-name">Starbucks</div>
             <div class="dli-cat">Cafeteria -- Q. Vida</div>
           </div>
-          <div class="dli-amount" style="color:var(--critical);">-R$18</div>
+          <div class="dli-amount" style="color:var(--critical);">-R$ 18,00</div>
         </div>
         <div class="desktop-list-item">
           <div class="dli-icon">🏠</div>
@@ -1478,7 +1512,7 @@
             <div class="dli-name">Aluguel</div>
             <div class="dli-cat">Moradia -- Essencial</div>
           </div>
-          <div class="dli-amount" style="color:var(--critical);">-R$3.200</div>
+          <div class="dli-amount" style="color:var(--critical);">-R$ 3.200,00</div>
         </div>
       </div>
     </div>
@@ -1520,96 +1554,96 @@
   // ── Tree data model ──
   const treeData = {
     name: 'Gastos do Mes',
-    value: 'R$15.880',
+    value: 'R$ 15.880,00',
     pct: '',
     color: '#1C1917',
     expanded: true,
     children: [
       {
         name: 'Essencial',
-        value: 'R$9.580',
-        pct: '60%',
+        value: 'R$ 9.580,00',
+        pct: '60,00%',
         color: '#22C55E',
         expanded: false,
         children: [
-          { name: 'Moradia', value: 'R$3.200', pct: '33,4%', color: '#22C55E', children: [] },
-          { name: 'Alimentacao', value: 'R$2.400', pct: '25%', color: '#22C55E', children: [] },
-          { name: 'Saude', value: 'R$1.800', pct: '18,8%', color: '#22C55E', children: [] },
-          { name: 'Contas fixas', value: 'R$1.280', pct: '13,4%', color: '#22C55E', children: [] },
-          { name: 'Educacao', value: 'R$900', pct: '9,4%', color: '#22C55E', children: [] }
+          { name: 'Moradia', value: 'R$ 3.200,00', pct: '33,40%', color: '#22C55E', children: [] },
+          { name: 'Alimentacao', value: 'R$ 2.400,00', pct: '25,00%', color: '#22C55E', children: [] },
+          { name: 'Saude', value: 'R$ 1.800,00', pct: '18,80%', color: '#22C55E', children: [] },
+          { name: 'Contas fixas', value: 'R$ 1.280,00', pct: '13,40%', color: '#22C55E', children: [] },
+          { name: 'Educacao', value: 'R$ 900,00', pct: '9,40%', color: '#22C55E', children: [] }
         ]
       },
       {
         name: 'Qualidade de Vida',
-        value: 'R$4.800',
-        pct: '30%',
+        value: 'R$ 4.800,00',
+        pct: '30,00%',
         color: '#4F46E5',
         expanded: true,
         children: [
           {
             name: '🍽 Restaurante',
-            value: 'R$1.800',
-            pct: '37,5%',
+            value: 'R$ 1.800,00',
+            pct: '37,50%',
             color: '#4F46E5',
             expanded: true,
             children: [
               {
                 name: '🍔 Fast Food',
-                value: 'R$720',
-                pct: '40%',
+                value: 'R$ 720,00',
+                pct: '40,00%',
                 color: '#4F46E5',
                 expanded: true,
                 children: [
-                  { name: "McDonald's", value: 'R$480', pct: '67%', color: '#DC2626', meta: '12 transacoes', children: [] },
-                  { name: 'Burger King', value: 'R$160', pct: '22%', color: '#EAB308', meta: '4 transacoes', children: [] },
-                  { name: 'Subway', value: 'R$80', pct: '11%', color: '#22C55E', meta: '3 transacoes', children: [] }
+                  { name: "McDonald's", value: 'R$ 480,00', pct: '67,00%', color: '#DC2626', meta: '12 transacoes', children: [] },
+                  { name: 'Burger King', value: 'R$ 160,00', pct: '22,00%', color: '#EAB308', meta: '4 transacoes', children: [] },
+                  { name: 'Subway', value: 'R$ 80,00', pct: '11,00%', color: '#22C55E', meta: '3 transacoes', children: [] }
                 ]
               },
               {
                 name: '🛵 Delivery',
-                value: 'R$630',
-                pct: '35%',
+                value: 'R$ 630,00',
+                pct: '35,00%',
                 color: '#6366F1',
                 expanded: false,
                 children: [
-                  { name: 'iFood', value: 'R$380', pct: '60%', color: '#DC2626', meta: '8 pedidos', children: [] },
-                  { name: 'Rappi', value: 'R$250', pct: '40%', color: '#6366F1', meta: '5 pedidos', children: [] }
+                  { name: 'iFood', value: 'R$ 380,00', pct: '60,00%', color: '#DC2626', meta: '8 pedidos', children: [] },
+                  { name: 'Rappi', value: 'R$ 250,00', pct: '40,00%', color: '#6366F1', meta: '5 pedidos', children: [] }
                 ]
               },
               {
                 name: '🍷 Jantar fora',
-                value: 'R$450',
-                pct: '25%',
+                value: 'R$ 450,00',
+                pct: '25,00%',
                 color: '#8B5CF6',
                 expanded: false,
                 children: [
-                  { name: 'Outback', value: 'R$280', pct: '62%', color: '#8B5CF6', meta: '2 visitas', children: [] },
-                  { name: 'Cantina Italiana', value: 'R$170', pct: '38%', color: '#A78BFA', meta: '1 visita', children: [] }
+                  { name: 'Outback', value: 'R$ 280,00', pct: '62,00%', color: '#8B5CF6', meta: '2 visitas', children: [] },
+                  { name: 'Cantina Italiana', value: 'R$ 170,00', pct: '38,00%', color: '#A78BFA', meta: '1 visita', children: [] }
                 ]
               }
             ]
           },
-          { name: '🚗 Transporte', value: 'R$900', pct: '18,8%', color: '#6366F1', expanded: false, children: [
-            { name: 'Uber', value: 'R$520', pct: '58%', color: '#6366F1', meta: '14 corridas', children: [] },
-            { name: '99', value: 'R$280', pct: '31%', color: '#8B5CF6', meta: '8 corridas', children: [] },
-            { name: 'Combustivel', value: 'R$100', pct: '11%', color: '#A78BFA', meta: '2 abastecimentos', children: [] }
+          { name: '🚗 Transporte', value: 'R$ 900,00', pct: '18,80%', color: '#6366F1', expanded: false, children: [
+            { name: 'Uber', value: 'R$ 520,00', pct: '58,00%', color: '#6366F1', meta: '14 corridas', children: [] },
+            { name: '99', value: 'R$ 280,00', pct: '31,00%', color: '#8B5CF6', meta: '8 corridas', children: [] },
+            { name: 'Combustivel', value: 'R$ 100,00', pct: '11,00%', color: '#A78BFA', meta: '2 abastecimentos', children: [] }
           ]},
-          { name: '📦 Compras', value: 'R$750', pct: '15,6%', color: '#8B5CF6', expanded: false, children: [] },
-          { name: '🎉 Lazer', value: 'R$650', pct: '13,5%', color: '#A78BFA', expanded: false, children: [] },
-          { name: '☕ Cafeteria', value: 'R$400', pct: '8,3%', color: '#C4B5FD', expanded: false, children: [] },
-          { name: '🎬 Entretenimento', value: 'R$300', pct: '6,3%', color: '#DDD6FE', expanded: false, children: [] }
+          { name: '📦 Compras', value: 'R$ 750,00', pct: '15,60%', color: '#8B5CF6', expanded: false, children: [] },
+          { name: '🎉 Lazer', value: 'R$ 650,00', pct: '13,50%', color: '#A78BFA', expanded: false, children: [] },
+          { name: '☕ Cafeteria', value: 'R$ 400,00', pct: '8,30%', color: '#C4B5FD', expanded: false, children: [] },
+          { name: '🎬 Entretenimento', value: 'R$ 300,00', pct: '6,30%', color: '#DDD6FE', expanded: false, children: [] }
         ]
       },
       {
         name: 'Nao Essencial',
-        value: 'R$1.500',
-        pct: '10%',
+        value: 'R$ 1.500,00',
+        pct: '10,00%',
         color: '#A8A29E',
         expanded: false,
         children: [
-          { name: 'Compras impulsivas', value: 'R$800', pct: '53%', color: '#A8A29E', children: [] },
-          { name: 'Assinaturas', value: 'R$450', pct: '30%', color: '#A8A29E', children: [] },
-          { name: 'Outros', value: 'R$250', pct: '17%', color: '#A8A29E', children: [] }
+          { name: 'Compras impulsivas', value: 'R$ 800,00', pct: '53,00%', color: '#A8A29E', children: [] },
+          { name: 'Assinaturas', value: 'R$ 450,00', pct: '30,00%', color: '#A8A29E', children: [] },
+          { name: 'Outros', value: 'R$ 250,00', pct: '17,00%', color: '#A8A29E', children: [] }
         ]
       }
     ]
@@ -1727,9 +1761,9 @@
   insightDiv.className = 'panel-insight';
   insightDiv.innerHTML =
     '<div class="pi-title">💡 Insight automatico</div>' +
-    '<div class="pi-text"><strong>R$480/mes no McDonald\'s = R$5.760/ano</strong><br>' +
-    '12 visitas este mes -- media de R$40 por visita.<br>' +
-    'Representa 3% do total de gastos mensais.</div>';
+    '<div class="pi-text"><strong>R$ 480,00/mes no McDonald\'s = R$ 5.760,00/ano</strong><br>' +
+    '12 visitas este mes -- media de R$ 40,00 por visita.<br>' +
+    'Representa 3,00% do total de gastos mensais.</div>';
   container.appendChild(insightDiv);
 
 })();

@@ -20,11 +20,13 @@
       --primary: #4F46E5;
       --primary-hover: #4338CA;
       --primary-light: #EEF2FF;
+      --primary-fg: #FFFFFF;
       --positive: #22C55E;
       --positive-bg: #DCFCE7;
       --positive-text: #166534;
+      --radius-button: 8px;
       --radius-card: 12px;
-      --radius-input: 6px;
+      --radius-input: 8px;
       --radius-badge: 100px;
       --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
       --shadow-card-lg: 0 2px 6px rgba(0,0,0,.06), 0 8px 32px rgba(0,0,0,.06);
@@ -36,11 +38,20 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-variant-numeric: tabular-nums;
       background: var(--bg);
       color: var(--text-primary);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ── Tabular nums (only for numeric values) ── */
+    .tabular-nums,
+    .item-card-detail,
+    .category-budget-input,
+    .desktop-budget-input,
+    .summary-value,
+    .summary-total-value {
+      font-variant-numeric: tabular-nums;
     }
 
     /* ── Page Header ── */
@@ -54,7 +65,7 @@
       font-size: 24px;
       font-weight: 700;
       color: var(--text-primary);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .page-header p {
       font-size: 15px;
@@ -130,7 +141,7 @@
       height: 8px;
       background: #374151;
       border-radius: 50%;
-      top: 7px;
+      top: 8px;
       right: 24px;
     }
 
@@ -160,11 +171,11 @@
       display: flex;
       align-items: center;
       padding: 0 12px;
-      gap: 6px;
+      gap: 8px;
     }
     .desktop-toolbar-dot {
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background: var(--border-hover);
     }
@@ -211,7 +222,7 @@
       background: var(--primary);
       color: #FFFFFF;
       border: none;
-      border-radius: var(--radius-input);
+      border-radius: var(--radius-button);
       font-family: inherit;
       font-size: 14px;
       font-weight: 600;
@@ -232,7 +243,7 @@
       background: var(--primary-light);
       color: var(--primary);
       border: 1px solid transparent;
-      border-radius: var(--radius-input);
+      border-radius: var(--radius-button);
       font-family: inherit;
       font-size: 14px;
       font-weight: 600;
@@ -249,11 +260,11 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      padding: 10px 16px;
+      padding: 12px 16px;
       background: transparent;
       color: var(--text-secondary);
       border: none;
-      border-radius: var(--radius-input);
+      border-radius: var(--radius-button);
       font-family: inherit;
       font-size: 13px;
       font-weight: 500;
@@ -269,13 +280,13 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 8px;
       width: 100%;
-      padding: 10px 16px;
+      padding: 12px 16px;
       background: transparent;
       color: var(--primary);
       border: 1px dashed var(--primary);
-      border-radius: var(--radius-input);
+      border-radius: var(--radius-button);
       font-family: inherit;
       font-size: 13px;
       font-weight: 500;
@@ -300,7 +311,7 @@
     }
     .form-input {
       width: 100%;
-      padding: 9px 12px;
+      padding: 8px 12px;
       border: 1px solid var(--border);
       border-radius: var(--radius-input);
       font-family: inherit;
@@ -318,7 +329,7 @@
       color: var(--text-tertiary);
     }
     .form-input-sm {
-      padding: 7px 10px;
+      padding: 8px 12px;
       font-size: 13px;
     }
 
@@ -332,7 +343,7 @@
 
     .form-select {
       width: 100%;
-      padding: 7px 10px;
+      padding: 8px 12px;
       border: 1px solid var(--border);
       border-radius: var(--radius-input);
       font-family: inherit;
@@ -344,7 +355,7 @@
       appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2378716C' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 10px center;
+      background-position: right 12px center;
       padding-right: 28px;
       transition: border-color var(--transition);
     }
@@ -377,15 +388,20 @@
     .item-card {
       display: flex;
       align-items: center;
-      padding: 10px 12px;
+      padding: 12px;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: var(--radius-input);
-      gap: 10px;
+      gap: 12px;
       transition: border-color var(--transition);
     }
     .item-card:hover {
       border-color: var(--border-hover);
+      cursor: pointer;
+    }
+    .item-card.editing {
+      border-color: var(--primary);
+      background: var(--primary-light);
     }
     .item-card-icon {
       width: 32px;
@@ -475,7 +491,7 @@
     .item-card-detail {
       font-size: 11px;
       color: var(--text-secondary);
-      margin-top: 1px;
+      margin-top: 2px;
     }
     .item-card-actions {
       display: flex;
@@ -518,11 +534,11 @@
     .category-item {
       display: flex;
       flex-direction: column;
-      padding: 10px;
+      padding: 12px;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: var(--radius-input);
-      gap: 6px;
+      gap: 8px;
       transition: border-color var(--transition);
     }
     .category-item:hover {
@@ -549,7 +565,7 @@
     .category-budget {
       display: flex;
       align-items: center;
-      gap: 2px;
+      gap: 4px;
       flex-shrink: 0;
     }
     .category-budget-prefix {
@@ -558,7 +574,7 @@
     }
     .category-budget-input {
       width: 60px;
-      padding: 4px 6px;
+      padding: 4px 8px;
       border: 1px solid var(--border);
       border-radius: 4px;
       font-family: inherit;
@@ -582,7 +598,7 @@
     .category-payment {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       padding-left: 32px;
     }
     .category-payment-label {
@@ -593,7 +609,7 @@
 
     /* ── Classification Groups ── */
     .classification-group {
-      margin-bottom: 14px;
+      margin-bottom: 16px;
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -604,9 +620,9 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: var(--primary);
-      padding: 6px 0 4px;
+      padding: 8px 0 4px;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     .desktop-classification-group {
@@ -618,9 +634,9 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: var(--primary);
-      padding: 8px 0 6px;
+      padding: 8px 0 8px;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       grid-column: 1 / -1;
     }
 
@@ -730,7 +746,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 6px 0;
+      padding: 8px 0;
       font-size: 13px;
       color: var(--text-primary);
     }
@@ -741,7 +757,7 @@
       width: 24px;
       height: 24px;
       background: var(--primary-light);
-      border-radius: 6px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -757,7 +773,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 16px;
+      padding: 12px 16px;
       background: var(--positive-bg);
       border: 1px solid #BBF7D0;
       border-radius: var(--radius-input);
@@ -777,7 +793,282 @@
       margin-top: auto;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
+    }
+
+    /* ── Desktop Welcome Screen ── */
+    .desktop-welcome-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 0 40px;
+    }
+    .desktop-welcome-logo {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .desktop-welcome-illustration {
+      width: 100px;
+      height: 100px;
+      background: var(--primary-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      margin: 28px 0;
+    }
+    .desktop-welcome-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+    .desktop-welcome-desc {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 380px;
+    }
+
+    /* ── Desktop Item Grid (accounts / cards) ── */
+    .desktop-item-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .desktop-item-card {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      gap: 12px;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      position: relative;
+      cursor: pointer;
+    }
+    .desktop-item-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-card);
+    }
+    .desktop-item-card.editing {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+    .desktop-item-card .item-card-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 15px;
+      border-radius: 10px;
+    }
+    .desktop-item-card .item-card-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .desktop-item-card .item-card-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .desktop-item-card .item-card-detail {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+    .desktop-item-card .item-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .desktop-item-card .item-card-action {
+      width: 28px;
+      height: 28px;
+      font-size: 13px;
+    }
+
+    /* ── Desktop Credit Card items ── */
+    .desktop-credit-card {
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      gap: 8px;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      position: relative;
+      cursor: pointer;
+    }
+    .desktop-credit-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-card);
+    }
+    .desktop-credit-card-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+    .desktop-credit-card .card-brand {
+      width: 44px;
+      height: 28px;
+    }
+    .desktop-credit-card .item-card-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .desktop-credit-card .item-card-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .desktop-credit-card .item-card-detail {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+    .desktop-credit-card-sub {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      padding-left: 56px;
+    }
+    .desktop-credit-card .item-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .desktop-credit-card .item-card-action {
+      width: 28px;
+      height: 28px;
+      font-size: 13px;
+    }
+
+    /* ── Desktop Add Form ── */
+    .desktop-add-form {
+      padding: 16px 20px;
+      background: var(--primary-light);
+      border: 1px solid #C7D2FE;
+      border-radius: var(--radius-card);
+      margin-bottom: 16px;
+    }
+    .desktop-add-form .add-form-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+    .desktop-add-form .form-row {
+      display: flex;
+      gap: 12px;
+    }
+    .desktop-add-form .form-row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* ── Desktop Done Screen ── */
+    .desktop-done-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 40px 0 20px;
+    }
+    .desktop-done-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--positive-bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+    .desktop-done-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+    .desktop-done-desc {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 28px;
+      max-width: 380px;
+    }
+    .desktop-summary-list {
+      width: 100%;
+      max-width: 460px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .desktop-summary-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+    .desktop-summary-item + .desktop-summary-item {
+      border-top: 1px solid var(--border);
+    }
+    .desktop-summary-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--primary-light);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .desktop-summary-value {
+      margin-left: auto;
+      font-weight: 600;
+      color: var(--primary);
+      font-variant-numeric: tabular-nums;
+    }
+    .desktop-summary-total {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 460px;
+      padding: 14px 20px;
+      background: var(--positive-bg);
+      border: 1px solid #BBF7D0;
+      border-radius: var(--radius-input);
+      margin-bottom: 16px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--positive-text);
+    }
+    .desktop-summary-total-value {
+      font-size: 18px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
     }
 
     /* ── Desktop Category Grid ── */
@@ -806,7 +1097,7 @@
     .desktop-category-item {
       display: flex;
       align-items: center;
-      padding: 14px 16px;
+      padding: 16px;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: var(--radius-card);
@@ -828,7 +1119,7 @@
       font-size: 14px;
       font-weight: 600;
       color: var(--text-primary);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .desktop-category-budget-row {
       display: flex;
@@ -841,7 +1132,7 @@
     }
     .desktop-budget-input {
       width: 80px;
-      padding: 5px 8px;
+      padding: 4px 8px;
       border: 1px solid var(--border);
       border-radius: 4px;
       font-family: inherit;
@@ -864,7 +1155,7 @@
     .desktop-category-payment-row {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       margin-top: 8px;
     }
     .desktop-category-payment-label {
@@ -873,7 +1164,7 @@
       white-space: nowrap;
     }
     .desktop-select {
-      padding: 5px 8px;
+      padding: 4px 8px;
       border: 1px solid var(--border);
       border-radius: 4px;
       font-family: inherit;
@@ -885,8 +1176,8 @@
       appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%2378716C' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 6px center;
-      padding-right: 22px;
+      background-position: right 8px center;
+      padding-right: 24px;
       transition: border-color var(--transition);
     }
     .desktop-select:focus {
@@ -897,12 +1188,12 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       padding: 20px 0 12px;
     }
     .desktop-progress-dot {
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background: var(--border);
       transition: background var(--transition), transform var(--transition);
@@ -922,7 +1213,7 @@
     }
     .desktop-btn {
       padding: 12px 32px;
-      border-radius: var(--radius-input);
+      border-radius: var(--radius-button);
       font-family: inherit;
       font-size: 14px;
       font-weight: 600;
@@ -954,6 +1245,69 @@
       margin: 0;
     }
 
+    /* ── Bank Logo Variants (AI-6) ── */
+    .item-card-icon.bank-nubank { background: #820AD1; color: #FFFFFF; }
+    .item-card-icon.bank-itau   { background: #003399; color: #FFFFFF; }
+    .item-card-icon.bank-bb     { background: #FFFF00; color: #003882; }
+
+    /* ── Method Select Badges (AI-7) ── */
+    .method-select-wrapper {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .bank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 4px;
+      font-size: 8px;
+      font-weight: 700;
+      flex-shrink: 0;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .bank-badge-itau { background: #003399; color: #FFFFFF; }
+    .bank-badge-nubank { background: #820AD1; color: #FFFFFF; }
+    .method-brand {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 4px;
+      font-size: 8px;
+      font-weight: 700;
+      flex-shrink: 0;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .method-brand-visa { background: #1A1F71; color: #FFFFFF; }
+    .method-brand-master {
+      background: #252525;
+      position: relative;
+      overflow: hidden;
+      width: 24px;
+    }
+    .method-brand-master::before,
+    .method-brand-master::after {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .method-brand-master::before {
+      left: 2px;
+      background: #EB001B;
+    }
+    .method-brand-master::after {
+      right: 2px;
+      background: #F79E1B;
+    }
+
     /* ── Responsive ── */
     @media (max-width: 1400px) {
       .showcase { gap: 20px; }
@@ -964,7 +1318,7 @@
 
   <!-- Page Header -->
   <header class="page-header">
-    <h1>Prototipo 08 — Onboarding</h1>
+    <h1>Protótipo 08 — Onboarding</h1>
     <p>Setup inicial progressivo — ~5 minutos</p>
   </header>
 
@@ -986,12 +1340,12 @@
         <div class="phone-content">
           <div class="welcome-screen">
             <div class="welcome-logo">
-              <span class="welcome-logo-icon">&#9998;</span> Caderninho
+              <span class="welcome-logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/><path d="M8 11h8"/><path d="M8 7h6"/></svg></span> Caderninho
             </div>
             <div class="welcome-illustration">&#128202;</div>
             <div class="welcome-title">Bem-vindo ao Caderninho!</div>
             <div class="welcome-desc">
-              Vamos configurar o basico para voce comecar. Leva cerca de 5 minutos.
+              Vamos configurar o básico para você começar. Leva cerca de 5 minutos.
             </div>
           </div>
 
@@ -1003,27 +1357,27 @@
               <div class="progress-dot"></div>
               <div class="progress-dot"></div>
             </div>
-            <button class="btn-primary">Comecar</button>
-            <button class="btn-ghost">Ja tenho um convite</button>
+            <button class="btn-primary">Começar</button>
+            <button class="btn-ghost">Já tenho um convite</button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- ═══════════════════════════════════════ -->
-    <!-- STEP 2 — Contas Bancarias -->
+    <!-- STEP 2 — Contas Bancárias -->
     <!-- ═══════════════════════════════════════ -->
     <div class="showcase-column">
       <div class="showcase-column-label">Etapa 2 de 5</div>
       <div class="phone-frame">
         <div class="phone-notch"></div>
         <div class="phone-content">
-          <div class="step-title">Suas contas bancarias</div>
-          <div class="step-subtitle">Adicione as contas que voce usa no dia a dia</div>
+          <div class="step-title">Suas contas bancárias</div>
+          <div class="step-subtitle">Adicione as contas que você usa no dia a dia</div>
 
           <div class="item-list">
             <div class="item-card">
-              <div class="item-card-icon">Nu</div>
+              <div class="item-card-icon bank-nubank">Nu</div>
               <div class="item-card-info">
                 <div class="item-card-name">Nubank</div>
                 <div class="item-card-detail">Saldo: R$ 8.500,00</div>
@@ -1034,9 +1388,9 @@
               </div>
             </div>
             <div class="item-card">
-              <div class="item-card-icon">It</div>
+              <div class="item-card-icon bank-itau">Itaú</div>
               <div class="item-card-info">
-                <div class="item-card-name">Itau</div>
+                <div class="item-card-name">Itaú</div>
                 <div class="item-card-detail">Saldo: R$ 6.200,00</div>
               </div>
               <div class="item-card-actions">
@@ -1045,7 +1399,7 @@
               </div>
             </div>
             <div class="item-card">
-              <div class="item-card-icon">BB</div>
+              <div class="item-card-icon bank-bb">BB</div>
               <div class="item-card-info">
                 <div class="item-card-name">BB</div>
                 <div class="item-card-detail">Saldo: R$ 4.500,00</div>
@@ -1070,9 +1424,7 @@
             </div>
           </div>
 
-          <button class="btn-add" onclick="this.previousElementSibling.style.display = this.previousElementSibling.style.display === 'none' ? 'block' : 'none'">
-            + Adicionar conta
-          </button>
+          <button class="btn-add">+ Adicionar conta</button>
 
           <div class="bottom-actions">
             <div class="progress-dots">
@@ -1082,55 +1434,56 @@
               <div class="progress-dot"></div>
               <div class="progress-dot"></div>
             </div>
-            <button class="btn-primary">Proximo</button>
+            <button class="btn-primary">Próximo</button>
             <button class="btn-ghost">Pular</button>
+            <button class="btn-ghost">&#8592; Voltar</button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- ═══════════════════════════════════════ -->
-    <!-- STEP 3 — Cartoes de Credito -->
+    <!-- STEP 3 — Cartões de Crédito -->
     <!-- ═══════════════════════════════════════ -->
     <div class="showcase-column">
       <div class="showcase-column-label">Etapa 3 de 5</div>
       <div class="phone-frame">
         <div class="phone-notch"></div>
         <div class="phone-content">
-          <div class="step-title">Seus cartoes de credito</div>
-          <div class="step-subtitle">Cadastre seus cartoes para controlar as faturas</div>
+          <div class="step-title">Seus cartões de crédito</div>
+          <div class="step-subtitle">Cadastre seus cartões para controlar as faturas</div>
 
           <div class="item-list">
             <div class="item-card" style="flex-direction: column; align-items: flex-start; gap: 4px;">
-              <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+              <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
                 <div class="card-brand card-brand-visa">VISA</div>
                 <div class="item-card-info">
                   <div class="item-card-name">Latam Pass Visa</div>
-                  <div class="item-card-detail">Limite: R$ 10.000 &middot; Credito</div>
+                  <div class="item-card-detail">Limite: R$ 10.000,00 &middot; Crédito</div>
                 </div>
                 <div class="item-card-actions">
                   <button class="item-card-action check">&#10003;</button>
                   <button class="item-card-action remove">&#10005;</button>
                 </div>
               </div>
-              <div style="font-size: 11px; color: var(--text-tertiary); padding-left: 50px;">
+              <div style="font-size: 11px; color: var(--text-tertiary); padding-left: 52px;">
                 Fecha dia 7 &middot; Vence dia 15
               </div>
             </div>
 
             <div class="item-card" style="flex-direction: column; align-items: flex-start; gap: 4px;">
-              <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+              <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
                 <div class="card-brand card-brand-master"></div>
                 <div class="item-card-info">
-                  <div class="item-card-name">Pao de Acucar</div>
-                  <div class="item-card-detail">Limite: R$ 5.000 &middot; Credito</div>
+                  <div class="item-card-name">Pão de Açúcar</div>
+                  <div class="item-card-detail">Limite: R$ 5.000,00 &middot; Crédito</div>
                 </div>
                 <div class="item-card-actions">
                   <button class="item-card-action check">&#10003;</button>
                   <button class="item-card-action remove">&#10005;</button>
                 </div>
               </div>
-              <div style="font-size: 11px; color: var(--text-tertiary); padding-left: 50px;">
+              <div style="font-size: 11px; color: var(--text-tertiary); padding-left: 52px;">
                 Fecha dia 3 &middot; Vence dia 10
               </div>
             </div>
@@ -1138,15 +1491,15 @@
 
           <!-- Add form -->
           <div class="add-form">
-            <div class="add-form-title">Adicionar cartao</div>
+            <div class="add-form-title">Adicionar cartão</div>
             <div class="form-group">
-              <label class="form-label">Nome do cartao</label>
+              <label class="form-label">Nome do cartão</label>
               <input type="text" class="form-input form-input-sm" placeholder="Ex: Nubank Mastercard" />
             </div>
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">Bandeira</label>
-                <select class="form-select" style="font-size: 12px; padding: 6px 8px;">
+                <select class="form-select" style="font-size: 12px; padding: 8px;">
                   <option>Selecionar...</option>
                   <option>Visa</option>
                   <option>Mastercard</option>
@@ -1157,10 +1510,10 @@
               </div>
               <div class="form-group">
                 <label class="form-label">Tipo</label>
-                <select class="form-select" style="font-size: 12px; padding: 6px 8px;">
-                  <option>Credito</option>
-                  <option>Debito</option>
-                  <option>Credito + Debito</option>
+                <select class="form-select" style="font-size: 12px; padding: 8px;">
+                  <option>Crédito</option>
+                  <option>Débito</option>
+                  <option>Crédito + Débito</option>
                 </select>
               </div>
             </div>
@@ -1180,7 +1533,7 @@
             </div>
           </div>
 
-          <button class="btn-add">+ Adicionar cartao</button>
+          <button class="btn-add">+ Adicionar cartão</button>
 
           <div class="bottom-actions">
             <div class="progress-dots">
@@ -1190,15 +1543,16 @@
               <div class="progress-dot"></div>
               <div class="progress-dot"></div>
             </div>
-            <button class="btn-primary">Proximo</button>
+            <button class="btn-primary">Próximo</button>
             <button class="btn-ghost">Pular</button>
+            <button class="btn-ghost">&#8592; Voltar</button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- ═══════════════════════════════════════ -->
-    <!-- STEP 4 — Categorias e Orcamentos -->
+    <!-- STEP 4 — Categorias e Orçamentos -->
     <!-- ═══════════════════════════════════════ -->
     <div class="showcase-column">
       <div class="showcase-column-label">Etapa 4 de 5</div>
@@ -1219,20 +1573,23 @@
                   <span class="category-name">Supermercado</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="3.000" />
-                    <span class="category-budget-suffix">/ mes</span>
+                    <input type="text" class="category-budget-input" value="3.000,00" />
+                    <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
                 <div class="category-payment">
                   <span class="category-payment-label">Método:</span>
-                  <select class="form-select" style="font-size: 11px; padding: 3px 22px 3px 6px; flex: 1;">
-                    <option>Selecionar...</option>
-                    <option selected>Latam Pass Visa</option>
-                    <option>Nubank Master</option>
-                    <option>Itau Debito</option>
-                    <option>PIX</option>
-                    <option>Dinheiro</option>
-                  </select>
+                  <span class="method-select-wrapper">
+                    <span class="method-brand method-brand-visa">VISA</span>
+                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
+                      <option>Selecionar...</option>
+                      <option selected>Latam Pass Visa</option>
+                      <option>Nubank Master</option>
+                      <option>Itaú Débito</option>
+                      <option>PIX</option>
+                      <option>Dinheiro</option>
+                    </select>
+                  </span>
                 </div>
               </div>
 
@@ -1242,20 +1599,23 @@
                   <span class="category-name">Moradia</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="2.200" />
-                    <span class="category-budget-suffix">/ mes</span>
+                    <input type="text" class="category-budget-input" value="2.200,00" />
+                    <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
                 <div class="category-payment">
                   <span class="category-payment-label">Método:</span>
-                  <select class="form-select" style="font-size: 11px; padding: 3px 22px 3px 6px; flex: 1;">
-                    <option>Selecionar...</option>
-                    <option>Latam Pass Visa</option>
-                    <option>Nubank Master</option>
-                    <option selected>Itau Debito</option>
-                    <option>PIX</option>
-                    <option>Dinheiro</option>
-                  </select>
+                  <span class="method-select-wrapper">
+                    <span class="bank-badge bank-badge-itau">Itaú</span>
+                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
+                      <option>Selecionar...</option>
+                      <option>Latam Pass Visa</option>
+                      <option>Nubank Master</option>
+                      <option selected>Itaú Débito</option>
+                      <option>PIX</option>
+                      <option>Dinheiro</option>
+                    </select>
+                  </span>
                 </div>
               </div>
 
@@ -1265,20 +1625,23 @@
                   <span class="category-name">Gasolina</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="600" />
-                    <span class="category-budget-suffix">/ mes</span>
+                    <input type="text" class="category-budget-input" value="600,00" />
+                    <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
                 <div class="category-payment">
                   <span class="category-payment-label">Método:</span>
-                  <select class="form-select" style="font-size: 11px; padding: 3px 22px 3px 6px; flex: 1;">
-                    <option>Selecionar...</option>
-                    <option>Latam Pass Visa</option>
-                    <option>Nubank Master</option>
-                    <option selected>Itau Debito</option>
-                    <option>PIX</option>
-                    <option>Dinheiro</option>
-                  </select>
+                  <span class="method-select-wrapper">
+                    <span class="bank-badge bank-badge-itau">Itaú</span>
+                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
+                      <option>Selecionar...</option>
+                      <option>Latam Pass Visa</option>
+                      <option>Nubank Master</option>
+                      <option selected>Itaú Débito</option>
+                      <option>PIX</option>
+                      <option>Dinheiro</option>
+                    </select>
+                  </span>
                 </div>
               </div>
 
@@ -1288,43 +1651,49 @@
                   <span class="category-name">Internet/Tel</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="158" />
-                    <span class="category-budget-suffix">/ mes</span>
+                    <input type="text" class="category-budget-input" value="158,00" />
+                    <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
                 <div class="category-payment">
                   <span class="category-payment-label">Método:</span>
-                  <select class="form-select" style="font-size: 11px; padding: 3px 22px 3px 6px; flex: 1;">
-                    <option>Selecionar...</option>
-                    <option selected>Latam Pass Visa</option>
-                    <option>Nubank Master</option>
-                    <option>Itau Debito</option>
-                    <option>PIX</option>
-                    <option>Dinheiro</option>
-                  </select>
+                  <span class="method-select-wrapper">
+                    <span class="method-brand method-brand-visa">VISA</span>
+                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
+                      <option>Selecionar...</option>
+                      <option selected>Latam Pass Visa</option>
+                      <option>Nubank Master</option>
+                      <option>Itaú Débito</option>
+                      <option>PIX</option>
+                      <option>Dinheiro</option>
+                    </select>
+                  </span>
                 </div>
               </div>
 
               <div class="category-item">
                 <div class="category-item-top">
                   <span class="category-emoji">&#127891;</span>
-                  <span class="category-name">Educacao</span>
+                  <span class="category-name">Educação</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="2.800" />
-                    <span class="category-budget-suffix">/ mes</span>
+                    <input type="text" class="category-budget-input" value="2.800,00" />
+                    <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
                 <div class="category-payment">
                   <span class="category-payment-label">Método:</span>
-                  <select class="form-select" style="font-size: 11px; padding: 3px 22px 3px 6px; flex: 1;">
-                    <option>Selecionar...</option>
-                    <option selected>Latam Pass Visa</option>
-                    <option>Nubank Master</option>
-                    <option>Itau Debito</option>
-                    <option>PIX</option>
-                    <option>Dinheiro</option>
-                  </select>
+                  <span class="method-select-wrapper">
+                    <span class="method-brand method-brand-visa">VISA</span>
+                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
+                      <option>Selecionar...</option>
+                      <option selected>Latam Pass Visa</option>
+                      <option>Nubank Master</option>
+                      <option>Itaú Débito</option>
+                      <option>PIX</option>
+                      <option>Dinheiro</option>
+                    </select>
+                  </span>
                 </div>
               </div>
             </div>
@@ -1339,20 +1708,23 @@
                   <span class="category-name">Restaurante</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="2.500" />
-                    <span class="category-budget-suffix">/ mes</span>
+                    <input type="text" class="category-budget-input" value="2.500,00" />
+                    <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
                 <div class="category-payment">
                   <span class="category-payment-label">Método:</span>
-                  <select class="form-select" style="font-size: 11px; padding: 3px 22px 3px 6px; flex: 1;">
-                    <option>Selecionar...</option>
-                    <option selected>Nubank Master</option>
-                    <option>Latam Pass Visa</option>
-                    <option>Itau Debito</option>
-                    <option>PIX</option>
-                    <option>Dinheiro</option>
-                  </select>
+                  <span class="method-select-wrapper">
+                    <span class="method-brand method-brand-master"></span>
+                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
+                      <option>Selecionar...</option>
+                      <option selected>Nubank Master</option>
+                      <option>Latam Pass Visa</option>
+                      <option>Itaú Débito</option>
+                      <option>PIX</option>
+                      <option>Dinheiro</option>
+                    </select>
+                  </span>
                 </div>
               </div>
             </div>
@@ -1368,8 +1740,9 @@
               <div class="progress-dot active"></div>
               <div class="progress-dot"></div>
             </div>
-            <button class="btn-primary">Proximo</button>
+            <button class="btn-primary">Próximo</button>
             <button class="btn-ghost">Pular</button>
+            <button class="btn-ghost">&#8592; Voltar</button>
           </div>
         </div>
       </div>
@@ -1387,23 +1760,23 @@
             <div class="done-icon">&#10003;</div>
             <div class="done-title">Tudo configurado!</div>
             <div class="done-desc">
-              Agora e so comecar a registrar.<br />Cada gasto leva ~5 segundos.
+              Agora é só começar a registrar.<br />Cada gasto leva ~5 segundos.
             </div>
 
             <div class="summary-list">
               <div class="summary-item">
                 <div class="summary-icon">&#127974;</div>
-                <span>Contas bancarias</span>
+                <span>Contas bancárias</span>
                 <span class="summary-value">3</span>
               </div>
               <div class="summary-item">
                 <div class="summary-icon">&#128179;</div>
-                <span>Cartoes de credito</span>
+                <span>Cartões de crédito</span>
                 <span class="summary-value">2</span>
               </div>
               <div class="summary-item">
                 <div class="summary-icon">&#128202;</div>
-                <span>Categorias com orcamento</span>
+                <span>Categorias com orçamento</span>
                 <span class="summary-value">6</span>
               </div>
             </div>
@@ -1423,7 +1796,8 @@
               <div class="progress-dot active"></div>
             </div>
             <button class="btn-primary">Ir para o Dashboard</button>
-            <button class="btn-secondary">Convidar alguem</button>
+            <button class="btn-secondary">Convidar alguém</button>
+            <button class="btn-ghost">&#8592; Voltar</button>
           </div>
         </div>
       </div>
@@ -1434,11 +1808,282 @@
   <hr class="section-divider" />
 
   <!-- ═══════════════════════════════════════ -->
+  <!-- DESKTOP VERSION — Step 1 -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="section-header">
+    <h2>Versão Desktop (Etapa 1)</h2>
+    <p>Tela de boas-vindas com logo e call-to-action centralizado</p>
+  </div>
+
+  <div class="showcase">
+    <div class="showcase-column">
+      <div class="showcase-column-label">Desktop &mdash; 800px</div>
+      <div class="desktop-frame">
+        <div class="desktop-toolbar">
+          <div class="desktop-toolbar-dot"></div>
+          <div class="desktop-toolbar-dot"></div>
+          <div class="desktop-toolbar-dot"></div>
+        </div>
+        <div class="desktop-content">
+          <div class="desktop-card">
+            <div class="desktop-welcome-screen">
+              <div class="desktop-welcome-logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/><path d="M8 11h8"/><path d="M8 7h6"/></svg>
+                Caderninho
+              </div>
+              <div class="desktop-welcome-illustration">&#128202;</div>
+              <div class="desktop-welcome-title">Bem-vindo ao Caderninho!</div>
+              <div class="desktop-welcome-desc">
+                Vamos configurar o básico para você começar. Leva cerca de 5 minutos.
+              </div>
+            </div>
+
+            <div class="desktop-progress-dots">
+              <div class="desktop-progress-dot active"></div>
+              <div class="desktop-progress-dot"></div>
+              <div class="desktop-progress-dot"></div>
+              <div class="desktop-progress-dot"></div>
+              <div class="desktop-progress-dot"></div>
+            </div>
+            <div class="desktop-bottom-actions">
+              <button class="desktop-btn desktop-btn-ghost">Já tenho um convite</button>
+              <button class="desktop-btn desktop-btn-primary">Começar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider" />
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- DESKTOP VERSION — Step 2 -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="section-header">
+    <h2>Versão Desktop (Etapa 2)</h2>
+    <p>Contas bancárias com grid de 2 colunas e edição inline</p>
+  </div>
+
+  <div class="showcase">
+    <div class="showcase-column">
+      <div class="showcase-column-label">Desktop &mdash; 800px</div>
+      <div class="desktop-frame">
+        <div class="desktop-toolbar">
+          <div class="desktop-toolbar-dot"></div>
+          <div class="desktop-toolbar-dot"></div>
+          <div class="desktop-toolbar-dot"></div>
+        </div>
+        <div class="desktop-content">
+          <div class="desktop-card">
+            <div class="desktop-step-title">Suas contas bancárias</div>
+            <div class="desktop-step-subtitle">Adicione as contas que você usa no dia a dia</div>
+
+            <div class="item-list desktop-item-grid">
+              <div class="item-card desktop-item-card">
+                <div class="item-card-icon bank-nubank">Nu</div>
+                <div class="item-card-info">
+                  <div class="item-card-name">Nubank</div>
+                  <div class="item-card-detail">Saldo: R$ 8.500,00</div>
+                </div>
+                <div class="item-card-actions">
+                  <button class="item-card-action check">&#10003;</button>
+                  <button class="item-card-action remove">&#10005;</button>
+                </div>
+              </div>
+
+              <div class="item-card desktop-item-card">
+                <div class="item-card-icon bank-itau">Itaú</div>
+                <div class="item-card-info">
+                  <div class="item-card-name">Itaú</div>
+                  <div class="item-card-detail">Saldo: R$ 6.200,00</div>
+                </div>
+                <div class="item-card-actions">
+                  <button class="item-card-action check">&#10003;</button>
+                  <button class="item-card-action remove">&#10005;</button>
+                </div>
+              </div>
+
+              <div class="item-card desktop-item-card">
+                <div class="item-card-icon bank-bb">BB</div>
+                <div class="item-card-info">
+                  <div class="item-card-name">BB</div>
+                  <div class="item-card-detail">Saldo: R$ 4.500,00</div>
+                </div>
+                <div class="item-card-actions">
+                  <button class="item-card-action check">&#10003;</button>
+                  <button class="item-card-action remove">&#10005;</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Add form (desktop) -->
+            <div class="add-form desktop-add-form" style="display: none;">
+              <div class="add-form-title">Adicionar conta</div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Nome do banco</label>
+                  <input type="text" class="form-input form-input-sm" placeholder="Ex: Bradesco" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Saldo atual</label>
+                  <input type="text" class="form-input form-input-sm" placeholder="R$ 0,00" />
+                </div>
+              </div>
+            </div>
+
+            <button class="btn-add" style="max-width: 280px;">+ Adicionar conta</button>
+
+            <div class="desktop-progress-dots">
+              <div class="desktop-progress-dot completed"></div>
+              <div class="desktop-progress-dot active"></div>
+              <div class="desktop-progress-dot"></div>
+              <div class="desktop-progress-dot"></div>
+              <div class="desktop-progress-dot"></div>
+            </div>
+            <div class="desktop-bottom-actions">
+              <button class="desktop-btn desktop-btn-ghost">&#8592; Voltar</button>
+              <button class="desktop-btn desktop-btn-ghost">Pular</button>
+              <button class="desktop-btn desktop-btn-primary">Próximo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider" />
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- DESKTOP VERSION — Step 3 -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="section-header">
+    <h2>Versão Desktop (Etapa 3)</h2>
+    <p>Cartões de crédito com grid de 2 colunas e detalhes expandidos</p>
+  </div>
+
+  <div class="showcase">
+    <div class="showcase-column">
+      <div class="showcase-column-label">Desktop &mdash; 800px</div>
+      <div class="desktop-frame">
+        <div class="desktop-toolbar">
+          <div class="desktop-toolbar-dot"></div>
+          <div class="desktop-toolbar-dot"></div>
+          <div class="desktop-toolbar-dot"></div>
+        </div>
+        <div class="desktop-content">
+          <div class="desktop-card">
+            <div class="desktop-step-title">Seus cartões de crédito</div>
+            <div class="desktop-step-subtitle">Cadastre seus cartões para controlar as faturas</div>
+
+            <div class="desktop-item-grid">
+              <div class="desktop-credit-card">
+                <div class="desktop-credit-card-top">
+                  <div class="card-brand card-brand-visa">VISA</div>
+                  <div class="item-card-info">
+                    <div class="item-card-name">Latam Pass Visa</div>
+                    <div class="item-card-detail">Limite: R$ 10.000,00 &middot; Crédito</div>
+                  </div>
+                  <div class="item-card-actions">
+                    <button class="item-card-action check">&#10003;</button>
+                    <button class="item-card-action remove">&#10005;</button>
+                  </div>
+                </div>
+                <div class="desktop-credit-card-sub">
+                  Fecha dia 7 &middot; Vence dia 15
+                </div>
+              </div>
+
+              <div class="desktop-credit-card">
+                <div class="desktop-credit-card-top">
+                  <div class="card-brand card-brand-master"></div>
+                  <div class="item-card-info">
+                    <div class="item-card-name">Pão de Açúcar</div>
+                    <div class="item-card-detail">Limite: R$ 5.000,00 &middot; Crédito</div>
+                  </div>
+                  <div class="item-card-actions">
+                    <button class="item-card-action check">&#10003;</button>
+                    <button class="item-card-action remove">&#10005;</button>
+                  </div>
+                </div>
+                <div class="desktop-credit-card-sub">
+                  Fecha dia 3 &middot; Vence dia 10
+                </div>
+              </div>
+            </div>
+
+            <!-- Add form (desktop) -->
+            <div class="add-form desktop-add-form" style="display: none;">
+              <div class="add-form-title">Adicionar cartão</div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Nome do cartão</label>
+                  <input type="text" class="form-input form-input-sm" placeholder="Ex: Nubank Mastercard" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Bandeira</label>
+                  <select class="form-select" style="font-size: 12px; padding: 8px;">
+                    <option>Selecionar...</option>
+                    <option>Visa</option>
+                    <option>Mastercard</option>
+                    <option>Elo</option>
+                    <option>Amex</option>
+                    <option>Hipercard</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Tipo</label>
+                  <select class="form-select" style="font-size: 12px; padding: 8px;">
+                    <option>Crédito</option>
+                    <option>Débito</option>
+                    <option>Crédito + Débito</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row" style="margin-top: 4px;">
+                <div class="form-group">
+                  <label class="form-label">Limite (R$)</label>
+                  <input type="text" class="form-input form-input-sm" placeholder="R$ 0,00" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Dia de fechamento</label>
+                  <input type="number" class="form-input form-input-sm" placeholder="Ex: 7" min="1" max="31" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Dia de vencimento</label>
+                  <input type="number" class="form-input form-input-sm" placeholder="Ex: 15" min="1" max="31" />
+                </div>
+              </div>
+            </div>
+
+            <button class="btn-add" style="max-width: 280px;">+ Adicionar cartão</button>
+
+            <div class="desktop-progress-dots">
+              <div class="desktop-progress-dot completed"></div>
+              <div class="desktop-progress-dot completed"></div>
+              <div class="desktop-progress-dot active"></div>
+              <div class="desktop-progress-dot"></div>
+              <div class="desktop-progress-dot"></div>
+            </div>
+            <div class="desktop-bottom-actions">
+              <button class="desktop-btn desktop-btn-ghost">&#8592; Voltar</button>
+              <button class="desktop-btn desktop-btn-ghost">Pular</button>
+              <button class="desktop-btn desktop-btn-primary">Próximo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider" />
+
+  <!-- ═══════════════════════════════════════ -->
   <!-- DESKTOP VERSION — Step 4 -->
   <!-- ═══════════════════════════════════════ -->
   <div class="section-header">
-    <h2>Versao Desktop (Etapa 4)</h2>
-    <p>Categorias e orcamentos com layout mais espacoso</p>
+    <h2>Versão Desktop (Etapa 4)</h2>
+    <p>Categorias e orçamentos com layout mais espaçoso</p>
   </div>
 
   <div class="showcase">
@@ -1466,19 +2111,22 @@
                   <div class="desktop-category-name">Supermercado</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="3.000" />
-                    <span class="desktop-category-budget-suffix">/ mes</span>
+                    <input type="text" class="desktop-budget-input" value="3.000,00" />
+                    <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
                   <div class="desktop-category-payment-row">
                     <span class="desktop-category-payment-label">Método:</span>
-                    <select class="desktop-select">
-                      <option>Selecionar...</option>
-                      <option selected>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option>Itau Debito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
+                    <span class="method-select-wrapper">
+                      <span class="method-brand method-brand-visa">VISA</span>
+                      <select class="desktop-select">
+                        <option>Selecionar...</option>
+                        <option selected>Latam Pass Visa</option>
+                        <option>Nubank Master</option>
+                        <option>Itaú Débito</option>
+                        <option>PIX</option>
+                        <option>Dinheiro</option>
+                      </select>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1489,19 +2137,22 @@
                   <div class="desktop-category-name">Moradia</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="2.200" />
-                    <span class="desktop-category-budget-suffix">/ mes</span>
+                    <input type="text" class="desktop-budget-input" value="2.200,00" />
+                    <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
                   <div class="desktop-category-payment-row">
                     <span class="desktop-category-payment-label">Método:</span>
-                    <select class="desktop-select">
-                      <option>Selecionar...</option>
-                      <option>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option selected>Itau Debito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
+                    <span class="method-select-wrapper">
+                      <span class="bank-badge bank-badge-itau">Itaú</span>
+                      <select class="desktop-select">
+                        <option>Selecionar...</option>
+                        <option>Latam Pass Visa</option>
+                        <option>Nubank Master</option>
+                        <option selected>Itaú Débito</option>
+                        <option>PIX</option>
+                        <option>Dinheiro</option>
+                      </select>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1512,19 +2163,22 @@
                   <div class="desktop-category-name">Gasolina</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="600" />
-                    <span class="desktop-category-budget-suffix">/ mes</span>
+                    <input type="text" class="desktop-budget-input" value="600,00" />
+                    <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
                   <div class="desktop-category-payment-row">
                     <span class="desktop-category-payment-label">Método:</span>
-                    <select class="desktop-select">
-                      <option>Selecionar...</option>
-                      <option>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option selected>Itau Debito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
+                    <span class="method-select-wrapper">
+                      <span class="bank-badge bank-badge-itau">Itaú</span>
+                      <select class="desktop-select">
+                        <option>Selecionar...</option>
+                        <option>Latam Pass Visa</option>
+                        <option>Nubank Master</option>
+                        <option selected>Itaú Débito</option>
+                        <option>PIX</option>
+                        <option>Dinheiro</option>
+                      </select>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1535,19 +2189,22 @@
                   <div class="desktop-category-name">Internet/Tel</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="158" />
-                    <span class="desktop-category-budget-suffix">/ mes</span>
+                    <input type="text" class="desktop-budget-input" value="158,00" />
+                    <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
                   <div class="desktop-category-payment-row">
                     <span class="desktop-category-payment-label">Método:</span>
-                    <select class="desktop-select">
-                      <option>Selecionar...</option>
-                      <option selected>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option>Itau Debito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
+                    <span class="method-select-wrapper">
+                      <span class="method-brand method-brand-visa">VISA</span>
+                      <select class="desktop-select">
+                        <option>Selecionar...</option>
+                        <option selected>Latam Pass Visa</option>
+                        <option>Nubank Master</option>
+                        <option>Itaú Débito</option>
+                        <option>PIX</option>
+                        <option>Dinheiro</option>
+                      </select>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1555,22 +2212,25 @@
               <div class="desktop-category-item">
                 <span class="desktop-category-emoji">&#127891;</span>
                 <div class="desktop-category-info">
-                  <div class="desktop-category-name">Educacao</div>
+                  <div class="desktop-category-name">Educação</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="2.800" />
-                    <span class="desktop-category-budget-suffix">/ mes</span>
+                    <input type="text" class="desktop-budget-input" value="2.800,00" />
+                    <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
                   <div class="desktop-category-payment-row">
                     <span class="desktop-category-payment-label">Método:</span>
-                    <select class="desktop-select">
-                      <option>Selecionar...</option>
-                      <option selected>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option>Itau Debito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
+                    <span class="method-select-wrapper">
+                      <span class="method-brand method-brand-visa">VISA</span>
+                      <select class="desktop-select">
+                        <option>Selecionar...</option>
+                        <option selected>Latam Pass Visa</option>
+                        <option>Nubank Master</option>
+                        <option>Itaú Débito</option>
+                        <option>PIX</option>
+                        <option>Dinheiro</option>
+                      </select>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1584,19 +2244,22 @@
                   <div class="desktop-category-name">Restaurante</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="2.500" />
-                    <span class="desktop-category-budget-suffix">/ mes</span>
+                    <input type="text" class="desktop-budget-input" value="2.500,00" />
+                    <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
                   <div class="desktop-category-payment-row">
                     <span class="desktop-category-payment-label">Método:</span>
-                    <select class="desktop-select">
-                      <option>Selecionar...</option>
-                      <option selected>Nubank Master</option>
-                      <option>Latam Pass Visa</option>
-                      <option>Itau Debito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
+                    <span class="method-select-wrapper">
+                      <span class="method-brand method-brand-master"></span>
+                      <select class="desktop-select">
+                        <option>Selecionar...</option>
+                        <option selected>Nubank Master</option>
+                        <option>Latam Pass Visa</option>
+                        <option>Itaú Débito</option>
+                        <option>PIX</option>
+                        <option>Dinheiro</option>
+                      </select>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1614,14 +2277,159 @@
             </div>
 
             <div class="desktop-bottom-actions">
+              <button class="desktop-btn desktop-btn-ghost">&#8592; Voltar</button>
               <button class="desktop-btn desktop-btn-ghost">Pular</button>
-              <button class="desktop-btn desktop-btn-primary">Proximo</button>
+              <button class="desktop-btn desktop-btn-primary">Próximo</button>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <hr class="section-divider" />
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- DESKTOP VERSION — Step 5 -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="section-header">
+    <h2>Versão Desktop (Etapa 5)</h2>
+    <p>Tela de conclusão com resumo do que foi configurado</p>
+  </div>
+
+  <div class="showcase">
+    <div class="showcase-column">
+      <div class="showcase-column-label">Desktop &mdash; 800px</div>
+      <div class="desktop-frame">
+        <div class="desktop-toolbar">
+          <div class="desktop-toolbar-dot"></div>
+          <div class="desktop-toolbar-dot"></div>
+          <div class="desktop-toolbar-dot"></div>
+        </div>
+        <div class="desktop-content">
+          <div class="desktop-card">
+            <div class="desktop-done-screen">
+              <div class="desktop-done-icon">&#10003;</div>
+              <div class="desktop-done-title">Tudo configurado!</div>
+              <div class="desktop-done-desc">
+                Agora é só começar a registrar. Cada gasto leva ~5 segundos.
+              </div>
+
+              <div class="desktop-summary-list">
+                <div class="desktop-summary-item">
+                  <div class="desktop-summary-icon">&#127974;</div>
+                  <span>Contas bancárias</span>
+                  <span class="desktop-summary-value">3</span>
+                </div>
+                <div class="desktop-summary-item">
+                  <div class="desktop-summary-icon">&#128179;</div>
+                  <span>Cartões de crédito</span>
+                  <span class="desktop-summary-value">2</span>
+                </div>
+                <div class="desktop-summary-item">
+                  <div class="desktop-summary-icon">&#128202;</div>
+                  <span>Categorias com orçamento</span>
+                  <span class="desktop-summary-value">6</span>
+                </div>
+              </div>
+
+              <div class="desktop-summary-total">
+                <span>Saldo total</span>
+                <span class="desktop-summary-total-value">R$ 19.200,00</span>
+              </div>
+            </div>
+
+            <div class="desktop-progress-dots">
+              <div class="desktop-progress-dot completed"></div>
+              <div class="desktop-progress-dot completed"></div>
+              <div class="desktop-progress-dot completed"></div>
+              <div class="desktop-progress-dot completed"></div>
+              <div class="desktop-progress-dot active"></div>
+            </div>
+            <div class="desktop-bottom-actions">
+              <button class="desktop-btn desktop-btn-ghost">&#8592; Voltar</button>
+              <button class="desktop-btn desktop-btn-ghost">Convidar alguém</button>
+              <button class="desktop-btn desktop-btn-primary">Ir para o Dashboard</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ── Edição de item: tap no card preenche o formulário ──
+  document.querySelectorAll('.item-card').forEach(function(card) {
+    card.addEventListener('click', function(e) {
+      // Não ativar edição se clicou nos botões de ação
+      if (e.target.closest('.item-card-actions')) return;
+
+      var list = card.closest('.item-list');
+      if (!list) return;
+      var form = list.nextElementSibling;
+      while (form && !form.classList.contains('add-form')) {
+        form = form.nextElementSibling;
+      }
+      if (!form) return;
+
+      // Toggle: se já está editando este card, cancelar
+      if (card.classList.contains('editing')) {
+        card.classList.remove('editing');
+        var title = form.querySelector('.add-form-title');
+        if (title) title.textContent = title.dataset.originalTitle || title.textContent;
+        form.querySelectorAll('input').forEach(function(i) { i.value = ''; });
+        form.style.display = 'none';
+        return;
+      }
+
+      // Limpar edição anterior
+      list.querySelectorAll('.item-card').forEach(function(c) { c.classList.remove('editing'); });
+
+      // Marcar este card como editando
+      card.classList.add('editing');
+      form.style.display = 'block';
+
+      var title = form.querySelector('.add-form-title');
+      if (title) {
+        if (!title.dataset.originalTitle) title.dataset.originalTitle = title.textContent;
+        var name = card.querySelector('.item-card-name');
+        title.textContent = 'Editar' + (name ? ' — ' + name.textContent : '');
+      }
+
+      // Preencher inputs com dados do card
+      var inputs = form.querySelectorAll('input[type="text"], input[type="number"]');
+      var name = card.querySelector('.item-card-name');
+      var detail = card.querySelector('.item-card-detail');
+
+      if (inputs[0] && name) inputs[0].value = name.textContent;
+      if (inputs[1] && detail) {
+        var match = detail.textContent.match(/R\$\s*([\d.,]+)/);
+        if (match) inputs[1].value = 'R$ ' + match[1];
+      }
+    });
+  });
+
+  // ── Toggle add form (btn-add) ──
+  document.querySelectorAll('.btn-add').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var form = btn.previousElementSibling;
+      while (form && !form.classList.contains('add-form')) {
+        form = form.previousElementSibling;
+      }
+      if (!form) return;
+
+      // Se estava em modo edição, limpar
+      var list = btn.closest('.phone-content, .desktop-step');
+      if (list) list.querySelectorAll('.item-card.editing').forEach(function(c) { c.classList.remove('editing'); });
+
+      var title = form.querySelector('.add-form-title');
+      if (title && title.dataset.originalTitle) title.textContent = title.dataset.originalTitle;
+      form.querySelectorAll('input').forEach(function(i) { i.value = ''; });
+
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    });
+  });
+</script>
 
 </body>
 </html>

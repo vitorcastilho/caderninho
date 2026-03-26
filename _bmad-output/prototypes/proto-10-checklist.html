@@ -34,8 +34,10 @@
       --info: #3B82F6;
       --info-bg: #DBEAFE;
       --info-text: #1E40AF;
+      --primary-fg: #FFFFFF;
+      --radius-button: 8px;
       --radius-card: 12px;
-      --radius-input: 6px;
+      --radius-input: 8px;
       --radius-badge: 100px;
       --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
       --shadow-card-hover: 0 2px 6px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.06);
@@ -48,13 +50,15 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-variant-numeric: tabular-nums;
       background: var(--bg);
       color: var(--text-primary);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       line-height: 1.5;
     }
+
+    /* ── Tabular Nums ── */
+    .summary-card-value, .item-value, .m-item-value, .m-metric-value { font-variant-numeric: tabular-nums; }
 
     /* ── Page Title Header ── */
     .page-title-header {
@@ -81,77 +85,27 @@
     }
 
     /* ── Sidebar ── */
-    .sidebar {
-      width: var(--sidebar-width);
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      padding: 24px 0;
-      flex-shrink: 0;
-      position: sticky;
-      top: 0;
-      height: calc(100vh - 94px);
-      overflow-y: auto;
-    }
-    .sidebar-logo {
-      padding: 0 20px 24px;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .sidebar-logo svg {
-      width: 24px; height: 24px;
-    }
-    .sidebar-section {
-      padding: 0 12px;
-      margin-bottom: 24px;
-    }
-    .sidebar-section-label {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-tertiary);
-      padding: 0 8px 8px;
-    }
-    .sidebar-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 12px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all var(--transition);
-      text-decoration: none;
-      position: relative;
-    }
-    .sidebar-item:hover {
-      background: var(--bg);
-      color: var(--text-primary);
-    }
-    .sidebar-item.active {
-      background: var(--primary-light);
-      color: var(--primary);
-      font-weight: 600;
-    }
-    .sidebar-item svg {
-      width: 18px; height: 18px; flex-shrink: 0;
-    }
-    .sidebar-badge {
-      margin-left: auto;
-      background: var(--critical);
-      color: #fff;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 1px 7px;
-      border-radius: var(--radius-badge);
-      line-height: 1.5;
-    }
+    .sidebar { width: 220px; height: 100%; min-height: 820px; position: relative; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 40; flex-shrink: 0; }
+    .sidebar-logo { display: flex; align-items: center; padding: 20px 16px 16px; gap: 8px; }
+    .sidebar-logo-icon { color: var(--primary); display: flex; align-items: center; }
+    .sidebar-logo-text { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: var(--primary); }
+    .sidebar-separator { height: 1px; background: var(--border); margin: 4px 16px; }
+    .sidebar-nav { flex: 1; overflow-y: auto; }
+    .sidebar-section-label { padding: 16px 16px 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); }
+    .sidebar-items { list-style: none; margin: 0; padding: 0 8px; display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: all 150ms; cursor: pointer; }
+    .sidebar-item:hover { background: var(--bg); color: var(--text-primary); }
+    .sidebar-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+    .sidebar-icon { width: 18px; height: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .sidebar-icon svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding: 12px; }
+    .sidebar-user { display: flex; align-items: center; gap: 10px; }
+    .sidebar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+    .sidebar-user-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .sidebar-user-role { font-size: 11px; color: var(--text-tertiary); }
+    .sidebar-logout { display: flex; align-items: center; gap: 10px; margin-top: 0; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 150ms; border: none; background: none; width: 100%; }
+    .sidebar-logout:hover { background: var(--bg); color: var(--text-primary); }
+    .sidebar-logout svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
     /* ── Main Content ── */
     .main-content {
@@ -255,7 +209,6 @@
       border-radius: var(--radius-card);
       padding: 14px 20px;
       margin-bottom: 24px;
-      position: relative;
     }
     .banner-alert-icon {
       width: 36px;
@@ -300,9 +253,6 @@
       background: #2563EB;
     }
     .banner-dismiss {
-      position: absolute;
-      top: 8px;
-      right: 8px;
       background: none;
       border: none;
       color: var(--info-text);
@@ -312,6 +262,8 @@
       border-radius: 4px;
       line-height: 0;
       transition: opacity var(--transition);
+      flex-shrink: 0;
+      margin-left: 4px;
     }
     .banner-dismiss:hover { opacity: 1; }
     .banner-dismiss svg { width: 14px; height: 14px; }
@@ -340,7 +292,7 @@
       color: var(--text-secondary);
       text-transform: uppercase;
       letter-spacing: .03em;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .summary-card-value {
       font-size: 24px;
@@ -406,8 +358,8 @@
     .checklist-item {
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 14px 16px;
+      gap: 16px;
+      padding: 16px 16px;
       background: var(--surface);
       border-bottom: 1px solid var(--border);
       transition: background var(--transition);
@@ -677,7 +629,7 @@
     .mobile-progress-label {
       font-size: 12px;
       color: var(--text-secondary);
-      margin-top: 6px;
+      margin-top: 8px;
     }
 
     /* Mobile Banner */
@@ -847,50 +799,15 @@
     .m-item-badge.estimate { background: var(--attention-bg); color: var(--attention-text); }
 
     /* Mobile Bottom Nav */
-    .mobile-bottom-nav {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      display: flex;
-      padding: 8px 0 20px;
-      z-index: 10;
-    }
-    .mobile-nav-item {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      font-size: 10px;
-      font-weight: 500;
-      color: var(--text-tertiary);
-      padding-top: 4px;
-      position: relative;
-    }
-    .mobile-nav-item.active {
-      color: var(--primary);
-      font-weight: 600;
-    }
-    .mobile-nav-item svg {
-      width: 22px; height: 22px;
-    }
-    .mobile-nav-badge {
-      position: absolute;
-      top: 0;
-      right: calc(50% - 18px);
-      background: var(--critical);
-      color: #fff;
-      font-size: 9px;
-      font-weight: 700;
-      width: 16px; height: 16px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .bottom-nav { position: relative; height: 56px; background: var(--surface); border-top: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-around; z-index: 50; }
+    .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px 0; min-height: 44px; color: var(--text-tertiary); text-decoration: none; font-size: 10px; font-weight: 500; cursor: pointer; }
+    .bottom-nav-item.active { color: var(--primary); }
+    .bottom-nav-icon { width: 20px; height: 20px; }
+    .bottom-nav-icon svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .bottom-nav-fab { display: flex; flex-direction: column; align-items: center; text-decoration: none; margin-top: -16px; }
+    .bottom-nav-fab-icon { width: 48px; height: 48px; background: var(--primary); color: #FFFFFF; border-radius: 50%; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; }
+    .bottom-nav-fab-icon svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .bottom-nav-fab-label { margin-top: 2px; font-size: 10px; font-weight: 500; color: var(--text-tertiary); }
 
     /* ── Responsive for the page itself ── */
     @media (max-width: 900px) {
@@ -939,6 +856,24 @@
     }
     .method-brand-master::before { left: 3px; background: #EB001B; }
     .method-brand-master::after { right: 3px; background: #F79E1B; }
+
+    /* Bank Badges */
+    .bank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 4px;
+      font-size: 8px;
+      font-weight: 700;
+      flex-shrink: 0;
+      vertical-align: middle;
+      margin-right: 4px;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .bank-badge-itau   { background: #003399; color: #FFFFFF; }
+    .bank-badge-nubank { background: #820AD1; color: #FFFFFF; }
   </style>
 </head>
 <body>
@@ -955,49 +890,68 @@
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-logo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M8 7h6"/><path d="M8 11h4"/></svg>
-        Caderninho
+        <span class="sidebar-logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/><path d="M8 11h8"/><path d="M8 7h6"/></svg></span>
+        <span class="sidebar-logo-text">Caderninho</span>
       </div>
-
-      <div class="sidebar-section">
-        <div class="sidebar-section-label">Principal</div>
-        <a class="sidebar-item" href="#">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-          Dashboard
-        </a>
-        <a class="sidebar-item active" href="#">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-          Checklist
-          <span class="sidebar-badge">3</span>
-        </a>
-        <a class="sidebar-item" href="#">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-          Cartões
-        </a>
-        <a class="sidebar-item" href="#">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-          Contas
-        </a>
-      </div>
-
-      <div class="sidebar-section">
-        <div class="sidebar-section-label">Análise</div>
-        <a class="sidebar-item" href="#">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
-          Categorias
-        </a>
-        <a class="sidebar-item" href="#">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          Evolução
-        </a>
-      </div>
-
-      <div class="sidebar-section">
-        <div class="sidebar-section-label">Config</div>
-        <a class="sidebar-item" href="#">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          Configurações
-        </a>
+      <div class="sidebar-separator"></div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section-label">Navegação</div>
+        <ul class="sidebar-items">
+          <li class="sidebar-item">
+            <span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
+            Dashboard
+          </li>
+          <li class="sidebar-item">
+            <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"/><path d="M16 10h.01"/><path d="M2 8v1a2 2 0 0 0 2 2h1"/></svg></span>
+            Orçamentos
+          </li>
+          <li class="sidebar-item active">
+            <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span>
+            Checklist
+          </li>
+          <li class="sidebar-item">
+            <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>
+            Projeção
+          </li>
+        </ul>
+        <div class="sidebar-separator"></div>
+        <div class="sidebar-section-label">Configurações</div>
+        <ul class="sidebar-items">
+          <li class="sidebar-item">
+            <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M10 12h4"/><path d="M10 8h4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/></svg></span>
+            Contas
+          </li>
+          <li class="sidebar-item">
+            <span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
+            Cartões
+          </li>
+          <li class="sidebar-item">
+            <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M10 18v-7"/><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></svg></span>
+            Investimentos
+          </li>
+          <li class="sidebar-item">
+            <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>
+            Receitas
+          </li>
+          <li class="sidebar-item">
+            <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z"/><path d="M2 7v6.172a2 2 0 0 0 .586 1.414l6.71 6.71a2.4 2.4 0 0 0 3.191.193"/><circle cx="10.5" cy="6.5" r=".5" fill="currentColor"/></svg></span>
+            Categorias
+          </li>
+        </ul>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar">V</div>
+          <div>
+            <div class="sidebar-user-name">Vitor</div>
+            <div class="sidebar-user-role">Administrador</div>
+          </div>
+        </div>
+        <div class="sidebar-separator"></div>
+        <button class="sidebar-logout">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+          Sair
+        </button>
       </div>
     </aside>
 
@@ -1016,7 +970,7 @@
                   stroke-dasharray="125.66"
                   stroke-dashoffset="54.04"/>
               </svg>
-              <div class="progress-ring-text" id="progressPercent">57%</div>
+              <div class="progress-ring-text" id="progressPercent">57,00%</div>
             </div>
             <div class="progress-label">
               <strong id="progressCount">8 de 14</strong><br/>confirmadas
@@ -1036,7 +990,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
         <div class="banner-alert-text">
-          <strong>Amanhã vence: Internet R$158,00</strong>
+          <strong>Amanhã vence: Internet R$ 158,00</strong>
         </div>
         <button class="banner-alert-action" onclick="markInternetPaid()">Marcar como pago</button>
         <button class="banner-dismiss" onclick="dismissBanner()" aria-label="Fechar">
@@ -1048,15 +1002,15 @@
       <div class="summary-row">
         <div class="summary-card">
           <div class="summary-card-label">Total do mês</div>
-          <div class="summary-card-value" id="summaryTotal">R$14.858</div>
+          <div class="summary-card-value" id="summaryTotal">R$ 14.858,00</div>
         </div>
         <div class="summary-card">
           <div class="summary-card-label">Confirmado</div>
-          <div class="summary-card-value confirmed" id="summaryConfirmed">R$9.600</div>
+          <div class="summary-card-value confirmed" id="summaryConfirmed">R$ 9.600,00</div>
         </div>
         <div class="summary-card">
           <div class="summary-card-label">Pendente</div>
-          <div class="summary-card-value pending" id="summaryPending">R$5.258</div>
+          <div class="summary-card-value pending" id="summaryPending">R$ 5.258,00</div>
         </div>
       </div>
 
@@ -1080,11 +1034,11 @@
             </label>
             <div class="item-content">
               <span class="item-name">Aluguel</span>
-              <span class="item-value">R$1.800</span>
+              <span class="item-value">R$ 1.800,00</span>
               <span class="item-meta">
-                Pago em 01/03
+                <span class="bank-badge bank-badge-itau">Itaú</span> Conta Itaú
                 <span class="item-meta-separator"></span>
-                Conta Itaú
+                Pago em 01/03
               </span>
             </div>
             <span class="status-badge paid">Pago</span>
@@ -1103,11 +1057,11 @@
             </label>
             <div class="item-content">
               <span class="item-name">Energia</span>
-              <span class="item-value">R$320</span>
+              <span class="item-value">R$ 320,00</span>
               <span class="item-meta">
-                Pago em 05/03
+                <span class="bank-badge bank-badge-nubank">Nu</span> Conta Nubank
                 <span class="item-meta-separator"></span>
-                Conta Nubank
+                Pago em 05/03
               </span>
             </div>
             <span class="status-badge paid">Pago</span>
@@ -1126,11 +1080,11 @@
             </label>
             <div class="item-content">
               <span class="item-name">Streaming</span>
-              <span class="item-value">R$45</span>
+              <span class="item-value">R$ 45,00</span>
               <span class="item-meta">
-                Pago em 01/03
+                <span class="bank-badge bank-badge-nubank">Nu</span> Conta Nubank
                 <span class="item-meta-separator"></span>
-                Conta Nubank
+                Pago em 01/03
               </span>
             </div>
             <span class="status-badge paid">Pago</span>
@@ -1160,7 +1114,7 @@
             </label>
             <div class="item-content">
               <span class="item-name">Escola</span>
-              <span class="item-value">R$2.800</span>
+              <span class="item-value">R$ 2.800,00</span>
               <span class="item-meta">
                 Pago em 05/03
                 <span class="item-meta-separator"></span>
@@ -1183,7 +1137,7 @@
             </label>
             <div class="item-content">
               <span class="item-name">Internet</span>
-              <span class="item-value">R$158</span>
+              <span class="item-value">R$ 158,00</span>
               <span class="item-meta">
                 Vence 13/03
                 <span class="item-meta-separator"></span>
@@ -1217,7 +1171,7 @@
             </label>
             <div class="item-content">
               <span class="item-name">Spotify</span>
-              <span class="item-value">R$22</span>
+              <span class="item-value">R$ 22,00</span>
               <span class="item-meta">
                 <span class="method-brand method-brand-visa">VISA</span> Latam Pass
                 <span class="item-meta-separator"></span>
@@ -1240,7 +1194,7 @@
             </label>
             <div class="item-content">
               <span class="item-name">Netflix</span>
-              <span class="item-value">R$45</span>
+              <span class="item-value">R$ 45,00</span>
               <span class="item-meta">
                 <span class="method-brand method-brand-visa">VISA</span> Latam Pass
                 <span class="item-meta-separator"></span>
@@ -1263,9 +1217,9 @@
             </label>
             <div class="item-content">
               <span class="item-name">iCloud</span>
-              <span class="item-value">R$12</span>
+              <span class="item-value">R$ 12,00</span>
               <span class="item-meta">
-                PDA
+                <span class="method-brand method-brand-visa">VISA</span> PDA
                 <span class="item-meta-separator"></span>
                 Ciclo Mar
               </span>
@@ -1297,7 +1251,7 @@
             </label>
             <div class="item-content">
               <span class="item-name"><span class="method-brand method-brand-visa">VISA</span> Fatura Latam Pass</span>
-              <span class="item-value">~R$4.200</span>
+              <span class="item-value">~R$ 4.200,00</span>
               <span class="item-meta">
                 Vence 15/03
                 <span class="item-meta-separator"></span>
@@ -1321,7 +1275,7 @@
             </label>
             <div class="item-content">
               <span class="item-name"><span class="method-brand method-brand-master"></span> Fatura Pão de Açúcar</span>
-              <span class="item-value">~R$1.980</span>
+              <span class="item-value">~R$ 1.980,00</span>
               <span class="item-meta">
                 Vence 10/03
                 <span class="item-meta-separator"></span>
@@ -1356,7 +1310,7 @@
             </label>
             <div class="item-content">
               <span class="item-name">Faxineira</span>
-              <span class="item-value">R$250</span>
+              <span class="item-value">R$ 250,00</span>
               <span class="item-meta">
                 Vence 20/03
                 <span class="item-meta-separator"></span>
@@ -1379,7 +1333,7 @@
             </label>
             <div class="item-content">
               <span class="item-name">Condomínio</span>
-              <span class="item-value">R$580</span>
+              <span class="item-value">R$ 580,00</span>
               <span class="item-meta">
                 Vence 15/03
                 <span class="item-meta-separator"></span>
@@ -1402,11 +1356,11 @@
             </label>
             <div class="item-content">
               <span class="item-name">Seguro carro</span>
-              <span class="item-value">R$230</span>
+              <span class="item-value">R$ 230,00</span>
               <span class="item-meta">
-                Vence 25/03
+                <span class="bank-badge bank-badge-itau">Itaú</span> Débito
                 <span class="item-meta-separator"></span>
-                Débito
+                Vence 25/03
               </span>
             </div>
             <span class="status-badge pending">Pendente</span>
@@ -1425,7 +1379,7 @@
             </label>
             <div class="item-content">
               <span class="item-name">Plano saúde</span>
-              <span class="item-value">R$815</span>
+              <span class="item-value">R$ 815,00</span>
               <span class="item-meta">
                 Vence 28/03
                 <span class="item-meta-separator"></span>
@@ -1467,7 +1421,7 @@
             <!-- Mobile Banner -->
             <div class="mobile-banner">
               <div class="mobile-banner-dot"></div>
-              <div class="mobile-banner-text">Amanhã: Internet R$158</div>
+              <div class="mobile-banner-text">Amanhã: Internet R$ 158,00</div>
               <button class="mobile-banner-btn">Pagar</button>
             </div>
 
@@ -1494,7 +1448,7 @@
                     <div class="m-item-detail">Vence 13/03 · Nubank</div>
                   </div>
                   <div class="m-item-right">
-                    <div class="m-item-value">R$158</div>
+                    <div class="m-item-value">R$ 158,00</div>
                     <span class="m-item-badge tomorrow">Amanhã</span>
                   </div>
                 </div>
@@ -1505,7 +1459,7 @@
                     <div class="m-item-detail">Vence 15/03 · Estimativa</div>
                   </div>
                   <div class="m-item-right">
-                    <div class="m-item-value">~R$4.200</div>
+                    <div class="m-item-value">~R$ 4.200,00</div>
                     <span class="m-item-badge estimate">Estimativa</span>
                   </div>
                 </div>
@@ -1516,7 +1470,7 @@
                     <div class="m-item-detail">Vence 10/03 · Estimativa</div>
                   </div>
                   <div class="m-item-right">
-                    <div class="m-item-value">~R$1.980</div>
+                    <div class="m-item-value">~R$ 1.980,00</div>
                     <span class="m-item-badge estimate">Estimativa</span>
                   </div>
                 </div>
@@ -1527,7 +1481,7 @@
                     <div class="m-item-detail">Vence 15/03 · Boleto</div>
                   </div>
                   <div class="m-item-right">
-                    <div class="m-item-value">R$580</div>
+                    <div class="m-item-value">R$ 580,00</div>
                     <span class="m-item-badge pending">Pendente</span>
                   </div>
                 </div>
@@ -1538,7 +1492,7 @@
                     <div class="m-item-detail">Vence 20/03 · PIX</div>
                   </div>
                   <div class="m-item-right">
-                    <div class="m-item-value">R$250</div>
+                    <div class="m-item-value">R$ 250,00</div>
                     <span class="m-item-badge pending">Pendente</span>
                   </div>
                 </div>
@@ -1546,10 +1500,10 @@
                   <div class="m-item-check"></div>
                   <div class="m-item-info">
                     <div class="m-item-name">Seguro carro</div>
-                    <div class="m-item-detail">Vence 25/03 · Débito</div>
+                    <div class="m-item-detail"><span class="bank-badge bank-badge-itau">Itaú</span> Débito · Vence 25/03</div>
                   </div>
                   <div class="m-item-right">
-                    <div class="m-item-value">R$230</div>
+                    <div class="m-item-value">R$ 230,00</div>
                     <span class="m-item-badge pending">Pendente</span>
                   </div>
                 </div>
@@ -1560,7 +1514,7 @@
                     <div class="m-item-detail">Vence 28/03 · Boleto</div>
                   </div>
                   <div class="m-item-right">
-                    <div class="m-item-value">R$815</div>
+                    <div class="m-item-value">R$ 815,00</div>
                     <span class="m-item-badge pending">Pendente</span>
                   </div>
                 </div>
@@ -1581,10 +1535,10 @@
                   </div>
                   <div class="m-item-info">
                     <div class="m-item-name">Aluguel</div>
-                    <div class="m-item-detail">Pago 01/03 · Itaú</div>
+                    <div class="m-item-detail"><span class="bank-badge bank-badge-itau">Itaú</span> Conta Itaú · Pago 01/03</div>
                   </div>
                   <div class="m-item-right">
-                    <div class="m-item-value">R$1.800</div>
+                    <div class="m-item-value">R$ 1.800,00</div>
                     <span class="m-item-badge paid">Pago</span>
                   </div>
                 </div>
@@ -1597,7 +1551,7 @@
                     <div class="m-item-detail">Pago 05/03 · Itaú</div>
                   </div>
                   <div class="m-item-right">
-                    <div class="m-item-value">R$2.800</div>
+                    <div class="m-item-value">R$ 2.800,00</div>
                     <span class="m-item-badge paid">Pago</span>
                   </div>
                 </div>
@@ -1607,10 +1561,10 @@
                   </div>
                   <div class="m-item-info">
                     <div class="m-item-name">Energia</div>
-                    <div class="m-item-detail">Pago 05/03 · Nubank</div>
+                    <div class="m-item-detail"><span class="bank-badge bank-badge-nubank">Nu</span> Conta Nubank · Pago 05/03</div>
                   </div>
                   <div class="m-item-right">
-                    <div class="m-item-value">R$320</div>
+                    <div class="m-item-value">R$ 320,00</div>
                     <span class="m-item-badge paid">Pago</span>
                   </div>
                 </div>
@@ -1620,10 +1574,10 @@
                   </div>
                   <div class="m-item-info">
                     <div class="m-item-name">Streaming</div>
-                    <div class="m-item-detail">Pago 01/03 · Nubank</div>
+                    <div class="m-item-detail"><span class="bank-badge bank-badge-nubank">Nu</span> Conta Nubank · Pago 01/03</div>
                   </div>
                   <div class="m-item-right">
-                    <div class="m-item-value">R$45</div>
+                    <div class="m-item-value">R$ 45,00</div>
                     <span class="m-item-badge paid">Pago</span>
                   </div>
                 </div>
@@ -1636,7 +1590,7 @@
                     <div class="m-item-detail"><span class="method-brand method-brand-visa">VISA</span> Latam Pass · Ciclo Mar</div>
                   </div>
                   <div class="m-item-right">
-                    <div class="m-item-value">R$22</div>
+                    <div class="m-item-value">R$ 22,00</div>
                     <span class="m-item-badge paid">Pago</span>
                   </div>
                 </div>
@@ -1649,7 +1603,7 @@
                     <div class="m-item-detail"><span class="method-brand method-brand-visa">VISA</span> Latam Pass · Ciclo Mar</div>
                   </div>
                   <div class="m-item-right">
-                    <div class="m-item-value">R$45</div>
+                    <div class="m-item-value">R$ 45,00</div>
                     <span class="m-item-badge paid">Pago</span>
                   </div>
                 </div>
@@ -1659,10 +1613,10 @@
                   </div>
                   <div class="m-item-info">
                     <div class="m-item-name">iCloud</div>
-                    <div class="m-item-detail">PDA · Ciclo Mar</div>
+                    <div class="m-item-detail"><span class="method-brand method-brand-visa">VISA</span> PDA · Ciclo Mar</div>
                   </div>
                   <div class="m-item-right">
-                    <div class="m-item-value">R$12</div>
+                    <div class="m-item-value">R$ 12,00</div>
                     <span class="m-item-badge paid">Pago</span>
                   </div>
                 </div>
@@ -1672,10 +1626,10 @@
                   </div>
                   <div class="m-item-info">
                     <div class="m-item-name">Streaming</div>
-                    <div class="m-item-detail">Pago 01/03 · Nubank</div>
+                    <div class="m-item-detail"><span class="bank-badge bank-badge-nubank">Nu</span> Conta Nubank · Pago 01/03</div>
                   </div>
                   <div class="m-item-right">
-                    <div class="m-item-value">R$45</div>
+                    <div class="m-item-value">R$ 45,00</div>
                     <span class="m-item-badge paid">Pago</span>
                   </div>
                 </div>
@@ -1685,25 +1639,32 @@
           </div>
 
           <!-- Mobile Bottom Nav -->
-          <nav class="mobile-bottom-nav">
-            <div class="mobile-nav-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-              Início
-            </div>
-            <div class="mobile-nav-item active">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-              Checklist
-              <span class="mobile-nav-badge">3</span>
-            </div>
-            <div class="mobile-nav-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-              Cartões
-            </div>
-            <div class="mobile-nav-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-              Config
-            </div>
-          </nav>
+          <div class="bottom-nav">
+            <a class="bottom-nav-item">
+              <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
+              <span>Dashboard</span>
+            </a>
+            <a class="bottom-nav-item">
+              <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
+              <span>Cartões</span>
+            </a>
+            <a class="bottom-nav-fab">
+              <span class="bottom-nav-fab-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>
+              <span class="bottom-nav-fab-label">Registrar</span>
+            </a>
+            <a class="bottom-nav-item active">
+              <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span>
+              <span>Checklist</span>
+            </a>
+            <a class="bottom-nav-item">
+              <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>
+              <span>Projeção</span>
+            </a>
+            <a class="bottom-nav-item">
+              <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg></span>
+              <span>Sair</span>
+            </a>
+          </div>
         </div>
       </div>
 
@@ -1799,16 +1760,16 @@
       ring.style.strokeDashoffset = offset;
 
       // Update text
-      document.getElementById('progressPercent').textContent = percent + '%';
+      document.getElementById('progressPercent').textContent = percent + ',00%';
       document.getElementById('progressCount').textContent = checked + ' de ' + total;
 
       // Update summary cards
-      document.getElementById('summaryConfirmed').textContent = 'R$' + confirmedValue.toLocaleString('pt-BR');
-      document.getElementById('summaryPending').textContent = 'R$' + pendingValue.toLocaleString('pt-BR');
+      document.getElementById('summaryConfirmed').textContent = 'R$ ' + confirmedValue.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+      document.getElementById('summaryPending').textContent = 'R$ ' + pendingValue.toLocaleString('pt-BR', {minimumFractionDigits: 2});
 
       // Update mobile progress
       const mobileFill = document.getElementById('mobileProgressFill');
-      mobileFill.style.width = percent + '%';
+      mobileFill.style.width = percent + ',00%';
       document.getElementById('mobileProgressLabel').textContent = checked + ' de ' + total + ' confirmadas';
     }
 

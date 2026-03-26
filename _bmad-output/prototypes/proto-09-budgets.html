@@ -31,7 +31,10 @@
       --critical: #DC2626;
       --critical-bg: #FEE2E2;
       --critical-text: #991B1B;
+      --primary-fg: #FFFFFF;
+      --radius-button: 8px;
       --radius-card: 12px;
+      --sidebar-width: 220px;
       --radius-input: 8px;
       --radius-badge: 100px;
       --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
@@ -44,13 +47,15 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-variant-numeric: tabular-nums;
       background: var(--bg);
       color: var(--text-primary);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       line-height: 1.5;
     }
+
+    /* ── Tabular Nums ── */
+    .summary-value, .treemap-card-spent, .treemap-card-total, .treemap-card-pct, .treemap-card-rest, .list-amount, .list-rest, .list-pct-text, .mob-summary-value, .mob-card-amounts, .mob-card-pct, .mob-card-rest, .timeline-amount, .tm-value, .tm-percent, .summary-progress-pct, .percentage { font-variant-numeric: tabular-nums; }
 
     /* ── Page Header ── */
     .page-header {
@@ -63,7 +68,7 @@
       font-size: 24px;
       font-weight: 700;
       color: var(--text-primary);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .page-header p {
       font-size: 15px;
@@ -84,118 +89,27 @@
     }
 
     /* ── Sidebar ── */
-    .sidebar {
-      width: 220px;
-      min-width: 220px;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      padding: 24px 0;
-    }
-    .sidebar-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 0 20px;
-      margin-bottom: 32px;
-    }
-    .sidebar-logo-icon {
-      width: 32px;
-      height: 32px;
-      background: var(--primary);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 700;
-    }
-    .sidebar-logo-text {
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-    .sidebar-section {
-      margin-bottom: 8px;
-    }
-    .sidebar-section-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text-tertiary);
-      padding: 0 20px;
-      margin-bottom: 4px;
-    }
-    .sidebar-nav {
-      list-style: none;
-    }
-    .sidebar-nav li a {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 20px;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      text-decoration: none;
-      border-radius: 0;
-      transition: background var(--transition), color var(--transition);
-      cursor: pointer;
-    }
-    .sidebar-nav li a:hover {
-      background: var(--bg);
-      color: var(--text-primary);
-    }
-    .sidebar-nav li a.active {
-      background: var(--primary-light);
-      color: var(--primary);
-      font-weight: 600;
-    }
-    .sidebar-nav li a .nav-icon {
-      width: 20px;
-      text-align: center;
-      font-size: 15px;
-    }
-    .sidebar-spacer { flex: 1; }
-    .sidebar-footer {
-      padding: 0 20px;
-      border-top: 1px solid var(--border);
-      padding-top: 16px;
-      margin-top: 8px;
-    }
-    .sidebar-user {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .sidebar-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: var(--primary-light);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--primary);
-    }
-    .sidebar-user-info {
-      display: flex;
-      flex-direction: column;
-    }
-    .sidebar-user-name {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-    .sidebar-user-email {
-      font-size: 11px;
-      color: var(--text-tertiary);
-    }
+    .sidebar { width: 220px; height: 100%; min-height: 820px; position: relative; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 40; flex-shrink: 0; }
+    .sidebar-logo { display: flex; align-items: center; padding: 20px 16px 16px; gap: 8px; }
+    .sidebar-logo-icon { color: var(--primary); display: flex; align-items: center; }
+    .sidebar-logo-text { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: var(--primary); }
+    .sidebar-separator { height: 1px; background: var(--border); margin: 4px 16px; }
+    .sidebar-nav { flex: 1; overflow-y: auto; }
+    .sidebar-section-label { padding: 16px 16px 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); }
+    .sidebar-items { list-style: none; margin: 0; padding: 0 8px; display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: all 150ms; cursor: pointer; }
+    .sidebar-item:hover { background: var(--bg); color: var(--text-primary); }
+    .sidebar-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+    .sidebar-icon { width: 18px; height: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .sidebar-icon svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding: 12px; }
+    .sidebar-user { display: flex; align-items: center; gap: 10px; }
+    .sidebar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+    .sidebar-user-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .sidebar-user-role { font-size: 11px; color: var(--text-tertiary); }
+    .sidebar-logout { display: flex; align-items: center; gap: 10px; margin-top: 0; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 150ms; border: none; background: none; width: 100%; }
+    .sidebar-logout:hover { background: var(--bg); color: var(--text-primary); }
+    .sidebar-logout svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
     /* ── Main Content ── */
     .main-content {
@@ -231,7 +145,7 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-card);
-      padding: 6px 14px;
+      padding: 8px 16px;
       cursor: pointer;
       transition: border-color var(--transition);
     }
@@ -269,15 +183,15 @@
     .view-toggle-btn {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 7px 14px;
+      gap: 8px;
+      padding: 8px 16px;
       border: none;
       background: transparent;
       font-family: inherit;
       font-size: 13px;
       font-weight: 500;
       color: var(--text-secondary);
-      border-radius: 9px;
+      border-radius: 8px;
       cursor: pointer;
       transition: all var(--transition);
     }
@@ -337,7 +251,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .summary-progress-label {
       font-size: 13px;
@@ -383,7 +297,8 @@
     .treemap-card-method {
       font-size: 11px;
       color: var(--text-tertiary);
-      margin-top: 2px;
+      margin-top: 4px;
+      margin-bottom: 8px;
       display: flex;
       align-items: center;
     }
@@ -430,6 +345,8 @@
     .mob-card-method {
       font-size: 10px;
       color: var(--text-tertiary);
+      margin-top: 4px;
+      margin-bottom: 8px;
       display: flex;
       align-items: center;
     }
@@ -446,7 +363,7 @@
     }
     .mob-view-tab {
       flex: 1;
-      padding: 6px 0;
+      padding: 8px 0;
       font-size: 11px;
       font-weight: 500;
       text-align: center;
@@ -606,7 +523,7 @@
     }
     .tm-value { font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.2; }
     .tm-percent { font-size: 12px; font-weight: 500; opacity: 0.7; margin-top: 1px; }
-    .tm-bar-wrap { margin-top: auto; padding-top: 6px; }
+    .tm-bar-wrap { margin-top: auto; padding-top: 8px; }
     .tm-bar-label {
       font-size: 10px; opacity: 0.65; margin-bottom: 3px;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -631,6 +548,13 @@
     .tm-block.sz-xxs .tm-percent { display: none; }
     .tm-block.sz-xxs .tm-bar-wrap { display: none; }
     .tm-block.sz-xxs .tm-method { display: none; }
+    .tm-block.sz-xxs .tm-hint { display: none; }
+    .tm-block.sz-xs .tm-hint { display: none; }
+
+    .tm-hint {
+      position: absolute; bottom: 8px; right: 10px;
+      font-size: 9px; opacity: 0.45;
+    }
 
     /* Color themes */
     .tm-positive { background: linear-gradient(145deg, #C6F6D5, #9AE6B4); color: #14532D; }
@@ -641,8 +565,12 @@
     .tm-attention .tm-bar-fill { background: #CA8A04; }
     .tm-alert { background: linear-gradient(145deg, #FED7AA, #FDBA74); color: #7C2D12; }
     .tm-alert .tm-bar-fill { background: #EA580C; }
+    .tm-critical { background: linear-gradient(145deg, #FECACA, #FCA5A5); color: #7F1D1D; }
+    .tm-critical .tm-bar-fill { background: #DC2626; }
     .tm-neutral { background: linear-gradient(145deg, #DDD6FE, #C4B5FD); color: #312E81; }
     .tm-neutral .tm-bar-fill { background: #7C3AED; }
+    .tm-neutral-light { background: linear-gradient(145deg, #E0E7FF, #C7D2FE); color: #312E81; }
+    .tm-neutral-light .tm-bar-fill { background: #4F46E5; }
 
     /* Tooltip */
     .tm-tooltip {
@@ -751,7 +679,7 @@
       color: var(--critical-text);
     }
     .treemap-card-amounts {
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .treemap-card-spent {
       font-size: 22px;
@@ -770,7 +698,7 @@
       background: var(--bg);
       border-radius: 100px;
       overflow: hidden;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .treemap-card-progress-fill {
       height: 100%;
@@ -1130,12 +1058,12 @@
     .mob-month {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       font-size: 13px;
       font-weight: 600;
       color: var(--text-secondary);
       background: var(--bg);
-      padding: 6px 12px;
+      padding: 8px 12px;
       border-radius: 100px;
     }
     .mob-summary {
@@ -1230,49 +1158,15 @@
     }
 
     /* ── Bottom Nav ── */
-    .bottom-nav {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding: 10px 0 22px;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-    }
-    .bottom-nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      font-size: 10px;
-      font-weight: 500;
-      color: var(--text-tertiary);
-      text-decoration: none;
-    }
-    .bottom-nav-item.active {
-      color: var(--primary);
-      font-weight: 600;
-    }
-    .bottom-nav-icon {
-      font-size: 20px;
-    }
-    .bottom-nav-item-add {
-      width: 44px;
-      height: 44px;
-      background: var(--primary);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 24px;
-      font-weight: 300;
-      margin-top: -22px;
-      box-shadow: 0 4px 12px rgba(79,70,229,.3);
-    }
+    .bottom-nav { position: relative; height: 56px; background: var(--surface); border-top: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-around; z-index: 50; }
+    .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px 0; min-height: 44px; color: var(--text-tertiary); text-decoration: none; font-size: 10px; font-weight: 500; cursor: pointer; }
+    .bottom-nav-item.active { color: var(--primary); }
+    .bottom-nav-icon { width: 20px; height: 20px; }
+    .bottom-nav-icon svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .bottom-nav-fab { display: flex; flex-direction: column; align-items: center; text-decoration: none; margin-top: -16px; }
+    .bottom-nav-fab-icon { width: 48px; height: 48px; background: var(--primary); color: #FFFFFF; border-radius: 50%; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; }
+    .bottom-nav-fab-icon svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .bottom-nav-fab-label { margin-top: 2px; font-size: 10px; font-weight: 500; color: var(--text-tertiary); }
   </style>
 </head>
 <body>
@@ -1291,44 +1185,72 @@
 <div class="desktop-frame">
 
   <!-- Sidebar -->
-  <nav class="sidebar">
+  <aside class="sidebar">
     <div class="sidebar-logo">
-      <div class="sidebar-logo-icon">C</div>
+      <span class="sidebar-logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/><path d="M8 11h8"/><path d="M8 7h6"/></svg></span>
       <span class="sidebar-logo-text">Caderninho</span>
     </div>
-
-    <div class="sidebar-section">
-      <div class="sidebar-section-label">Menu</div>
-      <ul class="sidebar-nav">
-        <li><a href="#"><span class="nav-icon">🏠</span> Início</a></li>
-        <li><a href="#"><span class="nav-icon">💳</span> Transações</a></li>
-        <li><a href="#"><span class="nav-icon">🏦</span> Contas</a></li>
-        <li><a href="#" class="active"><span class="nav-icon">📊</span> Orçamentos</a></li>
-        <li><a href="#"><span class="nav-icon">📈</span> Relatórios</a></li>
-        <li><a href="#"><span class="nav-icon">🏷️</span> Categorias</a></li>
+    <div class="sidebar-separator"></div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Navegação</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
+          Dashboard
+        </li>
+        <li class="sidebar-item active">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"/><path d="M16 10h.01"/><path d="M2 8v1a2 2 0 0 0 2 2h1"/></svg></span>
+          Orçamentos
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span>
+          Checklist
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>
+          Projeção
+        </li>
       </ul>
-    </div>
-
-    <div class="sidebar-section">
+      <div class="sidebar-separator"></div>
       <div class="sidebar-section-label">Configurações</div>
-      <ul class="sidebar-nav">
-        <li><a href="#"><span class="nav-icon">⚙️</span> Preferências</a></li>
-        <li><a href="#"><span class="nav-icon">🔗</span> Integrações</a></li>
+      <ul class="sidebar-items">
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M10 12h4"/><path d="M10 8h4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/></svg></span>
+          Contas
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
+          Cartões
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M10 18v-7"/><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></svg></span>
+          Investimentos
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>
+          Receitas
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z"/><path d="M2 7v6.172a2 2 0 0 0 .586 1.414l6.71 6.71a2.4 2.4 0 0 0 3.191.193"/><circle cx="10.5" cy="6.5" r=".5" fill="currentColor"/></svg></span>
+          Categorias
+        </li>
       </ul>
-    </div>
-
-    <div class="sidebar-spacer"></div>
-
+    </nav>
     <div class="sidebar-footer">
       <div class="sidebar-user">
-        <div class="sidebar-avatar">VC</div>
-        <div class="sidebar-user-info">
-          <span class="sidebar-user-name">Vitor C.</span>
-          <span class="sidebar-user-email">vitor@email.com</span>
+        <div class="sidebar-avatar">V</div>
+        <div>
+          <div class="sidebar-user-name">Vitor</div>
+          <div class="sidebar-user-role">Administrador</div>
         </div>
       </div>
+      <div class="sidebar-separator"></div>
+      <button class="sidebar-logout">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+        Sair
+      </button>
     </div>
-  </nav>
+  </aside>
 
   <!-- Main Content -->
   <div class="main-content">
@@ -1363,26 +1285,26 @@
     <div class="summary-bar">
       <div class="summary-item">
         <span class="summary-label">Gasto</span>
-        <span class="summary-value">R$9.930</span>
+        <span class="summary-value">R$ 14.526,00</span>
       </div>
       <div class="summary-divider"></div>
       <div class="summary-item">
         <span class="summary-label">Orçado</span>
-        <span class="summary-value">R$14.858</span>
+        <span class="summary-value">R$ 22.300,00</span>
       </div>
       <div class="summary-divider"></div>
       <div class="summary-item">
         <span class="summary-label">Disponível</span>
-        <span class="summary-value positive">R$4.928</span>
+        <span class="summary-value positive">R$ 7.774,00</span>
       </div>
       <div class="summary-divider"></div>
       <div class="summary-progress-wrap">
         <div class="summary-progress-header">
           <span class="summary-progress-label">Total utilizado</span>
-          <span class="summary-progress-pct">67%</span>
+          <span class="summary-progress-pct">65%</span>
         </div>
         <div class="summary-progress-bar">
-          <div class="summary-progress-fill" style="width: 67%; background: var(--positive);"></div>
+          <div class="summary-progress-fill" style="width: 65%; background: var(--positive);"></div>
         </div>
       </div>
     </div>
@@ -1393,64 +1315,10 @@
     <div class="view-panel active" id="view-visual">
       <div class="treemap-grid">
 
-        <!-- ── ESSENCIAIS ── -->
-        <div class="treemap-group-header">Essenciais</div>
+        <!-- ── ESSENCIAIS FIXOS ── -->
+        <div class="treemap-group-header">Essenciais Fixos</div>
 
-        <!-- Supermercado — large -->
-        <div class="treemap-card">
-          <div>
-            <div class="treemap-card-header">
-              <div class="treemap-card-icon-name">
-                <span class="treemap-card-emoji">🛒</span>
-                <span class="treemap-card-name">Supermercado</span>
-              </div>
-              <span class="treemap-card-badge badge-ok">Ok</span>
-            </div>
-            <div class="treemap-card-amounts">
-              <span class="treemap-card-spent">R$2.122</span>
-              <span class="treemap-card-total">/ R$3.000</span>
-            </div>
-            <div class="treemap-card-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
-          </div>
-          <div>
-            <div class="treemap-card-progress">
-              <div class="treemap-card-progress-fill" style="width: 70.7%; background: var(--positive);"></div>
-            </div>
-            <div class="treemap-card-footer">
-              <span class="treemap-card-rest">Resta R$878</span>
-              <span class="treemap-card-pct" style="color: var(--positive-text);">70%</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Escola — large -->
-        <div class="treemap-card">
-          <div>
-            <div class="treemap-card-header">
-              <div class="treemap-card-icon-name">
-                <span class="treemap-card-emoji">🎓</span>
-                <span class="treemap-card-name">Escola</span>
-              </div>
-              <span class="treemap-card-badge badge-fixed">Fixo</span>
-            </div>
-            <div class="treemap-card-amounts">
-              <span class="treemap-card-spent">R$2.800</span>
-              <span class="treemap-card-total">/ R$2.800</span>
-            </div>
-            <div class="treemap-card-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
-          </div>
-          <div>
-            <div class="treemap-card-progress">
-              <div class="treemap-card-progress-fill" style="width: 100%; background: var(--primary);"></div>
-            </div>
-            <div class="treemap-card-footer">
-              <span class="treemap-card-rest" style="color: var(--text-tertiary);">Custo fixo</span>
-              <span class="treemap-card-pct" style="color: var(--primary);">100%</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Moradia — medium -->
+        <!-- Moradia -->
         <div class="treemap-card">
           <div>
             <div class="treemap-card-header">
@@ -1458,94 +1326,40 @@
                 <span class="treemap-card-emoji">🏠</span>
                 <span class="treemap-card-name">Moradia</span>
               </div>
-              <span class="treemap-card-badge badge-attention">Atenção</span>
-            </div>
-            <div class="treemap-card-amounts">
-              <span class="treemap-card-spent">R$1.800</span>
-              <span class="treemap-card-total">/ R$2.200</span>
-            </div>
-            <div class="treemap-card-method"><span class="method-brand method-brand-visa">VISA</span> Itaú Débito</div>
-          </div>
-          <div>
-            <div class="treemap-card-progress">
-              <div class="treemap-card-progress-fill" style="width: 82%; background: var(--attention);"></div>
-            </div>
-            <div class="treemap-card-footer">
-              <span class="treemap-card-rest">Resta R$400</span>
-              <span class="treemap-card-pct" style="color: var(--attention-text);">82%</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Gasolina — small -->
-        <div class="treemap-card">
-          <div>
-            <div class="treemap-card-header">
-              <div class="treemap-card-icon-name">
-                <span class="treemap-card-emoji">⛽</span>
-                <span class="treemap-card-name">Gasolina</span>
-              </div>
               <span class="treemap-card-badge badge-ok">Ok</span>
             </div>
             <div class="treemap-card-amounts">
-              <span class="treemap-card-spent">R$420</span>
-              <span class="treemap-card-total">/ R$600</span>
+              <span class="treemap-card-spent">R$ 3.381,00</span>
+              <span class="treemap-card-total">/ R$ 4.000,00</span>
             </div>
-            <div class="treemap-card-method"><span class="method-brand method-brand-visa">VISA</span> Itaú Débito</div>
+            <div class="treemap-card-method">4 subcategorias</div>
           </div>
           <div>
             <div class="treemap-card-progress">
-              <div class="treemap-card-progress-fill" style="width: 70%; background: var(--positive);"></div>
+              <div class="treemap-card-progress-fill" style="width: 85%; background: var(--positive);"></div>
             </div>
             <div class="treemap-card-footer">
-              <span class="treemap-card-rest">Resta R$180</span>
-              <span class="treemap-card-pct" style="color: var(--positive-text);">70%</span>
+              <span class="treemap-card-rest">Resta R$ 619,00</span>
+              <span class="treemap-card-pct" style="color: var(--positive-text);">84,5%</span>
             </div>
           </div>
         </div>
 
-        <!-- Transporte — small -->
+        <!-- Assinaturas -->
         <div class="treemap-card">
           <div>
             <div class="treemap-card-header">
               <div class="treemap-card-icon-name">
-                <span class="treemap-card-emoji">🚌</span>
-                <span class="treemap-card-name">Transporte</span>
-              </div>
-              <span class="treemap-card-badge badge-ok">Ok</span>
-            </div>
-            <div class="treemap-card-amounts">
-              <span class="treemap-card-spent">R$380</span>
-              <span class="treemap-card-total">/ R$500</span>
-            </div>
-            <div class="treemap-card-method"><span class="method-brand method-brand-visa">VISA</span> Itaú Débito</div>
-          </div>
-          <div>
-            <div class="treemap-card-progress">
-              <div class="treemap-card-progress-fill" style="width: 76%; background: var(--positive);"></div>
-            </div>
-            <div class="treemap-card-footer">
-              <span class="treemap-card-rest">Resta R$120</span>
-              <span class="treemap-card-pct" style="color: var(--positive-text);">76%</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Internet — small/fixed -->
-        <div class="treemap-card">
-          <div>
-            <div class="treemap-card-header">
-              <div class="treemap-card-icon-name">
-                <span class="treemap-card-emoji">🌐</span>
-                <span class="treemap-card-name">Internet</span>
+                <span class="treemap-card-emoji">📱</span>
+                <span class="treemap-card-name">Assinaturas</span>
               </div>
               <span class="treemap-card-badge badge-fixed">Fixo</span>
             </div>
             <div class="treemap-card-amounts">
-              <span class="treemap-card-spent">R$158</span>
-              <span class="treemap-card-total">/ R$158</span>
+              <span class="treemap-card-spent">R$ 200,00</span>
+              <span class="treemap-card-total">/ R$ 200,00</span>
             </div>
-            <div class="treemap-card-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
+            <div class="treemap-card-method">2 subcategorias</div>
           </div>
           <div>
             <div class="treemap-card-progress">
@@ -1558,59 +1372,206 @@
           </div>
         </div>
 
-        <!-- ── QUALIDADE DE VIDA ── -->
-        <div class="treemap-group-header">Qualidade de Vida</div>
+        <!-- ── ESSENCIAIS VARIAVEIS ── -->
+        <div class="treemap-group-header">Essenciais Variáveis</div>
 
-        <!-- Restaurante — medium -->
+        <!-- Alimentação -->
         <div class="treemap-card">
           <div>
             <div class="treemap-card-header">
               <div class="treemap-card-icon-name">
-                <span class="treemap-card-emoji">🍽️</span>
+                <span class="treemap-card-emoji">🍽</span>
+                <span class="treemap-card-name">Alimentação</span>
+              </div>
+              <span class="treemap-card-badge badge-ok">Ok</span>
+            </div>
+            <div class="treemap-card-amounts">
+              <span class="treemap-card-spent">R$ 3.682,00</span>
+              <span class="treemap-card-total">/ R$ 5.500,00</span>
+            </div>
+            <div class="treemap-card-method">3 subcategorias</div>
+          </div>
+          <div>
+            <div class="treemap-card-progress">
+              <div class="treemap-card-progress-fill" style="width: 66.9%; background: var(--positive);"></div>
+            </div>
+            <div class="treemap-card-footer">
+              <span class="treemap-card-rest">Resta R$ 1.818,00</span>
+              <span class="treemap-card-pct" style="color: var(--positive-text);">66,9%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transporte -->
+        <div class="treemap-card">
+          <div>
+            <div class="treemap-card-header">
+              <div class="treemap-card-icon-name">
+                <span class="treemap-card-emoji">🚗</span>
+                <span class="treemap-card-name">Transporte</span>
+              </div>
+              <span class="treemap-card-badge badge-attention">Atenção</span>
+            </div>
+            <div class="treemap-card-amounts">
+              <span class="treemap-card-spent">R$ 1.403,00</span>
+              <span class="treemap-card-total">/ R$ 1.500,00</span>
+            </div>
+            <div class="treemap-card-method">4 subcategorias</div>
+          </div>
+          <div>
+            <div class="treemap-card-progress">
+              <div class="treemap-card-progress-fill" style="width: 93.5%; background: var(--attention);"></div>
+            </div>
+            <div class="treemap-card-footer">
+              <span class="treemap-card-rest">Resta R$ 97,00</span>
+              <span class="treemap-card-pct" style="color: var(--attention-text);">93,5%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── QUALIDADE DE VIDA ── -->
+        <div class="treemap-group-header">Qualidade de Vida</div>
+
+        <!-- Restaurante -->
+        <div class="treemap-card">
+          <div>
+            <div class="treemap-card-header">
+              <div class="treemap-card-icon-name">
+                <span class="treemap-card-emoji">🍔</span>
                 <span class="treemap-card-name">Restaurante</span>
               </div>
               <span class="treemap-card-badge badge-ok">Ok</span>
             </div>
             <div class="treemap-card-amounts">
-              <span class="treemap-card-spent">R$1.800</span>
-              <span class="treemap-card-total">/ R$2.500</span>
+              <span class="treemap-card-spent">R$ 1.550,00</span>
+              <span class="treemap-card-total">/ R$ 2.000,00</span>
             </div>
-            <div class="treemap-card-method"><span class="method-brand method-brand-master"></span> Nubank Master</div>
+            <div class="treemap-card-method">3 subcategorias</div>
           </div>
           <div>
             <div class="treemap-card-progress">
-              <div class="treemap-card-progress-fill" style="width: 72%; background: var(--positive);"></div>
+              <div class="treemap-card-progress-fill" style="width: 77.5%; background: var(--positive);"></div>
             </div>
             <div class="treemap-card-footer">
-              <span class="treemap-card-rest">Resta R$700</span>
-              <span class="treemap-card-pct" style="color: var(--positive-text);">72%</span>
+              <span class="treemap-card-rest">Resta R$ 450,00</span>
+              <span class="treemap-card-pct" style="color: var(--positive-text);">77,5%</span>
             </div>
           </div>
         </div>
 
-        <!-- Outros — medium -->
+        <!-- Viagem -->
         <div class="treemap-card">
           <div>
             <div class="treemap-card-header">
               <div class="treemap-card-icon-name">
-                <span class="treemap-card-emoji">📦</span>
-                <span class="treemap-card-name">Outros</span>
+                <span class="treemap-card-emoji">✈️</span>
+                <span class="treemap-card-name">Viagem</span>
               </div>
               <span class="treemap-card-badge badge-ok">Ok</span>
             </div>
             <div class="treemap-card-amounts">
-              <span class="treemap-card-spent">R$450</span>
-              <span class="treemap-card-total">/ R$2.000</span>
+              <span class="treemap-card-spent">R$ 800,00</span>
+              <span class="treemap-card-total">/ R$ 2.000,00</span>
             </div>
-            <div class="treemap-card-method">Variado</div>
+            <div class="treemap-card-method">4 subcategorias</div>
           </div>
           <div>
             <div class="treemap-card-progress">
-              <div class="treemap-card-progress-fill" style="width: 22.5%; background: var(--positive);"></div>
+              <div class="treemap-card-progress-fill" style="width: 40%; background: var(--positive);"></div>
             </div>
             <div class="treemap-card-footer">
-              <span class="treemap-card-rest">Resta R$1.550</span>
-              <span class="treemap-card-pct" style="color: var(--positive-text);">22%</span>
+              <span class="treemap-card-rest">Resta R$ 1.200,00</span>
+              <span class="treemap-card-pct" style="color: var(--positive-text);">40,0%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── INVESTIMENTOS ── -->
+        <div class="treemap-group-header">Investimentos</div>
+
+        <!-- Educação -->
+        <div class="treemap-card">
+          <div>
+            <div class="treemap-card-header">
+              <div class="treemap-card-icon-name">
+                <span class="treemap-card-emoji">📚</span>
+                <span class="treemap-card-name">Educação</span>
+              </div>
+              <span class="treemap-card-badge badge-attention">Atenção</span>
+            </div>
+            <div class="treemap-card-amounts">
+              <span class="treemap-card-spent">R$ 2.680,00</span>
+              <span class="treemap-card-total">/ R$ 2.800,00</span>
+            </div>
+            <div class="treemap-card-method">2 subcategorias</div>
+          </div>
+          <div>
+            <div class="treemap-card-progress">
+              <div class="treemap-card-progress-fill" style="width: 95.7%; background: var(--attention);"></div>
+            </div>
+            <div class="treemap-card-footer">
+              <span class="treemap-card-rest">Resta R$ 120,00</span>
+              <span class="treemap-card-pct" style="color: var(--attention-text);">95,7%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── PROTEÇÃO ── -->
+        <div class="treemap-group-header">Proteção</div>
+
+        <!-- Seguros -->
+        <div class="treemap-card">
+          <div>
+            <div class="treemap-card-header">
+              <div class="treemap-card-icon-name">
+                <span class="treemap-card-emoji">🛡</span>
+                <span class="treemap-card-name">Seguros</span>
+              </div>
+              <span class="treemap-card-badge badge-attention">Atenção</span>
+            </div>
+            <div class="treemap-card-amounts">
+              <span class="treemap-card-spent">R$ 480,00</span>
+              <span class="treemap-card-total">/ R$ 500,00</span>
+            </div>
+            <div class="treemap-card-method">2 subcategorias</div>
+          </div>
+          <div>
+            <div class="treemap-card-progress">
+              <div class="treemap-card-progress-fill" style="width: 96%; background: var(--attention);"></div>
+            </div>
+            <div class="treemap-card-footer">
+              <span class="treemap-card-rest">Resta R$ 20,00</span>
+              <span class="treemap-card-pct" style="color: var(--attention-text);">96,0%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── IMPREVISTOS ── -->
+        <div class="treemap-group-header">Imprevistos</div>
+
+        <!-- Imprevistos (sem categorias) -->
+        <div class="treemap-card">
+          <div>
+            <div class="treemap-card-header">
+              <div class="treemap-card-icon-name">
+                <span class="treemap-card-emoji">⚡</span>
+                <span class="treemap-card-name">Imprevistos</span>
+              </div>
+              <span class="treemap-card-badge badge-ok">Ok</span>
+            </div>
+            <div class="treemap-card-amounts">
+              <span class="treemap-card-spent">R$ 350,00</span>
+              <span class="treemap-card-total">/ R$ 1.000,00</span>
+            </div>
+            <div class="treemap-card-method">Sem categorias definidas</div>
+          </div>
+          <div>
+            <div class="treemap-card-progress">
+              <div class="treemap-card-progress-fill" style="width: 35%; background: var(--positive);"></div>
+            </div>
+            <div class="treemap-card-footer">
+              <span class="treemap-card-rest">Resta R$ 650,00</span>
+              <span class="treemap-card-pct" style="color: var(--positive-text);">35,0%</span>
             </div>
           </div>
         </div>
@@ -1635,207 +1596,235 @@
             </tr>
           </thead>
           <tbody>
-            <!-- ── ESSENCIAIS ── -->
-            <tr class="list-group-header"><td colspan="6">Essenciais</td></tr>
-            <!-- Escola 100% -->
-            <tr>
-              <td>
-                <div class="list-cat">
-                  <span class="list-cat-emoji">🎓</span>
-                  <div>
-                    <div class="list-cat-name">Escola</div>
-                    <div class="list-cat-type">Custo fixo</div>
-                    <div class="list-cat-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
-                  </div>
-                </div>
-              </td>
-              <td class="list-amount">R$2.800</td>
-              <td class="list-amount">R$2.800</td>
-              <td><span class="list-rest zero">R$0</span></td>
-              <td>
-                <div class="list-pct-bar">
-                  <div class="list-pct-track">
-                    <div class="list-pct-fill" style="width: 100%; background: var(--primary);"></div>
-                  </div>
-                  <span class="list-pct-text" style="color: var(--primary);">100%</span>
-                </div>
-              </td>
-              <td><span class="list-status-badge badge-fixed">Fixo</span></td>
-            </tr>
-            <!-- Internet 100% -->
-            <tr>
-              <td>
-                <div class="list-cat">
-                  <span class="list-cat-emoji">🌐</span>
-                  <div>
-                    <div class="list-cat-name">Internet</div>
-                    <div class="list-cat-type">Custo fixo</div>
-                    <div class="list-cat-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
-                  </div>
-                </div>
-              </td>
-              <td class="list-amount">R$158</td>
-              <td class="list-amount">R$158</td>
-              <td><span class="list-rest zero">R$0</span></td>
-              <td>
-                <div class="list-pct-bar">
-                  <div class="list-pct-track">
-                    <div class="list-pct-fill" style="width: 100%; background: var(--primary);"></div>
-                  </div>
-                  <span class="list-pct-text" style="color: var(--primary);">100%</span>
-                </div>
-              </td>
-              <td><span class="list-status-badge badge-fixed">Fixo</span></td>
-            </tr>
-            <!-- Moradia 82% -->
+            <!-- ── ESSENCIAIS FIXOS ── -->
+            <tr class="list-group-header"><td colspan="6">Essenciais Fixos</td></tr>
+            <!-- Moradia 84.5% -->
             <tr>
               <td>
                 <div class="list-cat">
                   <span class="list-cat-emoji">🏠</span>
                   <div>
                     <div class="list-cat-name">Moradia</div>
-                    <div class="list-cat-type">Variável</div>
-                    <div class="list-cat-method"><span class="method-brand method-brand-visa">VISA</span> Itaú Débito</div>
+                    <div class="list-cat-type">4 subcategorias</div>
                   </div>
                 </div>
               </td>
-              <td class="list-amount">R$2.200</td>
-              <td class="list-amount">R$1.800</td>
-              <td><span class="list-rest ok">R$400</span></td>
+              <td class="list-amount">R$ 4.000,00</td>
+              <td class="list-amount">R$ 3.381,00</td>
+              <td><span class="list-rest ok">R$ 619,00</span></td>
               <td>
                 <div class="list-pct-bar">
                   <div class="list-pct-track">
-                    <div class="list-pct-fill" style="width: 82%; background: var(--attention);"></div>
+                    <div class="list-pct-fill" style="width: 84.5%; background: var(--positive);"></div>
                   </div>
-                  <span class="list-pct-text" style="color: var(--attention-text);">82%</span>
-                </div>
-              </td>
-              <td><span class="list-status-badge badge-attention">&#9888;&#65039; Atenção</span></td>
-            </tr>
-            <!-- Supermercado 70% -->
-            <tr>
-              <td>
-                <div class="list-cat">
-                  <span class="list-cat-emoji">🛒</span>
-                  <div>
-                    <div class="list-cat-name">Supermercado</div>
-                    <div class="list-cat-type">Variável</div>
-                    <div class="list-cat-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
-                  </div>
-                </div>
-              </td>
-              <td class="list-amount">R$3.000</td>
-              <td class="list-amount">R$2.122</td>
-              <td><span class="list-rest ok">R$878</span></td>
-              <td>
-                <div class="list-pct-bar">
-                  <div class="list-pct-track">
-                    <div class="list-pct-fill" style="width: 70.7%; background: var(--positive);"></div>
-                  </div>
-                  <span class="list-pct-text" style="color: var(--positive-text);">70%</span>
+                  <span class="list-pct-text" style="color: var(--positive-text);">84,5%</span>
                 </div>
               </td>
               <td><span class="list-status-badge badge-ok">&#9989; Ok</span></td>
             </tr>
-            <!-- Gasolina 70% -->
+            <!-- Assinaturas 100% -->
             <tr>
               <td>
                 <div class="list-cat">
-                  <span class="list-cat-emoji">⛽</span>
+                  <span class="list-cat-emoji">📱</span>
                   <div>
-                    <div class="list-cat-name">Gasolina</div>
-                    <div class="list-cat-type">Variável</div>
-                    <div class="list-cat-method"><span class="method-brand method-brand-visa">VISA</span> Itaú Débito</div>
+                    <div class="list-cat-name">Assinaturas</div>
+                    <div class="list-cat-type">2 subcategorias</div>
                   </div>
                 </div>
               </td>
-              <td class="list-amount">R$600</td>
-              <td class="list-amount">R$420</td>
-              <td><span class="list-rest ok">R$180</span></td>
+              <td class="list-amount">R$ 200,00</td>
+              <td class="list-amount">R$ 200,00</td>
+              <td><span class="list-rest zero">R$ 0,00</span></td>
               <td>
                 <div class="list-pct-bar">
                   <div class="list-pct-track">
-                    <div class="list-pct-fill" style="width: 70%; background: var(--positive);"></div>
+                    <div class="list-pct-fill" style="width: 100%; background: var(--primary);"></div>
                   </div>
-                  <span class="list-pct-text" style="color: var(--positive-text);">70%</span>
+                  <span class="list-pct-text" style="color: var(--primary);">100%</span>
+                </div>
+              </td>
+              <td><span class="list-status-badge badge-fixed">Fixo</span></td>
+            </tr>
+
+            <!-- ── ESSENCIAIS VARIAVEIS ── -->
+            <tr class="list-group-header"><td colspan="6">Essenciais Variáveis</td></tr>
+            <!-- Alimentação 66.9% -->
+            <tr>
+              <td>
+                <div class="list-cat">
+                  <span class="list-cat-emoji">🍽</span>
+                  <div>
+                    <div class="list-cat-name">Alimentação</div>
+                    <div class="list-cat-type">3 subcategorias</div>
+                  </div>
+                </div>
+              </td>
+              <td class="list-amount">R$ 5.500,00</td>
+              <td class="list-amount">R$ 3.682,00</td>
+              <td><span class="list-rest ok">R$ 1.818,00</span></td>
+              <td>
+                <div class="list-pct-bar">
+                  <div class="list-pct-track">
+                    <div class="list-pct-fill" style="width: 66.9%; background: var(--positive);"></div>
+                  </div>
+                  <span class="list-pct-text" style="color: var(--positive-text);">66,9%</span>
                 </div>
               </td>
               <td><span class="list-status-badge badge-ok">&#9989; Ok</span></td>
             </tr>
-            <!-- Transporte 76% -->
+            <!-- Transporte 93.5% -->
             <tr>
               <td>
                 <div class="list-cat">
-                  <span class="list-cat-emoji">🚌</span>
+                  <span class="list-cat-emoji">🚗</span>
                   <div>
                     <div class="list-cat-name">Transporte</div>
-                    <div class="list-cat-type">Variável</div>
-                    <div class="list-cat-method"><span class="method-brand method-brand-visa">VISA</span> Itaú Débito</div>
+                    <div class="list-cat-type">4 subcategorias</div>
                   </div>
                 </div>
               </td>
-              <td class="list-amount">R$500</td>
-              <td class="list-amount">R$380</td>
-              <td><span class="list-rest ok">R$120</span></td>
+              <td class="list-amount">R$ 1.500,00</td>
+              <td class="list-amount">R$ 1.403,00</td>
+              <td><span class="list-rest ok">R$ 97,00</span></td>
               <td>
                 <div class="list-pct-bar">
                   <div class="list-pct-track">
-                    <div class="list-pct-fill" style="width: 76%; background: var(--positive);"></div>
+                    <div class="list-pct-fill" style="width: 93.5%; background: var(--attention);"></div>
                   </div>
-                  <span class="list-pct-text" style="color: var(--positive-text);">76%</span>
+                  <span class="list-pct-text" style="color: var(--attention-text);">93,5%</span>
+                </div>
+              </td>
+              <td><span class="list-status-badge badge-attention">&#9888; Atenção</span></td>
+            </tr>
+
+            <!-- ── QUALIDADE DE VIDA ── -->
+            <tr class="list-group-header"><td colspan="6">Qualidade de Vida</td></tr>
+            <!-- Restaurante 77.5% -->
+            <tr>
+              <td>
+                <div class="list-cat">
+                  <span class="list-cat-emoji">🍔</span>
+                  <div>
+                    <div class="list-cat-name">Restaurante</div>
+                    <div class="list-cat-type">3 subcategorias</div>
+                  </div>
+                </div>
+              </td>
+              <td class="list-amount">R$ 2.000,00</td>
+              <td class="list-amount">R$ 1.550,00</td>
+              <td><span class="list-rest ok">R$ 450,00</span></td>
+              <td>
+                <div class="list-pct-bar">
+                  <div class="list-pct-track">
+                    <div class="list-pct-fill" style="width: 77.5%; background: var(--positive);"></div>
+                  </div>
+                  <span class="list-pct-text" style="color: var(--positive-text);">77,5%</span>
+                </div>
+              </td>
+              <td><span class="list-status-badge badge-ok">&#9989; Ok</span></td>
+            </tr>
+            <!-- Viagem 40% -->
+            <tr>
+              <td>
+                <div class="list-cat">
+                  <span class="list-cat-emoji">✈️</span>
+                  <div>
+                    <div class="list-cat-name">Viagem</div>
+                    <div class="list-cat-type">4 subcategorias</div>
+                  </div>
+                </div>
+              </td>
+              <td class="list-amount">R$ 2.000,00</td>
+              <td class="list-amount">R$ 800,00</td>
+              <td><span class="list-rest ok">R$ 1.200,00</span></td>
+              <td>
+                <div class="list-pct-bar">
+                  <div class="list-pct-track">
+                    <div class="list-pct-fill" style="width: 40%; background: var(--positive);"></div>
+                  </div>
+                  <span class="list-pct-text" style="color: var(--positive-text);">40,0%</span>
                 </div>
               </td>
               <td><span class="list-status-badge badge-ok">&#9989; Ok</span></td>
             </tr>
 
-            <!-- ── QUALIDADE DE VIDA ── -->
-            <tr class="list-group-header"><td colspan="6">Qualidade de Vida</td></tr>
-            <!-- Restaurante 72% -->
+            <!-- ── INVESTIMENTOS ── -->
+            <tr class="list-group-header"><td colspan="6">Investimentos</td></tr>
+            <!-- Educação 95.7% -->
             <tr>
               <td>
                 <div class="list-cat">
-                  <span class="list-cat-emoji">🍽️</span>
+                  <span class="list-cat-emoji">📚</span>
                   <div>
-                    <div class="list-cat-name">Restaurante</div>
-                    <div class="list-cat-type">Variável</div>
-                    <div class="list-cat-method"><span class="method-brand method-brand-master"></span> Nubank Master</div>
+                    <div class="list-cat-name">Educação</div>
+                    <div class="list-cat-type">2 subcategorias</div>
                   </div>
                 </div>
               </td>
-              <td class="list-amount">R$2.500</td>
-              <td class="list-amount">R$1.800</td>
-              <td><span class="list-rest ok">R$700</span></td>
+              <td class="list-amount">R$ 2.800,00</td>
+              <td class="list-amount">R$ 2.680,00</td>
+              <td><span class="list-rest ok">R$ 120,00</span></td>
               <td>
                 <div class="list-pct-bar">
                   <div class="list-pct-track">
-                    <div class="list-pct-fill" style="width: 72%; background: var(--positive);"></div>
+                    <div class="list-pct-fill" style="width: 95.7%; background: var(--attention);"></div>
                   </div>
-                  <span class="list-pct-text" style="color: var(--positive-text);">72%</span>
+                  <span class="list-pct-text" style="color: var(--attention-text);">95,7%</span>
                 </div>
               </td>
-              <td><span class="list-status-badge badge-ok">&#9989; Ok</span></td>
+              <td><span class="list-status-badge badge-attention">&#9888; Atenção</span></td>
             </tr>
-            <!-- Outros 22% -->
+
+            <!-- ── PROTEÇÃO ── -->
+            <tr class="list-group-header"><td colspan="6">Proteção</td></tr>
+            <!-- Seguros 96% -->
             <tr>
               <td>
                 <div class="list-cat">
-                  <span class="list-cat-emoji">📦</span>
+                  <span class="list-cat-emoji">🛡</span>
                   <div>
-                    <div class="list-cat-name">Outros</div>
-                    <div class="list-cat-type">Variável</div>
-                    <div class="list-cat-method">Variado</div>
+                    <div class="list-cat-name">Seguros</div>
+                    <div class="list-cat-type">2 subcategorias</div>
                   </div>
                 </div>
               </td>
-              <td class="list-amount">R$2.000</td>
-              <td class="list-amount">R$450</td>
-              <td><span class="list-rest ok">R$1.550</span></td>
+              <td class="list-amount">R$ 500,00</td>
+              <td class="list-amount">R$ 480,00</td>
+              <td><span class="list-rest ok">R$ 20,00</span></td>
               <td>
                 <div class="list-pct-bar">
                   <div class="list-pct-track">
-                    <div class="list-pct-fill" style="width: 22.5%; background: var(--positive);"></div>
+                    <div class="list-pct-fill" style="width: 96%; background: var(--attention);"></div>
                   </div>
-                  <span class="list-pct-text" style="color: var(--positive-text);">22%</span>
+                  <span class="list-pct-text" style="color: var(--attention-text);">96,0%</span>
+                </div>
+              </td>
+              <td><span class="list-status-badge badge-attention">&#9888; Atenção</span></td>
+            </tr>
+
+            <!-- ── IMPREVISTOS ── -->
+            <tr class="list-group-header"><td colspan="6">Imprevistos</td></tr>
+            <!-- Imprevistos 35% -->
+            <tr>
+              <td>
+                <div class="list-cat">
+                  <span class="list-cat-emoji">⚡</span>
+                  <div>
+                    <div class="list-cat-name">Imprevistos</div>
+                    <div class="list-cat-type">Sem categorias</div>
+                  </div>
+                </div>
+              </td>
+              <td class="list-amount">R$ 1.000,00</td>
+              <td class="list-amount">R$ 350,00</td>
+              <td><span class="list-rest ok">R$ 650,00</span></td>
+              <td>
+                <div class="list-pct-bar">
+                  <div class="list-pct-track">
+                    <div class="list-pct-fill" style="width: 35%; background: var(--positive);"></div>
+                  </div>
+                  <span class="list-pct-text" style="color: var(--positive-text);">35,0%</span>
                 </div>
               </td>
               <td><span class="list-status-badge badge-ok">&#9989; Ok</span></td>
@@ -1843,16 +1832,16 @@
           </tbody>
           <tfoot>
             <tr>
-              <td>Total (8 categorias)</td>
-              <td>R$14.858</td>
-              <td>R$9.930</td>
-              <td style="color: var(--positive-text);">R$4.928</td>
+              <td>Total (9 categorias)</td>
+              <td>R$ 22.300,00</td>
+              <td>R$ 14.526,00</td>
+              <td style="color: var(--positive-text);">R$ 7.774,00</td>
               <td>
                 <div class="list-pct-bar">
                   <div class="list-pct-track">
-                    <div class="list-pct-fill" style="width: 67%; background: var(--positive);"></div>
+                    <div class="list-pct-fill" style="width: 65%; background: var(--positive);"></div>
                   </div>
-                  <span class="list-pct-text" style="color: var(--positive-text);">67%</span>
+                  <span class="list-pct-text" style="color: var(--positive-text);">65%</span>
                 </div>
               </td>
               <td></td>
@@ -1876,276 +1865,189 @@
           <div class="timeline-header-cell">Mai 2026</div>
           <div class="timeline-header-cell">Jun 2026</div>
 
-          <!-- ── ESSENCIAIS ── -->
-          <div class="timeline-group-header">Essenciais</div>
+          <!-- ── ESSENCIAIS FIXOS ── -->
+          <div class="timeline-group-header">Essenciais Fixos</div>
 
-          <!-- Escola (recurring) -->
-          <div class="timeline-cat-cell">
-            <span class="timeline-cat-emoji">🎓</span> Escola
-          </div>
-          <div class="timeline-data-cell current-col">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary);">
-                  <span class="timeline-bar-label">R$2.800</span>
-                </div>
-              </div>
-              <span class="timeline-amount">R$2.800 / R$2.800</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$2.800</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">R$2.800</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$2.800</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">R$2.800</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 100%; background: var(--primary); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$2.800</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">R$2.800</span>
-            </div>
-          </div>
-
-          <!-- Supermercado -->
-          <div class="timeline-cat-cell">
-            <span class="timeline-cat-emoji">🛒</span> Supermercado
-          </div>
-          <div class="timeline-data-cell current-col">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 70.7%; background: var(--positive);">
-                  <span class="timeline-bar-label">R$2.122</span>
-                </div>
-              </div>
-              <span class="timeline-amount">R$2.122 / R$3.000</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 85%; background: var(--attention); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$2.550</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">~R$2.550</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 80%; background: var(--positive); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$2.400</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">~R$2.400</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 83%; background: var(--attention); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$2.500</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">~R$2.500</span>
-            </div>
-          </div>
-
-          <!-- Moradia -->
+          <!-- Moradia (fixo) -->
           <div class="timeline-cat-cell">
             <span class="timeline-cat-emoji">🏠</span> Moradia
           </div>
           <div class="timeline-data-cell current-col">
             <div class="timeline-bar-wrap">
               <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 82%; background: var(--attention);">
-                  <span class="timeline-bar-label">R$1.800</span>
+                <div class="timeline-bar-fill" style="width: 84.5%; background: var(--positive);">
+                  <span class="timeline-bar-label">R$ 3.381</span>
                 </div>
               </div>
-              <span class="timeline-amount">R$1.800 / R$2.200</span>
+              <span class="timeline-amount">R$3.381 / R$ 4.000</span>
             </div>
           </div>
           <div class="timeline-data-cell">
             <div class="timeline-bar-wrap">
               <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 77%; background: var(--positive); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$1.700</span>
+                <div class="timeline-bar-fill" style="width: 85%; background: var(--positive); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 3.400</span>
                 </div>
               </div>
-              <span class="timeline-amount projected">~R$1.700</span>
+              <span class="timeline-amount projected">~R$ 3.400</span>
             </div>
           </div>
           <div class="timeline-data-cell">
             <div class="timeline-bar-wrap">
               <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 82%; background: var(--attention); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$1.800</span>
+                <div class="timeline-bar-fill" style="width: 85%; background: var(--positive); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 3.400</span>
                 </div>
               </div>
-              <span class="timeline-amount projected">~R$1.800</span>
+              <span class="timeline-amount projected">~R$ 3.400</span>
             </div>
           </div>
           <div class="timeline-data-cell">
             <div class="timeline-bar-wrap">
               <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 77%; background: var(--positive); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$1.700</span>
+                <div class="timeline-bar-fill" style="width: 87%; background: var(--attention); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 3.480</span>
                 </div>
               </div>
-              <span class="timeline-amount projected">~R$1.700</span>
+              <span class="timeline-amount projected">~R$ 3.480</span>
             </div>
           </div>
 
-          <!-- Gasolina -->
+          <!-- Assinaturas (fixo) -->
           <div class="timeline-cat-cell">
-            <span class="timeline-cat-emoji">⛽</span> Gasolina
-          </div>
-          <div class="timeline-data-cell current-col">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 70%; background: var(--positive);">
-                  <span class="timeline-bar-label">R$420</span>
-                </div>
-              </div>
-              <span class="timeline-amount">R$420 / R$600</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 75%; background: var(--positive); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$450</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">~R$450</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 75%; background: var(--positive); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$450</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">~R$450</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 83%; background: var(--attention); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$500</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">~R$500</span>
-            </div>
-          </div>
-
-          <!-- Transporte -->
-          <div class="timeline-cat-cell">
-            <span class="timeline-cat-emoji">🚌</span> Transporte
-          </div>
-          <div class="timeline-data-cell current-col">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 76%; background: var(--positive);">
-                  <span class="timeline-bar-label">R$380</span>
-                </div>
-              </div>
-              <span class="timeline-amount">R$380 / R$500</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 80%; background: var(--positive); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$400</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">~R$400</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 76%; background: var(--positive); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$380</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">~R$380</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 76%; background: var(--positive); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$380</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">~R$380</span>
-            </div>
-          </div>
-
-          <!-- Internet (recurring) -->
-          <div class="timeline-cat-cell">
-            <span class="timeline-cat-emoji">🌐</span> Internet
+            <span class="timeline-cat-emoji">📱</span> Assinaturas
           </div>
           <div class="timeline-data-cell current-col">
             <div class="timeline-bar-wrap">
               <div class="timeline-bar-track">
                 <div class="timeline-bar-fill" style="width: 100%; background: var(--primary);">
-                  <span class="timeline-bar-label">R$158</span>
+                  <span class="timeline-bar-label">R$ 200</span>
                 </div>
               </div>
-              <span class="timeline-amount">R$158 / R$158</span>
+              <span class="timeline-amount">R$200 / R$ 200</span>
             </div>
           </div>
           <div class="timeline-data-cell">
             <div class="timeline-bar-wrap">
               <div class="timeline-bar-track">
                 <div class="timeline-bar-fill" style="width: 100%; background: var(--primary); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$158</span>
+                  <span class="timeline-bar-label">R$ 200</span>
                 </div>
               </div>
-              <span class="timeline-amount projected">R$158</span>
+              <span class="timeline-amount projected">R$ 200</span>
             </div>
           </div>
           <div class="timeline-data-cell">
             <div class="timeline-bar-wrap">
               <div class="timeline-bar-track">
                 <div class="timeline-bar-fill" style="width: 100%; background: var(--primary); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$158</span>
+                  <span class="timeline-bar-label">R$ 200</span>
                 </div>
               </div>
-              <span class="timeline-amount projected">R$158</span>
+              <span class="timeline-amount projected">R$ 200</span>
             </div>
           </div>
           <div class="timeline-data-cell">
             <div class="timeline-bar-wrap">
               <div class="timeline-bar-track">
                 <div class="timeline-bar-fill" style="width: 100%; background: var(--primary); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$158</span>
+                  <span class="timeline-bar-label">R$ 200</span>
                 </div>
               </div>
-              <span class="timeline-amount projected">R$158</span>
+              <span class="timeline-amount projected">R$ 200</span>
+            </div>
+          </div>
+
+          <!-- ── ESSENCIAIS VARIAVEIS ── -->
+          <div class="timeline-group-header">Essenciais Variáveis</div>
+
+          <!-- Alimentação -->
+          <div class="timeline-cat-cell">
+            <span class="timeline-cat-emoji">🍽</span> Alimentação
+          </div>
+          <div class="timeline-data-cell current-col">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 66.9%; background: var(--positive);">
+                  <span class="timeline-bar-label">R$ 3.682</span>
+                </div>
+              </div>
+              <span class="timeline-amount">R$3.682 / R$ 5.500</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 72%; background: var(--positive); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 3.960</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">~R$ 3.960</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 69%; background: var(--positive); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 3.800</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">~R$ 3.800</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 74%; background: var(--positive); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 4.050</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">~R$ 4.050</span>
+            </div>
+          </div>
+
+          <!-- Transporte -->
+          <div class="timeline-cat-cell">
+            <span class="timeline-cat-emoji">🚗</span> Transporte
+          </div>
+          <div class="timeline-data-cell current-col">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 93.5%; background: var(--attention);">
+                  <span class="timeline-bar-label">R$ 1.403</span>
+                </div>
+              </div>
+              <span class="timeline-amount">R$1.403 / R$ 1.500</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 87%; background: var(--attention); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 1.300</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">~R$ 1.300</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 90%; background: var(--attention); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 1.350</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">~R$ 1.350</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 93%; background: var(--attention); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 1.400</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">~R$ 1.400</span>
             </div>
           </div>
 
@@ -2154,91 +2056,187 @@
 
           <!-- Restaurante -->
           <div class="timeline-cat-cell">
-            <span class="timeline-cat-emoji">🍽️</span> Restaurante
+            <span class="timeline-cat-emoji">🍔</span> Restaurante
           </div>
           <div class="timeline-data-cell current-col">
             <div class="timeline-bar-wrap">
               <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 72%; background: var(--positive);">
-                  <span class="timeline-bar-label">R$1.800</span>
+                <div class="timeline-bar-fill" style="width: 77.5%; background: var(--positive);">
+                  <span class="timeline-bar-label">R$ 1.550</span>
                 </div>
               </div>
-              <span class="timeline-amount">R$1.800 / R$2.500</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 76%; background: var(--positive); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$1.900</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">~R$1.900</span>
-            </div>
-          </div>
-          <div class="timeline-data-cell">
-            <div class="timeline-bar-wrap">
-              <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 72%; background: var(--positive); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$1.800</span>
-                </div>
-              </div>
-              <span class="timeline-amount projected">~R$1.800</span>
+              <span class="timeline-amount">R$1.550 / R$ 2.000</span>
             </div>
           </div>
           <div class="timeline-data-cell">
             <div class="timeline-bar-wrap">
               <div class="timeline-bar-track">
                 <div class="timeline-bar-fill" style="width: 80%; background: var(--attention); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$2.000</span>
+                  <span class="timeline-bar-label">R$ 1.600</span>
                 </div>
               </div>
-              <span class="timeline-amount projected">~R$2.000</span>
+              <span class="timeline-amount projected">~R$ 1.600</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 72.5%; background: var(--positive); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 1.450</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">~R$ 1.450</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 85%; background: var(--attention); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 1.700</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">~R$ 1.700</span>
             </div>
           </div>
 
-          <!-- Outros -->
+          <!-- Viagem -->
           <div class="timeline-cat-cell">
-            <span class="timeline-cat-emoji">📦</span> Outros
+            <span class="timeline-cat-emoji">✈️</span> Viagem
           </div>
           <div class="timeline-data-cell current-col">
             <div class="timeline-bar-wrap">
               <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 22.5%; background: var(--positive);">
-                  <span class="timeline-bar-label">R$450</span>
+                <div class="timeline-bar-fill" style="width: 40%; background: var(--positive);">
+                  <span class="timeline-bar-label">R$ 800</span>
                 </div>
               </div>
-              <span class="timeline-amount">R$450 / R$2.000</span>
+              <span class="timeline-amount">R$800 / R$ 2.000</span>
             </div>
           </div>
           <div class="timeline-data-cell">
             <div class="timeline-bar-wrap">
               <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 40%; background: var(--positive); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$800</span>
+                <div class="timeline-bar-fill" style="width: 30%; background: var(--positive); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 600</span>
                 </div>
               </div>
-              <span class="timeline-amount projected">~R$800</span>
+              <span class="timeline-amount projected">~R$ 600</span>
             </div>
           </div>
           <div class="timeline-data-cell">
             <div class="timeline-bar-wrap">
               <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 35%; background: var(--positive); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$700</span>
+                <div class="timeline-bar-fill" style="width: 55%; background: var(--positive); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 1.100</span>
                 </div>
               </div>
-              <span class="timeline-amount projected">~R$700</span>
+              <span class="timeline-amount projected">~R$ 1.100</span>
             </div>
           </div>
           <div class="timeline-data-cell">
             <div class="timeline-bar-wrap">
               <div class="timeline-bar-track">
-                <div class="timeline-bar-fill" style="width: 45%; background: var(--positive); opacity: 0.4;">
-                  <span class="timeline-bar-label">R$900</span>
+                <div class="timeline-bar-fill" style="width: 25%; background: var(--positive); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 500</span>
                 </div>
               </div>
-              <span class="timeline-amount projected">~R$900</span>
+              <span class="timeline-amount projected">~R$ 500</span>
+            </div>
+          </div>
+
+          <!-- ── INVESTIMENTOS ── -->
+          <div class="timeline-group-header">Investimentos</div>
+
+          <!-- Educação (fixo) -->
+          <div class="timeline-cat-cell">
+            <span class="timeline-cat-emoji">📚</span> Educação
+          </div>
+          <div class="timeline-data-cell current-col">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 95.7%; background: var(--attention);">
+                  <span class="timeline-bar-label">R$ 2.680</span>
+                </div>
+              </div>
+              <span class="timeline-amount">R$2.680 / R$ 2.800</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 96%; background: var(--attention); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 2.700</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">~R$ 2.700</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 96%; background: var(--attention); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 2.700</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">~R$ 2.700</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 96%; background: var(--attention); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 2.700</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">~R$ 2.700</span>
+            </div>
+          </div>
+
+          <!-- ── PROTEÇÃO ── -->
+          <div class="timeline-group-header">Proteção</div>
+
+          <!-- Seguros (fixo) -->
+          <div class="timeline-cat-cell">
+            <span class="timeline-cat-emoji">🛡</span> Seguros
+          </div>
+          <div class="timeline-data-cell current-col">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 96%; background: var(--attention);">
+                  <span class="timeline-bar-label">R$ 480</span>
+                </div>
+              </div>
+              <span class="timeline-amount">R$480 / R$ 500</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 96%; background: var(--attention); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 480</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">R$ 480</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 96%; background: var(--attention); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 480</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">R$ 480</span>
+            </div>
+          </div>
+          <div class="timeline-data-cell">
+            <div class="timeline-bar-wrap">
+              <div class="timeline-bar-track">
+                <div class="timeline-bar-fill" style="width: 96%; background: var(--attention); opacity: 0.4;">
+                  <span class="timeline-bar-label">R$ 480</span>
+                </div>
+              </div>
+              <span class="timeline-amount projected">R$ 480</span>
             </div>
           </div>
 
@@ -2248,20 +2246,20 @@
               Total
             </div>
             <div class="timeline-data-cell current-col" style="border-top: 2px solid var(--border); border-bottom: none;">
-              <div style="font-weight: 700; font-size: 14px; color: var(--text-primary); margin-bottom: 4px;">R$9.930 / R$14.858</div>
-              <span class="timeline-margin-pos">+R$4.928 disponível</span>
+              <div style="font-weight: 700; font-size: 14px; color: var(--text-primary); margin-bottom: 4px;">R$ 14.526,00 / R$ 22.300,00</div>
+              <span class="timeline-margin-pos">+R$ 7.774,00 disponível</span>
             </div>
             <div class="timeline-data-cell" style="border-top: 2px solid var(--border); border-bottom: none;">
-              <div style="font-weight: 700; font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;">~R$10.758 / R$14.858</div>
-              <span class="timeline-margin-pos">+R$4.100 projetado</span>
+              <div style="font-weight: 700; font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;">~R$ 14.640,00 / R$ 22.300,00</div>
+              <span class="timeline-margin-pos">+R$ 7.660,00 projetado</span>
             </div>
             <div class="timeline-data-cell" style="border-top: 2px solid var(--border); border-bottom: none;">
-              <div style="font-weight: 700; font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;">~R$10.488 / R$14.858</div>
-              <span class="timeline-margin-pos">+R$4.370 projetado</span>
+              <div style="font-weight: 700; font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;">~R$ 14.880,00 / R$ 22.300,00</div>
+              <span class="timeline-margin-pos">+R$ 7.420,00 projetado</span>
             </div>
             <div class="timeline-data-cell" style="border-top: 2px solid var(--border); border-bottom: none;">
-              <div style="font-weight: 700; font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;">~R$10.938 / R$14.858</div>
-              <span class="timeline-margin-pos">+R$3.920 projetado</span>
+              <div style="font-weight: 700; font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;">~R$ 14.910,00 / R$ 22.300,00</div>
+              <span class="timeline-margin-pos">+R$ 7.390,00 projetado</span>
             </div>
           </div>
 
@@ -2296,11 +2294,11 @@
       <div class="treemap-real-meta">
         <div>
           <div class="tm-breadcrumb" id="tm-breadcrumb">
-            <span class="tm-bc-current" id="tm-bc-title">Por Essencialidade</span>
+            <span class="tm-bc-current" id="tm-bc-title">Por Classificação</span>
           </div>
-          <h3 id="tm-mapa-title">Distribuição dos Gastos</h3>
+          <h3 id="tm-mapa-title">Distribuição por Classificação</h3>
         </div>
-        <div class="treemap-real-total" id="tm-mapa-total">Total do mês: <strong>R$9.930</strong> de R$14.858</div>
+        <div class="treemap-real-total" id="tm-mapa-total">Total do mês: <strong>R$ 14.526,00</strong> de R$ 22.300,00</div>
       </div>
       <div class="treemap-real-legend">
         <div class="treemap-real-legend-item"><div class="treemap-real-legend-dot" style="background:#4ADE80;"></div>Dentro do orçamento</div>
@@ -2339,14 +2337,14 @@
       <div class="mob-summary">
         <div class="mob-summary-row">
           <span class="mob-summary-label">Gasto / Orçado</span>
-          <span class="mob-summary-value">R$9.930 <span style="color: var(--text-tertiary); font-weight: 500;">/ R$14.858</span></span>
+          <span class="mob-summary-value">R$ 14.526,00 <span style="color: var(--text-tertiary); font-weight: 500;">/ R$ 22.300,00</span></span>
         </div>
         <div class="mob-progress-bar">
-          <div class="mob-progress-fill" style="width: 67%; background: var(--positive);"></div>
+          <div class="mob-progress-fill" style="width: 65%; background: var(--positive);"></div>
         </div>
         <div style="display: flex; justify-content: space-between; margin-top: 6px;">
-          <span style="font-size: 12px; color: var(--positive-text); font-weight: 600;">Resta R$4.928</span>
-          <span style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">67%</span>
+          <span style="font-size: 12px; color: var(--positive-text); font-weight: 600;">Resta R$ 7.774,00</span>
+          <span style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">65%</span>
         </div>
       </div>
 
@@ -2359,46 +2357,8 @@
       <!-- Mobile Cards View -->
       <div class="mob-view-panel active" id="mob-view-cards">
 
-      <!-- ── ESSENCIAIS ── -->
-      <div class="mob-group-header">Essenciais</div>
-
-      <!-- Escola -->
-      <div class="mob-card">
-        <div class="mob-card-top">
-          <div class="mob-card-left">
-            <span class="mob-card-emoji">🎓</span>
-            <span class="mob-card-name">Escola</span>
-          </div>
-          <div class="mob-card-amounts">R$2.800 <span>/ R$2.800</span></div>
-        </div>
-        <div class="mob-card-bar">
-          <div class="mob-card-bar-fill" style="width: 100%; background: var(--primary);"></div>
-        </div>
-        <div class="mob-card-bottom">
-          <span class="mob-card-rest" style="color: var(--text-tertiary);">Custo fixo</span>
-          <span class="mob-card-pct" style="color: var(--primary);">100%</span>
-        </div>
-        <div class="mob-card-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
-      </div>
-
-      <!-- Supermercado -->
-      <div class="mob-card">
-        <div class="mob-card-top">
-          <div class="mob-card-left">
-            <span class="mob-card-emoji">🛒</span>
-            <span class="mob-card-name">Supermercado</span>
-          </div>
-          <div class="mob-card-amounts">R$2.122 <span>/ R$3.000</span></div>
-        </div>
-        <div class="mob-card-bar">
-          <div class="mob-card-bar-fill" style="width: 70.7%; background: var(--positive);"></div>
-        </div>
-        <div class="mob-card-bottom">
-          <span class="mob-card-rest">Resta R$878</span>
-          <span class="mob-card-pct" style="color: var(--positive-text);">70%</span>
-        </div>
-        <div class="mob-card-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
-      </div>
+      <!-- ── ESSENCIAIS FIXOS ── -->
+      <div class="mob-group-header">Essenciais Fixos</div>
 
       <!-- Moradia -->
       <div class="mob-card">
@@ -2407,64 +2367,26 @@
             <span class="mob-card-emoji">🏠</span>
             <span class="mob-card-name">Moradia</span>
           </div>
-          <div class="mob-card-amounts">R$1.800 <span>/ R$2.200</span></div>
+          <div class="mob-card-amounts">R$3.381 <span>/ R$ 4.000,00</span></div>
         </div>
         <div class="mob-card-bar">
-          <div class="mob-card-bar-fill" style="width: 82%; background: var(--attention);"></div>
+          <div class="mob-card-bar-fill" style="width: 85%; background: var(--positive);"></div>
         </div>
         <div class="mob-card-bottom">
-          <span class="mob-card-rest">Resta R$400</span>
-          <span class="mob-card-pct" style="color: var(--attention-text);">82%</span>
+          <span class="mob-card-rest">Resta R$ 619,00</span>
+          <span class="mob-card-pct" style="color: var(--positive-text);">84,5%</span>
         </div>
-        <div class="mob-card-method"><span class="method-brand method-brand-visa">VISA</span> Itaú Débito</div>
+        <div class="mob-card-method">4 subcategorias</div>
       </div>
 
-      <!-- Gasolina -->
+      <!-- Assinaturas -->
       <div class="mob-card">
         <div class="mob-card-top">
           <div class="mob-card-left">
-            <span class="mob-card-emoji">⛽</span>
-            <span class="mob-card-name">Gasolina</span>
+            <span class="mob-card-emoji">📱</span>
+            <span class="mob-card-name">Assinaturas</span>
           </div>
-          <div class="mob-card-amounts">R$420 <span>/ R$600</span></div>
-        </div>
-        <div class="mob-card-bar">
-          <div class="mob-card-bar-fill" style="width: 70%; background: var(--positive);"></div>
-        </div>
-        <div class="mob-card-bottom">
-          <span class="mob-card-rest">Resta R$180</span>
-          <span class="mob-card-pct" style="color: var(--positive-text);">70%</span>
-        </div>
-        <div class="mob-card-method"><span class="method-brand method-brand-visa">VISA</span> Itaú Débito</div>
-      </div>
-
-      <!-- Transporte -->
-      <div class="mob-card">
-        <div class="mob-card-top">
-          <div class="mob-card-left">
-            <span class="mob-card-emoji">🚌</span>
-            <span class="mob-card-name">Transporte</span>
-          </div>
-          <div class="mob-card-amounts">R$380 <span>/ R$500</span></div>
-        </div>
-        <div class="mob-card-bar">
-          <div class="mob-card-bar-fill" style="width: 76%; background: var(--positive);"></div>
-        </div>
-        <div class="mob-card-bottom">
-          <span class="mob-card-rest">Resta R$120</span>
-          <span class="mob-card-pct" style="color: var(--positive-text);">76%</span>
-        </div>
-        <div class="mob-card-method"><span class="method-brand method-brand-visa">VISA</span> Itaú Débito</div>
-      </div>
-
-      <!-- Internet -->
-      <div class="mob-card">
-        <div class="mob-card-top">
-          <div class="mob-card-left">
-            <span class="mob-card-emoji">🌐</span>
-            <span class="mob-card-name">Internet</span>
-          </div>
-          <div class="mob-card-amounts">R$158 <span>/ R$158</span></div>
+          <div class="mob-card-amounts">R$200 <span>/ R$ 200,00</span></div>
         </div>
         <div class="mob-card-bar">
           <div class="mob-card-bar-fill" style="width: 100%; background: var(--primary);"></div>
@@ -2473,7 +2395,48 @@
           <span class="mob-card-rest" style="color: var(--text-tertiary);">Custo fixo</span>
           <span class="mob-card-pct" style="color: var(--primary);">100%</span>
         </div>
-        <div class="mob-card-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</div>
+        <div class="mob-card-method">2 subcategorias</div>
+      </div>
+
+      <!-- ── ESSENCIAIS VARIAVEIS ── -->
+      <div class="mob-group-header">Essenciais Variáveis</div>
+
+      <!-- Alimentação -->
+      <div class="mob-card">
+        <div class="mob-card-top">
+          <div class="mob-card-left">
+            <span class="mob-card-emoji">🍽</span>
+            <span class="mob-card-name">Alimentação</span>
+          </div>
+          <div class="mob-card-amounts">R$3.682 <span>/ R$ 5.500,00</span></div>
+        </div>
+        <div class="mob-card-bar">
+          <div class="mob-card-bar-fill" style="width: 66.9%; background: var(--positive);"></div>
+        </div>
+        <div class="mob-card-bottom">
+          <span class="mob-card-rest">Resta R$ 1.818,00</span>
+          <span class="mob-card-pct" style="color: var(--positive-text);">66,9%</span>
+        </div>
+        <div class="mob-card-method">3 subcategorias</div>
+      </div>
+
+      <!-- Transporte -->
+      <div class="mob-card">
+        <div class="mob-card-top">
+          <div class="mob-card-left">
+            <span class="mob-card-emoji">🚗</span>
+            <span class="mob-card-name">Transporte</span>
+          </div>
+          <div class="mob-card-amounts">R$1.403 <span>/ R$ 1.500,00</span></div>
+        </div>
+        <div class="mob-card-bar">
+          <div class="mob-card-bar-fill" style="width: 93.5%; background: var(--attention);"></div>
+        </div>
+        <div class="mob-card-bottom">
+          <span class="mob-card-rest">Resta R$ 97,00</span>
+          <span class="mob-card-pct" style="color: var(--attention-text);">93,5%</span>
+        </div>
+        <div class="mob-card-method">4 subcategorias</div>
       </div>
 
       <!-- ── QUALIDADE DE VIDA ── -->
@@ -2483,38 +2446,104 @@
       <div class="mob-card">
         <div class="mob-card-top">
           <div class="mob-card-left">
-            <span class="mob-card-emoji">🍽️</span>
+            <span class="mob-card-emoji">🍔</span>
             <span class="mob-card-name">Restaurante</span>
           </div>
-          <div class="mob-card-amounts">R$1.800 <span>/ R$2.500</span></div>
+          <div class="mob-card-amounts">R$1.550 <span>/ R$ 2.000,00</span></div>
         </div>
         <div class="mob-card-bar">
-          <div class="mob-card-bar-fill" style="width: 72%; background: var(--positive);"></div>
+          <div class="mob-card-bar-fill" style="width: 77.5%; background: var(--positive);"></div>
         </div>
         <div class="mob-card-bottom">
-          <span class="mob-card-rest">Resta R$700</span>
-          <span class="mob-card-pct" style="color: var(--positive-text);">72%</span>
+          <span class="mob-card-rest">Resta R$ 450,00</span>
+          <span class="mob-card-pct" style="color: var(--positive-text);">77,5%</span>
         </div>
-        <div class="mob-card-method"><span class="method-brand method-brand-master"></span> Nubank Master</div>
+        <div class="mob-card-method">3 subcategorias</div>
       </div>
 
-      <!-- Outros -->
+      <!-- Viagem -->
       <div class="mob-card">
         <div class="mob-card-top">
           <div class="mob-card-left">
-            <span class="mob-card-emoji">📦</span>
-            <span class="mob-card-name">Outros</span>
+            <span class="mob-card-emoji">✈️</span>
+            <span class="mob-card-name">Viagem</span>
           </div>
-          <div class="mob-card-amounts">R$450 <span>/ R$2.000</span></div>
+          <div class="mob-card-amounts">R$800 <span>/ R$ 2.000,00</span></div>
         </div>
         <div class="mob-card-bar">
-          <div class="mob-card-bar-fill" style="width: 22.5%; background: var(--positive);"></div>
+          <div class="mob-card-bar-fill" style="width: 40%; background: var(--positive);"></div>
         </div>
         <div class="mob-card-bottom">
-          <span class="mob-card-rest">Resta R$1.550</span>
-          <span class="mob-card-pct" style="color: var(--positive-text);">22%</span>
+          <span class="mob-card-rest">Resta R$ 1.200,00</span>
+          <span class="mob-card-pct" style="color: var(--positive-text);">40,0%</span>
         </div>
-        <div class="mob-card-method">Variado</div>
+        <div class="mob-card-method">4 subcategorias</div>
+      </div>
+
+      <!-- ── INVESTIMENTOS ── -->
+      <div class="mob-group-header">Investimentos</div>
+
+      <!-- Educação -->
+      <div class="mob-card">
+        <div class="mob-card-top">
+          <div class="mob-card-left">
+            <span class="mob-card-emoji">📚</span>
+            <span class="mob-card-name">Educação</span>
+          </div>
+          <div class="mob-card-amounts">R$2.680 <span>/ R$ 2.800,00</span></div>
+        </div>
+        <div class="mob-card-bar">
+          <div class="mob-card-bar-fill" style="width: 95.7%; background: var(--attention);"></div>
+        </div>
+        <div class="mob-card-bottom">
+          <span class="mob-card-rest">Resta R$ 120,00</span>
+          <span class="mob-card-pct" style="color: var(--attention-text);">95,7%</span>
+        </div>
+        <div class="mob-card-method">2 subcategorias</div>
+      </div>
+
+      <!-- ── PROTEÇÃO ── -->
+      <div class="mob-group-header">Proteção</div>
+
+      <!-- Seguros -->
+      <div class="mob-card">
+        <div class="mob-card-top">
+          <div class="mob-card-left">
+            <span class="mob-card-emoji">🛡</span>
+            <span class="mob-card-name">Seguros</span>
+          </div>
+          <div class="mob-card-amounts">R$480 <span>/ R$ 500,00</span></div>
+        </div>
+        <div class="mob-card-bar">
+          <div class="mob-card-bar-fill" style="width: 96%; background: var(--attention);"></div>
+        </div>
+        <div class="mob-card-bottom">
+          <span class="mob-card-rest">Resta R$ 20,00</span>
+          <span class="mob-card-pct" style="color: var(--attention-text);">96,0%</span>
+        </div>
+        <div class="mob-card-method">2 subcategorias</div>
+      </div>
+
+      <!-- ── IMPREVISTOS ── -->
+      <div class="mob-group-header">Imprevistos</div>
+
+      <!-- Imprevistos -->
+      <div class="mob-card">
+        <div class="mob-card-top">
+          <div class="mob-card-left">
+            <span class="mob-card-emoji">⚡</span>
+            <span class="mob-card-name">Imprevistos</span>
+          </div>
+          <div class="mob-card-amounts">R$350 <span>/ R$ 1.000,00</span></div>
+        </div>
+        <div class="mob-card-bar">
+          <div class="mob-card-bar-fill" style="width: 35%; background: var(--positive);"></div>
+        </div>
+        <div class="mob-card-bottom">
+          <span class="mob-card-rest">Resta R$ 650,00</span>
+          <span class="mob-card-pct" style="color: var(--positive-text);">35,0%</span>
+        </div>
+        <div class="mob-card-method">Sem categorias definidas</div>
       </div>
 
       </div><!-- /mob-view-cards -->
@@ -2524,7 +2553,7 @@
         <div class="tm-breadcrumb" id="mob-tm-breadcrumb" style="margin-bottom: 6px;">
           <span class="tm-bc-current" style="font-size: 11px;">Mar 2026</span>
         </div>
-        <div id="mob-tm-info" style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px;">Total: <strong style="color: var(--text-primary);">R$9.930</strong> de R$14.858</div>
+        <div id="mob-tm-info" style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px;">Total: <strong style="color: var(--text-primary);">R$ 14.526,00</strong> de R$ 22.300,00</div>
         <div class="mob-treemap-area" id="mob-treemap-mapa"></div>
         <div class="treemap-real-legend" style="margin-top: 10px; flex-wrap: wrap; gap: 8px;">
           <div class="treemap-real-legend-item"><div class="treemap-real-legend-dot" style="background:#4ADE80;"></div>Ok</div>
@@ -2538,24 +2567,29 @@
 
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
-      <a class="bottom-nav-item" href="#">
-        <span class="bottom-nav-icon">🏠</span>
-        Início
+      <a class="bottom-nav-item active">
+        <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
+        <span>Dashboard</span>
       </a>
-      <a class="bottom-nav-item" href="#">
-        <span class="bottom-nav-icon">💳</span>
-        Transações
+      <a class="bottom-nav-item">
+        <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
+        <span>Cartões</span>
       </a>
-      <a class="bottom-nav-item" href="#">
-        <div class="bottom-nav-item-add">+</div>
+      <a class="bottom-nav-fab">
+        <span class="bottom-nav-fab-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>
+        <span class="bottom-nav-fab-label">Registrar</span>
       </a>
-      <a class="bottom-nav-item active" href="#">
-        <span class="bottom-nav-icon">📊</span>
-        Orçamentos
+      <a class="bottom-nav-item">
+        <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span>
+        <span>Checklist</span>
       </a>
-      <a class="bottom-nav-item" href="#">
-        <span class="bottom-nav-icon">📈</span>
-        Relatórios
+      <a class="bottom-nav-item">
+        <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>
+        <span>Projeção</span>
+      </a>
+      <a class="bottom-nav-item">
+        <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg></span>
+        <span>Sair</span>
       </a>
     </div>
   </div>
@@ -2674,7 +2708,7 @@
 
   // ── Rendering ──
   function formatBRL(v) {
-    return 'R$' + v.toLocaleString('pt-BR');
+    return 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
   }
   function sizeClass(w, h) {
     var area = w * h;
@@ -2711,55 +2745,216 @@
   }
   function hideTmTooltip() { tooltipEl.style.display = 'none'; }
 
-  // ── Budget Data — Level 2 (categories) ──
-  var essenciaisData = [
-    { name: 'Supermercado', value: 2122, budget: 3000, method: 'Latam Pass Visa', theme: 'tm-positive',
-      tooltip: { name: 'Supermercado', rows: [['Orçamento','R$3.000'],['Gasto','R$2.122'],['Resta','R$878'],['Uso','70%']], hint: 'Latam Pass Visa' }},
-    { name: 'Escola', value: 2800, budget: 2800, method: 'Latam Pass Visa', theme: 'tm-neutral',
-      tooltip: { name: 'Escola', rows: [['Orçamento','R$2.800'],['Gasto','R$2.800'],['Resta','R$0'],['Uso','100%']], hint: 'Custo fixo · Latam Pass Visa' }},
-    { name: 'Moradia', value: 1800, budget: 2200, method: 'Itaú Débito', theme: 'tm-attention',
-      tooltip: { name: 'Moradia', rows: [['Orçamento','R$2.200'],['Gasto','R$1.800'],['Resta','R$400'],['Uso','82%']], hint: 'Itaú Débito' }},
-    { name: 'Gasolina', value: 420, budget: 600, method: 'Itaú Débito', theme: 'tm-positive',
-      tooltip: { name: 'Gasolina', rows: [['Orçamento','R$600'],['Gasto','R$420'],['Resta','R$180'],['Uso','70%']], hint: 'Itaú Débito' }},
-    { name: 'Transporte', value: 380, budget: 500, method: 'Itaú Débito', theme: 'tm-positive',
-      tooltip: { name: 'Transporte', rows: [['Orçamento','R$500'],['Gasto','R$380'],['Resta','R$120'],['Uso','76%']], hint: 'Itaú Débito' }},
-    { name: 'Internet', value: 158, budget: 158, method: 'Latam Pass Visa', theme: 'tm-neutral',
-      tooltip: { name: 'Internet', rows: [['Orçamento','R$158'],['Gasto','R$158'],['Resta','R$0'],['Uso','100%']], hint: 'Custo fixo · Latam Pass Visa' }}
-  ];
+  // ── Hierarchy Data (4 levels) ──
+  var drillMap = {
+    'root': [
+      { name: 'Essenciais Fixos', value: 3581, budget: 6000, theme: 'tm-positive', drillKey: 'ef', hint: '2 categorias',
+        tooltip: { name: 'Essenciais Fixos', rows: [['Orçamento','R$ 6.000,00'],['Gasto','R$ 3.581,00'],['Resta','R$ 2.419,00'],['Uso','60%'],['Categorias','2']], hint: 'Clique para ver categorias' }},
+      { name: 'Ess. Variáveis', value: 5085, budget: 8000, theme: 'tm-positive', drillKey: 'ev', hint: '2 categorias',
+        tooltip: { name: 'Essenciais Variáveis', rows: [['Orçamento','R$ 8.000,00'],['Gasto','R$ 5.085,00'],['Resta','R$ 2.915,00'],['Uso','64%'],['Categorias','2']], hint: 'Clique para ver categorias' }},
+      { name: 'Qualidade de Vida', value: 2350, budget: 4000, theme: 'tm-positive-deep', drillKey: 'qv', hint: '2 categorias',
+        tooltip: { name: 'Qualidade de Vida', rows: [['Orçamento','R$ 4.000,00'],['Gasto','R$ 2.350,00'],['Resta','R$ 1.650,00'],['Uso','59%'],['Categorias','2']], hint: 'Clique para ver categorias' }},
+      { name: 'Investimentos', value: 2680, budget: 2800, theme: 'tm-attention', drillKey: 'inv', hint: '1 categoria',
+        tooltip: { name: 'Investimentos', rows: [['Orçamento','R$ 2.800,00'],['Gasto','R$ 2.680,00'],['Resta','R$ 120,00'],['Uso','96%'],['Categorias','1']], hint: 'Clique para ver categorias' }},
+      { name: 'Proteção', value: 480, budget: 500, theme: 'tm-attention', drillKey: 'prot', hint: '1 categoria',
+        tooltip: { name: 'Proteção', rows: [['Orçamento','R$ 500,00'],['Gasto','R$ 480,00'],['Resta','R$ 20,00'],['Uso','96%'],['Categorias','1']], hint: 'Clique para ver categorias' }},
+      { name: 'Imprevistos', value: 350, budget: 1000, theme: 'tm-positive-deep',
+        tooltip: { name: 'Imprevistos', rows: [['Orçamento','R$ 1.000,00'],['Gasto','R$ 350,00'],['Resta','R$ 650,00'],['Uso','35%']], hint: 'Sem categorias definidas' }}
+    ],
+    // Level 2 — Categories per classification
+    'ef': [
+      { name: 'Moradia', value: 3381, budget: 4000, theme: 'tm-positive', drillKey: 'ef>moradia', hint: '4 subcategorias',
+        tooltip: { name: 'Moradia', rows: [['Orçamento','R$ 4.000,00'],['Gasto','R$ 3.381,00'],['Resta','R$ 619,00'],['Uso','85%'],['Subcategorias','4']], hint: 'Clique para ver subcategorias' }},
+      { name: 'Assinaturas', value: 200, budget: 200, theme: 'tm-neutral', drillKey: 'ef>assinaturas', hint: '2 subcategorias',
+        tooltip: { name: 'Assinaturas', rows: [['Orçamento','R$ 200,00'],['Gasto','R$ 200,00'],['Resta','R$ 0,00'],['Uso','100%'],['Subcategorias','2']], hint: 'Clique para ver subcategorias' }}
+    ],
+    'ev': [
+      { name: 'Alimentação', value: 3682, budget: 5500, theme: 'tm-positive', drillKey: 'ev>alimentacao', hint: '3 subcategorias',
+        tooltip: { name: 'Alimentação', rows: [['Orçamento','R$ 5.500,00'],['Gasto','R$ 3.682,00'],['Resta','R$ 1.818,00'],['Uso','67%'],['Subcategorias','3']], hint: 'Clique para ver subcategorias' }},
+      { name: 'Transporte', value: 1403, budget: 1500, theme: 'tm-attention', drillKey: 'ev>transporte', hint: '4 subcategorias',
+        tooltip: { name: 'Transporte', rows: [['Orçamento','R$ 1.500,00'],['Gasto','R$ 1.403,00'],['Resta','R$ 97,00'],['Uso','94%'],['Subcategorias','4']], hint: 'Clique para ver subcategorias' }}
+    ],
+    'qv': [
+      { name: 'Restaurante', value: 1550, budget: 2000, theme: 'tm-positive', drillKey: 'qv>restaurante', hint: '3 subcategorias',
+        tooltip: { name: 'Restaurante', rows: [['Orçamento','R$ 2.000,00'],['Gasto','R$ 1.550,00'],['Resta','R$ 450,00'],['Uso','78%'],['Subcategorias','3']], hint: 'Clique para ver subcategorias' }},
+      { name: 'Viagem', value: 800, budget: 2000, theme: 'tm-positive-deep', drillKey: 'qv>viagem', hint: '4 subcategorias',
+        tooltip: { name: 'Viagem', rows: [['Orçamento','R$ 2.000,00'],['Gasto','R$ 800,00'],['Resta','R$ 1.200,00'],['Uso','40%'],['Subcategorias','4']], hint: 'Clique para ver subcategorias' }}
+    ],
+    'inv': [
+      { name: 'Educação', value: 2680, budget: 2800, theme: 'tm-attention', drillKey: 'inv>educacao', hint: '2 subcategorias',
+        tooltip: { name: 'Educação', rows: [['Orçamento','R$ 2.800,00'],['Gasto','R$ 2.680,00'],['Resta','R$ 120,00'],['Uso','96%'],['Subcategorias','2']], hint: 'Clique para ver subcategorias' }}
+    ],
+    'prot': [
+      { name: 'Seguros', value: 480, budget: 500, theme: 'tm-attention', drillKey: 'prot>seguros', hint: '2 subcategorias',
+        tooltip: { name: 'Seguros', rows: [['Orçamento','R$ 500,00'],['Gasto','R$ 480,00'],['Resta','R$ 20,00'],['Uso','96%'],['Subcategorias','2']], hint: 'Clique para ver subcategorias' }}
+    ],
+    // Level 3 — Subcategories per category
+    'ef>moradia': [
+      { name: 'Aluguel', value: 2200, budget: 2200, theme: 'tm-neutral',
+        tooltip: { name: 'Aluguel', rows: [['Orçamento','R$ 2.200,00'],['Gasto','R$ 2.200,00'],['Resta','R$ 0,00'],['Uso','100%']], hint: 'Custo fixo' }},
+      { name: 'Condomínio', value: 800, budget: 800, theme: 'tm-neutral',
+        tooltip: { name: 'Condomínio', rows: [['Orçamento','R$ 800,00'],['Gasto','R$ 800,00'],['Resta','R$ 0,00'],['Uso','100%']], hint: 'Custo fixo' }},
+      { name: 'Luz', value: 223, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Luz', rows: [['Gasto','R$ 223,00']], hint: 'Sem orçamento definido' }},
+      { name: 'Internet', value: 158, budget: 158, theme: 'tm-neutral',
+        tooltip: { name: 'Internet', rows: [['Orçamento','R$ 158,00'],['Gasto','R$ 158,00'],['Resta','R$ 0,00'],['Uso','100%']], hint: 'Custo fixo' }}
+    ],
+    'ef>assinaturas': [
+      { name: 'Streaming', value: 120, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Streaming', rows: [['Gasto','R$ 120,00']], hint: 'Sem orçamento definido' }},
+      { name: 'Apps', value: 80, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Apps', rows: [['Gasto','R$ 80,00']], hint: 'Sem orçamento definido' }}
+    ],
+    'ev>alimentacao': [
+      { name: 'Supermercado', value: 2122, budget: 3000, theme: 'tm-positive', drillKey: 'ev>alimentacao>super', hint: '3 estabelecimentos',
+        tooltip: { name: 'Supermercado', rows: [['Orçamento','R$ 3.000,00'],['Gasto','R$ 2.122,00'],['Resta','R$ 878,00'],['Uso','71%']], hint: 'Clique para ver estabelecimentos' }},
+      { name: 'Rest. Trabalho', value: 1180, budget: 1500, theme: 'tm-positive', drillKey: 'ev>alimentacao>trabalho', hint: '3 estabelecimentos',
+        tooltip: { name: 'Rest. Trabalho', rows: [['Orçamento','R$ 1.500,00'],['Gasto','R$ 1.180,00'],['Resta','R$ 320,00'],['Uso','79%']], hint: 'Clique para ver estabelecimentos' }},
+      { name: 'Feira/Hortifruti', value: 380, budget: 500, theme: 'tm-positive', drillKey: 'ev>alimentacao>feira', hint: '2 estabelecimentos',
+        tooltip: { name: 'Feira/Hortifruti', rows: [['Orçamento','R$ 500,00'],['Gasto','R$ 380,00'],['Resta','R$ 120,00'],['Uso','76%']], hint: 'Clique para ver estabelecimentos' }}
+    ],
+    'ev>transporte': [
+      { name: 'Gasolina', value: 520, budget: 600, theme: 'tm-attention', drillKey: 'ev>transporte>gasolina', hint: '2 estabelecimentos',
+        tooltip: { name: 'Gasolina', rows: [['Orçamento','R$ 600,00'],['Gasto','R$ 520,00'],['Resta','R$ 80,00'],['Uso','87%']], hint: 'Clique para ver estabelecimentos' }},
+      { name: 'Manutenção', value: 400, budget: 400, theme: 'tm-neutral',
+        tooltip: { name: 'Manutenção', rows: [['Orçamento','R$ 400,00'],['Gasto','R$ 400,00'],['Resta','R$ 0,00'],['Uso','100%']], hint: 'Custo fixo' }},
+      { name: 'Estacionamento', value: 285, budget: 300, theme: 'tm-attention',
+        tooltip: { name: 'Estacionamento', rows: [['Orçamento','R$ 300,00'],['Gasto','R$ 285,00'],['Resta','R$ 15,00'],['Uso','95%']], hint: 'Sem drill-down' }},
+      { name: 'Pedágio', value: 198, budget: 200, theme: 'tm-attention',
+        tooltip: { name: 'Pedágio', rows: [['Orçamento','R$ 200,00'],['Gasto','R$ 198,00'],['Resta','R$ 2,00'],['Uso','99%']], hint: 'Sem drill-down' }}
+    ],
+    'qv>restaurante': [
+      { name: 'Delivery', value: 650, budget: 800, theme: 'tm-positive', drillKey: 'qv>restaurante>delivery', hint: '2 estabelecimentos',
+        tooltip: { name: 'Delivery', rows: [['Orçamento','R$ 800,00'],['Gasto','R$ 650,00'],['Resta','R$ 150,00'],['Uso','81%']], hint: 'Clique para ver estabelecimentos' }},
+      { name: 'Jantar fora', value: 520, budget: 700, theme: 'tm-positive', drillKey: 'qv>restaurante>jantar', hint: '2 estabelecimentos',
+        tooltip: { name: 'Jantar fora', rows: [['Orçamento','R$ 700,00'],['Gasto','R$ 520,00'],['Resta','R$ 180,00'],['Uso','74%']], hint: 'Clique para ver estabelecimentos' }},
+      { name: 'Fast Food', value: 380, budget: 500, theme: 'tm-positive', drillKey: 'qv>restaurante>fastfood', hint: '4 estabelecimentos',
+        tooltip: { name: 'Fast Food', rows: [['Orçamento','R$ 500,00'],['Gasto','R$ 380,00'],['Resta','R$ 120,00'],['Uso','76%']], hint: 'Clique para ver estabelecimentos' }}
+    ],
+    'qv>viagem': [
+      { name: 'Hospedagem', value: 450, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Hospedagem', rows: [['Gasto','R$ 450,00']], hint: 'Sem orçamento definido' }},
+      { name: 'Alim. viagem', value: 180, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Alim. viagem', rows: [['Gasto','R$ 180,00']], hint: 'Sem orçamento definido' }},
+      { name: 'Transp. viagem', value: 120, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Transp. viagem', rows: [['Gasto','R$ 120,00']], hint: 'Sem orçamento definido' }},
+      { name: 'Passeios', value: 50, budget: 0, theme: 'tm-positive-deep',
+        tooltip: { name: 'Passeios', rows: [['Gasto','R$ 50,00']], hint: 'Sem orçamento definido' }}
+    ],
+    'inv>educacao': [
+      { name: 'Cursos', value: 2500, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Cursos', rows: [['Gasto','R$ 2.500,00']], hint: 'Sem orçamento definido' }},
+      { name: 'Livros', value: 180, budget: 0, theme: 'tm-positive-deep',
+        tooltip: { name: 'Livros', rows: [['Gasto','R$ 180,00']], hint: 'Sem orçamento definido' }}
+    ],
+    'prot>seguros': [
+      { name: 'Seguro carro', value: 250, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Seguro carro', rows: [['Gasto','R$ 250,00']], hint: 'Sem orçamento definido' }},
+      { name: 'Plano saúde', value: 230, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Plano saúde', rows: [['Gasto','R$ 230,00']], hint: 'Sem orçamento definido' }}
+    ],
+    // Level 4 — Establishments
+    'ev>alimentacao>super': [
+      { name: 'Pão de Açúcar', value: 890, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Pão de Açúcar', rows: [['Gasto','R$ 890,00']], hint: 'Estabelecimento' }},
+      { name: 'Bistek', value: 650, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Bistek', rows: [['Gasto','R$ 650,00']], hint: 'Estabelecimento' }},
+      { name: 'Angeloni', value: 582, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Angeloni', rows: [['Gasto','R$ 582,00']], hint: 'Estabelecimento' }}
+    ],
+    'ev>alimentacao>trabalho': [
+      { name: 'Da Terra', value: 480, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Da Terra', rows: [['Gasto','R$ 480,00']], hint: 'Estabelecimento' }},
+      { name: 'Frango e Fritas', value: 350, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Frango e Fritas', rows: [['Gasto','R$ 350,00']], hint: 'Estabelecimento' }},
+      { name: 'Subway', value: 350, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Subway', rows: [['Gasto','R$ 350,00']], hint: 'Estabelecimento' }}
+    ],
+    'ev>alimentacao>feira': [
+      { name: 'Feira do bairro', value: 280, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Feira do bairro', rows: [['Gasto','R$ 280,00']], hint: 'Estabelecimento' }},
+      { name: 'Sacolão', value: 100, budget: 0, theme: 'tm-positive-deep',
+        tooltip: { name: 'Sacolão', rows: [['Gasto','R$ 100,00']], hint: 'Estabelecimento' }}
+    ],
+    'ev>transporte>gasolina': [
+      { name: 'Shell', value: 310, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Shell', rows: [['Gasto','R$ 310,00']], hint: 'Estabelecimento' }},
+      { name: 'Ipiranga', value: 210, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Ipiranga', rows: [['Gasto','R$ 210,00']], hint: 'Estabelecimento' }}
+    ],
+    'qv>restaurante>fastfood': [
+      { name: "McDonald's", value: 120, budget: 0, theme: 'tm-positive',
+        tooltip: { name: "McDonald's", rows: [['Gasto','R$ 120,00']], hint: 'Estabelecimento' }},
+      { name: 'Burger King', value: 95, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Burger King', rows: [['Gasto','R$ 95,00']], hint: 'Estabelecimento' }},
+      { name: 'Subway', value: 85, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Subway', rows: [['Gasto','R$ 85,00']], hint: 'Estabelecimento' }},
+      { name: 'Popeyes', value: 80, budget: 0, theme: 'tm-positive-deep',
+        tooltip: { name: 'Popeyes', rows: [['Gasto','R$ 80,00']], hint: 'Estabelecimento' }}
+    ],
+    'qv>restaurante>delivery': [
+      { name: 'iFood', value: 450, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'iFood', rows: [['Gasto','R$ 450,00']], hint: 'Estabelecimento' }},
+      { name: 'Rappi', value: 200, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Rappi', rows: [['Gasto','R$ 200,00']], hint: 'Estabelecimento' }}
+    ],
+    'qv>restaurante>jantar': [
+      { name: 'Outback', value: 280, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Outback', rows: [['Gasto','R$ 280,00']], hint: 'Estabelecimento' }},
+      { name: 'Cantina Italiana', value: 240, budget: 0, theme: 'tm-positive',
+        tooltip: { name: 'Cantina Italiana', rows: [['Gasto','R$ 240,00']], hint: 'Estabelecimento' }}
+    ]
+  };
 
-  var qualidadeData = [
-    { name: 'Restaurante', value: 1800, budget: 2500, method: 'Nubank Master', theme: 'tm-positive',
-      tooltip: { name: 'Restaurante', rows: [['Orçamento','R$2.500'],['Gasto','R$1.800'],['Resta','R$700'],['Uso','72%']], hint: 'Nubank Master' }},
-    { name: 'Outros', value: 450, budget: 2000, method: 'Variado', theme: 'tm-positive-deep',
-      tooltip: { name: 'Outros', rows: [['Orçamento','R$2.000'],['Gasto','R$450'],['Resta','R$1.550'],['Uso','22%']], hint: 'Variado' }}
-  ];
+  var drillMeta = {
+    'ef': { label: 'Essenciais Fixos', parent: 'root' },
+    'ev': { label: 'Essenciais Variáveis', parent: 'root' },
+    'qv': { label: 'Qualidade de Vida', parent: 'root' },
+    'inv': { label: 'Investimentos', parent: 'root' },
+    'prot': { label: 'Proteção', parent: 'root' },
+    'ef>moradia': { label: 'Moradia', parent: 'ef' },
+    'ef>assinaturas': { label: 'Assinaturas', parent: 'ef' },
+    'ev>alimentacao': { label: 'Alimentação', parent: 'ev' },
+    'ev>transporte': { label: 'Transporte', parent: 'ev' },
+    'qv>restaurante': { label: 'Restaurante', parent: 'qv' },
+    'qv>viagem': { label: 'Viagem', parent: 'qv' },
+    'inv>educacao': { label: 'Educação', parent: 'inv' },
+    'prot>seguros': { label: 'Seguros', parent: 'prot' },
+    'ev>alimentacao>super': { label: 'Supermercado', parent: 'ev>alimentacao' },
+    'ev>alimentacao>trabalho': { label: 'Rest. Trabalho', parent: 'ev>alimentacao' },
+    'ev>alimentacao>feira': { label: 'Feira/Hortifruti', parent: 'ev>alimentacao' },
+    'ev>transporte>gasolina': { label: 'Gasolina', parent: 'ev>transporte' },
+    'qv>restaurante>fastfood': { label: 'Fast Food', parent: 'qv>restaurante' },
+    'qv>restaurante>delivery': { label: 'Delivery', parent: 'qv>restaurante' },
+    'qv>restaurante>jantar': { label: 'Jantar fora', parent: 'qv>restaurante' }
+  };
 
-  // ── Level 1 (classification groups) ──
-  var level1Data = [
-    { name: 'Essenciais', value: 7680, budget: 9258, theme: 'tm-attention', drillKey: 'essenciais',
-      hint: 'Toque para explorar',
-      tooltip: { name: 'Essenciais', rows: [['Orçamento','R$9.258'],['Gasto','R$7.680'],['Resta','R$1.578'],['Uso','83%'],['Categorias','6']], hint: 'Clique para ver categorias' }},
-    { name: 'Qualidade de Vida', value: 2250, budget: 4500, theme: 'tm-positive-deep', drillKey: 'qualidade',
-      hint: 'Toque para explorar',
-      tooltip: { name: 'Qualidade de Vida', rows: [['Orçamento','R$4.500'],['Gasto','R$2.250'],['Resta','R$2.250'],['Uso','50%'],['Categorias','2']], hint: 'Clique para ver categorias' }}
-  ];
+  var currentDrillKey = 'root';
+  var mobCurrentDrillKey = 'root';
 
-  var drillMap = { essenciais: essenciaisData, qualidade: qualidadeData };
-  var drillLabels = { essenciais: 'Essenciais', qualidade: 'Qualidade de Vida' };
-  var currentLevel = 'root';
-  var currentKey = null;
+  // Build breadcrumb path from key to root
+  function buildBreadcrumbPath(key) {
+    var path = [];
+    var cur = key;
+    while (cur && cur !== 'root') {
+      var meta = drillMeta[cur];
+      if (!meta) break;
+      path.unshift({ key: cur, label: meta.label });
+      cur = meta.parent;
+    }
+    path.unshift({ key: 'root', label: 'Mar 2026' });
+    return path;
+  }
 
-  function renderBudgetTreemap(level, key) {
-    level = level || 'root';
-    key = key || null;
-    currentLevel = level;
-    currentKey = key;
+  function renderBudgetTreemap(key) {
+    key = key || 'root';
+    currentDrillKey = key;
 
     var container = document.getElementById('treemap-mapa');
     if (!container) return;
     container.innerHTML = '';
 
-    var data = (level === 'root') ? level1Data : drillMap[key];
+    var data = drillMap[key];
     if (!data) return;
 
     // Update breadcrumb & title
@@ -2767,20 +2962,37 @@
     var titleEl = document.getElementById('tm-mapa-title');
     var totalEl = document.getElementById('tm-mapa-total');
 
-    if (level === 'root') {
-      bcEl.innerHTML = '<span class="tm-bc-current">Mar 2026</span>';
-      titleEl.textContent = 'Distribuição por Essencialidade';
-      totalEl.innerHTML = 'Total do mês: <strong>R$9.930</strong> de R$14.858';
+    var path = buildBreadcrumbPath(key);
+    var bcHtml = '';
+    for (var i = 0; i < path.length; i++) {
+      if (i > 0) bcHtml += '<span class="tm-bc-sep">&rsaquo;</span>';
+      if (i < path.length - 1) {
+        bcHtml += '<span class="tm-bc-link" onclick="renderBudgetTreemap(\'' + path[i].key + '\')">' + path[i].label + '</span>';
+      } else {
+        bcHtml += '<span class="tm-bc-current">' + path[i].label + '</span>';
+      }
+    }
+    // Add back button if not root
+    if (key !== 'root') {
+      var parentKey = drillMeta[key] ? drillMeta[key].parent : 'root';
+      bcHtml += '<span class="tm-bc-link" style="margin-left:auto;font-size:11px;" onclick="renderBudgetTreemap(\'' + parentKey + '\')">&#8592; Voltar</span>';
+    }
+    bcEl.innerHTML = bcHtml;
+
+    var groupTotal = data.reduce(function(s,i){return s+i.value;},0);
+    var groupBudget = data.reduce(function(s,i){return s+(i.budget||0);},0);
+
+    if (key === 'root') {
+      titleEl.textContent = 'Distribuição por Classificação';
+      totalEl.innerHTML = 'Total do mês: <strong>' + formatBRL(groupTotal) + '</strong> de ' + formatBRL(groupBudget);
     } else {
-      var label = drillLabels[key];
-      var groupTotal = data.reduce(function(s,i){return s+i.value;},0);
-      var groupBudget = data.reduce(function(s,i){return s+i.budget;},0);
-      bcEl.innerHTML = '<span class="tm-bc-link" onclick="renderBudgetTreemap(\'root\')">Mar 2026</span>' +
-        '<span class="tm-bc-sep">›</span>' +
-        '<span class="tm-bc-current">' + label + '</span>' +
-        '<span class="tm-bc-link" style="margin-left:auto;font-size:11px;" onclick="renderBudgetTreemap(\'root\')">← Voltar</span>';
+      var label = drillMeta[key] ? drillMeta[key].label : key;
       titleEl.textContent = label + ' — ' + formatBRL(groupTotal);
-      totalEl.innerHTML = Math.round(groupTotal/groupBudget*100) + '% do orçamento de <strong>' + formatBRL(groupBudget) + '</strong>';
+      if (groupBudget > 0) {
+        totalEl.innerHTML = Math.round(groupTotal/groupBudget*100) + '% do orçamento de <strong>' + formatBRL(groupBudget) + '</strong>';
+      } else {
+        totalEl.innerHTML = 'Total: <strong>' + formatBRL(groupTotal) + '</strong>';
+      }
     }
 
     var rect = container.getBoundingClientRect();
@@ -2812,10 +3024,8 @@
         html += '</div>';
       }
 
-      if (b.hint && b.w > 100 && b.h > 70) {
-        html += '<div class="tm-method">' + b.hint + ' →</div>';
-      } else if (b.method && b.w > 100 && b.h > 70) {
-        html += '<div class="tm-method">' + b.method + '</div>';
+      if (b.hint && b.w > 120 && b.h > 90) {
+        html += '<div class="tm-hint">' + b.hint + '</div>';
       }
 
       el.innerHTML = html;
@@ -2823,7 +3033,7 @@
       // Drill-down on click
       if (b.drillKey) {
         el.style.cursor = 'pointer';
-        el.addEventListener('click', function() { renderBudgetTreemap('detail', b.drillKey); });
+        el.addEventListener('click', function() { renderBudgetTreemap(b.drillKey); });
       }
 
       if (b.tooltip) {
@@ -2847,38 +3057,49 @@
     if (viewId === 'mapa') setTimeout(function() { renderMobileTreemap('root'); }, 50);
   }
 
-  var mobCurrentLevel = 'root';
-  var mobCurrentKey = null;
-
-  function renderMobileTreemap(level, key) {
-    level = level || 'root';
-    key = key || null;
-    mobCurrentLevel = level;
-    mobCurrentKey = key;
+  function renderMobileTreemap(key) {
+    key = key || 'root';
+    mobCurrentDrillKey = key;
 
     var container = document.getElementById('mob-treemap-mapa');
     if (!container) return;
     container.innerHTML = '';
+    container.style.minHeight = '280px';
 
-    var data = (level === 'root') ? level1Data : drillMap[key];
+    var data = drillMap[key];
     if (!data) return;
 
     // Update mobile breadcrumb & info
     var bcEl = document.getElementById('mob-tm-breadcrumb');
     var infoEl = document.getElementById('mob-tm-info');
 
-    if (level === 'root') {
-      bcEl.innerHTML = '<span class="tm-bc-current" style="font-size:11px;">Mar 2026</span>';
-      infoEl.innerHTML = 'Total: <strong style="color:var(--text-primary);">R$9.930</strong> de R$14.858';
+    var path = buildBreadcrumbPath(key);
+    var bcHtml = '';
+    for (var i = 0; i < path.length; i++) {
+      if (i > 0) bcHtml += '<span class="tm-bc-sep">&rsaquo;</span>';
+      if (i < path.length - 1) {
+        bcHtml += '<span class="tm-bc-link" style="font-size:11px;" onclick="renderMobileTreemap(\'' + path[i].key + '\')">' + path[i].label + '</span>';
+      } else {
+        bcHtml += '<span class="tm-bc-current" style="font-size:11px;">' + path[i].label + '</span>';
+      }
+    }
+    if (key !== 'root') {
+      var parentKey = drillMeta[key] ? drillMeta[key].parent : 'root';
+      bcHtml += '<span class="tm-bc-link" style="margin-left:auto;font-size:10px;" onclick="renderMobileTreemap(\'' + parentKey + '\')">&#8592; Voltar</span>';
+    }
+    bcEl.innerHTML = bcHtml;
+
+    var groupTotal = data.reduce(function(s,i){return s+i.value;},0);
+    var groupBudget = data.reduce(function(s,i){return s+(i.budget||0);},0);
+
+    if (key === 'root') {
+      infoEl.innerHTML = 'Total: <strong style="color:var(--text-primary);">' + formatBRL(groupTotal) + '</strong> de ' + formatBRL(groupBudget);
     } else {
-      var label = drillLabels[key];
-      var groupTotal = data.reduce(function(s,i){return s+i.value;},0);
-      var groupBudget = data.reduce(function(s,i){return s+i.budget;},0);
-      bcEl.innerHTML = '<span class="tm-bc-link" style="font-size:11px;" onclick="renderMobileTreemap(\'root\')">Mar 2026</span>' +
-        '<span class="tm-bc-sep">›</span>' +
-        '<span class="tm-bc-current" style="font-size:11px;">' + label + '</span>' +
-        '<span class="tm-bc-link" style="margin-left:auto;font-size:10px;" onclick="renderMobileTreemap(\'root\')">← Voltar</span>';
-      infoEl.innerHTML = formatBRL(groupTotal) + ' de <strong style="color:var(--text-primary);">' + formatBRL(groupBudget) + '</strong> · ' + Math.round(groupTotal/groupBudget*100) + '%';
+      if (groupBudget > 0) {
+        infoEl.innerHTML = formatBRL(groupTotal) + ' de <strong style="color:var(--text-primary);">' + formatBRL(groupBudget) + '</strong> · ' + Math.round(groupTotal/groupBudget*100) + '%';
+      } else {
+        infoEl.innerHTML = 'Total: <strong style="color:var(--text-primary);">' + formatBRL(groupTotal) + '</strong>';
+      }
     }
 
     var rect = container.getBoundingClientRect();
@@ -2908,11 +3129,15 @@
         html += '</div>';
       }
 
+      if (b.hint && b.w > 100 && b.h > 70) {
+        html += '<div class="tm-hint">' + b.hint + '</div>';
+      }
+
       el.innerHTML = html;
 
       if (b.drillKey) {
         el.style.cursor = 'pointer';
-        el.addEventListener('click', function() { renderMobileTreemap('detail', b.drillKey); });
+        el.addEventListener('click', function() { renderMobileTreemap(b.drillKey); });
       } else if (b.tooltip) {
         el.style.cursor = 'pointer';
         el.addEventListener('click', function() { showMobPopup(b.tooltip); });
@@ -2945,8 +3170,8 @@
   window.addEventListener('resize', function() {
     clearTimeout(tmResizeTimer);
     tmResizeTimer = setTimeout(function() {
-      if (document.getElementById('view-mapa').classList.contains('active')) renderBudgetTreemap(currentLevel, currentKey);
-      if (document.getElementById('mob-view-mapa') && document.getElementById('mob-view-mapa').classList.contains('active')) renderMobileTreemap(mobCurrentLevel, mobCurrentKey);
+      if (document.getElementById('view-mapa').classList.contains('active')) renderBudgetTreemap(currentDrillKey);
+      if (document.getElementById('mob-view-mapa') && document.getElementById('mob-view-mapa').classList.contains('active')) renderMobileTreemap(mobCurrentDrillKey);
     }, 200);
   });
 </script>

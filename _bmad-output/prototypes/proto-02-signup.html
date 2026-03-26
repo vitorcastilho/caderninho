@@ -21,6 +21,9 @@
     --primary: #4F46E5;
     --primary-hover: #4338CA;
     --primary-light: #EEF2FF;
+    --primary-fg: #FFFFFF;
+    --radius-button: 8px;
+    --radius-card: 12px;
     --positive: #22C55E;
     --positive-bg: #DCFCE7;
     --critical: #DC2626;
@@ -31,14 +34,14 @@
   }
 
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     background: var(--bg);
     color: var(--text-primary);
     line-height: 1.5;
     padding: 24px;
   }
 
-  /* ── Page header ── */
+  /* -- Page header -- */
   .page-header {
     text-align: center;
     margin-bottom: 40px;
@@ -66,7 +69,7 @@
     font-weight: 500;
   }
 
-  /* ── Layout: two versions side by side ── */
+  /* -- Layout: two versions side by side -- */
   .versions {
     display: flex;
     gap: 48px;
@@ -102,7 +105,7 @@
     background: var(--border);
   }
 
-  /* ── Mobile phone frame ── */
+  /* -- Mobile phone frame -- */
   .phone-frame {
     width: 390px;
     min-height: 780px;
@@ -131,7 +134,7 @@
     min-height: 100%;
   }
 
-  /* ── Desktop card frame ── */
+  /* -- Desktop card frame -- */
   .desktop-frame {
     width: 900px;
     background: var(--bg);
@@ -160,9 +163,9 @@
   .desktop-toolbar .url-bar {
     flex: 1;
     margin-left: 8px;
-    padding: 6px 12px;
+    padding: 8px 12px;
     background: var(--bg);
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 12px;
     color: var(--text-tertiary);
   }
@@ -175,10 +178,10 @@
     background: var(--bg);
   }
 
-  /* ── Signup card (shared styles) ── */
+  /* -- Signup card (shared styles) -- */
   .signup-card {
     background: var(--surface);
-    border-radius: 12px;
+    border-radius: var(--radius-card);
     width: 100%;
   }
   .desktop-content .signup-card {
@@ -188,7 +191,7 @@
     box-shadow: 0 4px 24px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
   }
 
-  /* ── Back button ── */
+  /* -- Back button -- */
   .back-btn {
     display: inline-flex;
     align-items: center;
@@ -209,7 +212,7 @@
     height: 20px;
   }
 
-  /* ── Headings inside signup ── */
+  /* -- Headings inside signup -- */
   .signup-title {
     font-size: 24px;
     font-weight: 700;
@@ -223,7 +226,7 @@
     line-height: 1.5;
   }
 
-  /* ── Form fields ── */
+  /* -- Form fields -- */
   .form-row {
     display: flex;
     gap: 12px;
@@ -237,7 +240,7 @@
     font-size: 13px;
     font-weight: 500;
     color: var(--text-primary);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
   .input-wrapper {
     position: relative;
@@ -246,12 +249,12 @@
   }
   .form-input {
     width: 100%;
-    padding: 10px 12px;
+    padding: 12px 12px;
     font-size: 14px;
     font-family: inherit;
     color: var(--text-primary);
     background: var(--surface);
-    border: 1.5px solid var(--border);
+    border: 1px solid var(--border);
     border-radius: 8px;
     outline: none;
     transition: border-color 0.15s, box-shadow 0.15s;
@@ -288,10 +291,10 @@
     display: block;
   }
 
-  /* ── Toggle password visibility ── */
+  /* -- Toggle password visibility -- */
   .toggle-password {
     position: absolute;
-    right: 10px;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -311,7 +314,7 @@
     height: 18px;
   }
 
-  /* ── Password strength bar ── */
+  /* -- Password strength bar -- */
   .strength-section {
     margin-top: 8px;
     margin-bottom: 4px;
@@ -319,7 +322,7 @@
   .strength-bar-container {
     display: flex;
     gap: 4px;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
   .strength-segment {
     height: 4px;
@@ -335,7 +338,7 @@
     transition: color 0.2s;
   }
 
-  /* ── Password requirements checklist ── */
+  /* -- Password requirements checklist -- */
   .pw-requirements {
     margin-top: 12px;
     margin-bottom: 4px;
@@ -372,17 +375,17 @@
     color: #fff;
   }
 
-  /* ── Primary button ── */
+  /* -- Primary button -- */
   .btn-primary {
     width: 100%;
     padding: 12px 24px;
     font-size: 15px;
     font-weight: 600;
     font-family: inherit;
-    color: #FFFFFF;
+    color: var(--primary-fg);
     background: var(--primary);
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-button);
     cursor: pointer;
     transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
     margin-top: 8px;
@@ -401,7 +404,7 @@
     transform: none;
   }
 
-  /* ── Terms text ── */
+  /* -- Terms text -- */
   .terms-text {
     font-size: 12px;
     color: var(--text-tertiary);
@@ -418,7 +421,7 @@
     text-decoration: underline;
   }
 
-  /* ── Login link ── */
+  /* -- Login link -- */
   .login-link {
     font-size: 14px;
     color: var(--text-secondary);
@@ -436,7 +439,7 @@
     text-decoration: underline;
   }
 
-  /* ── Logo / branding ── */
+  /* -- Logo / branding -- */
   .brand-mark {
     display: flex;
     align-items: center;
@@ -448,7 +451,7 @@
     width: 36px;
     height: 36px;
     background: var(--primary);
-    border-radius: 10px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -464,7 +467,7 @@
     color: var(--text-primary);
   }
 
-  /* ── Desktop two-column row ── */
+  /* -- Desktop two-column row -- */
   .desktop-content .form-row-2col {
     display: flex;
     gap: 12px;
@@ -473,7 +476,7 @@
     flex: 1;
   }
 
-  /* ── Responsive tweaks ── */
+  /* -- Responsive tweaks -- */
   @media (max-width: 1400px) {
     .versions { flex-direction: column; align-items: center; }
   }
@@ -490,9 +493,9 @@
 
 <div class="versions">
 
-  <!-- ═══════════════════════════════════ -->
-  <!-- MOBILE VERSION                      -->
-  <!-- ═══════════════════════════════════ -->
+  <!-- ======================================= -->
+  <!-- MOBILE VERSION                          -->
+  <!-- ======================================= -->
   <div class="version-column">
     <div class="version-label">Mobile — 390px</div>
     <div class="phone-frame">
@@ -626,9 +629,9 @@
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════ -->
-  <!-- DESKTOP VERSION                     -->
-  <!-- ═══════════════════════════════════ -->
+  <!-- ======================================= -->
+  <!-- DESKTOP VERSION                         -->
+  <!-- ======================================= -->
   <div class="version-column">
     <div class="version-label">Desktop — 900px</div>
     <div class="desktop-frame">
@@ -644,9 +647,10 @@
           <!-- Brand -->
           <div class="brand-mark">
             <div class="icon-circle">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 19.5A2.5 2.5 0 016.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"></path>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>
+                <path d="M8 11h8"/>
+                <path d="M8 7h6"/>
               </svg>
             </div>
             <span>Caderninho</span>
@@ -777,7 +781,7 @@
 (function() {
   'use strict';
 
-  // ── Utility: get elements by prefix ──
+  // -- Utility: get elements by prefix --
   function getFormElements(prefix) {
     return {
       nome: document.getElementById(prefix + '-nome'),
@@ -799,7 +803,7 @@
     };
   }
 
-  // ── Password strength checker ──
+  // -- Password strength checker --
   function checkPasswordStrength(password) {
     var hasLength = password.length >= 8;
     var hasUpper = /[A-Z]/.test(password);
@@ -814,7 +818,7 @@
     };
   }
 
-  // ── Update strength UI ──
+  // -- Update strength UI --
   function updateStrengthUI(els, password) {
     var result = checkPasswordStrength(password);
 
@@ -858,12 +862,12 @@
     return result;
   }
 
-  // ── Email validation ──
+  // -- Email validation --
   function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  // ── Initialize form behavior ──
+  // -- Initialize form behavior --
   function initForm(prefix) {
     var els = getFormElements(prefix);
 
@@ -1009,7 +1013,7 @@
     }
   }
 
-  // ── Toggle password visibility ──
+  // -- Toggle password visibility --
   document.querySelectorAll('.toggle-password').forEach(function(btn) {
     btn.addEventListener('click', function() {
       var targetId = btn.getAttribute('data-target');
@@ -1029,7 +1033,7 @@
     });
   });
 
-  // ── Initialize both forms ──
+  // -- Initialize both forms --
   initForm('m');
   initForm('d');
 

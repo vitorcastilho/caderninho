@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* ── Design Tokens ── */
+    /* -- Design Tokens -- */
     :root {
       --bg: #FAFAF9;
       --surface: #FFFFFF;
@@ -20,27 +20,26 @@
       --primary: #4F46E5;
       --primary-hover: #4338CA;
       --primary-light: #EEF2FF;
+      --primary-fg: #FFFFFF;
+      --radius-button: 8px;
       --radius-card: 12px;
-      --radius-input: 6px;
-      --radius-badge: 100px;
       --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
       --shadow-card-lg: 0 2px 6px rgba(0,0,0,.06), 0 8px 32px rgba(0,0,0,.06);
       --transition: 150ms ease;
     }
 
-    /* ── Reset ── */
+    /* -- Reset -- */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-variant-numeric: tabular-nums;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       background: var(--bg);
       color: var(--text-primary);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
 
-    /* ── Page Header ── */
+    /* -- Page Header -- */
     .page-header {
       text-align: center;
       padding: 48px 24px 40px;
@@ -51,14 +50,14 @@
       font-size: 24px;
       font-weight: 700;
       color: var(--text-primary);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .page-header p {
       font-size: 15px;
       color: var(--text-secondary);
     }
 
-    /* ── Showcase Grid ── */
+    /* -- Showcase Grid -- */
     .showcase {
       display: flex;
       justify-content: center;
@@ -82,7 +81,7 @@
       margin-bottom: 20px;
     }
 
-    /* ── Phone Frame ── */
+    /* -- Phone Frame -- */
     .phone-frame {
       width: 390px;
       min-height: 780px;
@@ -113,7 +112,7 @@
       min-height: 768px;
     }
 
-    /* ── Desktop Frame ── */
+    /* -- Desktop Frame -- */
     .desktop-frame {
       width: 900px;
       min-height: 600px;
@@ -141,12 +140,12 @@
       content: '';
       position: absolute;
       top: 12px;
-      left: 14px;
-      width: 10px;
-      height: 10px;
+      left: 16px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background: #E7E5E4;
-      box-shadow: 18px 0 0 #E7E5E4, 36px 0 0 #E7E5E4;
+      box-shadow: 20px 0 0 #E7E5E4, 40px 0 0 #E7E5E4;
     }
     .desktop-content {
       padding: 56px 40px 40px;
@@ -157,7 +156,7 @@
       min-height: 564px;
     }
 
-    /* ── Login Card (shared) ── */
+    /* -- Login Card (shared) -- */
     .login-card {
       width: 100%;
       display: flex;
@@ -173,7 +172,7 @@
       padding: 44px 40px 40px;
     }
 
-    /* ── Logo ── */
+    /* -- Logo -- */
     .logo {
       display: flex;
       align-items: center;
@@ -203,7 +202,7 @@
       margin-bottom: 36px;
     }
 
-    /* ── Form ── */
+    /* -- Form -- */
     .login-form {
       width: 100%;
     }
@@ -215,7 +214,7 @@
       font-size: 13px;
       font-weight: 500;
       color: var(--text-primary);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .input-wrapper {
       position: relative;
@@ -223,13 +222,13 @@
     .form-input {
       width: 100%;
       height: 44px;
-      padding: 0 14px;
-      font-family: 'Inter', sans-serif;
+      padding: 0 16px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       font-size: 14px;
       color: var(--text-primary);
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius-input);
+      border-radius: 8px;
       outline: none;
       transition: border-color var(--transition), box-shadow var(--transition);
     }
@@ -267,15 +266,15 @@
       height: 18px;
     }
 
-    /* ── Buttons ── */
+    /* -- Buttons -- */
     .btn-primary {
       width: 100%;
       height: 44px;
       background: var(--primary);
-      color: #FFFFFF;
+      color: var(--primary-fg);
       border: none;
-      border-radius: var(--radius-input);
-      font-family: 'Inter', sans-serif;
+      border-radius: var(--radius-button);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
@@ -303,7 +302,7 @@
       color: var(--primary);
     }
 
-    /* ── Divider ── */
+    /* -- Divider -- */
     .divider {
       display: flex;
       align-items: center;
@@ -324,22 +323,22 @@
       text-transform: lowercase;
     }
 
-    /* ── Google Button ── */
+    /* -- Google Button -- */
     .btn-google {
       width: 100%;
       height: 44px;
       background: var(--surface);
       color: var(--text-primary);
       border: 1px solid var(--border);
-      border-radius: var(--radius-input);
-      font-family: 'Inter', sans-serif;
+      border-radius: var(--radius-button);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 12px;
       transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
     }
     .btn-google:hover {
@@ -356,7 +355,7 @@
       flex-shrink: 0;
     }
 
-    /* ── Footer ── */
+    /* -- Footer -- */
     .login-footer {
       margin-top: 32px;
       font-size: 13px;
@@ -374,7 +373,7 @@
       text-decoration: underline;
     }
 
-    /* ── Responsive ── */
+    /* -- Responsive -- */
     @media (max-width: 1400px) {
       .showcase {
         flex-direction: column;
@@ -412,9 +411,9 @@
             <div class="logo">
               <div class="logo-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+                  <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>
+                  <path d="M8 11h8"/>
                   <path d="M8 7h6"/>
-                  <path d="M8 11h4"/>
                 </svg>
               </div>
               <span class="logo-text">Caderninho</span>
@@ -507,9 +506,9 @@
             <div class="logo">
               <div class="logo-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+                  <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>
+                  <path d="M8 11h8"/>
                   <path d="M8 7h6"/>
-                  <path d="M8 11h4"/>
                 </svg>
               </div>
               <span class="logo-text">Caderninho</span>

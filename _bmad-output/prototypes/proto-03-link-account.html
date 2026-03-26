@@ -21,6 +21,9 @@
     --primary: #4F46E5;
     --primary-hover: #4338CA;
     --primary-light: #EEF2FF;
+    --primary-fg: #FFFFFF;
+    --radius-button: 8px;
+    --radius-card: 12px;
     --positive: #22C55E;
     --positive-bg: #DCFCE7;
     --positive-text: #166534;
@@ -30,10 +33,11 @@
     --destructive: #DC2626;
     --destructive-hover: #B91C1C;
     --destructive-bg: #FEE2E2;
+    --sidebar-width: 220px;
   }
 
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     background: var(--bg);
     color: var(--text-primary);
     line-height: 1.5;
@@ -50,7 +54,7 @@
   .page-header h1 { font-size: 22px; font-weight: 700; color: var(--text-primary); }
   .page-header .subtitle { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
   .page-header .badge {
-    display: inline-block; margin-top: 8px; padding: 4px 14px;
+    display: inline-block; margin-top: 8px; padding: 4px 16px;
     background: var(--primary-light); color: var(--primary); border-radius: 100px;
     font-size: 12px; font-weight: 500;
   }
@@ -82,91 +86,43 @@
     box-shadow: 0 4px 24px rgba(0,0,0,0.06);
   }
 
-  /* --- Sidebar --- */
-  .sidebar {
-    width: 220px;
-    min-width: 220px;
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    padding: 20px 0;
-  }
-  .sidebar-logo {
-    padding: 0 20px 20px;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--primary);
-    letter-spacing: -0.3px;
-  }
-  .sidebar-logo span { color: var(--text-tertiary); font-weight: 400; font-size: 11px; margin-left: 4px; }
-
-  .sidebar-nav { flex: 1; }
-  .nav-section-label {
-    padding: 16px 20px 6px;
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--text-tertiary);
-  }
-  .nav-separator {
-    margin: 8px 20px;
-    border: none;
-    border-top: 1px solid var(--border);
-  }
-  .nav-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 20px;
-    font-size: 14px;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: all 0.15s;
-    text-decoration: none;
-    border-radius: 0;
-    margin: 1px 8px;
-    border-radius: 8px;
-  }
-  .nav-item:hover { background: var(--bg); color: var(--text-primary); }
-  .nav-item.active {
-    background: var(--primary-light);
-    color: var(--primary);
-    font-weight: 500;
-  }
-  .nav-icon {
-    width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    opacity: 0.7;
-  }
-  .nav-item.active .nav-icon { opacity: 1; }
-
-  .sidebar-user {
-    padding: 16px 20px 4px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .sidebar-user-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 600;
-  }
-  .sidebar-user-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  /* --- Sidebar Canonico --- */
+  .sidebar { width: 220px; height: 100%; min-height: 820px; position: relative; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 40; flex-shrink: 0; }
+  .sidebar-logo { display: flex; align-items: center; padding: 20px 16px 16px; gap: 8px; }
+  .sidebar-logo-icon { color: var(--primary); display: flex; align-items: center; }
+  .sidebar-logo-text { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: var(--primary); }
+  .sidebar-separator { height: 1px; background: var(--border); margin: 4px 16px; }
+  .sidebar-nav { flex: 1; overflow-y: auto; }
+  .sidebar-section-label { padding: 16px 16px 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); }
+  .sidebar-items { list-style: none; margin: 0; padding: 0 8px; display: flex; flex-direction: column; gap: 2px; }
+  .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: all 150ms; cursor: pointer; }
+  .sidebar-item:hover { background: var(--bg); color: var(--text-primary); }
+  .sidebar-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+  .sidebar-icon { width: 18px; height: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .sidebar-icon svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding: 12px; }
+  .sidebar-user { display: flex; align-items: center; gap: 10px; }
+  .sidebar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+  .sidebar-user-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
   .sidebar-user-role { font-size: 11px; color: var(--text-tertiary); }
+  .sidebar-logout { display: flex; align-items: center; gap: 10px; margin-top: 0; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 150ms; border: none; background: none; width: 100%; }
+  .sidebar-logout:hover { background: var(--bg); color: var(--text-primary); }
+  .sidebar-logout svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Breadcrumb */
+  .breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--text-tertiary);
+    margin-bottom: 16px;
+  }
+  .breadcrumb a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .breadcrumb a:hover { color: var(--primary); }
+  .breadcrumb .bc-sep { color: var(--text-tertiary); }
+  .breadcrumb .bc-current { color: var(--text-primary); font-weight: 500; }
 
   /* --- Main Content --- */
   .main-content {
@@ -191,7 +147,7 @@
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: var(--radius-card);
     padding: 20px 24px;
     margin-bottom: 20px;
     transition: box-shadow 0.2s;
@@ -211,7 +167,7 @@
   .user-row {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
   }
   .user-avatar {
     width: 44px;
@@ -239,7 +195,7 @@
   .badge {
     display: inline-flex;
     align-items: center;
-    padding: 3px 10px;
+    padding: 4px 12px;
     border-radius: 100px;
     font-size: 11px;
     font-weight: 500;
@@ -255,9 +211,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
     padding: 8px 16px;
-    border-radius: 8px;
+    border-radius: var(--radius-button);
     font-size: 13px;
     font-weight: 500;
     font-family: inherit;
@@ -269,7 +225,7 @@
   }
   .btn-primary {
     background: var(--primary);
-    color: white;
+    color: var(--primary-fg);
   }
   .btn-primary:hover { background: var(--primary-hover); }
 
@@ -297,7 +253,7 @@
     background: var(--bg);
     color: var(--text-secondary);
     border: 1px solid var(--border);
-    padding: 6px 12px;
+    padding: 8px 12px;
     font-size: 12px;
   }
   .btn-copy:hover { background: var(--border); color: var(--text-primary); }
@@ -307,11 +263,11 @@
     border-color: var(--positive);
   }
 
-  .btn-sm { padding: 5px 12px; font-size: 12px; }
+  .btn-sm { padding: 4px 12px; font-size: 12px; }
 
   .user-actions {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     flex-shrink: 0;
   }
 
@@ -322,13 +278,13 @@
     font-size: 13px;
     font-weight: 500;
     color: var(--text-primary);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
   .form-input {
     width: 100%;
-    padding: 9px 12px;
+    padding: 8px 12px;
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 14px;
     font-family: inherit;
     color: var(--text-primary);
@@ -345,14 +301,14 @@
   /* --- Role Selector --- */
   .role-selector {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     margin-top: 4px;
   }
   .role-option {
     flex: 1;
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 14px;
+    border-radius: 8px;
+    padding: 12px 16px;
     cursor: pointer;
     transition: all 0.15s;
     position: relative;
@@ -433,7 +389,7 @@
     flex: 1;
     padding: 8px 12px;
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 12px;
     font-family: 'Inter', monospace;
     color: var(--text-secondary);
@@ -471,7 +427,7 @@
   .pending-info { flex: 1; min-width: 0; }
   .pending-email { font-size: 14px; font-weight: 500; color: var(--text-primary); }
   .pending-meta { font-size: 12px; color: var(--text-tertiary); margin-top: 1px; }
-  .pending-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .pending-actions { display: flex; gap: 8px; flex-shrink: 0; }
 
 
   /* ======================== */
@@ -498,7 +454,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 20px 14px;
+    padding: 12px 20px 16px;
     background: var(--surface);
     border-bottom: 1px solid var(--border);
   }
@@ -539,7 +495,7 @@
   }
   .mobile-body .user-badges {
     width: 100%;
-    margin-left: 58px;
+    margin-left: 56px;
     margin-top: 4px;
   }
   .mobile-body .user-actions {
@@ -579,47 +535,16 @@
     justify-content: center;
   }
 
-  /* --- Bottom Nav --- */
-  .bottom-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    padding: 8px 0 20px;
-    position: relative;
-  }
-  .bottom-nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    font-size: 10px;
-    color: var(--text-tertiary);
-    cursor: pointer;
-    padding: 4px 8px;
-    text-decoration: none;
-    transition: color 0.15s;
-  }
-  .bottom-nav-item:hover { color: var(--text-secondary); }
-  .bottom-nav-item .nav-tab-icon { font-size: 20px; height: 22px; }
-  .bottom-nav-fab {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    font-weight: 300;
-    margin-top: -20px;
-    box-shadow: 0 4px 12px rgba(79,70,229,0.3);
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .bottom-nav-fab:hover { background: var(--primary-hover); }
+  /* --- Bottom Nav Canonico --- */
+  .bottom-nav { position: relative; height: 56px; background: var(--surface); border-top: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-around; z-index: 50; }
+  .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px 0; min-height: 44px; color: var(--text-tertiary); text-decoration: none; font-size: 10px; font-weight: 500; cursor: pointer; }
+  .bottom-nav-item.active { color: var(--primary); }
+  .bottom-nav-icon { width: 20px; height: 20px; }
+  .bottom-nav-icon svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .bottom-nav-fab { display: flex; flex-direction: column; align-items: center; text-decoration: none; margin-top: -16px; }
+  .bottom-nav-fab-icon { width: 48px; height: 48px; background: var(--primary); color: #FFFFFF; border-radius: 50%; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; }
+  .bottom-nav-fab-icon svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .bottom-nav-fab-label { margin-top: 2px; font-size: 10px; font-weight: 500; color: var(--text-tertiary); }
 
   /* --- SVG icons inline --- */
   .icon-svg {
@@ -634,15 +559,6 @@
   .icon-svg-sm {
     width: 14px;
     height: 14px;
-  }
-  .icon-svg-nav {
-    width: 22px;
-    height: 22px;
-    stroke: currentColor;
-    stroke-width: 1.6;
-    fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
   }
 </style>
 </head>
@@ -661,78 +577,81 @@
 <div class="version-label">Desktop</div>
 
 <div class="desktop-frame">
-  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-logo">
-      Caderninho
+      <span class="sidebar-logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/><path d="M8 11h8"/><path d="M8 7h6"/></svg></span>
+      <span class="sidebar-logo-text">Caderninho</span>
     </div>
-
+    <div class="sidebar-separator"></div>
     <nav class="sidebar-nav">
-      <div class="nav-item">
-        <span class="nav-icon">
-          <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-        </span>
-        Dashboard
-      </div>
-      <div class="nav-item">
-        <span class="nav-icon">
-          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-        </span>
-        Orcamentos
-      </div>
-      <div class="nav-item">
-        <span class="nav-icon">
-          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-        </span>
-        Checklist
-      </div>
-      <div class="nav-item">
-        <span class="nav-icon">
-          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-        </span>
-        Projecao
-      </div>
-
-      <hr class="nav-separator">
-
-      <div class="nav-section-label">Configuracoes</div>
-      <div class="nav-item">
-        <span class="nav-icon">
-          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18"/></svg>
-        </span>
-        Categorias
-      </div>
-      <div class="nav-item">
-        <span class="nav-icon">
-          <svg class="icon-svg" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-        </span>
-        Contas
-      </div>
-      <div class="nav-item">
-        <span class="nav-icon">
-          <svg class="icon-svg" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
-        </span>
-        Cartoes
-      </div>
-      <div class="nav-item active">
-        <span class="nav-icon">
-          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-        </span>
-        Usuarios
-      </div>
+      <div class="sidebar-section-label">Navegação</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
+          Dashboard
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"/><path d="M16 10h.01"/><path d="M2 8v1a2 2 0 0 0 2 2h1"/></svg></span>
+          Orçamentos
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span>
+          Checklist
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>
+          Projeção
+        </li>
+      </ul>
+      <div class="sidebar-separator"></div>
+      <div class="sidebar-section-label">Configurações</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item active">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M10 12h4"/><path d="M10 8h4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/></svg></span>
+          Contas
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
+          Cartões
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M10 18v-7"/><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></svg></span>
+          Investimentos
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>
+          Receitas
+        </li>
+        <li class="sidebar-item">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z"/><path d="M2 7v6.172a2 2 0 0 0 .586 1.414l6.71 6.71a2.4 2.4 0 0 0 3.191.193"/><circle cx="10.5" cy="6.5" r=".5" fill="currentColor"/></svg></span>
+          Categorias
+        </li>
+      </ul>
     </nav>
-
-    <div class="sidebar-user">
-      <div class="sidebar-user-avatar">V</div>
-      <div>
-        <div class="sidebar-user-name">Vitor</div>
-        <div class="sidebar-user-role">Administrador</div>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">V</div>
+        <div>
+          <div class="sidebar-user-name">Vitor</div>
+          <div class="sidebar-user-role">Administrador</div>
+        </div>
       </div>
+      <div class="sidebar-separator"></div>
+      <button class="sidebar-logout">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+        Sair
+      </button>
     </div>
   </aside>
 
   <!-- Main Content -->
   <main class="main-content">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a href="#">Contas</a>
+      <span class="bc-sep">&#8250;</span>
+      <span class="bc-current">Vincular Conta</span>
+    </div>
     <h1 class="main-title">Usuarios e Contas Vinculadas</h1>
     <p class="main-subtitle">Gerencie quem tem acesso ao seu Caderninho</p>
 
@@ -821,7 +740,7 @@
         </button>
       </div>
       <div class="share-link-note">
-        <svg class="icon-svg icon-svg-sm" viewBox="0 0 24 24" style="width:12px;height:12px;stroke:var(--text-tertiary);vertical-align:-1px;margin-right:3px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <svg class="icon-svg icon-svg-sm" viewBox="0 0 24 24" style="width:12px;height:12px;stroke:var(--text-tertiary);vertical-align:-1px;margin-right:4px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
         Link valido por 7 dias
       </div>
     </div>
@@ -872,7 +791,7 @@
     <div class="section-label">Sua Conta</div>
     <div class="card">
       <div class="user-row">
-        <div class="user-avatar avatar-indigo" style="width:38px;height:38px;font-size:15px;">V</div>
+        <div class="user-avatar avatar-indigo" style="width:40px;height:40px;font-size:15px;">V</div>
         <div class="user-info">
           <div class="user-name" style="font-size:14px;">Vitor Castilho</div>
           <div class="user-email" style="font-size:12px;">vitor@email.com</div>
@@ -887,7 +806,7 @@
     <div class="section-label">Contas Vinculadas</div>
     <div class="card">
       <div class="user-row">
-        <div class="user-avatar avatar-rose" style="width:38px;height:38px;font-size:15px;">T</div>
+        <div class="user-avatar avatar-rose" style="width:40px;height:40px;font-size:15px;">T</div>
         <div class="user-info">
           <div class="user-name" style="font-size:14px;">Tamires</div>
           <div class="user-email" style="font-size:12px;">tamires@email.com</div>
@@ -906,13 +825,13 @@
     <!-- Section 3: Invite -->
     <div class="section-label">Convidar Nova Pessoa</div>
     <div class="card">
-      <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 14px;">
+      <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
         Convide alguem para acompanhar as financas da familia
       </p>
 
       <div class="form-group">
         <label class="form-label" style="font-size:12px;">E-mail</label>
-        <input type="email" class="form-input" placeholder="nome@email.com" style="font-size:13px; padding:8px 10px;">
+        <input type="email" class="form-input" placeholder="nome@email.com" style="font-size:13px; padding:8px 12px;">
       </div>
 
       <div class="form-group">
@@ -977,24 +896,30 @@
 
   </div>
 
-  <!-- Bottom Navigation -->
   <div class="bottom-nav">
-    <a class="bottom-nav-item">
-      <svg class="icon-svg-nav" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    <a class="bottom-nav-item active">
+      <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
       <span>Dashboard</span>
     </a>
     <a class="bottom-nav-item">
-      <svg class="icon-svg-nav" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-      <span>Orcamentos</span>
+      <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
+      <span>Cartões</span>
     </a>
-    <div class="bottom-nav-fab">+</div>
+    <a class="bottom-nav-fab">
+      <span class="bottom-nav-fab-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>
+      <span class="bottom-nav-fab-label">Registrar</span>
+    </a>
     <a class="bottom-nav-item">
-      <svg class="icon-svg-nav" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span>
       <span>Checklist</span>
     </a>
     <a class="bottom-nav-item">
-      <svg class="icon-svg-nav" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-      <span>Projecao</span>
+      <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>
+      <span>Projeção</span>
+    </a>
+    <a class="bottom-nav-item">
+      <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg></span>
+      <span>Sair</span>
     </a>
   </div>
 </div>
