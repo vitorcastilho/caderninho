@@ -1,6 +1,6 @@
 # Story 2.5.2: Reavaliação Completa dos Protótipos
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -342,6 +342,7 @@ Nenhum debug necessário — story é UX/Design, sem código de produção.
 
 - **2026-03-24**: Implementação completa da reavaliação — Tasks 1-11 concluídas (regras canônicas, inventário, sidebar unificado, formatação padronizada, tokens visuais, documento de saída)
 - **2026-03-25**: Addressed code review findings — 5 items resolvidos (2 CRITICAL, 1 HIGH rejeitado pelo PO, 2 MEDIUM)
+- **2026-03-25**: Code review R2 — todos os 5 fixes validados e aprovados. Story marcada como done.
 
 ### File List
 

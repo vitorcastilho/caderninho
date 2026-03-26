@@ -1260,19 +1260,19 @@ O gráfico mostra 6 barras (Out-Mar) com alturas proporcionais simulando tendên
 
 Após executar os 16 action items, o dev deve verificar:
 
-- [ ] AI-1: Abrir proto-03 no browser → sidebar mostra `✎ Caderninho` (e não `✐`)
-- [ ] AI-2: Abrir proto-04 no browser → na seção "Entidades" (desktop E mobile), TODOS os 4 cartões mostram badge de bandeira (Latam Pass = VISA, Pão de Açúcar = Mastercard, Uniclass = VISA, PDA = VISA)
-- [ ] AI-3: Abrir proto-05 no browser → o gauge "Regra de Ouro" mostra 68,00% ABAIXO do arco, sem sobreposição
-- [ ] AI-4: Abrir proto-05 no browser → a transação "Uber" mostra `[Itaú] Débito · Ontem` com badge azul do banco
-- [ ] AI-5: Abrir proto-07 no browser → o fluxo mostra "Estado 3a: Pagamento à Vista" e "Estado 3b: Parcelamento no Cartão" como parte da mesma sequência, sem seção "Bônus" separada
-- [ ] AI-6: Abrir proto-08 no browser → Etapa 2 mostra bancos com cores institucionais (Nubank roxo, Itaú azul, BB amarelo)
-- [ ] AI-7: Abrir proto-08 no browser → Etapa 4 desktop mostra badge VISA ou badge banco ao lado de cada select de método
-- [ ] AI-8: Abrir proto-09 no browser → na view "Visual/Cards", o badge do método NÃO encosta na barra de progresso (espaço de 8px entre eles)
-- [ ] AI-9: Abrir proto-10 no browser → banner "Amanhã vence" tem X, botão e ícone alinhados sem sobreposição; valor mostra "R$ 158,00" com espaço
-- [ ] AI-10: Abrir proto-10 no browser → item "iCloud" mostra badge `[VISA] PDA · Ciclo Mar`
-- [ ] AI-11: Abrir proto-10 no browser → itens de Débito Automático mostram badge do banco; itens Manual com Débito mostram badge do banco; padrão `[Badge] Método • Info temporal` consistente em todas as seções
-- [ ] AI-12: Abrir proto-12 no browser → card "Parcelas Ativas" é full-width abaixo das duas colunas, tabela com 5 colunas (sem "Restam"), não espremido
-- [ ] AI-13: Abrir proto-12 no browser → aba "Parcelas" mobile mostra barra de progresso colorida em cada card + info "libera limite"
-- [ ] AI-14: Abrir proto-14 no browser → aba "Categorias" organizada por seções de classificação customizável (Essenciais fixos, Essenciais variáveis, Qualidade de vida, etc.), cada classificação com nome + orçamento + botões editar/excluir; categorias sem coluna "Pagamento padrão" nem "Essencialidade"; botão "+ Adicionar classificação" visível
-- [ ] AI-15: Abrir proto-14 no browser → ao expandir edição de "Alimentação", subcategorias (Supermercado, Restaurante trabalho, Feira/Hortifruti) mostram método de pagamento primário (com badge) + orçamento individual + saldo não alocado da categoria
-- [ ] AI-16: Abrir proto-15 no browser → seção desktop mostra gráfico de barras real (6 meses, mês atual em indigo) em vez de placeholder texto
+- [x] AI-1: Abrir proto-03 no browser → sidebar mostra `✎ Caderninho` (e não `✐`)
+- [x] AI-2: Abrir proto-04 no browser → na seção "Entidades" (desktop E mobile), TODOS os 4 cartões mostram badge de bandeira (Latam Pass = VISA, Pão de Açúcar = Mastercard, Uniclass = VISA, PDA = VISA)
+- [x] AI-3: Abrir proto-05 no browser → o gauge "Regra de Ouro" mostra 68,00% ABAIXO do arco, sem sobreposição
+- [x] AI-4: Abrir proto-05 no browser → a transação "Uber" mostra `[Itaú] Débito · Ontem` com badge azul do banco
+- [x] AI-5: Abrir proto-07 no browser → o fluxo mostra "Estado 3a: Pagamento à Vista" e "Estado 3b: Parcelamento no Cartão" como parte da mesma sequência, sem seção "Bônus" separada
+- [x] AI-6: Abrir proto-08 no browser → Etapa 2 mostra bancos com cores institucionais (Nubank roxo, Itaú azul, BB amarelo)
+- [x] AI-7: Abrir proto-08 no browser → Etapa 4 desktop mostra badge VISA ou badge banco ao lado de cada select de método
+- [x] AI-8: Abrir proto-09 no browser → na view "Visual/Cards", o badge do método NÃO encosta na barra de progresso (espaço de 8px entre eles)
+- [x] AI-9: Abrir proto-10 no browser → banner "Amanhã vence" tem X, botão e ícone alinhados sem sobreposição; valor mostra "R$ 158,00" com espaço
+- [x] AI-10: Abrir proto-10 no browser → item "iCloud" mostra badge `[VISA] PDA · Ciclo Mar`
+- [x] AI-11: Abrir proto-10 no browser → itens de Débito Automático mostram badge do banco; itens Manual com Débito mostram badge do banco; padrão `[Badge] Método • Info temporal` consistente em todas as seções
+- [x] AI-12: Abrir proto-12 no browser → card "Parcelas Ativas" é full-width abaixo das duas colunas, tabela com 5 colunas (sem "Restam"), não espremido
+- [x] AI-13: Abrir proto-12 no browser → aba "Parcelas" mobile mostra barra de progresso colorida em cada card + info "libera limite"
+- [x] AI-14: Abrir proto-14 no browser → aba "Categorias" organizada por seções de classificação customizável (Essenciais fixos, Essenciais variáveis, Qualidade de vida, etc.), cada classificação com nome + orçamento + botões editar/excluir; categorias sem coluna "Pagamento padrão" nem "Essencialidade"; botão "+ Adicionar classificação" visível
+- [x] AI-15: Abrir proto-14 no browser → ao expandir edição de "Alimentação", subcategorias (Supermercado, Restaurante trabalho, Feira/Hortifruti) mostram método de pagamento primário (com badge) + orçamento individual + saldo não alocado da categoria
+- [x] AI-16: Abrir proto-15 no browser → seção desktop mostra gráfico de barras real (6 meses, mês atual em indigo) em vez de placeholder texto
