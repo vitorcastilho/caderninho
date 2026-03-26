@@ -188,6 +188,14 @@ A retrospectiva do Épico 2 (`epic-2-retro-2026-03-24.md`) identificou que os pr
   - [x] 11.3: Criar mapeamento protótipo → tela → epic/story
   - [x] 11.4: Salvar como `_bmad-output/planning-artifacts/reavaliacao-prototipos.md`
 
+### Review Follow-ups (AI) — Code Review R1 (2026-03-25)
+
+- [x] [AI-Review][CRITICAL] C-1: Preencher File List no Dev Agent Record — 25 arquivos documentados (8 novos + 17 modificados)
+- [x] [AI-Review][CRITICAL] C-2: Preencher Agent Model Used — substituído placeholder por modelos reais usados
+- [x] [AI-Review][HIGH] H-1: ~~Substituir SVG BookText por `✎`~~ — **REJEITADO PELO PO**: protótipos devem manter o SVG BookText (ícone de caderneta), igual ao onboarding. Os 10 protótipos já usam SVG correto. Snippets e regras atualizados para refletir SVG em vez de ✎.
+- [x] [AI-Review][MEDIUM] M-1: Atualizar snippets canônicos e regras canônicas — "Sair" adicionado como 6° item da bottom nav; logo do sidebar atualizado de ✎ para SVG BookText em ambos os docs
+- [x] [AI-Review][MEDIUM] M-2: Atualizar status do action items review doc de "Pendente" para "Concluído"
+
 ## Dev Notes
 
 ### Natureza da Story: UX/Design — Não é Código de Produção
@@ -315,10 +323,53 @@ Do `MEMORY.md` (UI Patterns):
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4 (claude-opus-4-20250514) — implementação original
+Claude Opus 4.6 (claude-opus-4-6) — review follow-ups
 
 ### Debug Log References
 
+Nenhum debug necessário — story é UX/Design, sem código de produção.
+
 ### Completion Notes List
 
+- ✅ Resolved review finding [CRITICAL] C-1: File List preenchido com 25 arquivos (8 novos + 17 modificados)
+- ✅ Resolved review finding [CRITICAL] C-2: Agent Model Used preenchido (Opus 4 original + Opus 4.6 follow-ups)
+- ✅ Resolved review finding [HIGH] H-1: REJEITADO PELO PO — protótipos já usam SVG BookText correto. Snippets e regras atualizados para refletir SVG em vez de ✎
+- ✅ Resolved review finding [MEDIUM] M-1: Snippets e regras atualizados — "Sair" como 6° item da bottom nav, logo sidebar como SVG BookText
+- ✅ Resolved review finding [MEDIUM] M-2: Status do action items review doc atualizado de "Pendente" para "Concluído"
+
+### Change Log
+
+- **2026-03-24**: Implementação completa da reavaliação — Tasks 1-11 concluídas (regras canônicas, inventário, sidebar unificado, formatação padronizada, tokens visuais, documento de saída)
+- **2026-03-25**: Addressed code review findings — 5 items resolvidos (2 CRITICAL, 1 HIGH rejeitado pelo PO, 2 MEDIUM)
+
 ### File List
+
+**Novos (A):**
+- `_bmad-output/implementation-artifacts/2-5-2-reavaliacao-completa-dos-prototipos.md` (este arquivo)
+- `_bmad-output/implementation-artifacts/2-5-2-action-items-review.md`
+- `_bmad-output/implementation-artifacts/2-5-2b-atualizacao-prototipos-modelo-v2.md`
+- `_bmad-output/planning-artifacts/decisao-modelo-categorizacao-v2.md`
+- `_bmad-output/planning-artifacts/reavaliacao-prototipos.md`
+- `_bmad-output/planning-artifacts/regras-canonicas-prototipos.md`
+- `_bmad-output/planning-artifacts/snippets-canonicos-prototipos.md`
+- `_bmad-output/prototypes/proto-12a-credit-cards-list.html`
+
+**Modificados (M):**
+- `_bmad-output/implementation-artifacts/sprint-status.yaml`
+- `_bmad-output/prototypes/categories-ux-v2.html`
+- `_bmad-output/prototypes/proto-01-login.html`
+- `_bmad-output/prototypes/proto-02-signup.html`
+- `_bmad-output/prototypes/proto-03-link-account.html`
+- `_bmad-output/prototypes/proto-04-permissions.html`
+- `_bmad-output/prototypes/proto-05-dashboard-desktop.html`
+- `_bmad-output/prototypes/proto-06-dashboard-mobile.html`
+- `_bmad-output/prototypes/proto-07-cascade-input.html`
+- `_bmad-output/prototypes/proto-08-onboarding.html`
+- `_bmad-output/prototypes/proto-09-budgets.html`
+- `_bmad-output/prototypes/proto-10-checklist.html`
+- `_bmad-output/prototypes/proto-11-projection.html`
+- `_bmad-output/prototypes/proto-12-credit-card.html`
+- `_bmad-output/prototypes/proto-13-reconciliation.html`
+- `_bmad-output/prototypes/proto-14-settings.html`
+- `_bmad-output/prototypes/proto-15-drill-down.html`

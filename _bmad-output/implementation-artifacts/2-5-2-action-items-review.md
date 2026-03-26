@@ -2,7 +2,7 @@
 
 **Data:** 2026-03-24
 **Origem:** Review visual feito pelo PO nos protótipos corrigidos
-**Status:** Pendente — dev precisa executar antes de fechar o PR #20
+**Status:** Concluído — items AI-3, AI-4, AI-9, AI-10, AI-11, AI-14, AI-15 confirmados como executados (2026-03-25)
 
 ---
 

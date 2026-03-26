@@ -76,7 +76,7 @@ body {
 <aside class="sidebar">
   <!-- Logo -->
   <div class="sidebar-logo">
-    <span class="sidebar-logo-icon">✎</span>
+    <span class="sidebar-logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/><path d="M8 11h8"/><path d="M8 7h6"/></svg></span>
     <span class="sidebar-logo-text">Caderninho</span>
   </div>
   <div class="sidebar-separator"></div>
@@ -295,7 +295,7 @@ body {
 
 ---
 
-## 3. Bottom Nav Mobile (56px, 5 itens + FAB)
+## 3. Bottom Nav Mobile (56px, 5 itens + FAB + Sair)
 
 ### HTML
 
@@ -321,6 +321,10 @@ body {
     <svg class="bottom-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
     <span>Projeção</span>
   </a>
+  <button class="bottom-nav-item" onclick="handleLogout()">
+    <svg class="bottom-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+    <span>Sair</span>
+  </button>
 </nav>
 ```
 
@@ -429,7 +433,7 @@ CSS: font-variant-numeric: tabular-nums
 ┌─────────────────────────────────────────┐
 │ sidebar (220px) │ main content          │
 │                 │                       │
-│ ✎ Caderninho    │  [page content]       │
+│ 📖 Caderninho   │  [page content]       │
 │ ─────────       │                       │
 │ NAVEGAÇÃO       │                       │
 │ Dashboard       │                       │
@@ -458,10 +462,10 @@ CSS: font-variant-numeric: tabular-nums
 │                      │
 │                      │
 ├──────────────────────┤
-│ Dashboard │ Cartões  │
-│     [FAB +]          │
-│ Checklist │ Projeção │
+│ Dash │ Cartões│[FAB+]│
+│ Check│Projeção│ Sair │
 └──────────────────────┘
   bottom nav (56px)
   FAB central 48px, -mt-4
+  6 itens: Dash, Cartões, [+], Check, Projeção, Sair
 ```

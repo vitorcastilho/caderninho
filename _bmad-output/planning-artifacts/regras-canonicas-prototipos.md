@@ -41,7 +41,7 @@
 | Border | `border-r border-sidebar-border` (#E7E5E4) | Stone-200 |
 | Transição | `200ms ease-in-out` | Animação suave |
 | **Seções** | | |
-| Logo | Ícone ✎ + "Caderninho" em `text-base font-bold text-primary` | Indigo-600 |
+| Logo | SVG BookText (Lucide) 18×18 + "Caderninho" em `text-base font-bold text-primary` | Indigo-600 |
 | Navegação | Dashboard (LayoutDashboard), Orçamentos (PiggyBank), Checklist (CheckSquare), Projeção (TrendingUp) | 4 itens |
 | Configurações | Contas (Building2), Cartões (CreditCard), Investimentos (Landmark), Receitas (Wallet), Categorias (Tags) | 5 itens |
 | Separadores | `mx-4 my-1 h-px bg-border` entre seções | Stone-200 |
@@ -64,12 +64,13 @@
 | Altura | `56px` (`h-14`) | Fixa |
 | Posição | `fixed bottom-0 left-0 right-0 z-50` | Fixa no fundo |
 | Background | `bg-card` (#FFFFFF) com `border-t border-border` | Card + borda topo |
-| **Itens (5)** | | |
+| **Itens (6)** | | |
 | 1. Dashboard | Ícone LayoutDashboard + "Dashboard" | Link normal |
 | 2. Cartões | Ícone CreditCard + "Cartões" | Link normal |
 | 3. Registrar | **FAB** — Ícone Plus, `size-12` (48px), `rounded-full`, `bg-primary`, `-mt-4` elevado, `shadow-lg` | Botão flutuante central |
 | 4. Checklist | Ícone CheckSquare + "Checklist" | Link normal |
 | 5. Projeção | Ícone TrendingUp + "Projeção" | Link normal |
+| 6. Sair | Ícone LogOut + "Sair" | Botão ghost, chama signOut |
 | Ícones | `size-5` (20px) | Uniformes |
 | Texto | `text-[10px] font-medium` | 10px |
 | Item ativo | `text-primary` (Indigo) | Cor primária |
