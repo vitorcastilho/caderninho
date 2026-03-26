@@ -298,6 +298,44 @@
       border-style: solid;
     }
 
+    /* ── Form Action Buttons (Salvar / Cancelar) ── */
+    .add-form-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .btn-form-save {
+      flex: 1;
+      padding: 8px 16px;
+      background: var(--primary);
+      color: #FFFFFF;
+      border: none;
+      border-radius: var(--radius-button);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .btn-form-save:hover {
+      background: var(--primary-hover);
+    }
+    .btn-form-cancel {
+      padding: 8px 16px;
+      background: transparent;
+      color: var(--text-secondary);
+      border: none;
+      border-radius: var(--radius-button);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color var(--transition);
+    }
+    .btn-form-cancel:hover {
+      color: var(--text-primary);
+    }
+
     /* ── Form Elements ── */
     .form-group {
       margin-bottom: 12px;
@@ -1463,6 +1501,10 @@
               <label class="form-label">Saldo atual</label>
               <input type="text" class="form-input form-input-sm" placeholder="R$ 0,00" />
             </div>
+            <div class="add-form-actions">
+              <button class="btn-form-save">Salvar</button>
+              <button class="btn-form-cancel">Cancelar</button>
+            </div>
           </div>
 
           <button class="btn-add">+ Adicionar conta</button>
@@ -1571,6 +1613,10 @@
                 <label class="form-label">Dia de vencimento</label>
                 <input type="number" class="form-input form-input-sm" placeholder="Ex: 15" min="1" max="31" />
               </div>
+            </div>
+            <div class="add-form-actions">
+              <button class="btn-form-save">Salvar</button>
+              <button class="btn-form-cancel">Cancelar</button>
             </div>
           </div>
 
@@ -1765,6 +1811,29 @@
                 <button class="classification-header-remove" title="Remover">&times;</button>
               </div>
               <div style="font-size: 11px; color: var(--text-tertiary); padding: 4px 0 8px;">Sem categorias pré-definidas</div>
+            </div>
+          </div>
+
+          <!-- Add form (classificação) -->
+          <div class="add-form" style="display: none;">
+            <div class="add-form-title">Nova classificação</div>
+            <div class="form-row">
+              <div class="form-group" style="flex: 0 0 56px;">
+                <label class="form-label">Emoji</label>
+                <input type="text" class="form-input form-input-sm" placeholder="📊" style="text-align: center;" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nome</label>
+                <input type="text" class="form-input form-input-sm" placeholder="Ex: Lazer" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Orçamento mensal</label>
+              <input type="text" class="form-input form-input-sm" placeholder="R$ 0,00" />
+            </div>
+            <div class="add-form-actions">
+              <button class="btn-form-save">Salvar</button>
+              <button class="btn-form-cancel">Cancelar</button>
             </div>
           </div>
 
@@ -1968,6 +2037,10 @@
                   <input type="text" class="form-input form-input-sm" placeholder="R$ 0,00" />
                 </div>
               </div>
+              <div class="add-form-actions">
+                <button class="btn-form-save">Salvar</button>
+                <button class="btn-form-cancel">Cancelar</button>
+              </div>
             </div>
 
             <button class="btn-add" style="max-width: 280px;">+ Adicionar conta</button>
@@ -2091,6 +2164,10 @@
                   <label class="form-label">Dia de vencimento</label>
                   <input type="number" class="form-input form-input-sm" placeholder="Ex: 15" min="1" max="31" />
                 </div>
+              </div>
+              <div class="add-form-actions">
+                <button class="btn-form-save">Salvar</button>
+                <button class="btn-form-cancel">Cancelar</button>
               </div>
             </div>
 
@@ -2295,6 +2372,29 @@
 
             </div><!-- /grid -->
 
+            <!-- Add form (desktop classificação) -->
+            <div class="add-form desktop-add-form" style="display: none;">
+              <div class="add-form-title">Nova classificação</div>
+              <div class="form-row">
+                <div class="form-group" style="flex: 0 0 72px;">
+                  <label class="form-label">Emoji</label>
+                  <input type="text" class="form-input form-input-sm" placeholder="📊" style="text-align: center;" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Nome</label>
+                  <input type="text" class="form-input form-input-sm" placeholder="Ex: Lazer" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Orçamento mensal</label>
+                  <input type="text" class="form-input form-input-sm" placeholder="R$ 0,00" />
+                </div>
+              </div>
+              <div class="add-form-actions">
+                <button class="btn-form-save">Salvar</button>
+                <button class="btn-form-cancel">Cancelar</button>
+              </div>
+            </div>
+
             <button class="btn-add" style="max-width: 280px;">+ Adicionar classificação</button>
 
             <div class="desktop-progress-dots">
@@ -2456,6 +2556,54 @@
       form.querySelectorAll('input').forEach(function(i) { i.value = ''; });
 
       form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    });
+  });
+
+  // ── Cancelar form (btn-form-cancel) ──
+  document.querySelectorAll('.btn-form-cancel').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var form = btn.closest('.add-form');
+      if (!form) return;
+
+      // Limpar edição de cards
+      var container = form.closest('.phone-content, .desktop-step, .desktop-card');
+      if (container) container.querySelectorAll('.item-card.editing').forEach(function(c) { c.classList.remove('editing'); });
+
+      // Restaurar título original
+      var title = form.querySelector('.add-form-title');
+      if (title && title.dataset.originalTitle) title.textContent = title.dataset.originalTitle;
+
+      // Limpar inputs e fechar
+      form.querySelectorAll('input').forEach(function(i) { i.value = ''; });
+      form.querySelectorAll('select').forEach(function(s) { s.selectedIndex = 0; });
+      form.style.display = 'none';
+    });
+  });
+
+  // ── Salvar form (btn-form-save) — feedback visual no protótipo ──
+  document.querySelectorAll('.btn-form-save').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var form = btn.closest('.add-form');
+      if (!form) return;
+
+      // Flash verde para indicar sucesso
+      var originalBg = form.style.background;
+      form.style.background = '#DCFCE7';
+      form.style.borderColor = '#86EFAC';
+      setTimeout(function() {
+        form.style.background = originalBg || '';
+        form.style.borderColor = '';
+        form.querySelectorAll('input').forEach(function(i) { i.value = ''; });
+        form.querySelectorAll('select').forEach(function(s) { s.selectedIndex = 0; });
+        form.style.display = 'none';
+
+        // Limpar edição de cards
+        var container = form.closest('.phone-content, .desktop-step, .desktop-card');
+        if (container) container.querySelectorAll('.item-card.editing').forEach(function(c) { c.classList.remove('editing'); });
+
+        var title = form.querySelector('.add-form-title');
+        if (title && title.dataset.originalTitle) title.textContent = title.dataset.originalTitle;
+      }, 400);
     });
   });
 </script>
