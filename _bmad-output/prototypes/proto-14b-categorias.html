@@ -12,6 +12,7 @@
     --bg: #FAFAF9;
     --surface: #FFF;
     --border: #E7E5E4;
+    --border-hover: #D6D3D1;
     --text-primary: #1C1917;
     --text-secondary: #78716C;
     --text-tertiary: #A8A29E;
@@ -20,8 +21,17 @@
     --primary-light: #EEF2FF;
     --positive: #22C55E;
     --positive-bg: #DCFCE7;
+    --positive-text: #166534;
+    --attention: #EAB308;
+    --attention-bg: #FEF9C3;
+    --attention-text: #854D0E;
+    --alert: #F97316;
+    --alert-bg: #FFF7ED;
+    --alert-text: #9A3412;
     --critical: #DC2626;
     --critical-bg: #FEE2E2;
+    --critical-text: #991B1B;
+    --muted: #F5F5F4;
     --radius-sm: 6px;
     --radius-md: 8px;
     --radius-lg: 12px;
@@ -40,13 +50,9 @@
   }
 
   /* ===== DESKTOP LAYOUT ===== */
-  .desktop-frame {
-    display: flex;
-    min-height: 100vh;
-    margin-left: 220px;
-  }
+  .desktop-frame { display: flex; min-height: 100vh; margin-left: 220px; }
 
-  /* --- Sidebar --- */
+  /* --- Sidebar Canônico --- */
   .sidebar { width: 220px; height: 100%; min-height: 820px; position: fixed; left: 0; top: 0; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 40; flex-shrink: 0; }
   .sidebar-logo { display: flex; align-items: center; padding: 20px 16px 16px; gap: 8px; }
   .sidebar-logo-icon { color: var(--primary); display: flex; align-items: center; }
@@ -65,158 +71,181 @@
   .sidebar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
   .sidebar-user-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
   .sidebar-user-role { font-size: 11px; color: var(--text-tertiary); }
-  .sidebar-logout { display: flex; align-items: center; gap: 10px; margin-top: 0; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 150ms; border: none; background: none; width: 100%; }
+  .sidebar-logout { display: flex; align-items: center; gap: 10px; margin-top: 0; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 150ms; border: none; background: none; width: 100%; font-family: inherit; }
   .sidebar-logout:hover { background: var(--bg); color: var(--text-primary); }
   .sidebar-logout svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
   /* --- Main Content --- */
   .main-content { flex: 1; padding: 32px 40px; max-width: 1100px; }
-  .page-header { margin-bottom: 32px; }
-  .page-header h1 { font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
-  .page-header p { font-size: 14px; color: var(--text-secondary); }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  /* --- Breadcrumb --- */
+  .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; margin-bottom: 24px; flex-wrap: wrap; }
+  .breadcrumb-item { color: var(--text-tertiary); cursor: pointer; transition: color 150ms; }
+  .breadcrumb-item:hover { color: var(--primary); }
+  .breadcrumb-sep { color: var(--text-tertiary); font-size: 11px; }
+  .breadcrumb-current { color: var(--text-primary); font-weight: 600; }
 
-  /* --- Categories Table --- */
-  .categories-table { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
-  .categories-table thead th { background: var(--bg); padding: 12px 16px; font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; text-align: left; border-bottom: 1px solid var(--border); }
-  .categories-table tbody tr { transition: background 0.1s ease; }
-  .categories-table tbody tr:hover { background: #FAFAF9; }
-  .categories-table tbody td { padding: 16px 16px; font-size: 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-  .categories-table tbody tr:last-child td { border-bottom: none; }
-  .cat-emoji { font-size: 22px; text-align: center; width: 40px; }
-  .cat-name { font-weight: 600; color: var(--text-primary); }
-  .cat-budget { font-weight: 600; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+  /* --- Level Header (shown on levels 2-4) --- */
+  .level-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding: 20px 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+  .level-header-emoji { font-size: 28px; flex-shrink: 0; }
+  .level-header-info { flex: 1; min-width: 0; }
+  .level-header-name { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+  .level-header-meta { font-size: 13px; color: var(--text-secondary); margin-top: 2px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .level-header-budget { display: flex; flex-direction: column; gap: 6px; min-width: 200px; }
+  .level-header-budget-text { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text-primary); text-align: right; }
+  .level-header-budget-text .spent { color: var(--text-secondary); font-weight: 400; }
+  .btn-edit-header { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); color: var(--text-secondary); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 150ms; font-family: inherit; flex-shrink: 0; }
+  .btn-edit-header:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
 
-  /* Buttons */
-  .btn-edit { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text-secondary); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s ease; }
-  .btn-edit:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
-  .btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: var(--primary); color: #fff; border: none; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s ease; font-family: inherit; }
+  /* --- Item Cards (shared pattern for all levels) --- */
+  .items-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .item-card { display: flex; align-items: center; gap: 16px; padding: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); cursor: pointer; transition: all 150ms; }
+  .item-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-sm); }
+  .item-emoji { font-size: 24px; flex-shrink: 0; width: 36px; text-align: center; }
+  .item-info { flex: 1; min-width: 0; }
+  .item-name { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+  .item-meta { font-size: 12px; color: var(--text-secondary); margin-top: 2px; display: flex; align-items: center; gap: 8px; }
+  .item-budget-col { min-width: 200px; display: flex; flex-direction: column; gap: 6px; }
+  .item-budget-text { font-size: 13px; font-variant-numeric: tabular-nums; color: var(--text-secondary); text-align: right; }
+  .item-budget-text strong { color: var(--text-primary); font-weight: 600; }
+  .item-arrow { color: var(--text-tertiary); font-size: 18px; flex-shrink: 0; margin-left: 4px; }
+
+  /* --- Budget Progress Bar --- */
+  .budget-bar { height: 6px; width: 100%; border-radius: 100px; background: var(--muted); overflow: visible; position: relative; }
+  .budget-bar-fill { height: 100%; border-radius: 100px; transition: width 0.4s ease; }
+  .budget-bar-fill.status-positive { background: var(--positive); }
+  .budget-bar-fill.status-attention { background: var(--attention); }
+  .budget-bar-fill.status-alert { background: var(--alert); }
+  .budget-bar-fill.status-critical { background: var(--critical); }
+  .budget-bar-fill.status-none { background: #D6D3D1; }
+
+  /* Budget bar label below */
+  .budget-label { font-size: 11px; color: var(--text-tertiary); margin-top: 4px; text-align: right; font-variant-numeric: tabular-nums; }
+  .budget-label.status-positive { color: var(--positive-text); }
+  .budget-label.status-attention { color: var(--attention-text); }
+  .budget-label.status-alert { color: var(--alert-text); }
+  .budget-label.status-critical { color: var(--critical-text); }
+
+  /* --- Unallocated Row --- */
+  .unallocated-row { padding: 12px 20px; background: var(--muted); border-radius: var(--radius-md); font-size: 13px; color: var(--text-tertiary); margin-top: 4px; }
+
+  /* --- Add Button --- */
+  .add-item-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 20px; background: var(--surface); border: 2px dashed var(--border); border-radius: var(--radius-lg); color: var(--text-secondary); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 150ms; font-family: inherit; width: 100%; margin-top: 8px; }
+  .add-item-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+  /* --- Method Badge --- */
+  .method-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: var(--muted); border-radius: 100px; font-size: 11px; font-weight: 500; color: var(--text-secondary); }
+  .method-brand { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 14px; border-radius: 3px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.06); font-size: 6px; font-style: italic; font-weight: 800; }
+  .method-brand-visa { background: #1A1F71; color: #FFFFFF; }
+  .method-brand-master { background: #EB001B; color: #FFFFFF; }
+
+  /* --- Source Badge (auto/manual) --- */
+  .source-badge { padding: 2px 8px; border-radius: 100px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+  .source-auto { background: var(--positive-bg); color: var(--positive-text); }
+  .source-manual { background: var(--primary-light); color: var(--primary); }
+
+  /* --- Establishment specific --- */
+  .est-visits { font-size: 12px; color: var(--text-tertiary); font-variant-numeric: tabular-nums; }
+
+  /* --- Screen containers --- */
+  .d-screen { display: none; animation: fadeIn 0.2s ease; }
+  .d-screen.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* --- Page title (level 1 only) --- */
+  .page-title { font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+  .page-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 28px; }
+
+  /* --- Edit Sheet (right panel) --- */
+  .sheet-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.25); backdrop-filter: blur(2px); z-index: 100; }
+  .sheet-overlay.open { display: block; }
+  .sheet-panel { position: fixed; top: 0; right: -420px; width: 420px; height: 100vh; background: var(--surface); border-left: 1px solid var(--border); box-shadow: -8px 0 24px rgba(0,0,0,0.08); z-index: 101; transition: right 0.25s ease; overflow-y: auto; }
+  .sheet-panel.open { right: 0; }
+  .sheet-header { display: flex; align-items: center; justify-content: space-between; padding: 24px 24px 16px; border-bottom: 1px solid var(--border); }
+  .sheet-title { font-size: 18px; font-weight: 700; }
+  .sheet-close { width: 32px; height: 32px; border: none; background: none; color: var(--text-tertiary); cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); transition: all 150ms; }
+  .sheet-close:hover { background: var(--muted); color: var(--text-primary); }
+  .sheet-body { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+  .sheet-form-group { display: flex; flex-direction: column; gap: 6px; }
+  .sheet-form-group label { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+  .sheet-form-group .optional { font-weight: 400; color: var(--text-tertiary); font-size: 12px; }
+  .sheet-form-group input, .sheet-form-group select { height: 32px; padding: 0 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; color: var(--text-primary); background: var(--surface); outline: none; transition: border-color 150ms; }
+  .sheet-form-group input:focus, .sheet-form-group select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+  .sheet-emoji-trigger { width: 48px; height: 48px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 150ms; }
+  .sheet-emoji-trigger:hover { border-color: var(--primary); background: var(--primary-light); }
+  .sheet-actions { display: flex; gap: 10px; padding: 20px 24px; border-top: 1px solid var(--border); margin-top: auto; }
+  .sheet-actions .btn-primary { flex: 1; }
+  .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; background: var(--primary); color: #fff; border: none; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 150ms; font-family: inherit; }
   .btn-primary:hover { background: var(--primary-hover); }
-  .btn-secondary { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: var(--surface); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s ease; font-family: inherit; }
-  .btn-secondary:hover { background: var(--bg); border-color: #D6D3D1; }
-  .btn-danger { display: inline-flex; align-items: center; gap: 6px; padding: 8px 20px; background: var(--surface); color: var(--critical); border: 1px solid var(--critical); border-radius: var(--radius-md); font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s ease; margin-right: auto; }
-  .btn-danger:hover { background: var(--critical-bg); }
-  .add-btn-row { margin-top: 16px; }
+  .btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; background: var(--surface); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 150ms; font-family: inherit; }
+  .btn-secondary:hover { background: var(--bg); border-color: var(--border-hover); }
+  .btn-danger-outline { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; background: var(--surface); color: var(--critical); border: 1px solid var(--critical); border-radius: var(--radius-md); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 150ms; font-family: inherit; }
+  .btn-danger-outline:hover { background: var(--critical-bg); }
 
-  /* --- Edit Form (expanded category) --- */
-  .edit-row { display: none; }
-  .edit-row.active { display: table-row; }
-  .edit-row td { padding: 0 !important; border-bottom: 1px solid var(--border) !important; }
-  .edit-form { padding: 24px; background: #FAFAF9; border-top: 1px solid var(--border); }
-  .edit-form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-  .form-group { display: flex; flex-direction: column; gap: 6px; }
-  .form-group label { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
-  .form-group input, .form-group select { padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; color: var(--text-primary); background: var(--surface); outline: none; transition: border-color 0.15s ease; }
-  .form-group input:focus, .form-group select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
-  .edit-actions { display: flex; gap: 10px; justify-content: flex-end; padding-top: 16px; border-top: 1px solid var(--border); }
+  /* --- Empty State --- */
+  .empty-state { border: 2px dashed var(--border); border-radius: var(--radius-lg); padding: 32px 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+  .empty-state-icon { font-size: 32px; color: var(--text-tertiary); }
+  .empty-state-text { font-size: 14px; color: var(--text-secondary); }
+  .empty-state-hint { font-size: 12px; color: var(--text-tertiary); }
 
-  /* Classification sections */
-  .classification-section { margin-bottom: 32px; }
-  .classification-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg) var(--radius-lg) 0 0; border-bottom: none; }
-  .classification-header-left { display: flex; align-items: center; gap: 12px; }
-  .classification-emoji { font-size: 20px; }
-  .classification-name { font-size: 16px; font-weight: 700; color: var(--text-primary); }
-  .classification-budget { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; margin-left: 4px; }
-  .classification-actions { display: flex; gap: 8px; }
-  .classification-section .categories-table { border-radius: 0 0 var(--radius-lg) var(--radius-lg); border-top: 1px solid var(--border); }
-  .classification-section .add-btn-row { margin-top: 8px; margin-bottom: 0; }
-  .classification-empty { padding: 24px; text-align: center; color: var(--text-tertiary); font-size: 13px; font-style: italic; background: var(--surface); border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
-
-  /* Subcategories config */
-  .subcategories-config { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
-  .subcat-row { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); }
-  .subcat-name { font-size: 13px; font-weight: 500; color: var(--text-primary); min-width: 120px; }
-  .subcat-est-count { font-size: 11px; font-weight: 400; color: var(--text-tertiary); margin-left: 6px; }
-  .subcat-fields { display: flex; align-items: center; gap: 8px; flex: 1; }
-  .method-select-wrapper { display: inline-flex; align-items: center; gap: 4px; }
-  .subcat-method-select { padding: 4px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-family: inherit; color: var(--text-secondary); background: var(--bg); }
-  .subcat-budget-input { width: 120px; padding: 4px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-family: inherit; color: var(--text-primary); text-align: right; font-variant-numeric: tabular-nums; }
-  .budget-unallocated { margin-top: 8px; padding: 8px 12px; background: var(--bg); border-radius: var(--radius-md); font-size: 12px; color: var(--text-tertiary); }
-  .remove-sub-btn { cursor: pointer; color: var(--text-tertiary); font-size: 16px; line-height: 1; background: none; border: none; padding: 4px; }
-  .remove-sub-btn:hover { color: var(--critical); }
-
-  /* Establishments section */
-  .establishments-section { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
-  .establishments-section h4 { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; }
-  .establishments-section .est-note { font-size: 12px; color: var(--text-tertiary); font-style: italic; margin-top: 8px; }
-  .establishment-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 4px; }
-  .establishment-item .est-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
-  .establishment-item .est-meta { font-size: 12px; color: var(--text-tertiary); }
-
-  /* Inline Card Brand Icons */
-  .method-brand { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 16px; border-radius: 3px; flex-shrink: 0; vertical-align: middle; margin-right: 4px; border: 1px solid rgba(0,0,0,0.06); }
-  .method-brand-visa { background: #1A1F71; color: #FFFFFF; font-size: 7px; font-style: italic; font-weight: 800; }
-  .method-brand-master { background: #252525; position: relative; overflow: hidden; }
-  .method-brand-master::before, .method-brand-master::after { content: ''; position: absolute; width: 12px; height: 12px; border-radius: 50%; top: 50%; transform: translateY(-50%); }
-  .method-brand-master::before { left: 3px; background: #EB001B; }
-  .method-brand-master::after { right: 3px; background: #F79E1B; }
-
-  /* Bank badges */
-  .bank-badge { display: inline-flex; align-items: center; justify-content: center; height: 16px; padding: 0 4px; border-radius: 4px; font-size: 8px; font-weight: 700; flex-shrink: 0; vertical-align: middle; margin-right: 4px; border: 1px solid rgba(0,0,0,0.06); }
-  .bank-badge-itau { background: #003399; color: #FFFFFF; }
-  .bank-badge-nubank { background: #820AD1; color: #FFFFFF; }
-  .bank-badge-bb { background: #FFFF00; color: #003882; }
-
-  /* Emoji Picker */
-  .emoji-picker-wrapper { position: relative; display: inline-block; }
-  .emoji-picker-trigger { width: 44px; height: 36px; font-size: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color 0.15s ease, box-shadow 0.15s ease; position: relative; }
-  .emoji-picker-trigger:hover { border-color: var(--primary); }
-  .emoji-picker-trigger::after { content: '\25BE'; position: absolute; right: 2px; bottom: 0; font-size: 8px; color: var(--text-tertiary); }
-  .emoji-picker-panel { position: absolute; top: calc(100% + 4px); left: 0; z-index: 1000; width: 264px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: 0 4px 24px rgba(0,0,0,0.12); overflow: hidden; display: none; }
-  .emoji-picker-panel.open { display: block; }
-  .emoji-picker-search { width: 100%; padding: 8px 12px; border: none; border-bottom: 1px solid var(--border); font-family: inherit; font-size: 13px; color: var(--text-primary); outline: none; background: var(--bg); box-sizing: border-box; }
-  .emoji-picker-search::placeholder { color: var(--text-tertiary); }
-  .emoji-picker-tabs { display: flex; gap: 0; padding: 4px 6px; border-bottom: 1px solid var(--border); background: var(--bg); overflow-x: auto; }
-  .emoji-tab { padding: 4px 5px; font-size: 15px; background: none; border: none; border-radius: 4px; cursor: pointer; opacity: 0.45; transition: opacity 0.15s ease, background 0.15s ease; flex-shrink: 0; line-height: 1; }
-  .emoji-tab:hover { opacity: 0.8; background: var(--primary-light); }
-  .emoji-tab.active { opacity: 1; background: var(--primary-light); }
-  .emoji-picker-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; padding: 8px; max-height: 160px; overflow-y: auto; }
-  .emoji-option { font-size: 20px; padding: 3px; text-align: center; border-radius: 4px; cursor: pointer; transition: background 0.15s ease; line-height: 1.3; }
-  .emoji-option:hover { background: var(--primary-light); }
-
-  /* ===== MOBILE FRAME ===== */
+  /* ===== MOBILE ===== */
   .mobile-section { max-width: 430px; margin: 60px auto; padding: 0 20px 40px; }
   .mobile-section-title { font-size: 14px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; text-align: center; margin-bottom: 20px; }
   .phone-frame { width: 390px; height: 844px; border: 3px solid #1C1917; border-radius: 40px; overflow: hidden; background: var(--bg); margin: 0 auto; box-shadow: 0 25px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; position: relative; }
   .phone-status-bar { height: 54px; background: var(--surface); display: flex; align-items: flex-end; justify-content: space-between; padding: 0 28px 8px; flex-shrink: 0; }
   .phone-time { font-size: 15px; font-weight: 600; }
   .phone-indicators { display: flex; gap: 6px; font-size: 12px; color: var(--text-secondary); }
-  .phone-nav-header { background: var(--surface); padding: 12px 20px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; align-items: center; gap: 12px; }
-  .phone-nav-header .back-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--primary); padding: 4px; line-height: 1; }
-  .phone-nav-header h2 { font-size: 20px; font-weight: 700; color: var(--text-primary); }
-  .phone-body { flex: 1; overflow-y: auto; padding: 16px; }
+  .phone-body { flex: 1; overflow-y: auto; }
 
-  /* Mobile classification/category lists */
-  .m-list { display: flex; flex-direction: column; gap: 2px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-  .m-list-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; transition: background 0.1s ease; border-bottom: 1px solid var(--border); }
-  .m-list-item:last-child { border-bottom: none; }
-  .m-list-item:hover { background: var(--bg); }
-  .m-list-item-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
-  .m-list-item-emoji { font-size: 22px; width: 32px; text-align: center; flex-shrink: 0; }
-  .m-list-item-info { flex: 1; min-width: 0; }
-  .m-list-item-name { font-size: 15px; font-weight: 600; color: var(--text-primary); }
-  .m-list-item-meta { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
-  .m-list-item-arrow { color: var(--text-tertiary); font-size: 18px; flex-shrink: 0; }
+  /* Mobile screen header */
+  .m-screen-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
+  .m-back-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--primary); padding: 4px; display: flex; align-items: center; }
+  .m-screen-title { font-size: 18px; font-weight: 700; color: var(--text-primary); flex: 1; }
+  .m-screen-subtitle { font-size: 12px; color: var(--text-secondary); }
 
-  .m-detail-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 0 16px; }
-  .m-detail-header-info { font-size: 13px; color: var(--text-secondary); }
-  .m-detail-header-info strong { color: var(--text-primary); }
+  /* Mobile item cards */
+  .m-content { padding: 16px; }
+  .m-item-card { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 8px; cursor: pointer; transition: background 100ms; }
+  .m-item-card:active { background: var(--muted); }
+  .m-item-emoji { font-size: 22px; flex-shrink: 0; width: 32px; text-align: center; }
+  .m-item-info { flex: 1; min-width: 0; }
+  .m-item-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .m-item-meta { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+  .m-item-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; min-width: 80px; }
+  .m-item-budget { font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text-primary); }
+  .m-item-arrow { color: var(--text-tertiary); font-size: 16px; flex-shrink: 0; }
 
-  .m-section-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary); padding: 16px 4px 8px; }
-  .m-section-label:first-child { padding-top: 0; }
+  /* Mobile budget bar */
+  .m-budget-bar { height: 4px; width: 80px; border-radius: 100px; background: var(--muted); }
+  .m-budget-bar-fill { height: 100%; border-radius: 100px; }
 
-  .m-est-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--border); }
-  .m-est-item:last-child { border-bottom: none; }
-  .m-est-name { font-size: 14px; font-weight: 500; color: var(--text-primary); }
-  .m-est-meta { font-size: 12px; color: var(--text-tertiary); }
-  .m-est-note { font-size: 11px; color: var(--text-tertiary); font-style: italic; padding: 8px 16px; }
+  /* Mobile level header */
+  .m-level-header { padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 12px; }
+  .m-level-header-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .m-level-header-emoji { font-size: 24px; }
+  .m-level-header-name { font-size: 16px; font-weight: 700; }
+  .m-level-header-budget { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .m-edit-btn { padding: 6px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text-secondary); font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; }
 
-  /* Bottom Nav */
-  .bottom-nav { position: relative; height: 56px; background: var(--surface); border-top: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-around; z-index: 50; }
+  .m-section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); padding: 16px 0 8px; }
+
+  .m-add-btn { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 12px; background: var(--surface); border: 2px dashed var(--border); border-radius: var(--radius-lg); color: var(--text-secondary); font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; margin-top: 4px; }
+
+  .m-unallocated { padding: 10px 16px; background: var(--muted); border-radius: var(--radius-md); font-size: 12px; color: var(--text-tertiary); margin-top: 4px; margin-bottom: 4px; }
+
+  /* Mobile screens */
+  .m-screen { display: none; }
+  .m-screen.active { display: block; }
+
+  /* Mobile establishment extras */
+  .m-est-card { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 8px; }
+  .m-est-info { flex: 1; min-width: 0; }
+  .m-est-name { font-size: 14px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+  .m-est-meta { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
+
+  /* Bottom Nav Canônico */
+  .bottom-nav { position: relative; height: 56px; background: var(--surface); border-top: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-around; z-index: 50; flex-shrink: 0; }
   .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px 0; min-height: 44px; color: var(--text-tertiary); text-decoration: none; font-size: 10px; font-weight: 500; cursor: pointer; }
   .bottom-nav-item.active { color: var(--primary); }
   .bottom-nav-icon { width: 20px; height: 20px; }
@@ -234,10 +263,7 @@
     .sidebar { display: none; }
     .desktop-frame { margin-left: 0; }
     .main-content { padding: 24px 20px; }
-    .edit-form-grid { grid-template-columns: 1fr; }
-    .categories-table { font-size: 13px; }
   }
-
   @media (max-width: 600px) {
     .mobile-section { padding: 0 8px 40px; }
     .phone-frame { width: 100%; max-width: 390px; }
@@ -251,7 +277,7 @@
 <!-- ============================================ -->
 <div class="desktop-frame">
 
-  <!-- SIDEBAR -->
+  <!-- SIDEBAR CANÔNICO -->
   <aside class="sidebar">
     <div class="sidebar-logo">
       <span class="sidebar-logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/><path d="M8 11h8"/><path d="M8 7h6"/></svg></span>
@@ -261,681 +287,352 @@
     <nav class="sidebar-nav">
       <div class="sidebar-section-label">Navegação</div>
       <ul class="sidebar-items">
-        <li class="sidebar-item">
-          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
-          Dashboard
-        </li>
-        <li class="sidebar-item">
-          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"/><path d="M16 10h.01"/><path d="M2 8v1a2 2 0 0 0 2 2h1"/></svg></span>
-          Orçamentos
-        </li>
-        <li class="sidebar-item">
-          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span>
-          Checklist
-        </li>
-        <li class="sidebar-item">
-          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>
-          Projeção
-        </li>
+        <li class="sidebar-item"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>Dashboard</li>
+        <li class="sidebar-item"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"/><path d="M16 10h.01"/><path d="M2 8v1a2 2 0 0 0 2 2h1"/></svg></span>Orçamentos</li>
+        <li class="sidebar-item"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span>Checklist</li>
+        <li class="sidebar-item"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>Projeção</li>
       </ul>
       <div class="sidebar-separator"></div>
       <div class="sidebar-section-label">Configurações</div>
       <ul class="sidebar-items">
-        <li class="sidebar-item">
-          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M10 12h4"/><path d="M10 8h4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/></svg></span>
-          Contas
-        </li>
-        <li class="sidebar-item">
-          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
-          Cartões
-        </li>
-        <li class="sidebar-item">
-          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M10 18v-7"/><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></svg></span>
-          Investimentos
-        </li>
-        <li class="sidebar-item">
-          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>
-          Receitas
-        </li>
-        <li class="sidebar-item active">
-          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z"/><path d="M2 7v6.172a2 2 0 0 0 .586 1.414l6.71 6.71a2.4 2.4 0 0 0 3.191.193"/><circle cx="10.5" cy="6.5" r=".5" fill="currentColor"/></svg></span>
-          Categorias
-        </li>
-        <li class="sidebar-item" onclick="window.location.href='proto-14-settings.html'" style="cursor:pointer;">
-          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span>
-          Configurações
-        </li>
+        <li class="sidebar-item"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M10 12h4"/><path d="M10 8h4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/></svg></span>Contas</li>
+        <li class="sidebar-item"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>Cartões</li>
+        <li class="sidebar-item"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M10 18v-7"/><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></svg></span>Investimentos</li>
+        <li class="sidebar-item"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>Receitas</li>
+        <li class="sidebar-item active"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z"/><path d="M2 7v6.172a2 2 0 0 0 .586 1.414l6.71 6.71a2.4 2.4 0 0 0 3.191.193"/><circle cx="10.5" cy="6.5" r=".5" fill="currentColor"/></svg></span>Categorias</li>
+        <li class="sidebar-item" onclick="window.location.href='proto-14-settings.html'" style="cursor:pointer;"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span>Configurações</li>
       </ul>
     </nav>
     <div class="sidebar-footer">
       <div class="sidebar-user">
         <div class="sidebar-avatar">V</div>
-        <div>
-          <div class="sidebar-user-name">Vitor</div>
-          <div class="sidebar-user-role">Administrador</div>
-        </div>
+        <div><div class="sidebar-user-name">Vitor</div><div class="sidebar-user-role">Administrador</div></div>
       </div>
       <div class="sidebar-separator"></div>
-      <button class="sidebar-logout">
-        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-        Sair
-      </button>
+      <button class="sidebar-logout"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>Sair</button>
     </div>
   </aside>
 
   <!-- MAIN CONTENT -->
   <main class="main-content">
-    <div class="page-header">
-      <h1>Categorias</h1>
-      <p>Gerencie classificações, categorias, subcategorias e estabelecimentos</p>
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" id="d-breadcrumb">
+      <span class="breadcrumb-current">Categorias</span>
+    </nav>
+
+    <!-- ====== TELA 1: Classificações ====== -->
+    <div class="d-screen active" id="d-screen-1">
+      <h1 class="page-title">Categorias</h1>
+      <p class="page-subtitle">Gerencie classificações, categorias, subcategorias e estabelecimentos</p>
+
+      <div class="items-list">
+        <!-- Essenciais fixos -->
+        <div class="item-card" onclick="dNavigate(2, 'ef')">
+          <div class="item-emoji">📊</div>
+          <div class="item-info">
+            <div class="item-name">Essenciais fixos</div>
+            <div class="item-meta">2 categorias</div>
+          </div>
+          <div class="item-budget-col">
+            <div class="item-budget-text"><strong>R$ 4.200,00</strong> <span class="spent">/ R$ 6.000,00</span></div>
+            <div class="budget-bar"><div class="budget-bar-fill status-attention" style="width:70%"></div></div>
+            <div class="budget-label status-attention">70,00% — resta R$ 1.800,00</div>
+          </div>
+          <span class="item-arrow">›</span>
+        </div>
+
+        <!-- Essenciais variáveis -->
+        <div class="item-card" onclick="dNavigate(2, 'ev')">
+          <div class="item-emoji">📊</div>
+          <div class="item-info">
+            <div class="item-name">Essenciais variáveis</div>
+            <div class="item-meta">2 categorias</div>
+          </div>
+          <div class="item-budget-col">
+            <div class="item-budget-text"><strong>R$ 6.800,00</strong> <span class="spent">/ R$ 8.000,00</span></div>
+            <div class="budget-bar"><div class="budget-bar-fill status-alert" style="width:85%"></div></div>
+            <div class="budget-label status-alert">85,00% — resta R$ 1.200,00</div>
+          </div>
+          <span class="item-arrow">›</span>
+        </div>
+
+        <!-- Qualidade de vida -->
+        <div class="item-card" onclick="dNavigate(2, 'qv')">
+          <div class="item-emoji">📊</div>
+          <div class="item-info">
+            <div class="item-name">Qualidade de vida</div>
+            <div class="item-meta">2 categorias</div>
+          </div>
+          <div class="item-budget-col">
+            <div class="item-budget-text"><strong>R$ 3.200,00</strong> <span class="spent">/ R$ 4.000,00</span></div>
+            <div class="budget-bar"><div class="budget-bar-fill status-attention" style="width:80%"></div></div>
+            <div class="budget-label status-attention">80,00% — resta R$ 800,00</div>
+          </div>
+          <span class="item-arrow">›</span>
+        </div>
+
+        <!-- Investimentos -->
+        <div class="item-card" onclick="dNavigate(2, 'inv')">
+          <div class="item-emoji">📊</div>
+          <div class="item-info">
+            <div class="item-name">Investimentos</div>
+            <div class="item-meta">1 categoria</div>
+          </div>
+          <div class="item-budget-col">
+            <div class="item-budget-text"><strong>R$ 1.500,00</strong> <span class="spent">(sem orçamento)</span></div>
+            <div class="budget-bar"><div class="budget-bar-fill status-none" style="width:40%"></div></div>
+            <div class="budget-label">sem orçamento definido</div>
+          </div>
+          <span class="item-arrow">›</span>
+        </div>
+
+        <!-- Proteção -->
+        <div class="item-card" onclick="dNavigate(2, 'prot')">
+          <div class="item-emoji">📊</div>
+          <div class="item-info">
+            <div class="item-name">Proteção</div>
+            <div class="item-meta">1 categoria</div>
+          </div>
+          <div class="item-budget-col">
+            <div class="item-budget-text"><strong>R$ 450,00</strong> <span class="spent">/ R$ 500,00</span></div>
+            <div class="budget-bar"><div class="budget-bar-fill status-alert" style="width:90%"></div></div>
+            <div class="budget-label status-alert">90,00% — resta R$ 50,00</div>
+          </div>
+          <span class="item-arrow">›</span>
+        </div>
+
+        <!-- Imprevistos -->
+        <div class="item-card" onclick="dNavigate(2, 'imp')">
+          <div class="item-emoji">📊</div>
+          <div class="item-info">
+            <div class="item-name">Imprevistos</div>
+            <div class="item-meta">sem categorias</div>
+          </div>
+          <div class="item-budget-col">
+            <div class="item-budget-text"><strong>R$ 0,00</strong> <span class="spent">/ R$ 1.000,00</span></div>
+            <div class="budget-bar"><div class="budget-bar-fill status-positive" style="width:0%"></div></div>
+            <div class="budget-label status-positive">0,00% — resta R$ 1.000,00</div>
+          </div>
+          <span class="item-arrow">›</span>
+        </div>
+      </div>
+
+      <button class="add-item-btn">+ Adicionar classificação</button>
     </div>
 
-    <!-- ====== 1. Essenciais fixos ====== -->
-    <div class="classification-section">
-      <div class="classification-header">
-        <div class="classification-header-left">
-          <span class="classification-emoji">&#x1F4CA;</span>
-          <span class="classification-name">Essenciais fixos</span>
-          <span class="classification-budget">&mdash; R$ 6.000,00/mês</span>
+    <!-- ====== TELA 2: Categorias (dentro de Essenciais variáveis) ====== -->
+    <div class="d-screen" id="d-screen-2">
+      <div class="level-header">
+        <div class="level-header-emoji">📊</div>
+        <div class="level-header-info">
+          <div class="level-header-name">Essenciais variáveis</div>
+          <div class="level-header-meta">6 classificações total &middot; 2 categorias aqui</div>
         </div>
-        <div class="classification-actions">
-          <button class="btn-edit" onclick="toggleClassEdit(0)">&#x270F;&#xFE0F; Editar</button>
+        <div class="level-header-budget">
+          <div class="level-header-budget-text"><strong>R$ 6.800,00</strong> <span class="spent">/ R$ 8.000,00</span></div>
+          <div class="budget-bar"><div class="budget-bar-fill status-alert" style="width:85%"></div></div>
+          <div class="budget-label status-alert">85,00%</div>
+        </div>
+        <button class="btn-edit-header" onclick="openSheet('classification')">✏️ Editar</button>
+      </div>
+
+      <div class="items-list">
+        <div class="item-card" onclick="dNavigate(3, 'alim')">
+          <div class="item-emoji">🍽</div>
+          <div class="item-info">
+            <div class="item-name">Alimentação</div>
+            <div class="item-meta">3 subcategorias</div>
+          </div>
+          <div class="item-budget-col">
+            <div class="item-budget-text"><strong>R$ 5.100,00</strong> <span class="spent">/ R$ 5.500,00</span></div>
+            <div class="budget-bar"><div class="budget-bar-fill status-alert" style="width:92.7%"></div></div>
+            <div class="budget-label status-alert">92,73% — resta R$ 400,00</div>
+          </div>
+          <span class="item-arrow">›</span>
+        </div>
+
+        <div class="item-card" onclick="dNavigate(3, 'transp')">
+          <div class="item-emoji">🚗</div>
+          <div class="item-info">
+            <div class="item-name">Transporte</div>
+            <div class="item-meta">4 subcategorias</div>
+          </div>
+          <div class="item-budget-col">
+            <div class="item-budget-text"><strong>R$ 1.200,00</strong> <span class="spent">/ R$ 1.500,00</span></div>
+            <div class="budget-bar"><div class="budget-bar-fill status-attention" style="width:80%"></div></div>
+            <div class="budget-label status-attention">80,00% — resta R$ 300,00</div>
+          </div>
+          <span class="item-arrow">›</span>
         </div>
       </div>
-      <table class="categories-table">
-        <thead>
-          <tr>
-            <th style="width:50px"></th>
-            <th>Nome</th>
-            <th>Orçamento/mês</th>
-            <th style="width:100px">Subcategorias</th>
-            <th style="width:80px">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="cat-emoji">&#x1F3E0;</td>
-            <td class="cat-name">Moradia</td>
-            <td class="cat-budget">R$ 4.000,00</td>
-            <td>4 subcategorias</td>
-            <td><button class="btn-edit" onclick="toggleEdit(0)">&#x270F;&#xFE0F;</button></td>
-          </tr>
-          <tr class="edit-row" id="edit-row-0">
-            <td colspan="5">
-              <div class="edit-form">
-                <div class="edit-form-grid">
-                  <div class="form-group">
-                    <label>Nome</label>
-                    <input type="text" value="Moradia">
-                  </div>
-                  <div class="form-group">
-                    <label>Emoji</label>
-                    <div class="emoji-picker-wrapper">
-                      <button type="button" class="emoji-picker-trigger" data-emoji="🏠">&#x1F3E0;</button>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label>Orçamento mensal</label>
-                    <input type="text" value="R$ 4.000,00">
-                  </div>
-                </div>
-                <div class="form-group" style="margin-bottom:16px;">
-                  <label>Subcategorias</label>
-                  <div class="subcategories-config">
-                    <div class="subcat-row">
-                      <span class="subcat-name">Aluguel <span class="subcat-est-count">1 estab.</span></span>
-                      <div class="subcat-fields">
-                        <div class="method-select-wrapper">
-                          <select class="subcat-method-select">
-                            <option selected>Nubank Débito</option>
-                            <option>Latam Pass Visa</option>
-                            <option>PDA Visa</option>
-                          </select>
-                        </div>
-                        <input type="text" class="subcat-budget-input" value="R$ 2.500,00">
-                      </div>
-                      <button class="remove-sub-btn">&times;</button>
-                    </div>
-                    <div class="subcat-row">
-                      <span class="subcat-name">Condomínio</span>
-                      <div class="subcat-fields">
-                        <div class="method-select-wrapper">
-                          <select class="subcat-method-select">
-                            <option selected>Nubank Débito</option>
-                            <option>Latam Pass Visa</option>
-                          </select>
-                        </div>
-                        <input type="text" class="subcat-budget-input" value="R$ 800,00">
-                      </div>
-                      <button class="remove-sub-btn">&times;</button>
-                    </div>
-                    <div class="subcat-row">
-                      <span class="subcat-name">Energia <span class="subcat-est-count">1 estab.</span></span>
-                      <div class="subcat-fields">
-                        <div class="method-select-wrapper">
-                          <select class="subcat-method-select">
-                            <option selected>Nubank Débito</option>
-                          </select>
-                        </div>
-                        <input type="text" class="subcat-budget-input" value="R$ 400,00">
-                      </div>
-                      <button class="remove-sub-btn">&times;</button>
-                    </div>
-                    <div class="subcat-row">
-                      <span class="subcat-name">Internet</span>
-                      <div class="subcat-fields">
-                        <div class="method-select-wrapper">
-                          <select class="subcat-method-select">
-                            <option selected>Latam Pass Visa</option>
-                          </select>
-                        </div>
-                        <input type="text" class="subcat-budget-input" value="R$ 150,00">
-                      </div>
-                      <button class="remove-sub-btn">&times;</button>
-                    </div>
-                    <button class="btn-secondary" style="font-size:12px; padding:6px 12px; margin-top:4px;">+ Adicionar subcategoria</button>
-                    <div class="budget-unallocated">Não alocado: R$ 150,00 de R$ 4.000,00</div>
-                  </div>
-                </div>
-                <div class="edit-actions">
-                  <button class="btn-danger">Excluir</button>
-                  <button class="btn-secondary" onclick="toggleEdit(0)">Cancelar</button>
-                  <button class="btn-primary">Salvar</button>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td class="cat-emoji">&#x1F4F1;</td>
-            <td class="cat-name">Assinaturas</td>
-            <td class="cat-budget">R$ 200,00</td>
-            <td>2 subcategorias</td>
-            <td><button class="btn-edit" onclick="toggleEdit(1)">&#x270F;&#xFE0F;</button></td>
-          </tr>
-          <tr class="edit-row" id="edit-row-1">
-            <td colspan="5">
-              <div class="edit-form">
-                <div class="edit-form-grid">
-                  <div class="form-group">
-                    <label>Nome</label>
-                    <input type="text" value="Assinaturas">
-                  </div>
-                  <div class="form-group">
-                    <label>Emoji</label>
-                    <div class="emoji-picker-wrapper">
-                      <button type="button" class="emoji-picker-trigger" data-emoji="📱">&#x1F4F1;</button>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label>Orçamento mensal</label>
-                    <input type="text" value="R$ 200,00">
-                  </div>
-                </div>
-                <div class="form-group" style="margin-bottom:16px;">
-                  <label>Subcategorias</label>
-                  <div class="subcategories-config">
-                    <div class="subcat-row">
-                      <span class="subcat-name">Streaming</span>
-                      <div class="subcat-fields">
-                        <select class="subcat-method-select"><option selected>Latam Pass Visa</option></select>
-                        <input type="text" class="subcat-budget-input" value="R$ 120,00">
-                      </div>
-                      <button class="remove-sub-btn">&times;</button>
-                    </div>
-                    <div class="subcat-row">
-                      <span class="subcat-name">Apps</span>
-                      <div class="subcat-fields">
-                        <select class="subcat-method-select"><option selected>Latam Pass Visa</option></select>
-                        <input type="text" class="subcat-budget-input" value="R$ 80,00">
-                      </div>
-                      <button class="remove-sub-btn">&times;</button>
-                    </div>
-                    <button class="btn-secondary" style="font-size:12px; padding:6px 12px; margin-top:4px;">+ Adicionar subcategoria</button>
-                  </div>
-                </div>
-                <div class="edit-actions">
-                  <button class="btn-danger">Excluir</button>
-                  <button class="btn-secondary" onclick="toggleEdit(1)">Cancelar</button>
-                  <button class="btn-primary">Salvar</button>
-                </div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="add-btn-row">
-        <button class="btn-secondary" style="font-size:13px;">+ Adicionar categoria</button>
-      </div>
+
+      <div class="unallocated-row">Não alocado: R$ 1.000,00 de R$ 8.000,00</div>
+      <button class="add-item-btn">+ Adicionar categoria</button>
     </div>
 
-    <!-- ====== 2. Essenciais variáveis ====== -->
-    <div class="classification-section">
-      <div class="classification-header">
-        <div class="classification-header-left">
-          <span class="classification-emoji">&#x1F4CA;</span>
-          <span class="classification-name">Essenciais variáveis</span>
-          <span class="classification-budget">&mdash; R$ 8.000,00/mês</span>
+    <!-- ====== TELA 3: Subcategorias (dentro de Alimentação) ====== -->
+    <div class="d-screen" id="d-screen-3">
+      <div class="level-header">
+        <div class="level-header-emoji">🍽</div>
+        <div class="level-header-info">
+          <div class="level-header-name">Alimentação</div>
+          <div class="level-header-meta">Essenciais variáveis &middot; 3 subcategorias</div>
         </div>
-        <div class="classification-actions">
-          <button class="btn-edit" onclick="toggleClassEdit(1)">&#x270F;&#xFE0F; Editar</button>
+        <div class="level-header-budget">
+          <div class="level-header-budget-text"><strong>R$ 5.100,00</strong> <span class="spent">/ R$ 5.500,00</span></div>
+          <div class="budget-bar"><div class="budget-bar-fill status-alert" style="width:92.7%"></div></div>
+          <div class="budget-label status-alert">92,73%</div>
+        </div>
+        <button class="btn-edit-header" onclick="openSheet('category')">✏️ Editar</button>
+      </div>
+
+      <div class="items-list">
+        <div class="item-card" onclick="dNavigate(4, 'super')">
+          <div class="item-emoji" style="font-size:16px;">🛒</div>
+          <div class="item-info">
+            <div class="item-name">Supermercado</div>
+            <div class="item-meta">
+              <span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</span>
+              <span>3 estabelecimentos</span>
+            </div>
+          </div>
+          <div class="item-budget-col">
+            <div class="item-budget-text"><strong>R$ 2.800,00</strong> <span class="spent">/ R$ 3.000,00</span></div>
+            <div class="budget-bar"><div class="budget-bar-fill status-alert" style="width:93.3%"></div></div>
+            <div class="budget-label status-alert">93,33% — resta R$ 200,00</div>
+          </div>
+          <span class="item-arrow">›</span>
+        </div>
+
+        <div class="item-card" onclick="dNavigate(4, 'rest')">
+          <div class="item-emoji" style="font-size:16px;">🍴</div>
+          <div class="item-info">
+            <div class="item-name">Restaurante trabalho</div>
+            <div class="item-meta">
+              <span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> PDA Visa</span>
+              <span>2 estabelecimentos</span>
+            </div>
+          </div>
+          <div class="item-budget-col">
+            <div class="item-budget-text"><strong>R$ 1.400,00</strong> <span class="spent">/ R$ 1.500,00</span></div>
+            <div class="budget-bar"><div class="budget-bar-fill status-alert" style="width:93.3%"></div></div>
+            <div class="budget-label status-alert">93,33% — resta R$ 100,00</div>
+          </div>
+          <span class="item-arrow">›</span>
+        </div>
+
+        <div class="item-card" onclick="dNavigate(4, 'feira')">
+          <div class="item-emoji" style="font-size:16px;">🥬</div>
+          <div class="item-info">
+            <div class="item-name">Feira/Hortifruti</div>
+            <div class="item-meta">
+              <span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</span>
+              <span>1 estabelecimento</span>
+            </div>
+          </div>
+          <div class="item-budget-col">
+            <div class="item-budget-text"><strong>R$ 450,00</strong> <span class="spent">/ R$ 500,00</span></div>
+            <div class="budget-bar"><div class="budget-bar-fill status-alert" style="width:90%"></div></div>
+            <div class="budget-label status-alert">90,00% — resta R$ 50,00</div>
+          </div>
+          <span class="item-arrow">›</span>
         </div>
       </div>
-      <table class="categories-table">
-        <thead>
-          <tr>
-            <th style="width:50px"></th>
-            <th>Nome</th>
-            <th>Orçamento/mês</th>
-            <th style="width:100px">Subcategorias</th>
-            <th style="width:80px">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="cat-emoji">&#x1F37D;</td>
-            <td class="cat-name">Alimentação</td>
-            <td class="cat-budget">R$ 5.500,00</td>
-            <td>3 subcategorias</td>
-            <td><button class="btn-edit" onclick="toggleEdit(2)">&#x270F;&#xFE0F;</button></td>
-          </tr>
-          <tr class="edit-row active" id="edit-row-2">
-            <td colspan="5">
-              <div class="edit-form">
-                <div class="edit-form-grid">
-                  <div class="form-group">
-                    <label>Nome</label>
-                    <input type="text" value="Alimentação">
-                  </div>
-                  <div class="form-group">
-                    <label>Emoji</label>
-                    <div class="emoji-picker-wrapper">
-                      <button type="button" class="emoji-picker-trigger" data-emoji="🍽">&#x1F37D;</button>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label>Orçamento mensal</label>
-                    <input type="text" value="R$ 5.500,00">
-                  </div>
-                </div>
-                <div class="form-group" style="margin-bottom:16px;">
-                  <label>Subcategorias</label>
-                  <div class="subcategories-config">
-                    <div class="subcat-row">
-                      <span class="subcat-name">Supermercado <span class="subcat-est-count">3 estab.</span></span>
-                      <div class="subcat-fields">
-                        <div class="method-select-wrapper">
-                          <span class="method-brand method-brand-visa">VISA</span>
-                          <select class="subcat-method-select">
-                            <option selected>Latam Pass Visa</option>
-                            <option>PDA Visa</option>
-                            <option>Nubank Débito</option>
-                          </select>
-                        </div>
-                        <input type="text" class="subcat-budget-input" value="R$ 3.000,00">
-                      </div>
-                      <button class="remove-sub-btn">&times;</button>
-                    </div>
-                    <div class="subcat-row">
-                      <span class="subcat-name">Restaurante trabalho <span class="subcat-est-count">1 estab.</span></span>
-                      <div class="subcat-fields">
-                        <div class="method-select-wrapper">
-                          <span class="method-brand method-brand-visa">VISA</span>
-                          <select class="subcat-method-select">
-                            <option>Latam Pass Visa</option>
-                            <option selected>PDA Visa</option>
-                            <option>Nubank Débito</option>
-                          </select>
-                        </div>
-                        <input type="text" class="subcat-budget-input" value="R$ 1.500,00">
-                      </div>
-                      <button class="remove-sub-btn">&times;</button>
-                    </div>
-                    <div class="subcat-row">
-                      <span class="subcat-name">Feira/Hortifruti</span>
-                      <div class="subcat-fields">
-                        <div class="method-select-wrapper">
-                          <span class="method-brand method-brand-visa">VISA</span>
-                          <select class="subcat-method-select">
-                            <option selected>Latam Pass Visa</option>
-                            <option>PDA Visa</option>
-                          </select>
-                        </div>
-                        <input type="text" class="subcat-budget-input" value="R$ 500,00">
-                      </div>
-                      <button class="remove-sub-btn">&times;</button>
-                    </div>
-                    <button class="btn-secondary" style="font-size:12px; padding:6px 12px; margin-top:4px;">+ Adicionar subcategoria</button>
-                    <div class="budget-unallocated">Não alocado: R$ 500,00 de R$ 5.500,00</div>
-                  </div>
-                </div>
-                <div class="edit-actions">
-                  <button class="btn-danger">Excluir</button>
-                  <button class="btn-secondary" onclick="toggleEdit(2)">Cancelar</button>
-                  <button class="btn-primary">Salvar</button>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td class="cat-emoji">&#x1F697;</td>
-            <td class="cat-name">Transporte</td>
-            <td class="cat-budget">R$ 1.500,00</td>
-            <td>4 subcategorias</td>
-            <td><button class="btn-edit" onclick="toggleEdit(3)">&#x270F;&#xFE0F;</button></td>
-          </tr>
-          <tr class="edit-row" id="edit-row-3">
-            <td colspan="5">
-              <div class="edit-form">
-                <div class="edit-form-grid">
-                  <div class="form-group">
-                    <label>Nome</label>
-                    <input type="text" value="Transporte">
-                  </div>
-                  <div class="form-group">
-                    <label>Emoji</label>
-                    <div class="emoji-picker-wrapper">
-                      <button type="button" class="emoji-picker-trigger" data-emoji="🚗">&#x1F697;</button>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label>Orçamento mensal</label>
-                    <input type="text" value="R$ 1.500,00">
-                  </div>
-                </div>
-                <div class="form-group" style="margin-bottom:16px;">
-                  <label>Subcategorias</label>
-                  <div class="subcategories-config">
-                    <div class="subcat-row">
-                      <span class="subcat-name">Combustível</span>
-                      <div class="subcat-fields">
-                        <select class="subcat-method-select"><option selected>Latam Pass Visa</option></select>
-                        <input type="text" class="subcat-budget-input" value="R$ 600,00">
-                      </div>
-                      <button class="remove-sub-btn">&times;</button>
-                    </div>
-                    <div class="subcat-row">
-                      <span class="subcat-name">Estacionamento</span>
-                      <div class="subcat-fields">
-                        <select class="subcat-method-select"><option selected>PDA Visa</option></select>
-                        <input type="text" class="subcat-budget-input" value="R$ 200,00">
-                      </div>
-                      <button class="remove-sub-btn">&times;</button>
-                    </div>
-                    <div class="subcat-row">
-                      <span class="subcat-name">Manutenção</span>
-                      <div class="subcat-fields">
-                        <select class="subcat-method-select"><option selected>Nubank Débito</option></select>
-                        <input type="text" class="subcat-budget-input" value="R$ 500,00">
-                      </div>
-                      <button class="remove-sub-btn">&times;</button>
-                    </div>
-                    <div class="subcat-row">
-                      <span class="subcat-name">Uber/99</span>
-                      <div class="subcat-fields">
-                        <select class="subcat-method-select"><option selected>Latam Pass Visa</option></select>
-                        <input type="text" class="subcat-budget-input" value="R$ 200,00">
-                      </div>
-                      <button class="remove-sub-btn">&times;</button>
-                    </div>
-                    <button class="btn-secondary" style="font-size:12px; padding:6px 12px; margin-top:4px;">+ Adicionar subcategoria</button>
-                  </div>
-                </div>
-                <div class="edit-actions">
-                  <button class="btn-danger">Excluir</button>
-                  <button class="btn-secondary" onclick="toggleEdit(3)">Cancelar</button>
-                  <button class="btn-primary">Salvar</button>
-                </div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="add-btn-row">
-        <button class="btn-secondary" style="font-size:13px;">+ Adicionar categoria</button>
-      </div>
+
+      <div class="unallocated-row">Não alocado: R$ 500,00 de R$ 5.500,00</div>
+      <button class="add-item-btn">+ Adicionar subcategoria</button>
     </div>
 
-    <!-- ====== 3. Qualidade de vida ====== -->
-    <div class="classification-section">
-      <div class="classification-header">
-        <div class="classification-header-left">
-          <span class="classification-emoji">&#x1F4CA;</span>
-          <span class="classification-name">Qualidade de vida</span>
-          <span class="classification-budget">&mdash; R$ 4.000,00/mês</span>
+    <!-- ====== TELA 4: Estabelecimentos (dentro de Supermercado) ====== -->
+    <div class="d-screen" id="d-screen-4">
+      <div class="level-header">
+        <div class="level-header-emoji" style="font-size:22px;">🛒</div>
+        <div class="level-header-info">
+          <div class="level-header-name">Supermercado</div>
+          <div class="level-header-meta">
+            <span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</span>
+            <span>Alimentação &middot; Essenciais variáveis</span>
+          </div>
         </div>
-        <div class="classification-actions">
-          <button class="btn-edit" onclick="toggleClassEdit(2)">&#x270F;&#xFE0F; Editar</button>
+        <div class="level-header-budget">
+          <div class="level-header-budget-text"><strong>R$ 2.800,00</strong> <span class="spent">/ R$ 3.000,00</span></div>
+          <div class="budget-bar"><div class="budget-bar-fill status-alert" style="width:93.3%"></div></div>
+          <div class="budget-label status-alert">93,33%</div>
         </div>
+        <button class="btn-edit-header" onclick="openSheet('subcategory')">✏️ Editar</button>
       </div>
-      <table class="categories-table">
-        <thead>
-          <tr>
-            <th style="width:50px"></th>
-            <th>Nome</th>
-            <th>Orçamento/mês</th>
-            <th style="width:100px">Subcategorias</th>
-            <th style="width:80px">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="cat-emoji">&#x1F354;</td>
-            <td class="cat-name">Restaurante</td>
-            <td class="cat-budget">R$ 2.000,00</td>
-            <td>3 subcategorias</td>
-            <td><button class="btn-edit" onclick="toggleEdit(4)">&#x270F;&#xFE0F;</button></td>
-          </tr>
-          <tr class="edit-row" id="edit-row-4">
-            <td colspan="5">
-              <div class="edit-form">
-                <div class="edit-form-grid">
-                  <div class="form-group"><label>Nome</label><input type="text" value="Restaurante"></div>
-                  <div class="form-group"><label>Emoji</label><div class="emoji-picker-wrapper"><button type="button" class="emoji-picker-trigger" data-emoji="🍔">&#x1F354;</button></div></div>
-                  <div class="form-group"><label>Orçamento mensal</label><input type="text" value="R$ 2.000,00"></div>
-                </div>
-                <div class="form-group" style="margin-bottom:16px;">
-                  <label>Subcategorias</label>
-                  <div class="subcategories-config">
-                    <div class="subcat-row"><span class="subcat-name">Delivery</span><div class="subcat-fields"><select class="subcat-method-select"><option selected>Latam Pass Visa</option></select><input type="text" class="subcat-budget-input" value="R$ 800,00"></div><button class="remove-sub-btn">&times;</button></div>
-                    <div class="subcat-row"><span class="subcat-name">Jantar fora</span><div class="subcat-fields"><select class="subcat-method-select"><option selected>PDA Visa</option></select><input type="text" class="subcat-budget-input" value="R$ 800,00"></div><button class="remove-sub-btn">&times;</button></div>
-                    <div class="subcat-row"><span class="subcat-name">Café/Lanche</span><div class="subcat-fields"><select class="subcat-method-select"><option selected>Nubank Débito</option></select><input type="text" class="subcat-budget-input" value="R$ 400,00"></div><button class="remove-sub-btn">&times;</button></div>
-                    <button class="btn-secondary" style="font-size:12px; padding:6px 12px; margin-top:4px;">+ Adicionar subcategoria</button>
-                  </div>
-                </div>
-                <div class="edit-actions">
-                  <button class="btn-danger">Excluir</button>
-                  <button class="btn-secondary" onclick="toggleEdit(4)">Cancelar</button>
-                  <button class="btn-primary">Salvar</button>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td class="cat-emoji">&#x2708;&#xFE0F;</td>
-            <td class="cat-name">Viagem</td>
-            <td class="cat-budget">R$ 2.000,00</td>
-            <td>4 subcategorias</td>
-            <td><button class="btn-edit" onclick="toggleEdit(5)">&#x270F;&#xFE0F;</button></td>
-          </tr>
-          <tr class="edit-row" id="edit-row-5">
-            <td colspan="5">
-              <div class="edit-form">
-                <div class="edit-form-grid">
-                  <div class="form-group"><label>Nome</label><input type="text" value="Viagem"></div>
-                  <div class="form-group"><label>Emoji</label><div class="emoji-picker-wrapper"><button type="button" class="emoji-picker-trigger" data-emoji="✈️">&#x2708;&#xFE0F;</button></div></div>
-                  <div class="form-group"><label>Orçamento mensal</label><input type="text" value="R$ 2.000,00"></div>
-                </div>
-                <div class="form-group" style="margin-bottom:16px;">
-                  <label>Subcategorias</label>
-                  <div class="subcategories-config">
-                    <div class="subcat-row"><span class="subcat-name">Passagens</span><div class="subcat-fields"><select class="subcat-method-select"><option selected>Latam Pass Visa</option></select><input type="text" class="subcat-budget-input" value="R$ 800,00"></div><button class="remove-sub-btn">&times;</button></div>
-                    <div class="subcat-row"><span class="subcat-name">Hospedagem</span><div class="subcat-fields"><select class="subcat-method-select"><option selected>Latam Pass Visa</option></select><input type="text" class="subcat-budget-input" value="R$ 600,00"></div><button class="remove-sub-btn">&times;</button></div>
-                    <div class="subcat-row"><span class="subcat-name">Alimentação viagem</span><div class="subcat-fields"><select class="subcat-method-select"><option selected>PDA Visa</option></select><input type="text" class="subcat-budget-input" value="R$ 400,00"></div><button class="remove-sub-btn">&times;</button></div>
-                    <div class="subcat-row"><span class="subcat-name">Passeios</span><div class="subcat-fields"><select class="subcat-method-select"><option selected>Nubank Débito</option></select><input type="text" class="subcat-budget-input" value="R$ 200,00"></div><button class="remove-sub-btn">&times;</button></div>
-                    <button class="btn-secondary" style="font-size:12px; padding:6px 12px; margin-top:4px;">+ Adicionar subcategoria</button>
-                  </div>
-                </div>
-                <div class="edit-actions">
-                  <button class="btn-danger">Excluir</button>
-                  <button class="btn-secondary" onclick="toggleEdit(5)">Cancelar</button>
-                  <button class="btn-primary">Salvar</button>
-                </div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="add-btn-row">
-        <button class="btn-secondary" style="font-size:13px;">+ Adicionar categoria</button>
-      </div>
-    </div>
 
-    <!-- ====== 4. Investimentos ====== -->
-    <div class="classification-section">
-      <div class="classification-header">
-        <div class="classification-header-left">
-          <span class="classification-emoji">&#x1F4CA;</span>
-          <span class="classification-name">Investimentos</span>
-          <span class="classification-budget">&mdash; sem orçamento</span>
+      <div class="items-list">
+        <div class="item-card" style="cursor:default;">
+          <div class="item-info">
+            <div class="item-name" style="display:flex; align-items:center; gap:10px;">
+              Pão de Açúcar
+              <span class="source-badge source-auto">auto</span>
+            </div>
+            <div class="item-meta">
+              <span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</span>
+              <span class="est-visits">8 visitas &middot; último 20/03</span>
+            </div>
+          </div>
+          <div class="item-budget-col" style="min-width:140px;">
+            <div class="item-budget-text"><strong>R$ 1.200,00</strong> <span class="spent">(sem orçamento)</span></div>
+          </div>
         </div>
-        <div class="classification-actions">
-          <button class="btn-edit" onclick="toggleClassEdit(3)">&#x270F;&#xFE0F; Editar</button>
-        </div>
-      </div>
-      <table class="categories-table">
-        <thead>
-          <tr>
-            <th style="width:50px"></th>
-            <th>Nome</th>
-            <th>Orçamento/mês</th>
-            <th style="width:100px">Subcategorias</th>
-            <th style="width:80px">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="cat-emoji">&#x1F393;</td>
-            <td class="cat-name">Educação</td>
-            <td class="cat-budget">R$ 2.800,00</td>
-            <td>2 subcategorias</td>
-            <td><button class="btn-edit" onclick="toggleEdit(6)">&#x270F;&#xFE0F;</button></td>
-          </tr>
-          <tr class="edit-row" id="edit-row-6">
-            <td colspan="5">
-              <div class="edit-form">
-                <div class="edit-form-grid">
-                  <div class="form-group"><label>Nome</label><input type="text" value="Educação"></div>
-                  <div class="form-group"><label>Emoji</label><div class="emoji-picker-wrapper"><button type="button" class="emoji-picker-trigger" data-emoji="🎓">&#x1F393;</button></div></div>
-                  <div class="form-group"><label>Orçamento mensal</label><input type="text" value="R$ 2.800,00"></div>
-                </div>
-                <div class="form-group" style="margin-bottom:16px;">
-                  <label>Subcategorias</label>
-                  <div class="subcategories-config">
-                    <div class="subcat-row"><span class="subcat-name">Cursos online</span><div class="subcat-fields"><select class="subcat-method-select"><option selected>Latam Pass Visa</option></select><input type="text" class="subcat-budget-input" value="R$ 800,00"></div><button class="remove-sub-btn">&times;</button></div>
-                    <div class="subcat-row"><span class="subcat-name">Livros</span><div class="subcat-fields"><select class="subcat-method-select"><option selected>PDA Visa</option></select><input type="text" class="subcat-budget-input" value="R$ 2.000,00"></div><button class="remove-sub-btn">&times;</button></div>
-                    <button class="btn-secondary" style="font-size:12px; padding:6px 12px; margin-top:4px;">+ Adicionar subcategoria</button>
-                  </div>
-                </div>
-                <div class="edit-actions">
-                  <button class="btn-danger">Excluir</button>
-                  <button class="btn-secondary" onclick="toggleEdit(6)">Cancelar</button>
-                  <button class="btn-primary">Salvar</button>
-                </div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="add-btn-row">
-        <button class="btn-secondary" style="font-size:13px;">+ Adicionar categoria</button>
-      </div>
-    </div>
 
-    <!-- ====== 5. Proteção ====== -->
-    <div class="classification-section">
-      <div class="classification-header">
-        <div class="classification-header-left">
-          <span class="classification-emoji">&#x1F6E1;&#xFE0F;</span>
-          <span class="classification-name">Proteção</span>
-          <span class="classification-budget">&mdash; sem orçamento</span>
+        <div class="item-card" style="cursor:default;">
+          <div class="item-info">
+            <div class="item-name" style="display:flex; align-items:center; gap:10px;">
+              Bistek
+              <span class="source-badge source-auto">auto</span>
+            </div>
+            <div class="item-meta">
+              <span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> Latam Pass Visa</span>
+              <span class="est-visits">4 visitas &middot; último 18/03</span>
+            </div>
+          </div>
+          <div class="item-budget-col" style="min-width:140px;">
+            <div class="item-budget-text"><strong>R$ 950,00</strong> <span class="spent">(sem orçamento)</span></div>
+          </div>
         </div>
-        <div class="classification-actions">
-          <button class="btn-edit" onclick="toggleClassEdit(4)">&#x270F;&#xFE0F; Editar</button>
-        </div>
-      </div>
-      <table class="categories-table">
-        <thead>
-          <tr>
-            <th style="width:50px"></th>
-            <th>Nome</th>
-            <th>Orçamento/mês</th>
-            <th style="width:100px">Subcategorias</th>
-            <th style="width:80px">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="cat-emoji">&#x1F6E1;&#xFE0F;</td>
-            <td class="cat-name">Seguros</td>
-            <td class="cat-budget">R$ 500,00</td>
-            <td>2 subcategorias</td>
-            <td><button class="btn-edit" onclick="toggleEdit(7)">&#x270F;&#xFE0F;</button></td>
-          </tr>
-          <tr class="edit-row" id="edit-row-7">
-            <td colspan="5">
-              <div class="edit-form">
-                <div class="edit-form-grid">
-                  <div class="form-group"><label>Nome</label><input type="text" value="Seguros"></div>
-                  <div class="form-group"><label>Emoji</label><div class="emoji-picker-wrapper"><button type="button" class="emoji-picker-trigger" data-emoji="🛡️">&#x1F6E1;&#xFE0F;</button></div></div>
-                  <div class="form-group"><label>Orçamento mensal</label><input type="text" value="R$ 500,00"></div>
-                </div>
-                <div class="form-group" style="margin-bottom:16px;">
-                  <label>Subcategorias</label>
-                  <div class="subcategories-config">
-                    <div class="subcat-row"><span class="subcat-name">Seguro auto</span><div class="subcat-fields"><select class="subcat-method-select"><option selected>Nubank Débito</option></select><input type="text" class="subcat-budget-input" value="R$ 300,00"></div><button class="remove-sub-btn">&times;</button></div>
-                    <div class="subcat-row"><span class="subcat-name">Seguro vida</span><div class="subcat-fields"><select class="subcat-method-select"><option selected>Itaú Débito</option></select><input type="text" class="subcat-budget-input" value="R$ 200,00"></div><button class="remove-sub-btn">&times;</button></div>
-                    <button class="btn-secondary" style="font-size:12px; padding:6px 12px; margin-top:4px;">+ Adicionar subcategoria</button>
-                  </div>
-                </div>
-                <div class="edit-actions">
-                  <button class="btn-danger">Excluir</button>
-                  <button class="btn-secondary" onclick="toggleEdit(7)">Cancelar</button>
-                  <button class="btn-primary">Salvar</button>
-                </div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="add-btn-row">
-        <button class="btn-secondary" style="font-size:13px;">+ Adicionar categoria</button>
-      </div>
-    </div>
 
-    <!-- ====== 6. Imprevistos ====== -->
-    <div class="classification-section">
-      <div class="classification-header">
-        <div class="classification-header-left">
-          <span class="classification-emoji">&#x26A0;&#xFE0F;</span>
-          <span class="classification-name">Imprevistos</span>
-          <span class="classification-budget">&mdash; R$ 1.000,00/mês</span>
-        </div>
-        <div class="classification-actions">
-          <button class="btn-edit" onclick="toggleClassEdit(5)">&#x270F;&#xFE0F; Editar</button>
+        <div class="item-card" style="cursor:default;">
+          <div class="item-info">
+            <div class="item-name" style="display:flex; align-items:center; gap:10px;">
+              Angeloni
+              <span class="source-badge source-manual">manual</span>
+            </div>
+            <div class="item-meta">
+              <span style="font-size:12px; color:var(--text-tertiary);">adicionado manualmente &middot; sem uso ainda</span>
+            </div>
+          </div>
+          <div class="item-budget-col" style="min-width:140px;">
+            <div class="item-budget-text" style="color:var(--text-tertiary);">(sem uso)</div>
+          </div>
         </div>
       </div>
-      <div class="classification-empty">Sem categorias pré-definidas &mdash; crie quando surgir um imprevisto</div>
-      <div class="add-btn-row">
-        <button class="btn-secondary" style="font-size:13px;">+ Adicionar categoria</button>
-      </div>
-    </div>
 
-    <!-- Botão final -->
-    <div style="margin-top:16px;">
-      <button class="btn-primary">+ Adicionar classificação</button>
+      <button class="add-item-btn">+ Adicionar estabelecimento</button>
     </div>
 
   </main>
+</div>
+
+<!-- Edit Sheet (desktop) -->
+<div class="sheet-overlay" id="sheet-overlay" onclick="closeSheet()"></div>
+<div class="sheet-panel" id="sheet-panel">
+  <div class="sheet-header">
+    <span class="sheet-title" id="sheet-title">Editar</span>
+    <button class="sheet-close" onclick="closeSheet()">✕</button>
+  </div>
+  <div class="sheet-body" id="sheet-body">
+    <!-- Filled by JS -->
+  </div>
+  <div class="sheet-actions">
+    <button class="btn-danger-outline" style="margin-right:auto;">Excluir</button>
+    <button class="btn-secondary" onclick="closeSheet()">Cancelar</button>
+    <button class="btn-primary" onclick="closeSheet()">Salvar</button>
+  </div>
 </div>
 
 <!-- ============================================ -->
@@ -947,452 +644,348 @@
 <!-- MOBILE VERSION (390px phone frame)           -->
 <!-- ============================================ -->
 <div class="mobile-section">
-  <div class="mobile-section-title">Versão Mobile &mdash; 390px</div>
+  <div class="mobile-section-title">Versão Mobile — 390px</div>
 
   <div class="phone-frame">
     <div class="phone-status-bar">
       <span class="phone-time">9:41</span>
-      <div class="phone-indicators">
-        <span>&#9679;&#9679;&#9679;&#9679;</span>
-        <span>&#x1F4F6;</span>
-        <span>&#x1F50B;</span>
-      </div>
+      <div class="phone-indicators"><span>●●●●</span><span>📶</span><span>🔋</span></div>
     </div>
 
-    <div class="phone-nav-header" id="m-header">
-      <button class="back-btn" onclick="window.location.href='proto-14-settings.html'" id="m-back-btn">&#x2190;</button>
-      <h2 id="m-header-title">Categorias</h2>
+    <div class="phone-body">
+
+      <!-- MOBILE TELA 1: Classificações -->
+      <div class="m-screen active" id="m-screen-1">
+        <div class="m-screen-header">
+          <div style="flex:1;">
+            <div class="m-screen-title">Categorias</div>
+            <div class="m-screen-subtitle">Gerencie sua hierarquia</div>
+          </div>
+        </div>
+        <div class="m-content">
+          <div class="m-item-card" onclick="mNavigate(2,'ev')">
+            <div class="m-item-emoji">📊</div>
+            <div class="m-item-info">
+              <div class="m-item-name">Essenciais fixos</div>
+              <div class="m-item-meta">2 categorias</div>
+            </div>
+            <div class="m-item-right">
+              <div class="m-item-budget">R$ 4.200,00</div>
+              <div class="m-budget-bar"><div class="m-budget-bar-fill status-attention" style="width:70%"></div></div>
+            </div>
+            <span class="m-item-arrow">›</span>
+          </div>
+
+          <div class="m-item-card" onclick="mNavigate(2,'ev')">
+            <div class="m-item-emoji">📊</div>
+            <div class="m-item-info">
+              <div class="m-item-name">Essenciais variáveis</div>
+              <div class="m-item-meta">2 categorias</div>
+            </div>
+            <div class="m-item-right">
+              <div class="m-item-budget">R$ 6.800,00</div>
+              <div class="m-budget-bar"><div class="m-budget-bar-fill status-alert" style="width:85%"></div></div>
+            </div>
+            <span class="m-item-arrow">›</span>
+          </div>
+
+          <div class="m-item-card" onclick="mNavigate(2,'ev')">
+            <div class="m-item-emoji">📊</div>
+            <div class="m-item-info">
+              <div class="m-item-name">Qualidade de vida</div>
+              <div class="m-item-meta">2 categorias</div>
+            </div>
+            <div class="m-item-right">
+              <div class="m-item-budget">R$ 3.200,00</div>
+              <div class="m-budget-bar"><div class="m-budget-bar-fill status-attention" style="width:80%"></div></div>
+            </div>
+            <span class="m-item-arrow">›</span>
+          </div>
+
+          <div class="m-item-card" onclick="mNavigate(2,'ev')">
+            <div class="m-item-emoji">📊</div>
+            <div class="m-item-info">
+              <div class="m-item-name">Investimentos</div>
+              <div class="m-item-meta">1 categoria</div>
+            </div>
+            <div class="m-item-right">
+              <div class="m-item-budget">R$ 1.500,00</div>
+              <div class="m-budget-bar"><div class="m-budget-bar-fill status-none" style="width:40%"></div></div>
+            </div>
+            <span class="m-item-arrow">›</span>
+          </div>
+
+          <div class="m-item-card" onclick="mNavigate(2,'ev')">
+            <div class="m-item-emoji">📊</div>
+            <div class="m-item-info">
+              <div class="m-item-name">Proteção</div>
+              <div class="m-item-meta">1 categoria</div>
+            </div>
+            <div class="m-item-right">
+              <div class="m-item-budget">R$ 450,00</div>
+              <div class="m-budget-bar"><div class="m-budget-bar-fill status-alert" style="width:90%"></div></div>
+            </div>
+            <span class="m-item-arrow">›</span>
+          </div>
+
+          <div class="m-item-card" onclick="mNavigate(2,'ev')">
+            <div class="m-item-emoji">📊</div>
+            <div class="m-item-info">
+              <div class="m-item-name">Imprevistos</div>
+              <div class="m-item-meta">sem categorias</div>
+            </div>
+            <div class="m-item-right">
+              <div class="m-item-budget">R$ 0,00</div>
+              <div class="m-budget-bar"><div class="m-budget-bar-fill status-positive" style="width:0%"></div></div>
+            </div>
+            <span class="m-item-arrow">›</span>
+          </div>
+
+          <button class="m-add-btn">+ Adicionar classificação</button>
+        </div>
+      </div>
+
+      <!-- MOBILE TELA 2: Categorias (Essenciais variáveis) -->
+      <div class="m-screen" id="m-screen-2">
+        <div class="m-screen-header">
+          <button class="m-back-btn" onclick="mNavigate(1)">←</button>
+          <div style="flex:1;"><div class="m-screen-title">Essenciais variáveis</div></div>
+        </div>
+        <div class="m-content">
+          <div class="m-level-header">
+            <div class="m-level-header-top">
+              <span class="m-level-header-emoji">📊</span>
+              <span class="m-level-header-name">Essenciais variáveis</span>
+              <button class="m-edit-btn" style="margin-left:auto;">✏️</button>
+            </div>
+            <div class="m-level-header-budget">R$ 6.800,00 / R$ 8.000,00 — 85,00%</div>
+            <div class="budget-bar" style="margin-top:6px;"><div class="budget-bar-fill status-alert" style="width:85%"></div></div>
+          </div>
+
+          <div class="m-section-label">Categorias</div>
+
+          <div class="m-item-card" onclick="mNavigate(3)">
+            <div class="m-item-emoji">🍽</div>
+            <div class="m-item-info">
+              <div class="m-item-name">Alimentação</div>
+              <div class="m-item-meta">3 subcategorias</div>
+            </div>
+            <div class="m-item-right">
+              <div class="m-item-budget">R$ 5.100,00</div>
+              <div class="m-budget-bar"><div class="m-budget-bar-fill status-alert" style="width:93%"></div></div>
+            </div>
+            <span class="m-item-arrow">›</span>
+          </div>
+
+          <div class="m-item-card" onclick="mNavigate(3)">
+            <div class="m-item-emoji">🚗</div>
+            <div class="m-item-info">
+              <div class="m-item-name">Transporte</div>
+              <div class="m-item-meta">4 subcategorias</div>
+            </div>
+            <div class="m-item-right">
+              <div class="m-item-budget">R$ 1.200,00</div>
+              <div class="m-budget-bar"><div class="m-budget-bar-fill status-attention" style="width:80%"></div></div>
+            </div>
+            <span class="m-item-arrow">›</span>
+          </div>
+
+          <div class="m-unallocated">Não alocado: R$ 1.000,00 de R$ 8.000,00</div>
+          <button class="m-add-btn">+ Adicionar categoria</button>
+        </div>
+      </div>
+
+      <!-- MOBILE TELA 3: Subcategorias (Alimentação) -->
+      <div class="m-screen" id="m-screen-3">
+        <div class="m-screen-header">
+          <button class="m-back-btn" onclick="mNavigate(2)">←</button>
+          <div style="flex:1;"><div class="m-screen-title">Alimentação</div></div>
+        </div>
+        <div class="m-content">
+          <div class="m-level-header">
+            <div class="m-level-header-top">
+              <span class="m-level-header-emoji">🍽</span>
+              <span class="m-level-header-name">Alimentação</span>
+              <button class="m-edit-btn" style="margin-left:auto;">✏️</button>
+            </div>
+            <div class="m-level-header-budget">R$ 5.100,00 / R$ 5.500,00 — 92,73%</div>
+            <div class="budget-bar" style="margin-top:6px;"><div class="budget-bar-fill status-alert" style="width:92.7%"></div></div>
+          </div>
+
+          <div class="m-section-label">Subcategorias</div>
+
+          <div class="m-item-card" onclick="mNavigate(4)">
+            <div class="m-item-info">
+              <div class="m-item-name">Supermercado</div>
+              <div class="m-item-meta"><span class="method-brand method-brand-visa" style="vertical-align:middle;">VISA</span> Latam Pass &middot; 3 estab.</div>
+            </div>
+            <div class="m-item-right">
+              <div class="m-item-budget">R$ 2.800,00</div>
+              <div class="m-budget-bar"><div class="m-budget-bar-fill status-alert" style="width:93%"></div></div>
+            </div>
+            <span class="m-item-arrow">›</span>
+          </div>
+
+          <div class="m-item-card" onclick="mNavigate(4)">
+            <div class="m-item-info">
+              <div class="m-item-name">Restaurante trabalho</div>
+              <div class="m-item-meta"><span class="method-brand method-brand-visa" style="vertical-align:middle;">VISA</span> PDA Visa &middot; 2 estab.</div>
+            </div>
+            <div class="m-item-right">
+              <div class="m-item-budget">R$ 1.400,00</div>
+              <div class="m-budget-bar"><div class="m-budget-bar-fill status-alert" style="width:93%"></div></div>
+            </div>
+            <span class="m-item-arrow">›</span>
+          </div>
+
+          <div class="m-item-card" onclick="mNavigate(4)">
+            <div class="m-item-info">
+              <div class="m-item-name">Feira/Hortifruti</div>
+              <div class="m-item-meta"><span class="method-brand method-brand-visa" style="vertical-align:middle;">VISA</span> Latam Pass &middot; 1 estab.</div>
+            </div>
+            <div class="m-item-right">
+              <div class="m-item-budget">R$ 450,00</div>
+              <div class="m-budget-bar"><div class="m-budget-bar-fill status-alert" style="width:90%"></div></div>
+            </div>
+            <span class="m-item-arrow">›</span>
+          </div>
+
+          <div class="m-unallocated">Não alocado: R$ 500,00 de R$ 5.500,00</div>
+          <button class="m-add-btn">+ Adicionar subcategoria</button>
+        </div>
+      </div>
+
+      <!-- MOBILE TELA 4: Estabelecimentos (Supermercado) -->
+      <div class="m-screen" id="m-screen-4">
+        <div class="m-screen-header">
+          <button class="m-back-btn" onclick="mNavigate(3)">←</button>
+          <div style="flex:1;"><div class="m-screen-title">Supermercado</div></div>
+        </div>
+        <div class="m-content">
+          <div class="m-level-header">
+            <div class="m-level-header-top">
+              <span class="m-level-header-name">Supermercado</span>
+              <button class="m-edit-btn" style="margin-left:auto;">✏️</button>
+            </div>
+            <div class="m-level-header-budget" style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+              <span class="method-brand method-brand-visa" style="vertical-align:middle;">VISA</span> Latam Pass Visa &middot; R$ 2.800,00 / R$ 3.000,00
+            </div>
+            <div class="budget-bar" style="margin-top:6px;"><div class="budget-bar-fill status-alert" style="width:93.3%"></div></div>
+          </div>
+
+          <div class="m-section-label">Estabelecimentos</div>
+
+          <div class="m-est-card">
+            <div class="m-est-info">
+              <div class="m-est-name">Pão de Açúcar <span class="source-badge source-auto">auto</span></div>
+              <div class="m-est-meta"><span class="method-brand method-brand-visa" style="vertical-align:middle;">VISA</span> Latam Pass &middot; 8 visitas &middot; último 20/03</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:13px; font-weight:600; font-variant-numeric:tabular-nums;">R$ 1.200,00</div>
+            </div>
+          </div>
+
+          <div class="m-est-card">
+            <div class="m-est-info">
+              <div class="m-est-name">Bistek <span class="source-badge source-auto">auto</span></div>
+              <div class="m-est-meta"><span class="method-brand method-brand-visa" style="vertical-align:middle;">VISA</span> Latam Pass &middot; 4 visitas &middot; último 18/03</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:13px; font-weight:600; font-variant-numeric:tabular-nums;">R$ 950,00</div>
+            </div>
+          </div>
+
+          <div class="m-est-card">
+            <div class="m-est-info">
+              <div class="m-est-name">Angeloni <span class="source-badge source-manual">manual</span></div>
+              <div class="m-est-meta">adicionado manualmente &middot; sem uso ainda</div>
+            </div>
+          </div>
+
+          <button class="m-add-btn">+ Adicionar estabelecimento</button>
+        </div>
+      </div>
+
     </div>
 
-    <div class="phone-body" id="mobile-body">
-
-      <!-- TELA 1: Lista de Classificações -->
-      <div id="m-screen-1">
-        <div class="m-list">
-          <div class="m-list-item" onclick="showMobileScreen(2)">
-            <div class="m-list-item-left">
-              <span class="m-list-item-emoji">&#x1F4CA;</span>
-              <div class="m-list-item-info">
-                <div class="m-list-item-name">Essenciais fixos</div>
-                <div class="m-list-item-meta">R$ 6.000/mês</div>
-              </div>
-            </div>
-            <span class="m-list-item-arrow">&#x203A;</span>
-          </div>
-          <div class="m-list-item" onclick="showMobileScreen(2)">
-            <div class="m-list-item-left">
-              <span class="m-list-item-emoji">&#x1F4CA;</span>
-              <div class="m-list-item-info">
-                <div class="m-list-item-name">Essenciais variáveis</div>
-                <div class="m-list-item-meta">R$ 8.000/mês</div>
-              </div>
-            </div>
-            <span class="m-list-item-arrow">&#x203A;</span>
-          </div>
-          <div class="m-list-item" onclick="showMobileScreen(2)">
-            <div class="m-list-item-left">
-              <span class="m-list-item-emoji">&#x1F4CA;</span>
-              <div class="m-list-item-info">
-                <div class="m-list-item-name">Qualidade de vida</div>
-                <div class="m-list-item-meta">R$ 4.000/mês</div>
-              </div>
-            </div>
-            <span class="m-list-item-arrow">&#x203A;</span>
-          </div>
-          <div class="m-list-item" onclick="showMobileScreen(2)">
-            <div class="m-list-item-left">
-              <span class="m-list-item-emoji">&#x1F4CA;</span>
-              <div class="m-list-item-info">
-                <div class="m-list-item-name">Investimentos</div>
-                <div class="m-list-item-meta" style="color:var(--text-tertiary);">sem orçamento</div>
-              </div>
-            </div>
-            <span class="m-list-item-arrow">&#x203A;</span>
-          </div>
-          <div class="m-list-item" onclick="showMobileScreen(2)">
-            <div class="m-list-item-left">
-              <span class="m-list-item-emoji">&#x1F6E1;&#xFE0F;</span>
-              <div class="m-list-item-info">
-                <div class="m-list-item-name">Proteção</div>
-                <div class="m-list-item-meta" style="color:var(--text-tertiary);">sem orçamento</div>
-              </div>
-            </div>
-            <span class="m-list-item-arrow">&#x203A;</span>
-          </div>
-          <div class="m-list-item" onclick="showMobileScreen(2)">
-            <div class="m-list-item-left">
-              <span class="m-list-item-emoji">&#x26A0;&#xFE0F;</span>
-              <div class="m-list-item-info">
-                <div class="m-list-item-name">Imprevistos</div>
-                <div class="m-list-item-meta">R$ 1.000/mês</div>
-              </div>
-            </div>
-            <span class="m-list-item-arrow">&#x203A;</span>
-          </div>
-        </div>
-        <div style="margin-top:12px;">
-          <button class="btn-primary" style="width:100%; justify-content:center; font-size:13px; padding:10px;">+ Adicionar classificação</button>
-        </div>
-      </div>
-
-      <!-- TELA 2: Classificação selecionada (Essenciais variáveis) -->
-      <div id="m-screen-2" style="display:none;">
-        <div class="m-detail-header">
-          <div class="m-detail-header-info">Orçamento: <strong>R$ 8.000,00/mês</strong></div>
-          <button class="btn-edit" style="font-size:12px; padding:4px 10px;">&#x270F;&#xFE0F; Editar</button>
-        </div>
-
-        <div class="m-section-label">Categorias</div>
-        <div class="m-list">
-          <div class="m-list-item" onclick="showMobileScreen(3)">
-            <div class="m-list-item-left">
-              <span class="m-list-item-emoji">&#x1F37D;</span>
-              <div class="m-list-item-info">
-                <div class="m-list-item-name">Alimentação</div>
-                <div class="m-list-item-meta">R$ 5.500/mês &middot; 3 subcats</div>
-              </div>
-            </div>
-            <span class="m-list-item-arrow">&#x203A;</span>
-          </div>
-          <div class="m-list-item" onclick="showMobileScreen(3)">
-            <div class="m-list-item-left">
-              <span class="m-list-item-emoji">&#x1F697;</span>
-              <div class="m-list-item-info">
-                <div class="m-list-item-name">Transporte</div>
-                <div class="m-list-item-meta">R$ 1.500/mês &middot; 4 subcats</div>
-              </div>
-            </div>
-            <span class="m-list-item-arrow">&#x203A;</span>
-          </div>
-        </div>
-        <div style="margin-top:12px;">
-          <button class="btn-secondary" style="width:100%; justify-content:center; font-size:13px; padding:10px;">+ Adicionar categoria</button>
-        </div>
-      </div>
-
-      <!-- TELA 3: Categoria selecionada (Alimentação) -->
-      <div id="m-screen-3" style="display:none;">
-        <div class="m-detail-header">
-          <div class="m-detail-header-info" style="display:flex; align-items:center; gap:8px;">
-            <span style="font-size:22px;">&#x1F37D;</span>
-            Orçamento: <strong>R$ 5.500,00/mês</strong>
-          </div>
-          <button class="btn-edit" style="font-size:12px; padding:4px 10px;">&#x270F;&#xFE0F; Editar</button>
-        </div>
-
-        <div class="m-section-label">Subcategorias</div>
-        <div class="m-list">
-          <div class="m-list-item" onclick="showMobileScreen(4)">
-            <div class="m-list-item-left">
-              <div class="m-list-item-info">
-                <div class="m-list-item-name">Supermercado</div>
-                <div class="m-list-item-meta"><span class="method-brand method-brand-visa" style="vertical-align:middle;">VISA</span> Latam Pass Visa &middot; R$ 3.000 &middot; 3 estab.</div>
-              </div>
-            </div>
-            <span class="m-list-item-arrow">&#x203A;</span>
-          </div>
-          <div class="m-list-item" onclick="showMobileScreen(4)">
-            <div class="m-list-item-left">
-              <div class="m-list-item-info">
-                <div class="m-list-item-name">Restaurante trabalho</div>
-                <div class="m-list-item-meta"><span class="method-brand method-brand-visa" style="vertical-align:middle;">VISA</span> PDA Visa &middot; R$ 1.500 &middot; 1 estab.</div>
-              </div>
-            </div>
-            <span class="m-list-item-arrow">&#x203A;</span>
-          </div>
-          <div class="m-list-item" onclick="showMobileScreen(4)">
-            <div class="m-list-item-left">
-              <div class="m-list-item-info">
-                <div class="m-list-item-name">Feira/Hortifruti</div>
-                <div class="m-list-item-meta"><span class="method-brand method-brand-visa" style="vertical-align:middle;">VISA</span> Latam Pass Visa &middot; R$ 500</div>
-              </div>
-            </div>
-            <span class="m-list-item-arrow">&#x203A;</span>
-          </div>
-        </div>
-        <div style="margin-top:12px;">
-          <button class="btn-secondary" style="width:100%; justify-content:center; font-size:13px; padding:10px;">+ Adicionar subcategoria</button>
-        </div>
-
-      </div>
-
-      <!-- TELA 4: Subcategoria selecionada (Supermercado) -->
-      <div id="m-screen-4" style="display:none;">
-        <div class="m-detail-header">
-          <div class="m-detail-header-info" style="display:flex; flex-direction:column; gap:4px;">
-            <span>Método: <strong><span class="method-brand method-brand-visa" style="vertical-align:middle;">VISA</span> Latam Pass Visa</strong></span>
-            <span>Orçamento: <strong>R$ 3.000,00/mês</strong></span>
-          </div>
-          <button class="btn-edit" style="font-size:12px; padding:4px 10px;">&#x270F;&#xFE0F;</button>
-        </div>
-
-        <div class="m-section-label">Estabelecimentos aprendidos</div>
-        <div class="m-list">
-          <div class="m-est-item">
-            <span class="m-est-name">Pão de Açúcar</span>
-            <span class="m-est-meta">8 visitas, último 20/03</span>
-          </div>
-          <div class="m-est-item">
-            <span class="m-est-name">Bistek</span>
-            <span class="m-est-meta">4 visitas, último 18/03</span>
-          </div>
-          <div class="m-est-item">
-            <span class="m-est-name">Angeloni</span>
-            <span class="m-est-meta">2 visitas, último 10/03</span>
-          </div>
-        </div>
-        <p class="m-est-note">(aprendidos automaticamente do uso)</p>
-      </div>
-
-    </div>
-
-    <!-- Bottom Nav -->
+    <!-- Bottom Nav Canônico -->
     <div class="bottom-nav">
-      <a class="bottom-nav-item">
-        <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
-        <span>Dashboard</span>
-      </a>
-      <a class="bottom-nav-item">
-        <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
-        <span>Cartões</span>
-      </a>
-      <a class="bottom-nav-fab">
-        <span class="bottom-nav-fab-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>
-        <span class="bottom-nav-fab-label">Registrar</span>
-      </a>
-      <a class="bottom-nav-item">
-        <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span>
-        <span>Checklist</span>
-      </a>
-      <a class="bottom-nav-item">
-        <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>
-        <span>Projeção</span>
-      </a>
-      <a class="bottom-nav-item">
-        <span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg></span>
-        <span>Sair</span>
-      </a>
+      <a class="bottom-nav-item"><span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span><span>Dashboard</span></a>
+      <a class="bottom-nav-item"><span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span><span>Cartões</span></a>
+      <a class="bottom-nav-fab"><span class="bottom-nav-fab-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span><span class="bottom-nav-fab-label">Registrar</span></a>
+      <a class="bottom-nav-item"><span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span><span>Checklist</span></a>
+      <a class="bottom-nav-item"><span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span><span>Projeção</span></a>
+      <a class="bottom-nav-item"><span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg></span><span>Sair</span></a>
     </div>
   </div>
 </div>
 
 <script>
-  // ===== EDIT TOGGLE (category row) =====
-  function toggleEdit(index) {
-    var editRow = document.getElementById('edit-row-' + index);
-    if (editRow) {
-      editRow.classList.toggle('active');
-    }
-  }
-
-  // ===== CLASSIFICATION EDIT (placeholder) =====
-  function toggleClassEdit(index) {
-    alert('Editar classificação #' + (index + 1));
-  }
-
-  // ===== MOBILE DRILL-DOWN NAVIGATION =====
-  var mobileScreenTitles = {
-    1: 'Categorias',
-    2: 'Essenciais variáveis',
-    3: 'Alimentação',
-    4: 'Supermercado'
+  // ===== DESKTOP NAVIGATION =====
+  const breadcrumbPaths = {
+    1: [{ label: 'Categorias', level: null }],
+    2: [{ label: 'Categorias', level: 1 }, { label: 'Essenciais variáveis', level: null }],
+    3: [{ label: 'Categorias', level: 1 }, { label: 'Ess. variáveis', level: 2 }, { label: 'Alimentação', level: null }],
+    4: [{ label: 'Categorias', level: 1 }, { label: 'Ess. variáveis', level: 2 }, { label: 'Alimentação', level: 3 }, { label: 'Supermercado', level: null }],
   };
 
-  var mobileScreenBack = {
-    1: null,
-    2: 1,
-    3: 2,
-    4: 3
-  };
-
-  function showMobileScreen(screen) {
-    ['m-screen-1','m-screen-2','m-screen-3','m-screen-4'].forEach(function(id) {
-      document.getElementById(id).style.display = 'none';
-    });
-    document.getElementById('m-screen-' + screen).style.display = 'block';
-    document.getElementById('mobile-body').scrollTop = 0;
-
-    // Update header title
-    document.getElementById('m-header-title').textContent = mobileScreenTitles[screen];
-
-    // Update back button
-    var backBtn = document.getElementById('m-back-btn');
-    if (screen === 1) {
-      backBtn.onclick = function() { window.location.href = 'proto-14-settings.html'; };
-    } else {
-      backBtn.onclick = function() { showMobileScreen(mobileScreenBack[screen]); };
-    }
+  function dNavigate(level) {
+    document.querySelectorAll('.d-screen').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById('d-screen-' + level);
+    if (target) target.classList.add('active');
+    updateBreadcrumb(level);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // ===== REMOVE SUBCATEGORY =====
-  document.querySelectorAll('.remove-sub-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var row = this.closest('.subcat-row');
-      row.style.opacity = '0';
-      row.style.transform = 'scale(0.95)';
-      row.style.transition = 'all 0.2s ease';
-      setTimeout(function() { row.remove(); }, 200);
-    });
-  });
-
-  // ===== EMOJI PICKER (from proto-08) =====
-  var emojiData = {
-    frequentes: ['📊','💰','🏠','🍽','🚗','💊','📚','🛡','🎮','✈️','📱','💳','🎯','⭐','🔔','💎'],
-    financas:   ['💰','💵','💳','💸','🏦','📊','📈','💹','🪙','🧾','💲','🤑','🏧','💱','📉','💴'],
-    casa:       ['🏠','🏡','🔑','🛋','🛏','🚿','🔧','💡','🏗','🧹','🪴','🛁','🔌','🧊','🪟','🚪'],
-    comida:     ['🍽','🍔','🍕','🍎','🛒','🥗','🍰','☕','🍺','🥐','🍣','🌮','🍝','🥩','🧁','🍷'],
-    transporte: ['🚗','🚌','✈️','🚲','⛽','🅿️','🚕','🚇','🛵','🚢','🚁','🛣','🚙','🛻','🚐','⚓'],
-    saude:      ['💊','🏥','🩺','🧘','💪','🏋️','🦷','🩹','💉','🧬','🏃','🛀','💆','🩻','🫁','🧑‍⚕️'],
-    educacao:   ['📚','📖','🎓','✏️','💻','🧑‍💻','🔬','📐','🎒','📝','🏫','🗂','📕','🖊','📰','🔭'],
-    lazer:      ['🎮','🎬','🎵','🎭','🏖','🎲','🎸','🏈','🎳','🧩','🎤','🎨','🎧','🎪','🃏','🎻'],
-    protecao:   ['🛡','🔒','📋','🧯','🩹','🔐','📜','🛟','🔑','🧱','⚠️','🪪','📑','✅','🗝','🔏']
-  };
-
-  var emojiTabIcons = {
-    frequentes: '⭐', financas: '💰', casa: '🏠', comida: '🍽',
-    transporte: '🚗', saude: '💊', educacao: '📚', lazer: '🎮', protecao: '🛡'
-  };
-
-  var emojiTabNames = {
-    frequentes: 'Frequentes', financas: 'Finanças', casa: 'Casa', comida: 'Comida',
-    transporte: 'Transporte', saude: 'Saúde', educacao: 'Educação', lazer: 'Lazer', protecao: 'Proteção'
-  };
-
-  // Singleton picker panel
-  var pickerPanel = document.createElement('div');
-  pickerPanel.className = 'emoji-picker-panel';
-  pickerPanel.innerHTML =
-    '<input type="text" class="emoji-picker-search" placeholder="Buscar emoji..." />' +
-    '<div class="emoji-picker-tabs"></div>' +
-    '<div class="emoji-picker-grid"></div>';
-  document.body.appendChild(pickerPanel);
-
-  var pickerTabs = pickerPanel.querySelector('.emoji-picker-tabs');
-  var pickerGrid = pickerPanel.querySelector('.emoji-picker-grid');
-  var pickerSearch = pickerPanel.querySelector('.emoji-picker-search');
-  var currentTrigger = null;
-
-  // Populate tabs
-  Object.keys(emojiData).forEach(function(cat, i) {
-    var tab = document.createElement('button');
-    tab.type = 'button';
-    tab.className = 'emoji-tab' + (i === 0 ? ' active' : '');
-    tab.textContent = emojiTabIcons[cat];
-    tab.title = emojiTabNames[cat];
-    tab.dataset.category = cat;
-    tab.addEventListener('click', function(e) {
-      e.stopPropagation();
-      pickerTabs.querySelectorAll('.emoji-tab').forEach(function(t) { t.classList.remove('active'); });
-      tab.classList.add('active');
-      renderEmojiGrid(cat);
-    });
-    pickerTabs.appendChild(tab);
-  });
-
-  function renderEmojiGrid(cat) {
-    pickerGrid.innerHTML = '';
-    emojiData[cat].forEach(function(emoji) {
-      var span = document.createElement('span');
-      span.className = 'emoji-option';
-      span.textContent = emoji;
-      span.addEventListener('click', function(e) {
-        e.stopPropagation();
-        if (currentTrigger) {
-          currentTrigger.textContent = emoji;
-          currentTrigger.dataset.emoji = emoji;
-        }
-        closePicker();
-      });
-      pickerGrid.appendChild(span);
-    });
-  }
-
-  function openPicker(trigger) {
-    currentTrigger = trigger;
-    var wrapper = trigger.closest('.emoji-picker-wrapper');
-    wrapper.appendChild(pickerPanel);
-    pickerPanel.classList.add('open');
-    pickerTabs.querySelector('.emoji-tab').click();
-    pickerSearch.value = '';
-    pickerSearch.focus();
-  }
-
-  function closePicker() {
-    pickerPanel.classList.remove('open');
-    currentTrigger = null;
-  }
-
-  // Emoji search
-  pickerSearch.addEventListener('input', function() {
-    var q = pickerSearch.value.toLowerCase();
-    if (!q) {
-      pickerTabs.querySelector('.emoji-tab.active').click();
-      return;
-    }
-    pickerGrid.innerHTML = '';
-    var seen = {};
-    Object.keys(emojiData).forEach(function(cat) {
-      if (emojiTabNames[cat].toLowerCase().indexOf(q) !== -1) {
-        emojiData[cat].forEach(function(emoji) {
-          if (!seen[emoji]) {
-            seen[emoji] = true;
-            var span = document.createElement('span');
-            span.className = 'emoji-option';
-            span.textContent = emoji;
-            span.addEventListener('click', function(e) {
-              e.stopPropagation();
-              if (currentTrigger) {
-                currentTrigger.textContent = emoji;
-                currentTrigger.dataset.emoji = emoji;
-              }
-              closePicker();
-            });
-            pickerGrid.appendChild(span);
-          }
-        });
+  function updateBreadcrumb(level) {
+    const bc = document.getElementById('d-breadcrumb');
+    const path = breadcrumbPaths[level] || breadcrumbPaths[1];
+    bc.innerHTML = path.map((item, i) => {
+      const isLast = i === path.length - 1;
+      if (isLast) {
+        return '<span class="breadcrumb-current">' + item.label + '</span>';
       }
-    });
-    if (pickerGrid.children.length === 0) {
-      Object.keys(emojiData).forEach(function(cat) {
-        emojiData[cat].forEach(function(emoji) {
-          if (!seen[emoji]) {
-            seen[emoji] = true;
-            var span = document.createElement('span');
-            span.className = 'emoji-option';
-            span.textContent = emoji;
-            span.addEventListener('click', function(e) {
-              e.stopPropagation();
-              if (currentTrigger) {
-                currentTrigger.textContent = emoji;
-                currentTrigger.dataset.emoji = emoji;
-              }
-              closePicker();
-            });
-            pickerGrid.appendChild(span);
-          }
-        });
-      });
-    }
-  });
+      return '<span class="breadcrumb-item" onclick="dNavigate(' + item.level + ')">' + item.label + '</span><span class="breadcrumb-sep">›</span>';
+    }).join('');
+  }
 
-  // Click handler for emoji triggers
-  document.addEventListener('click', function(e) {
-    var trigger = e.target.closest('.emoji-picker-trigger');
-    if (trigger) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (currentTrigger === trigger) {
-        closePicker();
-      } else {
-        closePicker();
-        openPicker(trigger);
-      }
-      return;
+  // ===== EDIT SHEET =====
+  const sheetForms = {
+    classification: {
+      title: 'Editar classificação',
+      fields: '<div class="sheet-form-group"><label>Emoji</label><button type="button" class="sheet-emoji-trigger">📊</button></div><div class="sheet-form-group"><label>Nome</label><input type="text" value="Essenciais variáveis"></div><div class="sheet-form-group"><label>Orçamento mensal <span class="optional">(opcional)</span></label><input type="text" value="R$ 8.000,00" inputmode="numeric"></div>'
+    },
+    category: {
+      title: 'Editar categoria',
+      fields: '<div class="sheet-form-group"><label>Emoji</label><button type="button" class="sheet-emoji-trigger">🍽</button></div><div class="sheet-form-group"><label>Nome</label><input type="text" value="Alimentação"></div><div class="sheet-form-group"><label>Orçamento mensal <span class="optional">(opcional)</span></label><input type="text" value="R$ 5.500,00" inputmode="numeric"></div>'
+    },
+    subcategory: {
+      title: 'Editar subcategoria',
+      fields: '<div class="sheet-form-group"><label>Nome</label><input type="text" value="Supermercado"></div><div class="sheet-form-group"><label>Método de pagamento</label><select><option selected>Latam Pass Visa</option><option>PDA Visa</option><option>Nubank Débito</option><option>Itaú Débito</option></select></div><div class="sheet-form-group"><label>Orçamento mensal <span class="optional">(opcional)</span></label><input type="text" value="R$ 3.000,00" inputmode="numeric"></div>'
     }
-    if (!e.target.closest('.emoji-picker-panel')) {
-      closePicker();
-    }
-  });
+  };
+
+  function openSheet(type) {
+    const form = sheetForms[type];
+    if (!form) return;
+    document.getElementById('sheet-title').textContent = form.title;
+    document.getElementById('sheet-body').innerHTML = form.fields;
+    document.getElementById('sheet-overlay').classList.add('open');
+    document.getElementById('sheet-panel').classList.add('open');
+  }
+
+  function closeSheet() {
+    document.getElementById('sheet-overlay').classList.remove('open');
+    document.getElementById('sheet-panel').classList.remove('open');
+  }
+
+  // ===== MOBILE NAVIGATION =====
+  function mNavigate(level) {
+    document.querySelectorAll('.m-screen').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById('m-screen-' + level);
+    if (target) target.classList.add('active');
+    document.querySelector('.phone-body').scrollTop = 0;
+  }
 </script>
 </body>
 </html>
