@@ -336,6 +336,175 @@
       color: var(--text-primary);
     }
 
+    /* ── Emoji Picker ── */
+    .emoji-picker-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+    .emoji-picker-trigger {
+      width: 44px;
+      height: 36px;
+      font-size: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      position: relative;
+    }
+    .emoji-picker-trigger:hover {
+      border-color: var(--primary);
+    }
+    .emoji-picker-trigger::after {
+      content: '▾';
+      position: absolute;
+      right: 2px;
+      bottom: 0;
+      font-size: 8px;
+      color: var(--text-tertiary);
+    }
+    .emoji-picker-trigger-sm {
+      width: 36px;
+      height: 32px;
+      font-size: 16px;
+    }
+    .emoji-picker-panel {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      z-index: 1000;
+      width: 264px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+      overflow: hidden;
+      display: none;
+    }
+    .emoji-picker-panel.open {
+      display: block;
+    }
+    .emoji-picker-search {
+      width: 100%;
+      padding: 8px 12px;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--text-primary);
+      outline: none;
+      background: var(--bg);
+      box-sizing: border-box;
+    }
+    .emoji-picker-search::placeholder {
+      color: var(--text-tertiary);
+    }
+    .emoji-picker-tabs {
+      display: flex;
+      gap: 0;
+      padding: 4px 6px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      overflow-x: auto;
+    }
+    .emoji-tab {
+      padding: 4px 5px;
+      font-size: 15px;
+      background: none;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      opacity: 0.45;
+      transition: opacity var(--transition), background var(--transition);
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .emoji-tab:hover {
+      opacity: 0.8;
+      background: var(--primary-light);
+    }
+    .emoji-tab.active {
+      opacity: 1;
+      background: var(--primary-light);
+    }
+    .emoji-picker-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+      padding: 8px;
+      max-height: 160px;
+      overflow-y: auto;
+    }
+    .emoji-option {
+      font-size: 20px;
+      padding: 3px;
+      text-align: center;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background var(--transition);
+      line-height: 1.3;
+    }
+    .emoji-option:hover {
+      background: var(--primary-light);
+    }
+
+    /* ── New Categories List (dentro do form de classificação) ── */
+    .new-categories-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .new-category-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+    }
+    .new-category-row .form-input-sm {
+      margin-bottom: 0;
+    }
+    .btn-add-category {
+      padding: 8px;
+      background: transparent;
+      color: var(--primary);
+      border: 1px dashed var(--primary);
+      border-radius: var(--radius-input);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .btn-add-category:hover {
+      background: var(--primary-light);
+    }
+    .remove-cat-btn {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      color: var(--text-tertiary);
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      flex-shrink: 0;
+      transition: color var(--transition), background var(--transition);
+    }
+    .remove-cat-btn:hover {
+      color: #EF4444;
+      background: #FEF2F2;
+    }
+
     /* ── Form Elements ── */
     .form-group {
       margin-bottom: 12px;
@@ -1817,12 +1986,14 @@
           <!-- Add form (classificação) -->
           <div class="add-form" style="display: none;">
             <div class="add-form-title">Nova classificação</div>
-            <div class="form-row">
+            <div class="form-row" style="align-items: flex-end;">
               <div class="form-group" style="flex: 0 0 56px;">
                 <label class="form-label">Emoji</label>
-                <input type="text" class="form-input form-input-sm" placeholder="📊" style="text-align: center;" />
+                <div class="emoji-picker-wrapper">
+                  <button type="button" class="emoji-picker-trigger" data-emoji="📊">📊</button>
+                </div>
               </div>
-              <div class="form-group">
+              <div class="form-group" style="flex: 1;">
                 <label class="form-label">Nome</label>
                 <input type="text" class="form-input form-input-sm" placeholder="Ex: Lazer" />
               </div>
@@ -1830,6 +2001,12 @@
             <div class="form-group">
               <label class="form-label">Orçamento mensal</label>
               <input type="text" class="form-input form-input-sm" placeholder="R$ 0,00" />
+            </div>
+            <div class="form-group" style="margin-top: 4px;">
+              <label class="form-label">Categorias</label>
+              <div class="new-categories-list">
+                <button type="button" class="btn-add-category">+ Adicionar categoria</button>
+              </div>
             </div>
             <div class="add-form-actions">
               <button class="btn-form-save">Salvar</button>
@@ -2375,18 +2552,26 @@
             <!-- Add form (desktop classificação) -->
             <div class="add-form desktop-add-form" style="display: none;">
               <div class="add-form-title">Nova classificação</div>
-              <div class="form-row">
+              <div class="form-row" style="align-items: flex-end;">
                 <div class="form-group" style="flex: 0 0 72px;">
                   <label class="form-label">Emoji</label>
-                  <input type="text" class="form-input form-input-sm" placeholder="📊" style="text-align: center;" />
+                  <div class="emoji-picker-wrapper">
+                    <button type="button" class="emoji-picker-trigger" data-emoji="📊">📊</button>
+                  </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="flex: 1;">
                   <label class="form-label">Nome</label>
                   <input type="text" class="form-input form-input-sm" placeholder="Ex: Lazer" />
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="flex: 1;">
                   <label class="form-label">Orçamento mensal</label>
                   <input type="text" class="form-input form-input-sm" placeholder="R$ 0,00" />
+                </div>
+              </div>
+              <div class="form-group" style="margin-top: 4px;">
+                <label class="form-label">Categorias</label>
+                <div class="new-categories-list">
+                  <button type="button" class="btn-add-category">+ Adicionar categoria</button>
                 </div>
               </div>
               <div class="add-form-actions">
@@ -2604,6 +2789,189 @@
         var title = form.querySelector('.add-form-title');
         if (title && title.dataset.originalTitle) title.textContent = title.dataset.originalTitle;
       }, 400);
+    });
+  });
+
+  // ── Emoji Picker ──
+  var emojiData = {
+    frequentes: ['📊','💰','🏠','🍽','🚗','💊','📚','🛡','🎮','✈️','📱','💳','🎯','⭐','🔔','💎'],
+    financas:   ['💰','💵','💳','💸','🏦','📊','📈','💹','🪙','🧾','💲','🤑','🏧','💱','📉','💴'],
+    casa:       ['🏠','🏡','🔑','🛋','🛏','🚿','🔧','💡','🏗','🧹','🪴','🛁','🔌','🧊','🪟','🚪'],
+    comida:     ['🍽','🍔','🍕','🍎','🛒','🥗','🍰','☕','🍺','🥐','🍣','🌮','🍝','🥩','🧁','🍷'],
+    transporte: ['🚗','🚌','✈️','🚲','⛽','🅿️','🚕','🚇','🛵','🚢','🚁','🛣','🚙','🛻','🚐','⚓'],
+    saude:      ['💊','🏥','🩺','🧘','💪','🏋️','🦷','🩹','💉','🧬','🏃','🛀','💆','🩻','🫁','🧑‍⚕️'],
+    educacao:   ['📚','📖','🎓','✏️','💻','🧑‍💻','🔬','📐','🎒','📝','🏫','🗂','📕','🖊','📰','🔭'],
+    lazer:      ['🎮','🎬','🎵','🎭','🏖','🎲','🎸','🏈','🎳','🧩','🎤','🎨','🎧','🎪','🃏','🎻'],
+    protecao:   ['🛡','🔒','📋','🧯','🩹','🔐','📜','🛟','🔑','🧱','⚠️','🪪','📑','✅','🗝','🔏']
+  };
+
+  var emojiTabIcons = {
+    frequentes: '⭐', financas: '💰', casa: '🏠', comida: '🍽',
+    transporte: '🚗', saude: '💊', educacao: '📚', lazer: '🎮', protecao: '🛡'
+  };
+
+  var emojiTabNames = {
+    frequentes: 'Frequentes', financas: 'Finanças', casa: 'Casa', comida: 'Comida',
+    transporte: 'Transporte', saude: 'Saúde', educacao: 'Educação', lazer: 'Lazer', protecao: 'Proteção'
+  };
+
+  // Cria o painel do picker (singleton, reutilizado)
+  var pickerPanel = document.createElement('div');
+  pickerPanel.className = 'emoji-picker-panel';
+  pickerPanel.innerHTML =
+    '<input type="text" class="emoji-picker-search" placeholder="Buscar emoji..." />' +
+    '<div class="emoji-picker-tabs"></div>' +
+    '<div class="emoji-picker-grid"></div>';
+  document.body.appendChild(pickerPanel);
+
+  var pickerTabs = pickerPanel.querySelector('.emoji-picker-tabs');
+  var pickerGrid = pickerPanel.querySelector('.emoji-picker-grid');
+  var pickerSearch = pickerPanel.querySelector('.emoji-picker-search');
+  var currentTrigger = null;
+
+  // Popula tabs
+  Object.keys(emojiData).forEach(function(cat, i) {
+    var tab = document.createElement('button');
+    tab.type = 'button';
+    tab.className = 'emoji-tab' + (i === 0 ? ' active' : '');
+    tab.textContent = emojiTabIcons[cat];
+    tab.title = emojiTabNames[cat];
+    tab.dataset.category = cat;
+    tab.addEventListener('click', function(e) {
+      e.stopPropagation();
+      pickerTabs.querySelectorAll('.emoji-tab').forEach(function(t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+      renderEmojiGrid(cat);
+    });
+    pickerTabs.appendChild(tab);
+  });
+
+  function renderEmojiGrid(cat) {
+    pickerGrid.innerHTML = '';
+    emojiData[cat].forEach(function(emoji) {
+      var span = document.createElement('span');
+      span.className = 'emoji-option';
+      span.textContent = emoji;
+      span.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (currentTrigger) {
+          currentTrigger.textContent = emoji;
+          currentTrigger.dataset.emoji = emoji;
+        }
+        closePicker();
+      });
+      pickerGrid.appendChild(span);
+    });
+  }
+
+  function openPicker(trigger) {
+    currentTrigger = trigger;
+    var wrapper = trigger.closest('.emoji-picker-wrapper');
+    wrapper.appendChild(pickerPanel);
+    pickerPanel.classList.add('open');
+    pickerTabs.querySelector('.emoji-tab').click();
+    pickerSearch.value = '';
+    pickerSearch.focus();
+  }
+
+  function closePicker() {
+    pickerPanel.classList.remove('open');
+    currentTrigger = null;
+  }
+
+  // Busca de emojis
+  pickerSearch.addEventListener('input', function() {
+    var q = pickerSearch.value.toLowerCase();
+    if (!q) {
+      pickerTabs.querySelector('.emoji-tab.active').click();
+      return;
+    }
+    // Mostrar todos os emojis de todas as categorias
+    pickerGrid.innerHTML = '';
+    var seen = {};
+    Object.keys(emojiData).forEach(function(cat) {
+      // Busca simples pelo nome da categoria
+      if (emojiTabNames[cat].toLowerCase().indexOf(q) !== -1) {
+        emojiData[cat].forEach(function(emoji) {
+          if (!seen[emoji]) {
+            seen[emoji] = true;
+            var span = document.createElement('span');
+            span.className = 'emoji-option';
+            span.textContent = emoji;
+            span.addEventListener('click', function(e) {
+              e.stopPropagation();
+              if (currentTrigger) {
+                currentTrigger.textContent = emoji;
+                currentTrigger.dataset.emoji = emoji;
+              }
+              closePicker();
+            });
+            pickerGrid.appendChild(span);
+          }
+        });
+      }
+    });
+    // Se não achou por categoria, mostra tudo
+    if (pickerGrid.children.length === 0) {
+      Object.keys(emojiData).forEach(function(cat) {
+        emojiData[cat].forEach(function(emoji) {
+          if (!seen[emoji]) {
+            seen[emoji] = true;
+            var span = document.createElement('span');
+            span.className = 'emoji-option';
+            span.textContent = emoji;
+            span.addEventListener('click', function(e) {
+              e.stopPropagation();
+              if (currentTrigger) {
+                currentTrigger.textContent = emoji;
+                currentTrigger.dataset.emoji = emoji;
+              }
+              closePicker();
+            });
+            pickerGrid.appendChild(span);
+          }
+        });
+      });
+    }
+  });
+
+  // Click handler para triggers
+  document.addEventListener('click', function(e) {
+    var trigger = e.target.closest('.emoji-picker-trigger');
+    if (trigger) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (currentTrigger === trigger) {
+        closePicker();
+      } else {
+        closePicker();
+        openPicker(trigger);
+      }
+      return;
+    }
+    // Fechar se clicou fora
+    if (!e.target.closest('.emoji-picker-panel')) {
+      closePicker();
+    }
+  });
+
+  // ── Adicionar categoria dentro da classificação ──
+  document.querySelectorAll('.btn-add-category').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var row = document.createElement('div');
+      row.className = 'new-category-row';
+      row.innerHTML =
+        '<div class="emoji-picker-wrapper">' +
+        '  <button type="button" class="emoji-picker-trigger emoji-picker-trigger-sm" data-emoji="📁">📁</button>' +
+        '</div>' +
+        '<input type="text" class="form-input form-input-sm" placeholder="Nome da categoria" style="flex:1; margin-bottom:0;" />' +
+        '<button type="button" class="remove-cat-btn">&times;</button>';
+      btn.parentNode.insertBefore(row, btn);
+
+      // Handler de remover
+      row.querySelector('.remove-cat-btn').addEventListener('click', function() {
+        row.remove();
+      });
     });
   });
 </script>
