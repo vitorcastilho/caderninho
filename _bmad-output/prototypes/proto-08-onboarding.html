@@ -609,12 +609,15 @@
 
     /* ── Classification Groups ── */
     .classification-group {
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
     .classification-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
       font-size: 10px;
       font-weight: 600;
       text-transform: uppercase;
@@ -623,6 +626,44 @@
       padding: 8px 0 4px;
       border-bottom: 1px solid var(--border);
       margin-bottom: 8px;
+    }
+    .classification-header-emoji {
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .classification-header-name {
+      flex: 1;
+    }
+    .classification-header-budget {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      text-transform: none;
+      letter-spacing: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .classification-header-remove {
+      width: 20px;
+      height: 20px;
+      border: none;
+      background: transparent;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      font-size: 14px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .classification-header-remove:hover {
+      color: #EF4444;
+      background: #FEF2F2;
+    }
+    .category-subcat-count {
+      font-size: 10px;
+      color: var(--text-tertiary);
+      padding-left: 32px;
     }
 
     .desktop-classification-group {
@@ -1559,121 +1600,129 @@
       <div class="phone-frame">
         <div class="phone-notch"></div>
         <div class="phone-content">
-          <div class="step-title">Organize seus gastos</div>
-          <div class="step-subtitle">Sugerimos categorias com base nos mais comuns. Ajuste os valores.</div>
+          <div class="step-title">Organize seus gastos em classificações</div>
+          <div class="step-subtitle">Configure suas classificações e categorias. Você pode personalizar tudo depois.</div>
 
           <div class="category-list">
-            <!-- Grupo: Essenciais -->
+            <!-- 📊 Essenciais fixos -->
             <div class="classification-group">
-              <div class="classification-header">Essenciais</div>
-
-              <div class="category-item">
-                <div class="category-item-top">
-                  <span class="category-emoji">&#128722;</span>
-                  <span class="category-name">Supermercado</span>
-                  <div class="category-budget">
-                    <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="3.000,00" />
-                    <span class="category-budget-suffix">/ mês</span>
-                  </div>
-                </div>
-                <div class="category-payment">
-                  <span class="category-payment-label">Método:</span>
-                  <span class="method-select-wrapper">
-                    <span class="method-brand method-brand-visa">VISA</span>
-                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
-                      <option>Selecionar...</option>
-                      <option selected>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option>Itaú Débito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
-                  </span>
-                </div>
+              <div class="classification-header">
+                <span class="classification-header-emoji">📊</span>
+                <span class="classification-header-name">Essenciais fixos</span>
+                <span class="classification-header-budget">R$ 6.000</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
               </div>
 
               <div class="category-item">
                 <div class="category-item-top">
-                  <span class="category-emoji">&#127968;</span>
+                  <span class="category-emoji">🏠</span>
                   <span class="category-name">Moradia</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="2.200,00" />
+                    <input type="text" class="category-budget-input" value="4.000,00" />
                     <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
-                <div class="category-payment">
-                  <span class="category-payment-label">Método:</span>
-                  <span class="method-select-wrapper">
-                    <span class="bank-badge bank-badge-itau">Itaú</span>
-                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
-                      <option>Selecionar...</option>
-                      <option>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option selected>Itaú Débito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
-                  </span>
-                </div>
+                <div class="category-subcat-count">4 subcategorias</div>
               </div>
 
               <div class="category-item">
                 <div class="category-item-top">
-                  <span class="category-emoji">&#9981;</span>
-                  <span class="category-name">Gasolina</span>
+                  <span class="category-emoji">📱</span>
+                  <span class="category-name">Assinaturas</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="600,00" />
+                    <input type="text" class="category-budget-input" value="200,00" />
                     <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
-                <div class="category-payment">
-                  <span class="category-payment-label">Método:</span>
-                  <span class="method-select-wrapper">
-                    <span class="bank-badge bank-badge-itau">Itaú</span>
-                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
-                      <option>Selecionar...</option>
-                      <option>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option selected>Itaú Débito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
-                  </span>
-                </div>
+                <div class="category-subcat-count">2 subcategorias</div>
+              </div>
+            </div>
+
+            <!-- 📊 Essenciais variáveis -->
+            <div class="classification-group">
+              <div class="classification-header">
+                <span class="classification-header-emoji">📊</span>
+                <span class="classification-header-name">Essenciais variáveis</span>
+                <span class="classification-header-budget">R$ 8.000</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
               </div>
 
               <div class="category-item">
                 <div class="category-item-top">
-                  <span class="category-emoji">&#128241;</span>
-                  <span class="category-name">Internet/Tel</span>
+                  <span class="category-emoji">🍽</span>
+                  <span class="category-name">Alimentação</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="158,00" />
+                    <input type="text" class="category-budget-input" value="5.500,00" />
                     <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
-                <div class="category-payment">
-                  <span class="category-payment-label">Método:</span>
-                  <span class="method-select-wrapper">
-                    <span class="method-brand method-brand-visa">VISA</span>
-                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
-                      <option>Selecionar...</option>
-                      <option selected>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option>Itaú Débito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
-                  </span>
-                </div>
+                <div class="category-subcat-count">3 subcategorias</div>
               </div>
 
               <div class="category-item">
                 <div class="category-item-top">
-                  <span class="category-emoji">&#127891;</span>
+                  <span class="category-emoji">🚗</span>
+                  <span class="category-name">Transporte</span>
+                  <div class="category-budget">
+                    <span class="category-budget-prefix">R$</span>
+                    <input type="text" class="category-budget-input" value="1.500,00" />
+                    <span class="category-budget-suffix">/ mês</span>
+                  </div>
+                </div>
+                <div class="category-subcat-count">4 subcategorias</div>
+              </div>
+            </div>
+
+            <!-- 📊 Qualidade de vida -->
+            <div class="classification-group">
+              <div class="classification-header">
+                <span class="classification-header-emoji">📊</span>
+                <span class="classification-header-name">Qualidade de vida</span>
+                <span class="classification-header-budget">R$ 4.000</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
+              </div>
+
+              <div class="category-item">
+                <div class="category-item-top">
+                  <span class="category-emoji">🍔</span>
+                  <span class="category-name">Restaurante</span>
+                  <div class="category-budget">
+                    <span class="category-budget-prefix">R$</span>
+                    <input type="text" class="category-budget-input" value="2.000,00" />
+                    <span class="category-budget-suffix">/ mês</span>
+                  </div>
+                </div>
+                <div class="category-subcat-count">3 subcategorias</div>
+              </div>
+
+              <div class="category-item">
+                <div class="category-item-top">
+                  <span class="category-emoji">✈️</span>
+                  <span class="category-name">Viagem</span>
+                  <div class="category-budget">
+                    <span class="category-budget-prefix">R$</span>
+                    <input type="text" class="category-budget-input" value="2.000,00" />
+                    <span class="category-budget-suffix">/ mês</span>
+                  </div>
+                </div>
+                <div class="category-subcat-count">4 subcategorias</div>
+              </div>
+            </div>
+
+            <!-- 📊 Investimentos -->
+            <div class="classification-group">
+              <div class="classification-header">
+                <span class="classification-header-emoji">📊</span>
+                <span class="classification-header-name">Investimentos</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
+              </div>
+
+              <div class="category-item">
+                <div class="category-item-top">
+                  <span class="category-emoji">📈</span>
                   <span class="category-name">Educação</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
@@ -1681,56 +1730,45 @@
                     <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
-                <div class="category-payment">
-                  <span class="category-payment-label">Método:</span>
-                  <span class="method-select-wrapper">
-                    <span class="method-brand method-brand-visa">VISA</span>
-                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
-                      <option>Selecionar...</option>
-                      <option selected>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option>Itaú Débito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
-                  </span>
-                </div>
+                <div class="category-subcat-count">2 subcategorias</div>
               </div>
             </div>
 
-            <!-- Grupo: Qualidade de Vida -->
+            <!-- 📊 Proteção -->
             <div class="classification-group">
-              <div class="classification-header">Qualidade de Vida</div>
+              <div class="classification-header">
+                <span class="classification-header-emoji">📊</span>
+                <span class="classification-header-name">Proteção</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
+              </div>
 
               <div class="category-item">
                 <div class="category-item-top">
-                  <span class="category-emoji">&#127869;</span>
-                  <span class="category-name">Restaurante</span>
+                  <span class="category-emoji">🛡</span>
+                  <span class="category-name">Seguros</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="2.500,00" />
+                    <input type="text" class="category-budget-input" value="500,00" />
                     <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
-                <div class="category-payment">
-                  <span class="category-payment-label">Método:</span>
-                  <span class="method-select-wrapper">
-                    <span class="method-brand method-brand-master"></span>
-                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
-                      <option>Selecionar...</option>
-                      <option selected>Nubank Master</option>
-                      <option>Latam Pass Visa</option>
-                      <option>Itaú Débito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
-                  </span>
-                </div>
+                <div class="category-subcat-count">2 subcategorias</div>
               </div>
+            </div>
+
+            <!-- 📊 Imprevistos -->
+            <div class="classification-group">
+              <div class="classification-header">
+                <span class="classification-header-emoji">📊</span>
+                <span class="classification-header-name">Imprevistos</span>
+                <span class="classification-header-budget">R$ 1.000</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
+              </div>
+              <div style="font-size: 11px; color: var(--text-tertiary); padding: 4px 0 8px;">Sem categorias pré-definidas</div>
             </div>
           </div>
 
-          <button class="btn-add">+ Adicionar categoria</button>
+          <button class="btn-add">+ Adicionar classificação</button>
 
           <div class="bottom-actions">
             <div class="progress-dots">
@@ -2097,120 +2135,119 @@
         </div>
         <div class="desktop-content">
           <div class="desktop-card">
-            <div class="desktop-step-title">Organize seus gastos</div>
-            <div class="desktop-step-subtitle">Sugerimos categorias com base nos mais comuns. Ajuste os valores conforme sua realidade.</div>
+            <div class="desktop-step-title">Organize seus gastos em classificações</div>
+            <div class="desktop-step-subtitle">Configure suas classificações e categorias. Você pode personalizar tudo depois.</div>
 
             <div class="desktop-category-grid">
 
-              <!-- Grupo: Essenciais -->
-              <div class="desktop-classification-header">Essenciais</div>
-
-              <div class="desktop-category-item">
-                <span class="desktop-category-emoji">&#128722;</span>
-                <div class="desktop-category-info">
-                  <div class="desktop-category-name">Supermercado</div>
-                  <div class="desktop-category-budget-row">
-                    <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="3.000,00" />
-                    <span class="desktop-category-budget-suffix">/ mês</span>
-                  </div>
-                  <div class="desktop-category-payment-row">
-                    <span class="desktop-category-payment-label">Método:</span>
-                    <span class="method-select-wrapper">
-                      <span class="method-brand method-brand-visa">VISA</span>
-                      <select class="desktop-select">
-                        <option>Selecionar...</option>
-                        <option selected>Latam Pass Visa</option>
-                        <option>Nubank Master</option>
-                        <option>Itaú Débito</option>
-                        <option>PIX</option>
-                        <option>Dinheiro</option>
-                      </select>
-                    </span>
-                  </div>
-                </div>
+              <!-- 📊 Essenciais fixos -->
+              <div class="desktop-classification-header" style="display: flex; align-items: center; gap: 8px;">
+                <span>📊 Essenciais fixos</span>
+                <span style="margin-left: auto; font-size: 12px; color: var(--text-secondary); text-transform: none; letter-spacing: 0; font-variant-numeric: tabular-nums;">R$ 6.000</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
               </div>
 
               <div class="desktop-category-item">
-                <span class="desktop-category-emoji">&#127968;</span>
+                <span class="desktop-category-emoji">🏠</span>
                 <div class="desktop-category-info">
                   <div class="desktop-category-name">Moradia</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="2.200,00" />
+                    <input type="text" class="desktop-budget-input" value="4.000,00" />
                     <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
-                  <div class="desktop-category-payment-row">
-                    <span class="desktop-category-payment-label">Método:</span>
-                    <span class="method-select-wrapper">
-                      <span class="bank-badge bank-badge-itau">Itaú</span>
-                      <select class="desktop-select">
-                        <option>Selecionar...</option>
-                        <option>Latam Pass Visa</option>
-                        <option>Nubank Master</option>
-                        <option selected>Itaú Débito</option>
-                        <option>PIX</option>
-                        <option>Dinheiro</option>
-                      </select>
-                    </span>
-                  </div>
+                  <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">4 subcategorias</div>
                 </div>
               </div>
 
               <div class="desktop-category-item">
-                <span class="desktop-category-emoji">&#9981;</span>
+                <span class="desktop-category-emoji">📱</span>
                 <div class="desktop-category-info">
-                  <div class="desktop-category-name">Gasolina</div>
+                  <div class="desktop-category-name">Assinaturas</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="600,00" />
+                    <input type="text" class="desktop-budget-input" value="200,00" />
                     <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
-                  <div class="desktop-category-payment-row">
-                    <span class="desktop-category-payment-label">Método:</span>
-                    <span class="method-select-wrapper">
-                      <span class="bank-badge bank-badge-itau">Itaú</span>
-                      <select class="desktop-select">
-                        <option>Selecionar...</option>
-                        <option>Latam Pass Visa</option>
-                        <option>Nubank Master</option>
-                        <option selected>Itaú Débito</option>
-                        <option>PIX</option>
-                        <option>Dinheiro</option>
-                      </select>
-                    </span>
-                  </div>
+                  <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">2 subcategorias</div>
                 </div>
               </div>
 
+              <!-- 📊 Essenciais variáveis -->
+              <div class="desktop-classification-header" style="display: flex; align-items: center; gap: 8px;">
+                <span>📊 Essenciais variáveis</span>
+                <span style="margin-left: auto; font-size: 12px; color: var(--text-secondary); text-transform: none; letter-spacing: 0; font-variant-numeric: tabular-nums;">R$ 8.000</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
+              </div>
+
               <div class="desktop-category-item">
-                <span class="desktop-category-emoji">&#128241;</span>
+                <span class="desktop-category-emoji">🍽</span>
                 <div class="desktop-category-info">
-                  <div class="desktop-category-name">Internet/Tel</div>
+                  <div class="desktop-category-name">Alimentação</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="158,00" />
+                    <input type="text" class="desktop-budget-input" value="5.500,00" />
                     <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
-                  <div class="desktop-category-payment-row">
-                    <span class="desktop-category-payment-label">Método:</span>
-                    <span class="method-select-wrapper">
-                      <span class="method-brand method-brand-visa">VISA</span>
-                      <select class="desktop-select">
-                        <option>Selecionar...</option>
-                        <option selected>Latam Pass Visa</option>
-                        <option>Nubank Master</option>
-                        <option>Itaú Débito</option>
-                        <option>PIX</option>
-                        <option>Dinheiro</option>
-                      </select>
-                    </span>
-                  </div>
+                  <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">3 subcategorias</div>
                 </div>
               </div>
 
               <div class="desktop-category-item">
-                <span class="desktop-category-emoji">&#127891;</span>
+                <span class="desktop-category-emoji">🚗</span>
+                <div class="desktop-category-info">
+                  <div class="desktop-category-name">Transporte</div>
+                  <div class="desktop-category-budget-row">
+                    <span class="desktop-category-budget-label">R$</span>
+                    <input type="text" class="desktop-budget-input" value="1.500,00" />
+                    <span class="desktop-category-budget-suffix">/ mês</span>
+                  </div>
+                  <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">4 subcategorias</div>
+                </div>
+              </div>
+
+              <!-- 📊 Qualidade de vida -->
+              <div class="desktop-classification-header" style="display: flex; align-items: center; gap: 8px;">
+                <span>📊 Qualidade de vida</span>
+                <span style="margin-left: auto; font-size: 12px; color: var(--text-secondary); text-transform: none; letter-spacing: 0; font-variant-numeric: tabular-nums;">R$ 4.000</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
+              </div>
+
+              <div class="desktop-category-item">
+                <span class="desktop-category-emoji">🍔</span>
+                <div class="desktop-category-info">
+                  <div class="desktop-category-name">Restaurante</div>
+                  <div class="desktop-category-budget-row">
+                    <span class="desktop-category-budget-label">R$</span>
+                    <input type="text" class="desktop-budget-input" value="2.000,00" />
+                    <span class="desktop-category-budget-suffix">/ mês</span>
+                  </div>
+                  <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">3 subcategorias</div>
+                </div>
+              </div>
+
+              <div class="desktop-category-item">
+                <span class="desktop-category-emoji">✈️</span>
+                <div class="desktop-category-info">
+                  <div class="desktop-category-name">Viagem</div>
+                  <div class="desktop-category-budget-row">
+                    <span class="desktop-category-budget-label">R$</span>
+                    <input type="text" class="desktop-budget-input" value="2.000,00" />
+                    <span class="desktop-category-budget-suffix">/ mês</span>
+                  </div>
+                  <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">4 subcategorias</div>
+                </div>
+              </div>
+
+              <!-- 📊 Investimentos -->
+              <div class="desktop-classification-header" style="display: flex; align-items: center; gap: 8px;">
+                <span>📊 Investimentos</span>
+                <span style="flex: 1;"></span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
+              </div>
+
+              <div class="desktop-category-item">
+                <span class="desktop-category-emoji">📈</span>
                 <div class="desktop-category-info">
                   <div class="desktop-category-name">Educação</div>
                   <div class="desktop-category-budget-row">
@@ -2218,55 +2255,47 @@
                     <input type="text" class="desktop-budget-input" value="2.800,00" />
                     <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
-                  <div class="desktop-category-payment-row">
-                    <span class="desktop-category-payment-label">Método:</span>
-                    <span class="method-select-wrapper">
-                      <span class="method-brand method-brand-visa">VISA</span>
-                      <select class="desktop-select">
-                        <option>Selecionar...</option>
-                        <option selected>Latam Pass Visa</option>
-                        <option>Nubank Master</option>
-                        <option>Itaú Débito</option>
-                        <option>PIX</option>
-                        <option>Dinheiro</option>
-                      </select>
-                    </span>
-                  </div>
+                  <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">2 subcategorias</div>
                 </div>
               </div>
 
-              <!-- Grupo: Qualidade de Vida -->
-              <div class="desktop-classification-header">Qualidade de Vida</div>
+              <!-- 📊 Proteção -->
+              <div class="desktop-classification-header" style="display: flex; align-items: center; gap: 8px;">
+                <span>📊 Proteção</span>
+                <span style="flex: 1;"></span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
+              </div>
 
               <div class="desktop-category-item">
-                <span class="desktop-category-emoji">&#127869;</span>
+                <span class="desktop-category-emoji">🛡</span>
                 <div class="desktop-category-info">
-                  <div class="desktop-category-name">Restaurante</div>
+                  <div class="desktop-category-name">Seguros</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="2.500,00" />
+                    <input type="text" class="desktop-budget-input" value="500,00" />
                     <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
-                  <div class="desktop-category-payment-row">
-                    <span class="desktop-category-payment-label">Método:</span>
-                    <span class="method-select-wrapper">
-                      <span class="method-brand method-brand-master"></span>
-                      <select class="desktop-select">
-                        <option>Selecionar...</option>
-                        <option selected>Nubank Master</option>
-                        <option>Latam Pass Visa</option>
-                        <option>Itaú Débito</option>
-                        <option>PIX</option>
-                        <option>Dinheiro</option>
-                      </select>
-                    </span>
-                  </div>
+                  <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">2 subcategorias</div>
+                </div>
+              </div>
+
+              <!-- 📊 Imprevistos -->
+              <div class="desktop-classification-header" style="display: flex; align-items: center; gap: 8px;">
+                <span>📊 Imprevistos</span>
+                <span style="margin-left: auto; font-size: 12px; color: var(--text-secondary); text-transform: none; letter-spacing: 0; font-variant-numeric: tabular-nums;">R$ 1.000</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
+              </div>
+
+              <div class="desktop-category-item" style="grid-column: 1 / -1;">
+                <span class="desktop-category-emoji" style="opacity: 0.4;">—</span>
+                <div class="desktop-category-info">
+                  <div style="font-size: 13px; color: var(--text-tertiary);">Sem categorias pré-definidas</div>
                 </div>
               </div>
 
             </div><!-- /grid -->
 
-            <button class="btn-add" style="max-width: 280px;">+ Adicionar categoria</button>
+            <button class="btn-add" style="max-width: 280px;">+ Adicionar classificação</button>
 
             <div class="desktop-progress-dots">
               <div class="desktop-progress-dot completed"></div>
