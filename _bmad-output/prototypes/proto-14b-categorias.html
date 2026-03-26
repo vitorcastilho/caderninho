@@ -130,6 +130,7 @@
   .subcategories-config { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
   .subcat-row { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); }
   .subcat-name { font-size: 13px; font-weight: 500; color: var(--text-primary); min-width: 120px; }
+  .subcat-est-count { font-size: 11px; font-weight: 400; color: var(--text-tertiary); margin-left: 6px; }
   .subcat-fields { display: flex; align-items: center; gap: 8px; flex: 1; }
   .method-select-wrapper { display: inline-flex; align-items: center; gap: 4px; }
   .subcat-method-select { padding: 4px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-family: inherit; color: var(--text-secondary); background: var(--bg); }
@@ -382,7 +383,7 @@
                   <label>Subcategorias</label>
                   <div class="subcategories-config">
                     <div class="subcat-row">
-                      <span class="subcat-name">Aluguel</span>
+                      <span class="subcat-name">Aluguel <span class="subcat-est-count">1 estab.</span></span>
                       <div class="subcat-fields">
                         <div class="method-select-wrapper">
                           <select class="subcat-method-select">
@@ -409,7 +410,7 @@
                       <button class="remove-sub-btn">&times;</button>
                     </div>
                     <div class="subcat-row">
-                      <span class="subcat-name">Energia</span>
+                      <span class="subcat-name">Energia <span class="subcat-est-count">1 estab.</span></span>
                       <div class="subcat-fields">
                         <div class="method-select-wrapper">
                           <select class="subcat-method-select">
@@ -435,18 +436,6 @@
                     <button class="btn-secondary" style="font-size:12px; padding:6px 12px; margin-top:4px;">+ Adicionar subcategoria</button>
                     <div class="budget-unallocated">Não alocado: R$ 150,00 de R$ 4.000,00</div>
                   </div>
-                </div>
-                <div class="establishments-section">
-                  <h4>Estabelecimentos aprendidos</h4>
-                  <div class="establishment-item">
-                    <span class="est-name">Imobiliária Floripa</span>
-                    <span class="est-meta">12 visitas, último 01/03</span>
-                  </div>
-                  <div class="establishment-item">
-                    <span class="est-name">Celesc</span>
-                    <span class="est-meta">6 visitas, último 10/03</span>
-                  </div>
-                  <p class="est-note">Estabelecimentos são aprendidos automaticamente do uso</p>
                 </div>
                 <div class="edit-actions">
                   <button class="btn-danger">Excluir</button>
@@ -572,7 +561,7 @@
                   <label>Subcategorias</label>
                   <div class="subcategories-config">
                     <div class="subcat-row">
-                      <span class="subcat-name">Supermercado</span>
+                      <span class="subcat-name">Supermercado <span class="subcat-est-count">3 estab.</span></span>
                       <div class="subcat-fields">
                         <div class="method-select-wrapper">
                           <span class="method-brand method-brand-visa">VISA</span>
@@ -587,7 +576,7 @@
                       <button class="remove-sub-btn">&times;</button>
                     </div>
                     <div class="subcat-row">
-                      <span class="subcat-name">Restaurante trabalho</span>
+                      <span class="subcat-name">Restaurante trabalho <span class="subcat-est-count">1 estab.</span></span>
                       <div class="subcat-fields">
                         <div class="method-select-wrapper">
                           <span class="method-brand method-brand-visa">VISA</span>
@@ -618,22 +607,6 @@
                     <button class="btn-secondary" style="font-size:12px; padding:6px 12px; margin-top:4px;">+ Adicionar subcategoria</button>
                     <div class="budget-unallocated">Não alocado: R$ 500,00 de R$ 5.500,00</div>
                   </div>
-                </div>
-                <div class="establishments-section">
-                  <h4>Estabelecimentos aprendidos</h4>
-                  <div class="establishment-item">
-                    <span class="est-name">Pão de Açúcar</span>
-                    <span class="est-meta">8 visitas, último 20/03</span>
-                  </div>
-                  <div class="establishment-item">
-                    <span class="est-name">Bistek</span>
-                    <span class="est-meta">4 visitas, último 18/03</span>
-                  </div>
-                  <div class="establishment-item">
-                    <span class="est-name">McDonald's</span>
-                    <span class="est-meta">3 visitas, último 15/03</span>
-                  </div>
-                  <p class="est-note">Estabelecimentos são aprendidos automaticamente do uso</p>
                 </div>
                 <div class="edit-actions">
                   <button class="btn-danger">Excluir</button>
@@ -1113,7 +1086,7 @@
             <div class="m-list-item-left">
               <div class="m-list-item-info">
                 <div class="m-list-item-name">Supermercado</div>
-                <div class="m-list-item-meta"><span class="method-brand method-brand-visa" style="vertical-align:middle;">VISA</span> Latam Pass Visa &middot; R$ 3.000</div>
+                <div class="m-list-item-meta"><span class="method-brand method-brand-visa" style="vertical-align:middle;">VISA</span> Latam Pass Visa &middot; R$ 3.000 &middot; 3 estab.</div>
               </div>
             </div>
             <span class="m-list-item-arrow">&#x203A;</span>
@@ -1122,7 +1095,7 @@
             <div class="m-list-item-left">
               <div class="m-list-item-info">
                 <div class="m-list-item-name">Restaurante trabalho</div>
-                <div class="m-list-item-meta"><span class="method-brand method-brand-visa" style="vertical-align:middle;">VISA</span> PDA Visa &middot; R$ 1.500</div>
+                <div class="m-list-item-meta"><span class="method-brand method-brand-visa" style="vertical-align:middle;">VISA</span> PDA Visa &middot; R$ 1.500 &middot; 1 estab.</div>
               </div>
             </div>
             <span class="m-list-item-arrow">&#x203A;</span>
@@ -1141,18 +1114,6 @@
           <button class="btn-secondary" style="width:100%; justify-content:center; font-size:13px; padding:10px;">+ Adicionar subcategoria</button>
         </div>
 
-        <div class="m-section-label">Estabelecimentos aprendidos</div>
-        <div class="m-list">
-          <div class="m-est-item">
-            <span class="m-est-name">Pão de Açúcar</span>
-            <span class="m-est-meta">8 visitas</span>
-          </div>
-          <div class="m-est-item">
-            <span class="m-est-name">Bistek</span>
-            <span class="m-est-meta">4 visitas</span>
-          </div>
-        </div>
-        <p class="m-est-note">(aprendidos automaticamente)</p>
       </div>
 
       <!-- TELA 4: Subcategoria selecionada (Supermercado) -->
