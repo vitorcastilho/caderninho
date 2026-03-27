@@ -48,8 +48,9 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/client/components/ui/sheet"
-import { ChevronDown, ChevronLeft, ChevronRight, Plus, Pencil, Archive, Loader2, Clock, X, AlertTriangle, CheckCircle2, LayoutDashboard, PiggyBank, CheckSquare, TrendingUp, ShoppingCart, GraduationCap, Home, Fuel, Bus, UtensilsCrossed, Package, MoreVertical, Settings, Building2, Users, GripVertical, Trash2, Copy, CreditCard } from "lucide-react"
+import { ChevronDown, ChevronLeft, ChevronRight, Plus, Pencil, Archive, Loader2, Clock, X, AlertTriangle, CheckCircle2, LayoutDashboard, PiggyBank, CheckSquare, TrendingUp, ShoppingCart, GraduationCap, Home, Fuel, Bus, UtensilsCrossed, Package, MoreVertical, Settings, Building2, Users, GripVertical, Trash2, Copy, CreditCard, Smartphone, Tablet, Monitor, Wallet, Tags, Landmark, LogOut } from "lucide-react"
 import { toast } from "sonner"
+import { centsToDisplayValue } from "@/client/utils/currency-input"
 
 /* ─── helpers ─── */
 
@@ -94,8 +95,11 @@ export default function DesignSystemPage() {
       {/* Fundamentos */}
       <CoresSection />
       <TipografiaSection />
+      <FormatacaoSection />
       <CursoresSection />
       <EspacamentoSection />
+      <ResponsividadeSection />
+      <IconesSection />
       {/* Componentes base */}
       <BotoesSection />
       <FormulariosSection />
@@ -231,14 +235,213 @@ function TipografiaSection() {
           <p className="text-xs text-muted-foreground">Atualizado em 20/03/2026</p>
         </div>
         <div>
+          <span className="text-xs text-muted-foreground">Display — text-[28px] font-bold (valor grande)</span>
+          <p className="text-[28px] font-bold tabular-nums">R$ 12.500,00</p>
+        </div>
+        <div>
           <span className="text-xs text-muted-foreground">Label — text-sm font-medium</span>
           <Label>Nome da conta</Label>
+        </div>
+        <div>
+          <span className="text-xs text-muted-foreground">Caption — text-[11px] font-medium</span>
+          <p className="text-[11px] font-medium text-muted-foreground">Resta R$ 878,00</p>
+        </div>
+        <div>
+          <span className="text-xs text-muted-foreground">Mono — font-mono</span>
+          <p className="font-mono text-sm text-muted-foreground">ui-monospace, SFMono-Regular, Menlo, Consolas</p>
         </div>
         <div>
           <span className="text-xs text-muted-foreground">Tabular nums — tabular-nums</span>
           <p className="text-sm tabular-nums">
             R$ 1.234,56 &nbsp;|&nbsp; R$ 98.765,43 &nbsp;|&nbsp; R$ 0,01
           </p>
+        </div>
+      </div>
+    </Section>
+  )
+}
+
+/* ─── 2b. Convenções de Formatação ─── */
+
+function FormatacaoMoneyInput() {
+  const [value, setValue] = useState("")
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const raw = e.target.value.replace(/\D/g, "")
+    if (raw === "") {
+      setValue("")
+      return
+    }
+    const cents = parseInt(raw, 10)
+    setValue(`R$ ${centsToDisplayValue(cents)}`)
+  }
+
+  return (
+    <Input
+      inputMode="numeric"
+      placeholder="R$ 0,00"
+      value={value}
+      onChange={handleChange}
+      className="max-w-[200px]"
+    />
+  )
+}
+
+function FormatacaoPercentInput() {
+  const [value, setValue] = useState("")
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const raw = e.target.value.replace(/\D/g, "")
+    if (raw === "") {
+      setValue("")
+      return
+    }
+    const num = parseInt(raw, 10)
+    setValue(centsToDisplayValue(num))
+  }
+
+  return (
+    <div className="relative max-w-[200px]">
+      <Input
+        inputMode="numeric"
+        placeholder="0,00"
+        className="pr-8"
+        value={value}
+        onChange={handleChange}
+      />
+      <span className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-sm text-muted-foreground">
+        %
+      </span>
+    </div>
+  )
+}
+
+function FormatacaoSection() {
+  return (
+    <Section id="formatacao" title="Convenções de Formatação">
+      <div className="space-y-8">
+        {/* Valores monetários */}
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Valores monetários (R$)</h3>
+          <div className="space-y-3">
+            <div className="overflow-hidden rounded-[var(--radius-card)] border">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b bg-muted/50">
+                    <th className="px-4 py-2 text-left font-semibold">Contexto</th>
+                    <th className="px-4 py-2 text-right font-semibold">Formato</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b">
+                    <td className="px-4 py-2 text-muted-foreground">Valor positivo</td>
+                    <td className="px-4 py-2 text-right tabular-nums font-semibold">R$ 3.000,00</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="px-4 py-2 text-muted-foreground">Valor negativo</td>
+                    <td className="px-4 py-2 text-right tabular-nums font-semibold text-critical">-R$ 500,00</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="px-4 py-2 text-muted-foreground">Zero</td>
+                    <td className="px-4 py-2 text-right tabular-nums font-semibold">R$ 0,00</td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-2 text-muted-foreground">Valor grande</td>
+                    <td className="px-4 py-2 text-right tabular-nums font-semibold">R$ 1.234.567,89</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Sempre 2 decimais, separador de milhar com ponto, decimal com vírgula. Prefixo <code className="rounded bg-muted px-1 py-0.5 text-[11px]">R$</code> com espaço antes do valor. Negativo: sinal antes do <code className="rounded bg-muted px-1 py-0.5 text-[11px]">R$</code>. Nunca <code className="rounded bg-muted px-1 py-0.5 text-[11px]">R$ 0</code> ou <code className="rounded bg-muted px-1 py-0.5 text-[11px]">R$ -</code>.
+            </p>
+          </div>
+        </div>
+
+        {/* Percentuais */}
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Percentuais (%)</h3>
+          <div className="space-y-3">
+            <div className="overflow-hidden rounded-[var(--radius-card)] border">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b bg-muted/50">
+                    <th className="px-4 py-2 text-left font-semibold">Contexto</th>
+                    <th className="px-4 py-2 text-right font-semibold">Formato</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b">
+                    <td className="px-4 py-2 text-muted-foreground">Percentual normal</td>
+                    <td className="px-4 py-2 text-right tabular-nums font-semibold">25,03%</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="px-4 py-2 text-muted-foreground">Percentual inteiro</td>
+                    <td className="px-4 py-2 text-right tabular-nums font-semibold">100,00%</td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-2 text-muted-foreground">Zero</td>
+                    <td className="px-4 py-2 text-right tabular-nums font-semibold">0,00%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Sempre 2 decimais, vírgula como separador decimal, símbolo <code className="rounded bg-muted px-1 py-0.5 text-[11px]">%</code> como sufixo. Nunca <code className="rounded bg-muted px-1 py-0.5 text-[11px]">0%</code> ou <code className="rounded bg-muted px-1 py-0.5 text-[11px]">25%</code>.
+            </p>
+          </div>
+        </div>
+
+        {/* tabular-nums demo */}
+        <div>
+          <h3 className="mb-3 text-sm font-medium">tabular-nums (alinhamento em colunas)</h3>
+          <div className="grid max-w-sm gap-4 md:grid-cols-2">
+            <div>
+              <span className="mb-2 block text-xs text-muted-foreground">Com tabular-nums</span>
+              <div className="space-y-1 rounded-[var(--radius-card)] border p-3">
+                <p className="text-right text-sm tabular-nums">R$ 1.234,56</p>
+                <p className="text-right text-sm tabular-nums">R$ 98.765,43</p>
+                <p className="text-right text-sm tabular-nums">R$ 0,01</p>
+                <p className="text-right text-sm tabular-nums">R$ 123.456,78</p>
+              </div>
+            </div>
+            <div>
+              <span className="mb-2 block text-xs text-muted-foreground">Sem tabular-nums</span>
+              <div className="space-y-1 rounded-[var(--radius-card)] border p-3" style={{ fontVariantNumeric: "normal" }}>
+                <p className="text-right text-sm">R$ 1.234,56</p>
+                <p className="text-right text-sm">R$ 98.765,43</p>
+                <p className="text-right text-sm">R$ 0,01</p>
+                <p className="text-right text-sm">R$ 123.456,78</p>
+              </div>
+            </div>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            <code className="rounded bg-muted px-1 py-0.5 text-[11px]">font-variant-numeric: tabular-nums</code> aplicado seletivamente em colunas e comparações de valores — nunca no body inteiro. Classe Tailwind: <code className="rounded bg-muted px-1 py-0.5 text-[11px]">tabular-nums</code>.
+          </p>
+        </div>
+
+        {/* Input monetário */}
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Input monetário (estilo app bancário)</h3>
+          <div className="max-w-sm space-y-2">
+            <Label>Valor</Label>
+            <FormatacaoMoneyInput />
+            <p className="text-xs text-muted-foreground">
+              Usuário digita apenas números. Ex: digitar <code className="rounded bg-muted px-1 py-0.5 text-[11px]">1978</code> → <code className="rounded bg-muted px-1 py-0.5 text-[11px]">R$ 19,78</code>. Usar <code className="rounded bg-muted px-1 py-0.5 text-[11px]">inputMode=&quot;numeric&quot;</code>, prefixo &ldquo;R$&rdquo; no valor formatado.
+            </p>
+          </div>
+        </div>
+
+        {/* Input percentual */}
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Input percentual (estilo app bancário)</h3>
+          <div className="max-w-sm space-y-2">
+            <Label>Taxa</Label>
+            <FormatacaoPercentInput />
+            <p className="text-xs text-muted-foreground">
+              Mesmo padrão bancário. Ex: digitar <code className="rounded bg-muted px-1 py-0.5 text-[11px]">2503</code> → <code className="rounded bg-muted px-1 py-0.5 text-[11px]">25,03%</code>. Sufixo &ldquo;%&rdquo; posicionado com absolute.
+            </p>
+          </div>
         </div>
       </div>
     </Section>
@@ -432,8 +635,7 @@ function FormulariosSection() {
       return
     }
     const cents = parseInt(raw, 10)
-    const reais = (cents / 100).toFixed(2).replace(".", ",")
-    setMoneyValue(`R$ ${reais}`)
+    setMoneyValue(`R$ ${centsToDisplayValue(cents)}`)
   }
 
   return (
@@ -513,6 +715,12 @@ function FormulariosSection() {
           <p className="text-xs text-critical-text">Senha fraca</p>
         </div>
 
+        {/* Opcional */}
+        <div className="grid gap-2">
+          <Label htmlFor="demo-optional">Observações <span className="font-normal text-muted-foreground">(opcional)</span></Label>
+          <Input id="demo-optional" placeholder="Nota sobre a transação..." />
+        </div>
+
         {/* Disabled */}
         <div className="grid gap-2">
           <Label htmlFor="demo-disabled">Campo desabilitado</Label>
@@ -543,32 +751,70 @@ function FormulariosSection() {
 function BadgesSection() {
   return (
     <Section id="badges" title="Badges">
-      <div className="flex flex-wrap items-center gap-3">
-        <Badge>Default</Badge>
-        <Badge variant="secondary">Secondary</Badge>
-        <Badge variant="outline">Outline</Badge>
-        <Badge variant="destructive">Destructive</Badge>
-        <Badge variant="ghost">Ghost</Badge>
-        <Badge variant="link">Link</Badge>
-      </div>
-      <div className="mt-4">
-        <h3 className="mb-3 text-sm font-medium">Contextuais</h3>
-        <div className="flex flex-wrap items-center gap-3">
-          <Badge className="bg-positive-bg text-positive-text border-transparent">
-            Ativa
-          </Badge>
-          <Badge className="bg-attention-bg text-attention-text border-transparent">
-            Pendente
-          </Badge>
-          <Badge className="bg-alert-bg text-alert-text border-transparent">
-            Atrasada
-          </Badge>
-          <Badge className="bg-critical-bg text-critical-text border-transparent">
-            Cancelada
-          </Badge>
-          <Badge className="bg-info-bg text-info-text border-transparent">
-            Informativo
-          </Badge>
+      <div className="space-y-6">
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Variantes (CVA)</h3>
+          <div className="flex flex-wrap items-center gap-3">
+            <Badge>Default</Badge>
+            <Badge variant="secondary">Secondary</Badge>
+            <Badge variant="outline">Outline</Badge>
+            <Badge variant="destructive">Destructive</Badge>
+            <Badge variant="ghost">Ghost</Badge>
+            <Badge variant="link">Link</Badge>
+          </div>
+        </div>
+
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Semânticas (status)</h3>
+          <div className="flex flex-wrap items-center gap-3">
+            <Badge className="bg-positive-bg text-positive-text border-transparent">
+              Ativa
+            </Badge>
+            <Badge className="bg-attention-bg text-attention-text border-transparent">
+              Pendente
+            </Badge>
+            <Badge className="bg-alert-bg text-alert-text border-transparent">
+              Atrasada
+            </Badge>
+            <Badge className="bg-critical-bg text-critical-text border-transparent">
+              Cancelada
+            </Badge>
+            <Badge className="bg-info-bg text-info-text border-transparent">
+              Informativo
+            </Badge>
+          </div>
+        </div>
+
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Especificações</h3>
+          <div className="overflow-hidden rounded-[var(--radius-card)] border">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b bg-muted/50">
+                  <th className="px-4 py-2 text-left font-semibold">Propriedade</th>
+                  <th className="px-4 py-2 text-left font-semibold">Valor</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b">
+                  <td className="px-4 py-2 text-muted-foreground">Altura</td>
+                  <td className="px-4 py-2"><code className="rounded bg-muted px-1 py-0.5 text-[11px]">h-5</code> (20px)</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="px-4 py-2 text-muted-foreground">Border-radius</td>
+                  <td className="px-4 py-2"><code className="rounded bg-muted px-1 py-0.5 text-[11px]">rounded-4xl</code> (pill)</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="px-4 py-2 text-muted-foreground">Texto</td>
+                  <td className="px-4 py-2"><code className="rounded bg-muted px-1 py-0.5 text-[11px]">text-xs font-medium</code> (12px)</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-2 text-muted-foreground">Padding</td>
+                  <td className="px-4 py-2"><code className="rounded bg-muted px-1 py-0.5 text-[11px]">px-2</code> (8px horizontal)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </Section>
@@ -1013,7 +1259,7 @@ function BarrasProgressoSection() {
             <div>
               <div className="mb-1 flex justify-between text-sm">
                 <span>Ok — 45,00%</span>
-                <span className="font-semibold text-positive-text">45,00%</span>
+                <span className="font-semibold tabular-nums text-positive-text">45,00%</span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div className="h-full rounded-full bg-positive transition-all" style={{ width: "45%" }} />
@@ -1022,7 +1268,7 @@ function BarrasProgressoSection() {
             <div>
               <div className="mb-1 flex justify-between text-sm">
                 <span>Atenção — 78,00%</span>
-                <span className="font-semibold text-attention-text">78,00%</span>
+                <span className="font-semibold tabular-nums text-attention-text">78,00%</span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div className="h-full rounded-full bg-attention transition-all" style={{ width: "78%" }} />
@@ -1031,7 +1277,7 @@ function BarrasProgressoSection() {
             <div>
               <div className="mb-1 flex justify-between text-sm">
                 <span>Alerta — 92,00%</span>
-                <span className="font-semibold text-alert-text">92,00%</span>
+                <span className="font-semibold tabular-nums text-alert-text">92,00%</span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div className="h-full rounded-full bg-alert transition-all" style={{ width: "92%" }} />
@@ -1040,7 +1286,7 @@ function BarrasProgressoSection() {
             <div>
               <div className="mb-1 flex justify-between text-sm">
                 <span>Crítico — 110,00%</span>
-                <span className="font-semibold text-critical-text">110,00%</span>
+                <span className="font-semibold tabular-nums text-critical-text">110,00%</span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div className="h-full rounded-full bg-critical transition-all" style={{ width: "100%" }} />
@@ -1049,7 +1295,7 @@ function BarrasProgressoSection() {
             <div>
               <div className="mb-1 flex justify-between text-sm">
                 <span>Fixo — 100,00%</span>
-                <span className="font-semibold text-primary">100,00%</span>
+                <span className="font-semibold tabular-nums text-primary">100,00%</span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div className="h-full rounded-full bg-primary transition-all" style={{ width: "100%" }} />
@@ -1095,7 +1341,7 @@ function BarrasProgressoSection() {
         </div>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
-        Cores: positivo (verde &lt;75%), atenção (amarelo 75-85%), alerta (laranja 85-95%), crítico (vermelho &gt;95%), fixo (indigo 100% fixo). Barras sempre arredondadas.
+        Container: <code className="rounded bg-muted px-1 py-0.5 text-[11px]">h-1.5 w-full rounded-full bg-muted</code>. Label: <code className="rounded bg-muted px-1 py-0.5 text-[11px]">text-sm font-semibold tabular-nums</code> + cor semântica. Faixas: positivo (verde &lt;70%), atenção (amarelo 70-85%), alerta (laranja 85-100%), crítico (vermelho &gt;100%), fixo (indigo 100% fixo).
       </p>
     </Section>
   )
@@ -2806,10 +3052,12 @@ function SummaryCardsSection() {
 function EmptyStatesSection() {
   return (
     <Section id="empty-states" title="Empty States">
-      <div className="max-w-md">
+      <div className="max-w-md space-y-6">
         <div className="flex flex-col items-center gap-3 rounded-[var(--radius-card)] border border-dashed border-border px-6 py-8 text-center">
+          <Tags className="size-10 text-muted-foreground" />
+          <p className="text-sm font-medium">Nenhuma categoria ainda</p>
           <p className="text-sm text-muted-foreground">
-            Nenhuma categoria ainda
+            Crie categorias para organizar seus gastos e receitas.
           </p>
           <Button variant="secondary" size="sm">
             <Plus data-icon="inline-start" />
@@ -2819,6 +3067,9 @@ function EmptyStatesSection() {
             Ex.: Moradia, Alimentação, Transporte...
           </p>
         </div>
+        <p className="text-xs text-muted-foreground">
+          Padrão: <code className="rounded bg-muted px-1 py-0.5 text-[11px]">border border-dashed border-border rounded-xl</code> + ícone Lucide + título + descrição + CTA (<code className="rounded bg-muted px-1 py-0.5 text-[11px]">Button variant=&quot;secondary&quot; size=&quot;sm&quot;</code>).
+        </p>
       </div>
     </Section>
   )
@@ -3395,6 +3646,247 @@ function EspacamentoSection() {
   )
 }
 
+/* ─── Responsividade / Breakpoints ─── */
+
+function ResponsividadeSection() {
+  return (
+    <Section id="responsividade" title="Responsividade / Breakpoints">
+      <div className="space-y-6">
+        {/* Breakpoints */}
+        <div className="grid gap-4 md:grid-cols-3">
+          <Card>
+            <CardContent className="flex flex-col items-center gap-3 pt-4 text-center">
+              <Smartphone className="size-8 text-muted-foreground" />
+              <div>
+                <p className="text-sm font-semibold">Mobile</p>
+                <p className="text-xs text-muted-foreground">&lt; 768px</p>
+              </div>
+              <div className="w-full space-y-1.5 text-left text-xs text-muted-foreground">
+                <p>Bottom nav fixa (56px)</p>
+                <p>Layout vertical (stack)</p>
+                <p>Cards full-width</p>
+                <p>Sheets full-screen</p>
+                <p>Touch targets ≥ 44×44px</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="flex flex-col items-center gap-3 pt-4 text-center">
+              <Tablet className="size-8 text-muted-foreground" />
+              <div>
+                <p className="text-sm font-semibold">Tablet</p>
+                <p className="text-xs text-muted-foreground">768px – 1023px</p>
+              </div>
+              <div className="w-full space-y-1.5 text-left text-xs text-muted-foreground">
+                <p>Sidebar recolhida (56px)</p>
+                <p>Grid 2 colunas</p>
+                <p>Sheets laterais</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="flex flex-col items-center gap-3 pt-4 text-center">
+              <Monitor className="size-8 text-muted-foreground" />
+              <div>
+                <p className="text-sm font-semibold">Desktop</p>
+                <p className="text-xs text-muted-foreground">≥ 1024px</p>
+              </div>
+              <div className="w-full space-y-1.5 text-left text-xs text-muted-foreground">
+                <p>Sidebar expandida (220px)</p>
+                <p>Grid multi-coluna</p>
+                <p>Layout horizontal</p>
+                <p>Dialogs centralizados</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Layout patterns */}
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Padrões de layout</h3>
+          <div className="overflow-hidden rounded-[var(--radius-card)] border">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b bg-muted/50">
+                  <th className="px-4 py-2 text-left font-semibold">Elemento</th>
+                  <th className="px-4 py-2 text-left font-semibold">Mobile</th>
+                  <th className="px-4 py-2 text-left font-semibold">Desktop</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b">
+                  <td className="px-4 py-2 font-medium">Navegação</td>
+                  <td className="px-4 py-2 text-muted-foreground">Bottom nav (56px)</td>
+                  <td className="px-4 py-2 text-muted-foreground">Sidebar (220px)</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="px-4 py-2 font-medium">Grid</td>
+                  <td className="px-4 py-2 text-muted-foreground">1 coluna</td>
+                  <td className="px-4 py-2 text-muted-foreground">2–3 colunas</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="px-4 py-2 font-medium">Modais</td>
+                  <td className="px-4 py-2 text-muted-foreground">Sheet bottom full-screen</td>
+                  <td className="px-4 py-2 text-muted-foreground">Dialog centralizado / Sheet lateral</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-2 font-medium">Touch targets</td>
+                  <td className="px-4 py-2 text-muted-foreground">Mínimo 44×44px</td>
+                  <td className="px-4 py-2 text-muted-foreground">Padrão (sem restrição extra)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <p className="text-xs text-muted-foreground">
+          Cada tela canônica tem versão mobile E desktop separadas. Breakpoints via Tailwind: <code className="rounded bg-muted px-1 py-0.5 text-[11px]">md:</code> (768px) e <code className="rounded bg-muted px-1 py-0.5 text-[11px]">lg:</code> (1024px).
+        </p>
+      </div>
+    </Section>
+  )
+}
+
+/* ─── Ícones ─── */
+
+function IconGrid({ items }: { items: { icon: React.ComponentType<{ className?: string }>; name: string; use: string }[] }) {
+  return (
+    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+      {items.map(({ icon: Icon, name, use }) => (
+        <div key={name} className="flex items-center gap-3 rounded-md border px-3 py-2">
+          <Icon className="size-5 shrink-0 text-muted-foreground" />
+          <div className="min-w-0">
+            <p className="truncate text-xs font-medium">{name}</p>
+            <p className="truncate text-[11px] text-muted-foreground">{use}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function IconesSection() {
+  const navIcons = [
+    { icon: LayoutDashboard, name: "LayoutDashboard", use: "Dashboard" },
+    { icon: PiggyBank, name: "PiggyBank", use: "Orçamentos" },
+    { icon: CheckSquare, name: "CheckSquare", use: "Checklist" },
+    { icon: TrendingUp, name: "TrendingUp", use: "Projeção" },
+  ]
+  const configIcons = [
+    { icon: Building2, name: "Building2", use: "Contas" },
+    { icon: CreditCard, name: "CreditCard", use: "Cartões" },
+    { icon: Landmark, name: "Landmark", use: "Investimentos" },
+    { icon: Wallet, name: "Wallet", use: "Receitas" },
+    { icon: Tags, name: "Tags", use: "Categorias" },
+  ]
+  const actionIcons = [
+    { icon: Plus, name: "Plus", use: "Adicionar / FAB" },
+    { icon: Pencil, name: "Pencil", use: "Editar" },
+    { icon: Trash2, name: "Trash2", use: "Excluir" },
+    { icon: Archive, name: "Archive", use: "Arquivar" },
+    { icon: Copy, name: "Copy", use: "Duplicar" },
+    { icon: LogOut, name: "LogOut", use: "Sair" },
+    { icon: MoreVertical, name: "MoreVertical", use: "Menu de ações" },
+    { icon: Settings, name: "Settings", use: "Configurações" },
+  ]
+  const feedbackIcons = [
+    { icon: CheckCircle2, name: "CheckCircle2", use: "Sucesso" },
+    { icon: AlertTriangle, name: "AlertTriangle", use: "Erro / Warning" },
+    { icon: Clock, name: "Clock", use: "Informativo / Pendente" },
+    { icon: Loader2, name: "Loader2", use: "Loading (animate-spin)" },
+  ]
+
+  return (
+    <Section id="icones" title="Ícones">
+      <div className="space-y-6">
+        {/* Specs */}
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Especificações</h3>
+          <div className="overflow-hidden rounded-[var(--radius-card)] border">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b bg-muted/50">
+                  <th className="px-4 py-2 text-left font-semibold">Aspecto</th>
+                  <th className="px-4 py-2 text-left font-semibold">Regra</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b">
+                  <td className="px-4 py-2 font-medium">Biblioteca</td>
+                  <td className="px-4 py-2 text-muted-foreground">Lucide React (exclusivamente)</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="px-4 py-2 font-medium">Tamanho inline</td>
+                  <td className="px-4 py-2 text-muted-foreground"><code className="rounded bg-muted px-1 py-0.5 text-[11px]">size-4</code> (16px)</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="px-4 py-2 font-medium">Tamanho nav</td>
+                  <td className="px-4 py-2 text-muted-foreground"><code className="rounded bg-muted px-1 py-0.5 text-[11px]">size-5</code> (20px)</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="px-4 py-2 font-medium">Stroke width</td>
+                  <td className="px-4 py-2 text-muted-foreground">1.5px (padrão Lucide)</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-2 font-medium">Cores</td>
+                  <td className="px-4 py-2 text-muted-foreground">Semânticas via Tailwind (<code className="rounded bg-muted px-1 py-0.5 text-[11px]">text-primary</code>, <code className="rounded bg-muted px-1 py-0.5 text-[11px]">text-muted-foreground</code>, etc.)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Tamanhos visuais */}
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Tamanhos</h3>
+          <div className="flex items-end gap-6">
+            <div className="flex flex-col items-center gap-1.5">
+              <LayoutDashboard className="size-4 text-muted-foreground" />
+              <span className="text-[11px] text-muted-foreground">size-4 (16px)</span>
+            </div>
+            <div className="flex flex-col items-center gap-1.5">
+              <LayoutDashboard className="size-5 text-muted-foreground" />
+              <span className="text-[11px] text-muted-foreground">size-5 (20px)</span>
+            </div>
+            <div className="flex flex-col items-center gap-1.5">
+              <LayoutDashboard className="size-6 text-muted-foreground" />
+              <span className="text-[11px] text-muted-foreground">size-6 (24px)</span>
+            </div>
+            <div className="flex flex-col items-center gap-1.5">
+              <LayoutDashboard className="size-8 text-muted-foreground" />
+              <span className="text-[11px] text-muted-foreground">size-8 (32px)</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Catálogo — Navegação */}
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Navegação (sidebar + bottom nav)</h3>
+          <IconGrid items={navIcons} />
+        </div>
+
+        {/* Catálogo — Configurações */}
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Configurações</h3>
+          <IconGrid items={configIcons} />
+        </div>
+
+        {/* Catálogo — Ações */}
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Ações comuns</h3>
+          <IconGrid items={actionIcons} />
+        </div>
+
+        {/* Catálogo — Feedback */}
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Feedback / Status</h3>
+          <IconGrid items={feedbackIcons} />
+        </div>
+      </div>
+    </Section>
+  )
+}
+
 /* ─── 14. Skeleton ─── */
 
 function SkeletonSection() {
@@ -3441,7 +3933,24 @@ function SkeletonSection() {
             ))}
           </div>
         </div>
+
+        <div>
+          <h3 className="mb-3 text-sm font-medium">Spinner (ações pontuais)</h3>
+          <div className="flex items-center gap-6">
+            <div className="flex flex-col items-center gap-2">
+              <Loader2 className="size-5 animate-spin text-primary" />
+              <span className="text-[11px] text-muted-foreground">Salvando...</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Loader2 className="size-5 animate-spin text-muted-foreground" />
+              <span className="text-[11px] text-muted-foreground">Calculando...</span>
+            </div>
+          </div>
+        </div>
       </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Skeleton: <code className="rounded bg-muted px-1 py-0.5 text-[11px]">animate-pulse bg-muted</code> — replica layout real com placeholders. Transição skeleton → conteúdo: <code className="rounded bg-muted px-1 py-0.5 text-[11px]">fade-in 200ms ease</code>. Spinner: <code className="rounded bg-muted px-1 py-0.5 text-[11px]">Loader2 animate-spin</code> para ações pontuais (salvar, calcular). Transições &lt; 300ms não mostram loading (optimistic UI).
+      </p>
     </Section>
   )
 }
