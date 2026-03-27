@@ -361,6 +361,8 @@ N/A — sem erros de build/runtime (story de protótipos HTML, sem código de pr
 
 - [ ] [AI-Review][MEDIUM] Atualizar File List da story com proto-14-categorias.html e proto-17-configuracoes.html (escopo expandido durante implementação)
 - [ ] [AI-Review][MEDIUM] Proto-08: Adicionar indicador de contagem de subcategorias nas categorias do onboarding (ex: "3 subcategorias"). AC 2 exige mas não foi implementado.
+- [ ] [AI-Review][LOW] Proto-08: Não é claro como editar classificações existentes no onboarding — só tem botão remover (×), mas AC 2 pede "nome editável, emoji editável, orçamento editável". Considerar adicionar botão de edição ou tornar campos inline editáveis.
+- [ ] [AI-Review][LOW] Proto-15: Percentuais de classificação têm variação de arredondamento (ex: 24,65% vs AC esperado 24,69%). Diferença cosmética, não funcional.
 
 ### File List
 
