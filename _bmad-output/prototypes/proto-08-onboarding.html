@@ -298,6 +298,213 @@
       border-style: solid;
     }
 
+    /* ── Form Action Buttons (Salvar / Cancelar) ── */
+    .add-form-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .btn-form-save {
+      flex: 1;
+      padding: 8px 16px;
+      background: var(--primary);
+      color: #FFFFFF;
+      border: none;
+      border-radius: var(--radius-button);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .btn-form-save:hover {
+      background: var(--primary-hover);
+    }
+    .btn-form-cancel {
+      padding: 8px 16px;
+      background: transparent;
+      color: var(--text-secondary);
+      border: none;
+      border-radius: var(--radius-button);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color var(--transition);
+    }
+    .btn-form-cancel:hover {
+      color: var(--text-primary);
+    }
+
+    /* ── Emoji Picker ── */
+    .emoji-picker-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+    .emoji-picker-trigger {
+      width: 44px;
+      height: 36px;
+      font-size: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      position: relative;
+    }
+    .emoji-picker-trigger:hover {
+      border-color: var(--primary);
+    }
+    .emoji-picker-trigger::after {
+      content: '▾';
+      position: absolute;
+      right: 2px;
+      bottom: 0;
+      font-size: 8px;
+      color: var(--text-tertiary);
+    }
+    .emoji-picker-trigger-sm {
+      width: 36px;
+      height: 32px;
+      font-size: 16px;
+    }
+    .emoji-picker-panel {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      z-index: 1000;
+      width: 264px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+      overflow: hidden;
+      display: none;
+    }
+    .emoji-picker-panel.open {
+      display: block;
+    }
+    .emoji-picker-search {
+      width: 100%;
+      padding: 8px 12px;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--text-primary);
+      outline: none;
+      background: var(--bg);
+      box-sizing: border-box;
+    }
+    .emoji-picker-search::placeholder {
+      color: var(--text-tertiary);
+    }
+    .emoji-picker-tabs {
+      display: flex;
+      gap: 0;
+      padding: 4px 6px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      overflow-x: auto;
+    }
+    .emoji-tab {
+      padding: 4px 5px;
+      font-size: 15px;
+      background: none;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      opacity: 0.45;
+      transition: opacity var(--transition), background var(--transition);
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .emoji-tab:hover {
+      opacity: 0.8;
+      background: var(--primary-light);
+    }
+    .emoji-tab.active {
+      opacity: 1;
+      background: var(--primary-light);
+    }
+    .emoji-picker-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+      padding: 8px;
+      max-height: 160px;
+      overflow-y: auto;
+    }
+    .emoji-option {
+      font-size: 20px;
+      padding: 3px;
+      text-align: center;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background var(--transition);
+      line-height: 1.3;
+    }
+    .emoji-option:hover {
+      background: var(--primary-light);
+    }
+
+    /* ── New Categories List (dentro do form de classificação) ── */
+    .new-categories-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .new-category-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+    }
+    .new-category-row .form-input-sm {
+      margin-bottom: 0;
+    }
+    .btn-add-category {
+      padding: 8px;
+      background: transparent;
+      color: var(--primary);
+      border: 1px dashed var(--primary);
+      border-radius: var(--radius-input);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .btn-add-category:hover {
+      background: var(--primary-light);
+    }
+    .remove-cat-btn {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      color: var(--text-tertiary);
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      flex-shrink: 0;
+      transition: color var(--transition), background var(--transition);
+    }
+    .remove-cat-btn:hover {
+      color: #EF4444;
+      background: #FEF2F2;
+    }
+
     /* ── Form Elements ── */
     .form-group {
       margin-bottom: 12px;
@@ -590,6 +797,11 @@
       border-color: var(--primary);
       box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.12);
     }
+    .category-subcategories {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      padding-left: 32px;
+    }
     .category-budget-suffix {
       font-size: 11px;
       color: var(--text-tertiary);
@@ -609,12 +821,15 @@
 
     /* ── Classification Groups ── */
     .classification-group {
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
     .classification-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
       font-size: 10px;
       font-weight: 600;
       text-transform: uppercase;
@@ -623,6 +838,53 @@
       padding: 8px 0 4px;
       border-bottom: 1px solid var(--border);
       margin-bottom: 8px;
+    }
+    .classification-header-emoji {
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .classification-header-name {
+      flex: 1;
+    }
+    .classification-header-budget {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      text-transform: none;
+      letter-spacing: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .classification-header-remove {
+      width: 20px;
+      height: 20px;
+      border: none;
+      background: transparent;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      font-size: 14px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .classification-header-remove:hover {
+      color: #EF4444;
+      background: #FEF2F2;
+    }
+    .category-subcat-count {
+      font-size: 10px;
+      color: var(--text-tertiary);
+      padding-left: 32px;
+    }
+
+    .onboarding-hint {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      text-align: center;
+      padding: 8px 12px;
+      line-height: 1.5;
+      font-style: italic;
     }
 
     .desktop-classification-group {
@@ -1152,6 +1414,11 @@
       font-size: 12px;
       color: var(--text-tertiary);
     }
+    .desktop-category-subcategories {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      margin-top: 4px;
+    }
     .desktop-category-payment-row {
       display: flex;
       align-items: center;
@@ -1422,6 +1689,10 @@
               <label class="form-label">Saldo atual</label>
               <input type="text" class="form-input form-input-sm" placeholder="R$ 0,00" />
             </div>
+            <div class="add-form-actions">
+              <button class="btn-form-save">Salvar</button>
+              <button class="btn-form-cancel">Cancelar</button>
+            </div>
           </div>
 
           <button class="btn-add">+ Adicionar conta</button>
@@ -1531,6 +1802,10 @@
                 <input type="number" class="form-input form-input-sm" placeholder="Ex: 15" min="1" max="31" />
               </div>
             </div>
+            <div class="add-form-actions">
+              <button class="btn-form-save">Salvar</button>
+              <button class="btn-form-cancel">Cancelar</button>
+            </div>
           </div>
 
           <button class="btn-add">+ Adicionar cartão</button>
@@ -1559,121 +1834,129 @@
       <div class="phone-frame">
         <div class="phone-notch"></div>
         <div class="phone-content">
-          <div class="step-title">Organize seus gastos</div>
-          <div class="step-subtitle">Sugerimos categorias com base nos mais comuns. Ajuste os valores.</div>
+          <div class="step-title">Organize seus gastos em classificações</div>
+          <div class="step-subtitle">Configure suas classificações e categorias. Você pode personalizar tudo depois.</div>
 
           <div class="category-list">
-            <!-- Grupo: Essenciais -->
+            <!-- 📊 Essenciais fixos -->
             <div class="classification-group">
-              <div class="classification-header">Essenciais</div>
-
-              <div class="category-item">
-                <div class="category-item-top">
-                  <span class="category-emoji">&#128722;</span>
-                  <span class="category-name">Supermercado</span>
-                  <div class="category-budget">
-                    <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="3.000,00" />
-                    <span class="category-budget-suffix">/ mês</span>
-                  </div>
-                </div>
-                <div class="category-payment">
-                  <span class="category-payment-label">Método:</span>
-                  <span class="method-select-wrapper">
-                    <span class="method-brand method-brand-visa">VISA</span>
-                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
-                      <option>Selecionar...</option>
-                      <option selected>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option>Itaú Débito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
-                  </span>
-                </div>
+              <div class="classification-header">
+                <span class="classification-header-emoji">📊</span>
+                <span class="classification-header-name">Essenciais fixos</span>
+                <span class="classification-header-budget">R$ 6.000</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
               </div>
 
               <div class="category-item">
                 <div class="category-item-top">
-                  <span class="category-emoji">&#127968;</span>
+                  <span class="category-emoji">🏠</span>
                   <span class="category-name">Moradia</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="2.200,00" />
+                    <input type="text" class="category-budget-input" value="4.000,00" />
                     <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
-                <div class="category-payment">
-                  <span class="category-payment-label">Método:</span>
-                  <span class="method-select-wrapper">
-                    <span class="bank-badge bank-badge-itau">Itaú</span>
-                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
-                      <option>Selecionar...</option>
-                      <option>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option selected>Itaú Débito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
-                  </span>
-                </div>
+                <span class="category-subcategories">4 subcategorias</span>
               </div>
 
               <div class="category-item">
                 <div class="category-item-top">
-                  <span class="category-emoji">&#9981;</span>
-                  <span class="category-name">Gasolina</span>
+                  <span class="category-emoji">📱</span>
+                  <span class="category-name">Assinaturas</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="600,00" />
+                    <input type="text" class="category-budget-input" value="200,00" />
                     <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
-                <div class="category-payment">
-                  <span class="category-payment-label">Método:</span>
-                  <span class="method-select-wrapper">
-                    <span class="bank-badge bank-badge-itau">Itaú</span>
-                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
-                      <option>Selecionar...</option>
-                      <option>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option selected>Itaú Débito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
-                  </span>
-                </div>
+                <span class="category-subcategories">2 subcategorias</span>
+              </div>
+            </div>
+
+            <!-- 📊 Essenciais variáveis -->
+            <div class="classification-group">
+              <div class="classification-header">
+                <span class="classification-header-emoji">📊</span>
+                <span class="classification-header-name">Essenciais variáveis</span>
+                <span class="classification-header-budget">R$ 8.000</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
               </div>
 
               <div class="category-item">
                 <div class="category-item-top">
-                  <span class="category-emoji">&#128241;</span>
-                  <span class="category-name">Internet/Tel</span>
+                  <span class="category-emoji">🍽</span>
+                  <span class="category-name">Alimentação</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="158,00" />
+                    <input type="text" class="category-budget-input" value="5.500,00" />
                     <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
-                <div class="category-payment">
-                  <span class="category-payment-label">Método:</span>
-                  <span class="method-select-wrapper">
-                    <span class="method-brand method-brand-visa">VISA</span>
-                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
-                      <option>Selecionar...</option>
-                      <option selected>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option>Itaú Débito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
-                  </span>
-                </div>
+                <span class="category-subcategories">3 subcategorias</span>
               </div>
 
               <div class="category-item">
                 <div class="category-item-top">
-                  <span class="category-emoji">&#127891;</span>
+                  <span class="category-emoji">🚗</span>
+                  <span class="category-name">Transporte</span>
+                  <div class="category-budget">
+                    <span class="category-budget-prefix">R$</span>
+                    <input type="text" class="category-budget-input" value="1.500,00" />
+                    <span class="category-budget-suffix">/ mês</span>
+                  </div>
+                </div>
+                <span class="category-subcategories">4 subcategorias</span>
+              </div>
+            </div>
+
+            <!-- 📊 Qualidade de vida -->
+            <div class="classification-group">
+              <div class="classification-header">
+                <span class="classification-header-emoji">📊</span>
+                <span class="classification-header-name">Qualidade de vida</span>
+                <span class="classification-header-budget">R$ 4.000</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
+              </div>
+
+              <div class="category-item">
+                <div class="category-item-top">
+                  <span class="category-emoji">🍔</span>
+                  <span class="category-name">Restaurante</span>
+                  <div class="category-budget">
+                    <span class="category-budget-prefix">R$</span>
+                    <input type="text" class="category-budget-input" value="2.000,00" />
+                    <span class="category-budget-suffix">/ mês</span>
+                  </div>
+                </div>
+                <span class="category-subcategories">3 subcategorias</span>
+              </div>
+
+              <div class="category-item">
+                <div class="category-item-top">
+                  <span class="category-emoji">✈️</span>
+                  <span class="category-name">Viagem</span>
+                  <div class="category-budget">
+                    <span class="category-budget-prefix">R$</span>
+                    <input type="text" class="category-budget-input" value="2.000,00" />
+                    <span class="category-budget-suffix">/ mês</span>
+                  </div>
+                </div>
+                <span class="category-subcategories">4 subcategorias</span>
+              </div>
+            </div>
+
+            <!-- 📊 Investimentos -->
+            <div class="classification-group">
+              <div class="classification-header">
+                <span class="classification-header-emoji">📊</span>
+                <span class="classification-header-name">Investimentos</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
+              </div>
+
+              <div class="category-item">
+                <div class="category-item-top">
+                  <span class="category-emoji">📈</span>
                   <span class="category-name">Educação</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
@@ -1681,56 +1964,80 @@
                     <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
-                <div class="category-payment">
-                  <span class="category-payment-label">Método:</span>
-                  <span class="method-select-wrapper">
-                    <span class="method-brand method-brand-visa">VISA</span>
-                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
-                      <option>Selecionar...</option>
-                      <option selected>Latam Pass Visa</option>
-                      <option>Nubank Master</option>
-                      <option>Itaú Débito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
-                  </span>
-                </div>
+                <span class="category-subcategories">2 subcategorias</span>
               </div>
             </div>
 
-            <!-- Grupo: Qualidade de Vida -->
+            <!-- 📊 Proteção -->
             <div class="classification-group">
-              <div class="classification-header">Qualidade de Vida</div>
+              <div class="classification-header">
+                <span class="classification-header-emoji">📊</span>
+                <span class="classification-header-name">Proteção</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
+              </div>
 
               <div class="category-item">
                 <div class="category-item-top">
-                  <span class="category-emoji">&#127869;</span>
-                  <span class="category-name">Restaurante</span>
+                  <span class="category-emoji">🛡</span>
+                  <span class="category-name">Seguros</span>
                   <div class="category-budget">
                     <span class="category-budget-prefix">R$</span>
-                    <input type="text" class="category-budget-input" value="2.500,00" />
+                    <input type="text" class="category-budget-input" value="500,00" />
                     <span class="category-budget-suffix">/ mês</span>
                   </div>
                 </div>
-                <div class="category-payment">
-                  <span class="category-payment-label">Método:</span>
-                  <span class="method-select-wrapper">
-                    <span class="method-brand method-brand-master"></span>
-                    <select class="form-select" style="font-size: 11px; padding: 4px 24px 4px 8px; flex: 1;">
-                      <option>Selecionar...</option>
-                      <option selected>Nubank Master</option>
-                      <option>Latam Pass Visa</option>
-                      <option>Itaú Débito</option>
-                      <option>PIX</option>
-                      <option>Dinheiro</option>
-                    </select>
-                  </span>
-                </div>
+                <span class="category-subcategories">2 subcategorias</span>
               </div>
+            </div>
+
+            <!-- 📊 Imprevistos -->
+            <div class="classification-group">
+              <div class="classification-header">
+                <span class="classification-header-emoji">📊</span>
+                <span class="classification-header-name">Imprevistos</span>
+                <span class="classification-header-budget">R$ 1.000</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
+              </div>
+              <div style="font-size: 11px; color: var(--text-tertiary); padding: 4px 0 8px;">Sem categorias pré-definidas</div>
             </div>
           </div>
 
-          <button class="btn-add">+ Adicionar categoria</button>
+          <!-- Add form (classificação) -->
+          <div class="add-form" style="display: none;">
+            <div class="add-form-title">Nova classificação</div>
+            <div class="form-row" style="align-items: flex-end;">
+              <div class="form-group" style="flex: 0 0 56px;">
+                <label class="form-label">Emoji</label>
+                <div class="emoji-picker-wrapper">
+                  <button type="button" class="emoji-picker-trigger" data-emoji="📊">📊</button>
+                </div>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label class="form-label">Nome</label>
+                <input type="text" class="form-input form-input-sm" placeholder="Ex: Lazer" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Orçamento mensal</label>
+              <input type="text" class="form-input form-input-sm" placeholder="R$ 0,00" />
+            </div>
+            <div class="form-group" style="margin-top: 4px;">
+              <label class="form-label">Categorias</label>
+              <div class="new-categories-list">
+                <button type="button" class="btn-add-category">+ Adicionar categoria</button>
+              </div>
+            </div>
+            <div class="add-form-actions">
+              <button class="btn-form-save">Salvar</button>
+              <button class="btn-form-cancel">Cancelar</button>
+            </div>
+          </div>
+
+          <button class="btn-add">+ Adicionar classificação</button>
+
+          <div class="onboarding-hint">
+            Subcategorias e estabelecimentos podem ser configurados depois em <strong>Categorias</strong>
+          </div>
 
           <div class="bottom-actions">
             <div class="progress-dots">
@@ -1930,6 +2237,10 @@
                   <input type="text" class="form-input form-input-sm" placeholder="R$ 0,00" />
                 </div>
               </div>
+              <div class="add-form-actions">
+                <button class="btn-form-save">Salvar</button>
+                <button class="btn-form-cancel">Cancelar</button>
+              </div>
             </div>
 
             <button class="btn-add" style="max-width: 280px;">+ Adicionar conta</button>
@@ -2054,6 +2365,10 @@
                   <input type="number" class="form-input form-input-sm" placeholder="Ex: 15" min="1" max="31" />
                 </div>
               </div>
+              <div class="add-form-actions">
+                <button class="btn-form-save">Salvar</button>
+                <button class="btn-form-cancel">Cancelar</button>
+              </div>
             </div>
 
             <button class="btn-add" style="max-width: 280px;">+ Adicionar cartão</button>
@@ -2097,120 +2412,119 @@
         </div>
         <div class="desktop-content">
           <div class="desktop-card">
-            <div class="desktop-step-title">Organize seus gastos</div>
-            <div class="desktop-step-subtitle">Sugerimos categorias com base nos mais comuns. Ajuste os valores conforme sua realidade.</div>
+            <div class="desktop-step-title">Organize seus gastos em classificações</div>
+            <div class="desktop-step-subtitle">Configure suas classificações e categorias. Você pode personalizar tudo depois.</div>
 
             <div class="desktop-category-grid">
 
-              <!-- Grupo: Essenciais -->
-              <div class="desktop-classification-header">Essenciais</div>
-
-              <div class="desktop-category-item">
-                <span class="desktop-category-emoji">&#128722;</span>
-                <div class="desktop-category-info">
-                  <div class="desktop-category-name">Supermercado</div>
-                  <div class="desktop-category-budget-row">
-                    <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="3.000,00" />
-                    <span class="desktop-category-budget-suffix">/ mês</span>
-                  </div>
-                  <div class="desktop-category-payment-row">
-                    <span class="desktop-category-payment-label">Método:</span>
-                    <span class="method-select-wrapper">
-                      <span class="method-brand method-brand-visa">VISA</span>
-                      <select class="desktop-select">
-                        <option>Selecionar...</option>
-                        <option selected>Latam Pass Visa</option>
-                        <option>Nubank Master</option>
-                        <option>Itaú Débito</option>
-                        <option>PIX</option>
-                        <option>Dinheiro</option>
-                      </select>
-                    </span>
-                  </div>
-                </div>
+              <!-- 📊 Essenciais fixos -->
+              <div class="desktop-classification-header" style="display: flex; align-items: center; gap: 8px;">
+                <span>📊 Essenciais fixos</span>
+                <span style="margin-left: auto; font-size: 12px; color: var(--text-secondary); text-transform: none; letter-spacing: 0; font-variant-numeric: tabular-nums;">R$ 6.000</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
               </div>
 
               <div class="desktop-category-item">
-                <span class="desktop-category-emoji">&#127968;</span>
+                <span class="desktop-category-emoji">🏠</span>
                 <div class="desktop-category-info">
                   <div class="desktop-category-name">Moradia</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="2.200,00" />
+                    <input type="text" class="desktop-budget-input" value="4.000,00" />
                     <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
-                  <div class="desktop-category-payment-row">
-                    <span class="desktop-category-payment-label">Método:</span>
-                    <span class="method-select-wrapper">
-                      <span class="bank-badge bank-badge-itau">Itaú</span>
-                      <select class="desktop-select">
-                        <option>Selecionar...</option>
-                        <option>Latam Pass Visa</option>
-                        <option>Nubank Master</option>
-                        <option selected>Itaú Débito</option>
-                        <option>PIX</option>
-                        <option>Dinheiro</option>
-                      </select>
-                    </span>
-                  </div>
+                  <div class="desktop-category-subcategories">4 subcategorias</div>
                 </div>
               </div>
 
               <div class="desktop-category-item">
-                <span class="desktop-category-emoji">&#9981;</span>
+                <span class="desktop-category-emoji">📱</span>
                 <div class="desktop-category-info">
-                  <div class="desktop-category-name">Gasolina</div>
+                  <div class="desktop-category-name">Assinaturas</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="600,00" />
+                    <input type="text" class="desktop-budget-input" value="200,00" />
                     <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
-                  <div class="desktop-category-payment-row">
-                    <span class="desktop-category-payment-label">Método:</span>
-                    <span class="method-select-wrapper">
-                      <span class="bank-badge bank-badge-itau">Itaú</span>
-                      <select class="desktop-select">
-                        <option>Selecionar...</option>
-                        <option>Latam Pass Visa</option>
-                        <option>Nubank Master</option>
-                        <option selected>Itaú Débito</option>
-                        <option>PIX</option>
-                        <option>Dinheiro</option>
-                      </select>
-                    </span>
-                  </div>
+                  <div class="desktop-category-subcategories">2 subcategorias</div>
                 </div>
               </div>
 
+              <!-- 📊 Essenciais variáveis -->
+              <div class="desktop-classification-header" style="display: flex; align-items: center; gap: 8px;">
+                <span>📊 Essenciais variáveis</span>
+                <span style="margin-left: auto; font-size: 12px; color: var(--text-secondary); text-transform: none; letter-spacing: 0; font-variant-numeric: tabular-nums;">R$ 8.000</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
+              </div>
+
               <div class="desktop-category-item">
-                <span class="desktop-category-emoji">&#128241;</span>
+                <span class="desktop-category-emoji">🍽</span>
                 <div class="desktop-category-info">
-                  <div class="desktop-category-name">Internet/Tel</div>
+                  <div class="desktop-category-name">Alimentação</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="158,00" />
+                    <input type="text" class="desktop-budget-input" value="5.500,00" />
                     <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
-                  <div class="desktop-category-payment-row">
-                    <span class="desktop-category-payment-label">Método:</span>
-                    <span class="method-select-wrapper">
-                      <span class="method-brand method-brand-visa">VISA</span>
-                      <select class="desktop-select">
-                        <option>Selecionar...</option>
-                        <option selected>Latam Pass Visa</option>
-                        <option>Nubank Master</option>
-                        <option>Itaú Débito</option>
-                        <option>PIX</option>
-                        <option>Dinheiro</option>
-                      </select>
-                    </span>
-                  </div>
+                  <div class="desktop-category-subcategories">3 subcategorias</div>
                 </div>
               </div>
 
               <div class="desktop-category-item">
-                <span class="desktop-category-emoji">&#127891;</span>
+                <span class="desktop-category-emoji">🚗</span>
+                <div class="desktop-category-info">
+                  <div class="desktop-category-name">Transporte</div>
+                  <div class="desktop-category-budget-row">
+                    <span class="desktop-category-budget-label">R$</span>
+                    <input type="text" class="desktop-budget-input" value="1.500,00" />
+                    <span class="desktop-category-budget-suffix">/ mês</span>
+                  </div>
+                  <div class="desktop-category-subcategories">4 subcategorias</div>
+                </div>
+              </div>
+
+              <!-- 📊 Qualidade de vida -->
+              <div class="desktop-classification-header" style="display: flex; align-items: center; gap: 8px;">
+                <span>📊 Qualidade de vida</span>
+                <span style="margin-left: auto; font-size: 12px; color: var(--text-secondary); text-transform: none; letter-spacing: 0; font-variant-numeric: tabular-nums;">R$ 4.000</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
+              </div>
+
+              <div class="desktop-category-item">
+                <span class="desktop-category-emoji">🍔</span>
+                <div class="desktop-category-info">
+                  <div class="desktop-category-name">Restaurante</div>
+                  <div class="desktop-category-budget-row">
+                    <span class="desktop-category-budget-label">R$</span>
+                    <input type="text" class="desktop-budget-input" value="2.000,00" />
+                    <span class="desktop-category-budget-suffix">/ mês</span>
+                  </div>
+                  <div class="desktop-category-subcategories">3 subcategorias</div>
+                </div>
+              </div>
+
+              <div class="desktop-category-item">
+                <span class="desktop-category-emoji">✈️</span>
+                <div class="desktop-category-info">
+                  <div class="desktop-category-name">Viagem</div>
+                  <div class="desktop-category-budget-row">
+                    <span class="desktop-category-budget-label">R$</span>
+                    <input type="text" class="desktop-budget-input" value="2.000,00" />
+                    <span class="desktop-category-budget-suffix">/ mês</span>
+                  </div>
+                  <div class="desktop-category-subcategories">4 subcategorias</div>
+                </div>
+              </div>
+
+              <!-- 📊 Investimentos -->
+              <div class="desktop-classification-header" style="display: flex; align-items: center; gap: 8px;">
+                <span>📊 Investimentos</span>
+                <span style="flex: 1;"></span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
+              </div>
+
+              <div class="desktop-category-item">
+                <span class="desktop-category-emoji">📈</span>
                 <div class="desktop-category-info">
                   <div class="desktop-category-name">Educação</div>
                   <div class="desktop-category-budget-row">
@@ -2218,55 +2532,82 @@
                     <input type="text" class="desktop-budget-input" value="2.800,00" />
                     <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
-                  <div class="desktop-category-payment-row">
-                    <span class="desktop-category-payment-label">Método:</span>
-                    <span class="method-select-wrapper">
-                      <span class="method-brand method-brand-visa">VISA</span>
-                      <select class="desktop-select">
-                        <option>Selecionar...</option>
-                        <option selected>Latam Pass Visa</option>
-                        <option>Nubank Master</option>
-                        <option>Itaú Débito</option>
-                        <option>PIX</option>
-                        <option>Dinheiro</option>
-                      </select>
-                    </span>
-                  </div>
+                  <div class="desktop-category-subcategories">2 subcategorias</div>
                 </div>
               </div>
 
-              <!-- Grupo: Qualidade de Vida -->
-              <div class="desktop-classification-header">Qualidade de Vida</div>
+              <!-- 📊 Proteção -->
+              <div class="desktop-classification-header" style="display: flex; align-items: center; gap: 8px;">
+                <span>📊 Proteção</span>
+                <span style="flex: 1;"></span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
+              </div>
 
               <div class="desktop-category-item">
-                <span class="desktop-category-emoji">&#127869;</span>
+                <span class="desktop-category-emoji">🛡</span>
                 <div class="desktop-category-info">
-                  <div class="desktop-category-name">Restaurante</div>
+                  <div class="desktop-category-name">Seguros</div>
                   <div class="desktop-category-budget-row">
                     <span class="desktop-category-budget-label">R$</span>
-                    <input type="text" class="desktop-budget-input" value="2.500,00" />
+                    <input type="text" class="desktop-budget-input" value="500,00" />
                     <span class="desktop-category-budget-suffix">/ mês</span>
                   </div>
-                  <div class="desktop-category-payment-row">
-                    <span class="desktop-category-payment-label">Método:</span>
-                    <span class="method-select-wrapper">
-                      <span class="method-brand method-brand-master"></span>
-                      <select class="desktop-select">
-                        <option>Selecionar...</option>
-                        <option selected>Nubank Master</option>
-                        <option>Latam Pass Visa</option>
-                        <option>Itaú Débito</option>
-                        <option>PIX</option>
-                        <option>Dinheiro</option>
-                      </select>
-                    </span>
-                  </div>
+                  <div class="desktop-category-subcategories">2 subcategorias</div>
+                </div>
+              </div>
+
+              <!-- 📊 Imprevistos -->
+              <div class="desktop-classification-header" style="display: flex; align-items: center; gap: 8px;">
+                <span>📊 Imprevistos</span>
+                <span style="margin-left: auto; font-size: 12px; color: var(--text-secondary); text-transform: none; letter-spacing: 0; font-variant-numeric: tabular-nums;">R$ 1.000</span>
+                <button class="classification-header-remove" title="Remover">&times;</button>
+              </div>
+
+              <div class="desktop-category-item" style="grid-column: 1 / -1;">
+                <span class="desktop-category-emoji" style="opacity: 0.4;">—</span>
+                <div class="desktop-category-info">
+                  <div style="font-size: 13px; color: var(--text-tertiary);">Sem categorias pré-definidas</div>
                 </div>
               </div>
 
             </div><!-- /grid -->
 
-            <button class="btn-add" style="max-width: 280px;">+ Adicionar categoria</button>
+            <!-- Add form (desktop classificação) -->
+            <div class="add-form desktop-add-form" style="display: none;">
+              <div class="add-form-title">Nova classificação</div>
+              <div class="form-row" style="align-items: flex-end;">
+                <div class="form-group" style="flex: 0 0 72px;">
+                  <label class="form-label">Emoji</label>
+                  <div class="emoji-picker-wrapper">
+                    <button type="button" class="emoji-picker-trigger" data-emoji="📊">📊</button>
+                  </div>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                  <label class="form-label">Nome</label>
+                  <input type="text" class="form-input form-input-sm" placeholder="Ex: Lazer" />
+                </div>
+                <div class="form-group" style="flex: 1;">
+                  <label class="form-label">Orçamento mensal</label>
+                  <input type="text" class="form-input form-input-sm" placeholder="R$ 0,00" />
+                </div>
+              </div>
+              <div class="form-group" style="margin-top: 4px;">
+                <label class="form-label">Categorias</label>
+                <div class="new-categories-list">
+                  <button type="button" class="btn-add-category">+ Adicionar categoria</button>
+                </div>
+              </div>
+              <div class="add-form-actions">
+                <button class="btn-form-save">Salvar</button>
+                <button class="btn-form-cancel">Cancelar</button>
+              </div>
+            </div>
+
+            <button class="btn-add" style="max-width: 280px;">+ Adicionar classificação</button>
+
+            <div class="onboarding-hint" style="margin-top: 8px;">
+              Subcategorias e estabelecimentos podem ser configurados depois em <strong>Categorias</strong>
+            </div>
 
             <div class="desktop-progress-dots">
               <div class="desktop-progress-dot completed"></div>
@@ -2427,6 +2768,237 @@
       form.querySelectorAll('input').forEach(function(i) { i.value = ''; });
 
       form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    });
+  });
+
+  // ── Cancelar form (btn-form-cancel) ──
+  document.querySelectorAll('.btn-form-cancel').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var form = btn.closest('.add-form');
+      if (!form) return;
+
+      // Limpar edição de cards
+      var container = form.closest('.phone-content, .desktop-step, .desktop-card');
+      if (container) container.querySelectorAll('.item-card.editing').forEach(function(c) { c.classList.remove('editing'); });
+
+      // Restaurar título original
+      var title = form.querySelector('.add-form-title');
+      if (title && title.dataset.originalTitle) title.textContent = title.dataset.originalTitle;
+
+      // Limpar inputs e fechar
+      form.querySelectorAll('input').forEach(function(i) { i.value = ''; });
+      form.querySelectorAll('select').forEach(function(s) { s.selectedIndex = 0; });
+      form.style.display = 'none';
+    });
+  });
+
+  // ── Salvar form (btn-form-save) — feedback visual no protótipo ──
+  document.querySelectorAll('.btn-form-save').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var form = btn.closest('.add-form');
+      if (!form) return;
+
+      // Flash verde para indicar sucesso
+      var originalBg = form.style.background;
+      form.style.background = '#DCFCE7';
+      form.style.borderColor = '#86EFAC';
+      setTimeout(function() {
+        form.style.background = originalBg || '';
+        form.style.borderColor = '';
+        form.querySelectorAll('input').forEach(function(i) { i.value = ''; });
+        form.querySelectorAll('select').forEach(function(s) { s.selectedIndex = 0; });
+        form.style.display = 'none';
+
+        // Limpar edição de cards
+        var container = form.closest('.phone-content, .desktop-step, .desktop-card');
+        if (container) container.querySelectorAll('.item-card.editing').forEach(function(c) { c.classList.remove('editing'); });
+
+        var title = form.querySelector('.add-form-title');
+        if (title && title.dataset.originalTitle) title.textContent = title.dataset.originalTitle;
+      }, 400);
+    });
+  });
+
+  // ── Emoji Picker ──
+  var emojiData = {
+    frequentes: ['📊','💰','🏠','🍽','🚗','💊','📚','🛡','🎮','✈️','📱','💳','🎯','⭐','🔔','💎'],
+    financas:   ['💰','💵','💳','💸','🏦','📊','📈','💹','🪙','🧾','💲','🤑','🏧','💱','📉','💴'],
+    casa:       ['🏠','🏡','🔑','🛋','🛏','🚿','🔧','💡','🏗','🧹','🪴','🛁','🔌','🧊','🪟','🚪'],
+    comida:     ['🍽','🍔','🍕','🍎','🛒','🥗','🍰','☕','🍺','🥐','🍣','🌮','🍝','🥩','🧁','🍷'],
+    transporte: ['🚗','🚌','✈️','🚲','⛽','🅿️','🚕','🚇','🛵','🚢','🚁','🛣','🚙','🛻','🚐','⚓'],
+    saude:      ['💊','🏥','🩺','🧘','💪','🏋️','🦷','🩹','💉','🧬','🏃','🛀','💆','🩻','🫁','🧑‍⚕️'],
+    educacao:   ['📚','📖','🎓','✏️','💻','🧑‍💻','🔬','📐','🎒','📝','🏫','🗂','📕','🖊','📰','🔭'],
+    lazer:      ['🎮','🎬','🎵','🎭','🏖','🎲','🎸','🏈','🎳','🧩','🎤','🎨','🎧','🎪','🃏','🎻'],
+    protecao:   ['🛡','🔒','📋','🧯','🩹','🔐','📜','🛟','🔑','🧱','⚠️','🪪','📑','✅','🗝','🔏']
+  };
+
+  var emojiTabIcons = {
+    frequentes: '⭐', financas: '💰', casa: '🏠', comida: '🍽',
+    transporte: '🚗', saude: '💊', educacao: '📚', lazer: '🎮', protecao: '🛡'
+  };
+
+  var emojiTabNames = {
+    frequentes: 'Frequentes', financas: 'Finanças', casa: 'Casa', comida: 'Comida',
+    transporte: 'Transporte', saude: 'Saúde', educacao: 'Educação', lazer: 'Lazer', protecao: 'Proteção'
+  };
+
+  // Cria o painel do picker (singleton, reutilizado)
+  var pickerPanel = document.createElement('div');
+  pickerPanel.className = 'emoji-picker-panel';
+  pickerPanel.innerHTML =
+    '<input type="text" class="emoji-picker-search" placeholder="Buscar emoji..." />' +
+    '<div class="emoji-picker-tabs"></div>' +
+    '<div class="emoji-picker-grid"></div>';
+  document.body.appendChild(pickerPanel);
+
+  var pickerTabs = pickerPanel.querySelector('.emoji-picker-tabs');
+  var pickerGrid = pickerPanel.querySelector('.emoji-picker-grid');
+  var pickerSearch = pickerPanel.querySelector('.emoji-picker-search');
+  var currentTrigger = null;
+
+  // Popula tabs
+  Object.keys(emojiData).forEach(function(cat, i) {
+    var tab = document.createElement('button');
+    tab.type = 'button';
+    tab.className = 'emoji-tab' + (i === 0 ? ' active' : '');
+    tab.textContent = emojiTabIcons[cat];
+    tab.title = emojiTabNames[cat];
+    tab.dataset.category = cat;
+    tab.addEventListener('click', function(e) {
+      e.stopPropagation();
+      pickerTabs.querySelectorAll('.emoji-tab').forEach(function(t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+      renderEmojiGrid(cat);
+    });
+    pickerTabs.appendChild(tab);
+  });
+
+  function renderEmojiGrid(cat) {
+    pickerGrid.innerHTML = '';
+    emojiData[cat].forEach(function(emoji) {
+      var span = document.createElement('span');
+      span.className = 'emoji-option';
+      span.textContent = emoji;
+      span.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (currentTrigger) {
+          currentTrigger.textContent = emoji;
+          currentTrigger.dataset.emoji = emoji;
+        }
+        closePicker();
+      });
+      pickerGrid.appendChild(span);
+    });
+  }
+
+  function openPicker(trigger) {
+    currentTrigger = trigger;
+    var wrapper = trigger.closest('.emoji-picker-wrapper');
+    wrapper.appendChild(pickerPanel);
+    pickerPanel.classList.add('open');
+    pickerTabs.querySelector('.emoji-tab').click();
+    pickerSearch.value = '';
+    pickerSearch.focus();
+  }
+
+  function closePicker() {
+    pickerPanel.classList.remove('open');
+    currentTrigger = null;
+  }
+
+  // Busca de emojis
+  pickerSearch.addEventListener('input', function() {
+    var q = pickerSearch.value.toLowerCase();
+    if (!q) {
+      pickerTabs.querySelector('.emoji-tab.active').click();
+      return;
+    }
+    // Mostrar todos os emojis de todas as categorias
+    pickerGrid.innerHTML = '';
+    var seen = {};
+    Object.keys(emojiData).forEach(function(cat) {
+      // Busca simples pelo nome da categoria
+      if (emojiTabNames[cat].toLowerCase().indexOf(q) !== -1) {
+        emojiData[cat].forEach(function(emoji) {
+          if (!seen[emoji]) {
+            seen[emoji] = true;
+            var span = document.createElement('span');
+            span.className = 'emoji-option';
+            span.textContent = emoji;
+            span.addEventListener('click', function(e) {
+              e.stopPropagation();
+              if (currentTrigger) {
+                currentTrigger.textContent = emoji;
+                currentTrigger.dataset.emoji = emoji;
+              }
+              closePicker();
+            });
+            pickerGrid.appendChild(span);
+          }
+        });
+      }
+    });
+    // Se não achou por categoria, mostra tudo
+    if (pickerGrid.children.length === 0) {
+      Object.keys(emojiData).forEach(function(cat) {
+        emojiData[cat].forEach(function(emoji) {
+          if (!seen[emoji]) {
+            seen[emoji] = true;
+            var span = document.createElement('span');
+            span.className = 'emoji-option';
+            span.textContent = emoji;
+            span.addEventListener('click', function(e) {
+              e.stopPropagation();
+              if (currentTrigger) {
+                currentTrigger.textContent = emoji;
+                currentTrigger.dataset.emoji = emoji;
+              }
+              closePicker();
+            });
+            pickerGrid.appendChild(span);
+          }
+        });
+      });
+    }
+  });
+
+  // Click handler para triggers
+  document.addEventListener('click', function(e) {
+    var trigger = e.target.closest('.emoji-picker-trigger');
+    if (trigger) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (currentTrigger === trigger) {
+        closePicker();
+      } else {
+        closePicker();
+        openPicker(trigger);
+      }
+      return;
+    }
+    // Fechar se clicou fora
+    if (!e.target.closest('.emoji-picker-panel')) {
+      closePicker();
+    }
+  });
+
+  // ── Adicionar categoria dentro da classificação ──
+  document.querySelectorAll('.btn-add-category').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var row = document.createElement('div');
+      row.className = 'new-category-row';
+      row.innerHTML =
+        '<div class="emoji-picker-wrapper">' +
+        '  <button type="button" class="emoji-picker-trigger emoji-picker-trigger-sm" data-emoji="📁">📁</button>' +
+        '</div>' +
+        '<input type="text" class="form-input form-input-sm" placeholder="Nome da categoria" style="flex:1; margin-bottom:0;" />' +
+        '<button type="button" class="remove-cat-btn">&times;</button>';
+      btn.parentNode.insertBefore(row, btn);
+
+      // Handler de remover
+      row.querySelector('.remove-cat-btn').addEventListener('click', function() {
+        row.remove();
+      });
     });
   });
 </script>

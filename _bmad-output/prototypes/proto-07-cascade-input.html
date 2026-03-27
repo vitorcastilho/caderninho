@@ -425,6 +425,81 @@
     }
     .chip-link:hover { color: var(--primary-hover); }
 
+    /* ── Classification Pills ── */
+    .classification-pills {
+      display: flex;
+      gap: 6px;
+      padding: 0 20px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      margin-bottom: 4px;
+    }
+    .classification-pills::-webkit-scrollbar { display: none; }
+
+    .classification-pill {
+      padding: 6px 12px;
+      border-radius: var(--radius-badge);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .classification-pill:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .classification-pill.selected {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+
+    /* ── Subcategory chip with method badge ── */
+    .chip .chip-method {
+      display: block;
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+    }
+
+    .chip.selected .chip-method {
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* ── Desktop Classification Select ── */
+    .desktop-select {
+      display: block;
+      width: calc(100% - 48px);
+      margin: 0 24px;
+      padding: 10px 12px;
+      border-radius: var(--radius-input);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: border-color var(--transition);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2378716C' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+    .desktop-select:hover { border-color: var(--border-hover); }
+    .desktop-select:focus { border-color: var(--primary); outline: none; }
+
     /* ── Where Chips (single row) ── */
     .chips-row {
       display: flex;
@@ -976,8 +1051,8 @@
   <!-- MOBILE FLOW                                  -->
   <!-- ════════════════════════════════════════════ -->
   <div class="section-header">
-    <h2>Fluxo Mobile — 4 Estados Progressivos</h2>
-    <p>Cada estado revela a próxima camada de informação, mantendo o foco no essencial</p>
+    <h2>Fluxo Mobile — 5 Estados Progressivos</h2>
+    <p>Cada estado revela a próxima camada de informação, mantendo o foco no essencial. Classificação → Categoria → Subcategoria em 3 toques.</p>
   </div>
 
   <div class="phone-row">
@@ -1012,6 +1087,7 @@
               <div class="step-dot"></div>
               <div class="step-dot"></div>
               <div class="step-dot"></div>
+              <div class="step-dot"></div>
             </div>
 
             <div class="keypad" id="keypad1">
@@ -1033,11 +1109,11 @@
       </div>
     </div>
 
-    <!-- ──── STATE 2: Categoria ──── -->
+    <!-- ──── STATE 2: Classificação & Categoria ──── -->
     <div class="phone-column">
       <div class="phone-label">
-        Estado 2: Categoria
-        <span>Após digitar o valor</span>
+        Estado 2: Classificação &amp; Categoria
+        <span>Classificação como pills, categorias filtradas abaixo</span>
       </div>
       <div class="phone-frame">
         <div class="phone-notch"></div>
@@ -1059,29 +1135,84 @@
               <div class="step-dot active"></div>
               <div class="step-dot"></div>
               <div class="step-dot"></div>
+              <div class="step-dot"></div>
             </div>
 
-            <div class="field-label">Categorias Frequentes</div>
+            <div class="field-label">Classificação</div>
+            <div class="classification-pills" id="classificationPills">
+              <div class="classification-pill" data-class="ef">📊 Essenciais fixos</div>
+              <div class="classification-pill selected" data-class="ev">📊 Essenciais variáveis</div>
+              <div class="classification-pill" data-class="qv">📊 Qualidade de vida</div>
+              <div class="classification-pill" data-class="inv">📊 Investimentos</div>
+              <div class="classification-pill" data-class="prot">📊 Proteção</div>
+              <div class="classification-pill" data-class="imp">📊 Imprevistos</div>
+            </div>
+
+            <div class="field-label">Categoria</div>
             <div class="chips-grid" id="catGrid">
-              <div class="chip selected" data-cat="supermercado">
-                <span class="chip-emoji">&#x1F6D2;</span> Supermercado
-              </div>
-              <div class="chip" data-cat="gasolina">
-                <span class="chip-emoji">&#x26FD;</span> Gasolina
-              </div>
-              <div class="chip" data-cat="restaurante">
-                <span class="chip-emoji">&#x1F37D;</span> Restaurante
-              </div>
-              <div class="chip" data-cat="moradia">
-                <span class="chip-emoji">&#x1F3E0;</span> Moradia
+              <div class="chip selected" data-cat="alimentacao">
+                <span class="chip-emoji">&#x1F37D;</span> Alimentação
               </div>
               <div class="chip" data-cat="transporte">
                 <span class="chip-emoji">&#x1F697;</span> Transporte
               </div>
-              <div class="chip" data-cat="compras">
-                <span class="chip-emoji">&#x1F4E6;</span> Compras
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──── STATE 2b: Subcategoria ──── -->
+    <div class="phone-column">
+      <div class="phone-label">
+        Estado 2b: Subcategoria
+        <span>Subcategoria com método de pagamento sugerido</span>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="overlay"></div>
+          <div class="bottom-sheet" style="height: 480px;">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+              <span class="sheet-title">Novo Gasto</span>
+              <button class="sheet-close" title="Fechar">&#10005;</button>
+            </div>
+
+            <div class="summary-bar">
+              <span class="summary-amount">R$ 87,00</span>
+              <span class="summary-sep">&middot;</span>
+              <span class="summary-cat">&#x1F37D; Alimentação</span>
+            </div>
+
+            <div class="step-indicator" style="justify-content: center; padding: 8px 0;">
+              <div class="step-dot done"></div>
+              <div class="step-dot done"></div>
+              <div class="step-dot active"></div>
+              <div class="step-dot"></div>
+              <div class="step-dot"></div>
+            </div>
+
+            <div class="field-label">Subcategoria</div>
+            <div class="chips-grid" id="subcatGrid">
+              <div class="chip selected" data-subcat="supermercado">
+                <div>
+                  <span>Supermercado</span>
+                  <span class="chip-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass</span>
+                </div>
               </div>
-              <div class="chip-link">+ Todas categorias</div>
+              <div class="chip" data-subcat="rest-trabalho">
+                <div>
+                  <span>Rest. Trabalho</span>
+                  <span class="chip-method"><span class="method-brand method-brand-visa">VISA</span> PDA Visa</span>
+                </div>
+              </div>
+              <div class="chip" data-subcat="feira">
+                <div>
+                  <span>Feira/Hortifruti</span>
+                  <span class="chip-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1107,11 +1238,12 @@
 
             <div class="summary-bar">
               <span class="summary-amount">R$ 87,00</span>
-              <span class="summary-sep">·</span>
-              <span class="summary-cat">&#x1F6D2; Supermercado</span>
+              <span class="summary-sep">&middot;</span>
+              <span class="summary-cat">&#x1F37D; Supermercado</span>
             </div>
 
             <div class="step-indicator" style="justify-content: center; padding: 8px 0;">
+              <div class="step-dot done"></div>
               <div class="step-dot done"></div>
               <div class="step-dot done"></div>
               <div class="step-dot active"></div>
@@ -1121,8 +1253,8 @@
             <div class="field-label">Onde?</div>
             <div class="chips-row" id="storeChips">
               <div class="chip-sm selected">Pão de Açúcar</div>
-              <div class="chip-sm">Extra</div>
-              <div class="chip-sm">Assaí</div>
+              <div class="chip-sm">Bistek</div>
+              <div class="chip-sm">Angeloni</div>
               <div class="chip-sm" style="color: var(--primary); border-color: var(--primary-light);">+ Outro</div>
             </div>
 
@@ -1130,7 +1262,7 @@
             <div class="payment-selector">
               <div>
                 <div class="payment-name"><span class="method-brand method-brand-visa">VISA</span>Latam Pass Visa &#x25BE;</div>
-                <div class="payment-detail">(à vista)</div>
+                <div class="payment-detail">Sugerido pela subcategoria Supermercado (à vista)</div>
               </div>
               <span class="payment-arrow">&#x276F;</span>
             </div>
@@ -1180,11 +1312,12 @@
             <div class="bottom-sheet-scroll">
               <div class="summary-bar">
                 <span class="summary-amount">R$ 87,00</span>
-                <span class="summary-sep">·</span>
-                <span class="summary-cat">&#x1F6D2; Supermercado</span>
+                <span class="summary-sep">&middot;</span>
+                <span class="summary-cat">&#x1F37D; Supermercado</span>
               </div>
 
               <div class="step-indicator" style="justify-content: center; padding: 8px 0;">
+                <div class="step-dot done"></div>
                 <div class="step-dot done"></div>
                 <div class="step-dot done"></div>
                 <div class="step-dot active"></div>
@@ -1194,8 +1327,8 @@
               <div class="field-label">Onde?</div>
               <div class="chips-row">
                 <div class="chip-sm selected">Pão de Açúcar</div>
-                <div class="chip-sm">Extra</div>
-                <div class="chip-sm">Assaí</div>
+                <div class="chip-sm">Bistek</div>
+                <div class="chip-sm">Angeloni</div>
               </div>
 
               <div class="field-label">Pagamento</div>
@@ -1275,14 +1408,15 @@
               <div class="step-dot done"></div>
               <div class="step-dot done"></div>
               <div class="step-dot done"></div>
+              <div class="step-dot done"></div>
               <div class="step-dot active"></div>
             </div>
 
             <div class="confirm-summary">
               <div class="confirm-amount">R$ 87,00</div>
               <div class="confirm-details">
-                <strong>&#x1F6D2; Supermercado</strong> &rarr; Pão de Açúcar<br>
-                <span class="method-brand method-brand-visa">VISA</span>Latam Pass Visa · à vista
+                <strong>&#x1F37D; Alimentação</strong> &rarr; Supermercado &rarr; Pão de Açúcar<br>
+                <span class="method-brand method-brand-visa">VISA</span>Latam Pass Visa &middot; à vista
               </div>
             </div>
 
@@ -1373,34 +1507,53 @@
             <input type="text" class="valor-input-field" value="R$ 87,00" readonly>
           </div>
 
+          <div class="field-label">Classificação</div>
+          <select class="desktop-select" id="desktopClassSelect">
+            <option value="ef">📊 Essenciais fixos</option>
+            <option value="ev" selected>📊 Essenciais variáveis</option>
+            <option value="qv">📊 Qualidade de vida</option>
+            <option value="inv">📊 Investimentos</option>
+            <option value="prot">📊 Proteção</option>
+            <option value="imp">📊 Imprevistos</option>
+          </select>
+
           <div class="field-label">Categoria</div>
           <div class="chips-grid" style="margin-bottom: 4px;" id="desktopCatGrid">
-            <div class="chip selected" data-cat="supermercado">
-              <span class="chip-emoji">&#x1F6D2;</span> Supermercado
-            </div>
-            <div class="chip" data-cat="gasolina">
-              <span class="chip-emoji">&#x26FD;</span> Gasolina
-            </div>
-            <div class="chip" data-cat="restaurante">
-              <span class="chip-emoji">&#x1F37D;</span> Restaurante
-            </div>
-            <div class="chip" data-cat="moradia">
-              <span class="chip-emoji">&#x1F3E0;</span> Moradia
+            <div class="chip selected" data-cat="alimentacao">
+              <span class="chip-emoji">&#x1F37D;</span> Alimentação
             </div>
             <div class="chip" data-cat="transporte">
               <span class="chip-emoji">&#x1F697;</span> Transporte
             </div>
-            <div class="chip" data-cat="compras">
-              <span class="chip-emoji">&#x1F4E6;</span> Compras
+          </div>
+
+          <div class="field-label">Subcategoria</div>
+          <div class="chips-grid" style="margin-bottom: 4px;" id="desktopSubcatGrid">
+            <div class="chip selected" data-subcat="supermercado">
+              <div>
+                <span>Supermercado</span>
+                <span class="chip-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass</span>
+              </div>
             </div>
-            <div class="chip-link">+ Todas categorias</div>
+            <div class="chip" data-subcat="rest-trabalho">
+              <div>
+                <span>Rest. Trabalho</span>
+                <span class="chip-method"><span class="method-brand method-brand-visa">VISA</span> PDA Visa</span>
+              </div>
+            </div>
+            <div class="chip" data-subcat="feira">
+              <div>
+                <span>Feira/Hortifruti</span>
+                <span class="chip-method"><span class="method-brand method-brand-visa">VISA</span> Latam Pass</span>
+              </div>
+            </div>
           </div>
 
           <div class="field-label">Onde?</div>
           <div class="chips-row" id="desktopStoreChips">
             <div class="chip-sm selected">Pão de Açúcar</div>
-            <div class="chip-sm">Extra</div>
-            <div class="chip-sm">Assaí</div>
+            <div class="chip-sm">Bistek</div>
+            <div class="chip-sm">Angeloni</div>
             <div class="chip-sm" style="color: var(--primary); border-color: var(--primary-light);">+ Outro</div>
           </div>
 
@@ -1408,7 +1561,7 @@
           <div class="payment-selector">
             <div>
               <div class="payment-name"><span class="method-brand method-brand-visa">VISA</span>Latam Pass Visa &#x25BE;</div>
-              <div class="payment-detail">(à vista)</div>
+              <div class="payment-detail">Sugerido pela subcategoria Supermercado (à vista)</div>
             </div>
             <span class="payment-arrow">&#x276F;</span>
           </div>
@@ -1451,7 +1604,7 @@
     function setupChipSelection(containerId, multiSelect) {
       const container = document.getElementById(containerId);
       if (!container) return;
-      const chips = container.querySelectorAll('.chip, .chip-sm, .installment-chip');
+      const chips = container.querySelectorAll('.chip, .chip-sm, .installment-chip, .classification-pill');
       chips.forEach(chip => {
         chip.addEventListener('click', () => {
           if (!multiSelect) {
@@ -1462,12 +1615,18 @@
       });
     }
 
+    // Mobile classification pills
+    setupChipSelection('classificationPills', false);
     // Mobile category grid
     setupChipSelection('catGrid', false);
+    // Mobile subcategory grid
+    setupChipSelection('subcatGrid', false);
     // Mobile store chips
     setupChipSelection('storeChips', false);
     // Desktop category grid
     setupChipSelection('desktopCatGrid', false);
+    // Desktop subcategory grid
+    setupChipSelection('desktopSubcatGrid', false);
     // Desktop store chips
     setupChipSelection('desktopStoreChips', false);
 
