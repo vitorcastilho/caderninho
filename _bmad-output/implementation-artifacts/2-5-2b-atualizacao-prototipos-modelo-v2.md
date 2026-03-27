@@ -1,6 +1,6 @@
 # Story 2.5.2b: Atualização dos Protótipos para Modelo de Categorização v2
 
-Status: review
+Status: in-progress
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -356,6 +356,11 @@ N/A — sem erros de build/runtime (story de protótipos HTML, sem código de pr
 - Proto-08: Etapa 4 redesenhada com 6 classificações colapsáveis, campos editáveis (nome/emoji/orçamento), contagem de subcategorias, e botão "+ Adicionar classificação". Mobile e desktop atualizados.
 - Proto-15: Hierarquia de drill-down atualizada para 4 níveis com 6 classificações do PO. Stacked bar, breakdown items, treeData JavaScript, e desktop transactions todos atualizados com dados do proto-09.
 - Cross-prototype: Validação de consistência entre proto-07, 08, 09, 14, 15. Corrigidos acentos faltantes em proto-15 (Classificações, variáveis, Proteção, Alimentação, etc.).
+
+### Review Follow-ups (AI)
+
+- [ ] [AI-Review][MEDIUM] Atualizar File List da story com proto-14-categorias.html e proto-17-configuracoes.html (escopo expandido durante implementação)
+- [ ] [AI-Review][MEDIUM] Proto-08: Adicionar indicador de contagem de subcategorias nas categorias do onboarding (ex: "3 subcategorias"). AC 2 exige mas não foi implementado.
 
 ### File List
 
