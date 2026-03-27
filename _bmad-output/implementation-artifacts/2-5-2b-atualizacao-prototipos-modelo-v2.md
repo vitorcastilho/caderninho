@@ -1,6 +1,6 @@
 # Story 2.5.2b: Atualização dos Protótipos para Modelo de Categorização v2
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -377,3 +377,4 @@ N/A — sem erros de build/runtime (story de protótipos HTML, sem código de pr
 ### Change Log
 
 - 2026-03-27: Resolvidos 2 action items MEDIUM do code review R1 — indicador de subcategorias adicionado ao proto-08 (mobile + desktop) e File List atualizado com proto-14-categorias.html e proto-17-configuracoes.html
+- 2026-03-27: Code review R2 — 2 fixes MEDIUM validados e aprovados. 2 LOWs aceitos como backlog. Story marcada como done.
