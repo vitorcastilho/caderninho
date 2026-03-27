@@ -3,6 +3,7 @@
 import { useState, useTransition, useCallback } from 'react';
 import { toast } from 'sonner';
 
+import { Wallet } from 'lucide-react';
 import { Button } from '@/client/components/ui/button';
 import { Breadcrumb } from '@/client/components/ui/breadcrumb';
 import {
@@ -89,7 +90,7 @@ export function IncomeSourceList({ initialIncomeSources }: IncomeSourceListProps
           className="mb-1"
         />
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-foreground">Fontes de Receita</h1>
+          <h1 className="text-2xl font-bold text-foreground">Fontes de Receita</h1>
           <Button onClick={() => setShowCreateForm(true)}>Nova Fonte</Button>
         </div>
       </div>
@@ -130,12 +131,13 @@ export function IncomeSourceList({ initialIncomeSources }: IncomeSourceListProps
       </Dialog>
 
       {activeSources.length === 0 && archivedSources.length === 0 ? (
-        <div className="flex flex-col items-center gap-4 rounded-card border border-dashed border-border px-6 py-8 text-center">
-          <p className="text-sm text-muted-foreground">Nenhuma fonte de receita cadastrada.</p>
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border px-6 py-8 text-center">
+          <Wallet className="size-8 text-muted-foreground/60" />
+          <p className="text-sm font-medium text-foreground">Nenhuma fonte de receita cadastrada</p>
+          <p className="text-xs text-muted-foreground">Cadastre suas fontes de renda (CLT, PJ, freelance...).</p>
           <Button variant="secondary" size="sm" onClick={() => setShowCreateForm(true)}>
             Nova Fonte
           </Button>
-          <p className="text-xs text-muted-foreground">Cadastre suas fontes de renda (CLT, PJ, freelance...).</p>
         </div>
       ) : (
         <>

@@ -13,14 +13,11 @@ export function StepIndicator({ totalSteps, currentStep }: StepIndicatorProps) {
         let className = 'h-2 w-2 rounded-full transition-all duration-150';
 
         if (step < currentStep) {
-          // Completed
-          className += ' bg-green-500';
+          className += ' bg-positive';
         } else if (step === currentStep) {
-          // Active
-          className += ' bg-indigo-600 scale-125';
+          className += ' bg-primary scale-125';
         } else {
-          // Pending
-          className += ' bg-stone-300';
+          className += ' bg-border';
         }
 
         return <div key={step} className={className} />;

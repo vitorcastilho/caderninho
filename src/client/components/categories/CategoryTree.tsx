@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
-import { Info, X } from 'lucide-react';
+import { Info, Tags, X } from 'lucide-react';
 
 import { Button } from '@/client/components/ui/button';
 import { Breadcrumb } from '@/client/components/ui/breadcrumb';
@@ -162,7 +162,7 @@ export function CategoryTree({
           className="mb-1"
         />
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-foreground">Categorias</h1>
+          <h1 className="text-2xl font-bold text-foreground">Categorias</h1>
           <Button onClick={() => setShowCreateClassification(true)}>
             + Nova classificação
           </Button>
@@ -355,12 +355,13 @@ export function CategoryTree({
 
       {/* Classification sections */}
       {activeClassifications.length === 0 && archivedClassifications.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-card border border-dashed border-border px-6 py-8 text-center">
-          <p className="text-sm text-muted-foreground">Nenhuma classificação cadastrada.</p>
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border px-6 py-8 text-center">
+          <Tags className="size-8 text-muted-foreground/60" />
+          <p className="text-sm font-medium text-foreground">Nenhuma classificação cadastrada</p>
+          <p className="text-xs text-muted-foreground">Classificações organizam suas categorias por tipo de necessidade.</p>
           <Button variant="secondary" size="sm" onClick={() => setShowCreateClassification(true)}>
             + Nova classificação
           </Button>
-          <p className="text-xs text-muted-foreground">Classificações organizam suas categorias por tipo de necessidade.</p>
         </div>
       ) : (
         <>

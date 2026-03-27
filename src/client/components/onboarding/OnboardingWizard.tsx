@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-
+import { Button } from '@/client/components/ui/button';
 import { StepIndicator } from './StepIndicator';
 import { WelcomeStep } from './steps/WelcomeStep';
 import { BankAccountsStep } from './steps/BankAccountsStep';
@@ -95,12 +95,14 @@ export function OnboardingWizard({
       <div className="flex w-full max-w-lg flex-col" style={{ minHeight: '580px' }}>
         {/* Botão voltar (exceto step 1) */}
         {currentStep > 1 && currentStep < TOTAL_STEPS && (
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={goBack}
-            className="mb-2 self-start text-[13px] font-medium text-stone-500 transition-colors hover:text-stone-700"
+            className="mb-2 self-start text-[13px] font-medium text-muted-foreground"
           >
             ← Voltar
-          </button>
+          </Button>
         )}
 
         {/* Conteúdo do step */}

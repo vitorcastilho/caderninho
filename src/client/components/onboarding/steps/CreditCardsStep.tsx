@@ -7,8 +7,16 @@ import { Pencil } from 'lucide-react';
 import { createCreditCardAction, updateCreditCardAction, archiveCreditCardAction } from '@/server/actions/credit-card.actions';
 import { centsToDisplayValue, displayValueToCents } from '@/client/utils/currency-input';
 import { CreditCardBrandBadge } from '@/client/components/ui/credit-card-brand-badge';
+import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/client/components/ui/select';
 
 interface CreditCardItem {
   id: string;
@@ -122,8 +130,8 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded, on
 
   return (
     <div className="flex flex-1 flex-col">
-      <h2 className="text-lg font-bold text-stone-900 mb-1">Seus cartões de crédito</h2>
-      <p className="text-[13px] text-stone-500 mb-4 leading-relaxed">
+      <h2 className="text-lg font-bold text-foreground mb-1">Seus cartões de crédito</h2>
+      <p className="text-[13px] text-muted-foreground mb-4 leading-relaxed">
         Cadastre seus cartões para controlar as faturas
       </p>
 
@@ -133,27 +141,27 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded, on
           {activeCards.map((card) => (
             <div
               key={card.id}
-              className="flex flex-col gap-1 rounded-md border border-stone-200 bg-stone-50 px-3 py-2.5 transition-colors hover:border-stone-300"
+              className="flex flex-col gap-1 rounded-md border border-border bg-secondary px-3 py-2.5 transition-colors hover:border-border-hover"
             >
               <div className="flex items-center gap-2.5">
                 <CreditCardBrandBadge brand={card.brand} />
                 <div className="flex-1 min-w-0">
-                  <div className="text-[13px] font-semibold text-stone-900">{card.name}</div>
-                  <div className="text-[11px] text-stone-500">
+                  <div className="text-[13px] font-semibold text-foreground">{card.name}</div>
+                  <div className="text-[11px] text-muted-foreground">
                     Limite: R$ {centsToDisplayValue(card.limitCents)}
                   </div>
                 </div>
-                <button
-                  type="button"
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
                   onClick={() => handleStartEdit(card)}
                   disabled={isPending}
-                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded text-stone-400 transition-colors hover:bg-stone-200 hover:text-stone-600 disabled:opacity-50"
                   title="Editar cartão"
                 >
                   <Pencil className="size-3.5" />
-                </button>
+                </Button>
               </div>
-              <div className="text-[11px] text-stone-400 pl-[36px]">
+              <div className="text-[11px] text-text-tertiary pl-[36px]">
                 Fecha dia {card.closingDay} · Vence dia {card.dueDay}
               </div>
             </div>
@@ -163,13 +171,13 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded, on
 
       {/* Formulário inline (criar ou editar) */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="mb-3 rounded-md border border-indigo-200 bg-indigo-50 p-3">
-          <div className="text-xs font-semibold text-indigo-600 mb-2">
+        <form onSubmit={handleSubmit} className="mb-3 rounded-md border border-primary/20 bg-primary-light p-3">
+          <div className="text-xs font-semibold text-primary mb-2">
             {editingId ? 'Editar cartão' : 'Adicionar cartão'}
           </div>
           <div className="flex flex-col gap-2.5">
             <div className="flex flex-col gap-1">
-              <Label htmlFor="onb-card-name" className="text-xs text-stone-500">Nome do cartão</Label>
+              <Label htmlFor="onb-card-name" className="text-xs text-muted-foreground">Nome do cartão</Label>
               <Input
                 id="onb-card-name"
                 value={name}
@@ -180,21 +188,20 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded, on
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div className="flex flex-col gap-1">
-                <Label htmlFor="onb-card-brand" className="text-xs text-stone-500">Bandeira</Label>
-                <select
-                  id="onb-card-brand"
-                  value={brand}
-                  onChange={(e) => setBrand(e.target.value)}
-                  className="h-8 rounded-md border border-stone-200 bg-white px-2 text-xs text-stone-900 outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600/20"
-                >
-                  <option value="">Selecionar...</option>
-                  {BRAND_OPTIONS.map((b) => (
-                    <option key={b} value={b}>{b}</option>
-                  ))}
-                </select>
+                <Label className="text-xs text-muted-foreground">Bandeira</Label>
+                <Select value={brand} onValueChange={(val) => setBrand(val ?? '')}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Selecionar..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {BRAND_OPTIONS.map((b) => (
+                      <SelectItem key={b} value={b}>{b}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex flex-col gap-1">
-                <Label htmlFor="onb-card-limit" className="text-xs text-stone-500">Limite (R$)</Label>
+                <Label htmlFor="onb-card-limit" className="text-xs text-muted-foreground">Limite (R$)</Label>
                 <Input
                   id="onb-card-limit"
                   value={`R$ ${limitDisplay}`}
@@ -210,7 +217,7 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded, on
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div className="flex flex-col gap-1">
-                <Label htmlFor="onb-closing-day" className="text-xs text-stone-500">Dia de fechamento</Label>
+                <Label htmlFor="onb-closing-day" className="text-xs text-muted-foreground">Dia de fechamento</Label>
                 <Input
                   id="onb-closing-day"
                   type="number"
@@ -224,7 +231,7 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded, on
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <Label htmlFor="onb-due-day" className="text-xs text-stone-500">Dia de vencimento</Label>
+                <Label htmlFor="onb-due-day" className="text-xs text-muted-foreground">Dia de vencimento</Label>
                 <Input
                   id="onb-due-day"
                   type="number"
@@ -240,56 +247,60 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded, on
             </div>
             <div className="flex gap-2">
               {editingId && (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => handleRemoveCard(editingId)}
                   disabled={isPending}
-                  className="rounded-md px-3 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 disabled:opacity-50"
+                  className="text-destructive hover:text-destructive"
                 >
                   Remover
-                </button>
+                </Button>
               )}
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={resetForm}
-                className="flex-1 rounded-md px-3 py-1.5 text-xs font-medium text-stone-500 hover:text-stone-700"
+                className="flex-1"
               >
                 Cancelar
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
+                size="sm"
                 disabled={isPending || !name.trim() || !brand || !closingDay || !dueDay}
-                className="flex-1 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
+                className="flex-1"
               >
                 {isPending ? 'Salvando...' : editingId ? 'Salvar' : 'Adicionar'}
-              </button>
+              </Button>
             </div>
           </div>
         </form>
       )}
 
       {!showForm && (
-        <button
+        <Button
+          variant="outline"
           onClick={() => { resetForm(); setShowForm(true); }}
-          className="w-full rounded-md border border-dashed border-indigo-400 px-4 py-2.5 text-[13px] font-medium text-indigo-600 transition-colors hover:border-indigo-500 hover:bg-indigo-50"
+          className="w-full border-dashed border-primary/40 text-primary hover:border-primary/60 hover:bg-primary-light"
         >
           + Adicionar cartão
-        </button>
+        </Button>
       )}
 
       <div className="mt-auto flex flex-col gap-1.5 pt-4">
-        <button
-          onClick={onNext}
-          className="w-full rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700"
-        >
+        <Button onClick={onNext} className="w-full" size="lg">
           Próximo
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={onSkip}
-          className="w-full rounded-md px-4 py-2.5 text-[13px] font-medium text-stone-500 transition-colors hover:text-indigo-600 hover:bg-indigo-50"
+          className="w-full text-muted-foreground"
         >
           Pular
-        </button>
+        </Button>
       </div>
     </div>
   );
