@@ -1,6 +1,6 @@
 # Story 2.5.3: Unificação do Design System
 
-Status: review
+Status: done
 
 ## Story
 
@@ -383,3 +383,4 @@ Nenhum problema de debug encontrado. Build e testes passaram na primeira tentati
 - **2026-03-27:** Implementação completa da Story 2.5.3 — Gap analysis + correção de token CSS + 3 novas seções no DS (Formatação, Responsividade, Ícones) + 6 seções existentes atualizadas para alinhar com regras canônicas. Zero divergências entre DS e canonical rules. Build e testes OK.
 - **2026-03-27:** Code Review R1 — 1 HIGH, 2 MEDIUM, 3 LOW encontrados. Action items criados para H1 (input monetário sem separador de milhar), M1 (tabular-nums faltando nas barras de progresso), M2 (token --radius-input contradiz canonical rules e é dead code). LOWs aceitos como backlog. Status → ready-for-dev.
 - **2026-03-27:** Fixes do Code Review R1 — 3 action items resolvidos: (H1) formatação monetária usando `centsToDisplayValue` com separador de milhar, (M1) `tabular-nums` adicionado nos labels de barras de progresso, (M2) token `--radius-input` dead code removido. Build OK, 663 testes passando.
+- **2026-03-27:** Code Review R2 — Validação dos 3 fixes do R1. Todos aprovados: (H1) `centsToDisplayValue` usado nos 3 locais com `toLocaleString('pt-BR')`, (M1) `tabular-nums` presente nos 5 spans de percentual, (M2) token `--radius-input` removido do `globals.css`. Nenhum finding novo. Story → done.
