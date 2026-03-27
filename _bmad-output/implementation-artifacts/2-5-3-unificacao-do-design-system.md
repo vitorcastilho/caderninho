@@ -165,6 +165,12 @@ A página `/design-system` foi criada na Story 1.2 e expandida na Story 2.7 (aud
   - [x] 10.2: Confirmar que nenhuma regra canônica ficou sem representação visual no DS
   - [x] 10.3: Rodar `npm run build` e `npm run test` para confirmar zero regressões
 
+### Review Follow-ups R1 (AI)
+
+- [x] [AI-Review][HIGH] FormatacaoMoneyInput sem separador de milhar — demos de input monetário usam `(cents / 100).toFixed(2).replace(".", ",")` que não insere pontos de milhar. Para valores ≥ R$ 1.000,00 exibe "R$ 1000,00" ao invés de "R$ 1.000,00". Usar helper existente `centsToDisplayValue` de `src/client/utils/currency-input.ts` que já formata com `toLocaleString('pt-BR')`. Afeta: `FormatacaoMoneyInput` (page.tsx:275), `handleMoneyInput` em FormulariosSection (page.tsx:639), e `FormatacaoPercentInput` (page.tsx:300) [page.tsx:275,639,300]
+- [x] [AI-Review][MEDIUM] Labels das Barras de Progresso sem `tabular-nums` — regra canônica (tabela 15) exige "text-sm font-semibold tabular-nums + cor semântica". A nota de spec no rodapé da seção documenta corretamente, mas os 4 labels reais não aplicam a classe. Adicionar `tabular-nums` nos spans de percentual [page.tsx:1264,1273,1282,1291]
+- [x] [AI-Review][MEDIUM] Token `--radius-input: 8px` contradiz regras canônicas (6px) e é dead code — regras canônicas tabela 10 dizem `rounded-md (6px)`, Input component usa `rounded-md` e não referencia o token. Opções: (a) remover o token, ou (b) corrigir para 6px, ou (c) se 8px foi decisão consciente, atualizar regras canônicas e fazer o Input component usar o token
+
 ## Dev Notes
 
 ### Natureza da Story: Código de Produção (não protótipos)
@@ -361,14 +367,19 @@ Nenhum problema de debug encontrado. Build e testes passaram na primeira tentati
 - **Novas Seções (Tasks 4-6):** Criadas 3 novas seções completas no DS page — FormatacaoSection (tabelas de formato R$/%, demo tabular-nums, inputs bancários), ResponsividadeSection (3 breakpoints com cards visuais + tabela mobile vs desktop), IconesSection (specs + tamanhos visuais + catálogo de 21 ícones do app).
 - **Atualizações (Tasks 7-9):** BadgesSection expandida com tabela de specs (h-5, rounded-4xl, text-xs, px-2). BarrasProgressoSection corrigida (faixas <70%/70-85%/85-100%/>100% + specs de container/label). EmptyStatesSection ganhou ícone Lucide + título separado + descrição + spec inline. FormulariosSection ganhou campo "(opcional)". TipografiaSection ganhou Display (28px bold), Caption (11px), Mono. SkeletonSection ganhou Loader2 spinner + spec inline com regras de animate-pulse/fade-in/optimistic UI.
 - **Validação (Task 10):** 22/22 tabelas canônicas cobertas no DS. Build OK. 97 test files, 663 testes passando, zero regressões.
+- ✅ Resolved review finding [HIGH]: FormatacaoMoneyInput sem separador de milhar — substituído formatação manual por `centsToDisplayValue` em FormatacaoMoneyInput, FormatacaoPercentInput e handleMoneyInput (FormulariosSection). Agora valores ≥ R$ 1.000,00 exibem corretamente com pontos de milhar.
+- ✅ Resolved review finding [MEDIUM]: Labels das Barras de Progresso sem `tabular-nums` — adicionada classe `tabular-nums` nos 5 spans de percentual (4 semânticos + 1 fixo).
+- ✅ Resolved review finding [MEDIUM]: Token `--radius-input: 8px` dead code — removido do `globals.css`. Input component usa `rounded-md` (Tailwind) diretamente, token nunca era referenciado.
 
 ### File List
 
-- `src/app/globals.css` — adicionado token `--radius-input: 8px`
-- `src/app/design-system/page.tsx` — 3 novas seções (Formatação, Responsividade, Ícones) + 6 seções atualizadas (Badges, Barras de Progresso, Empty States, Formulários, Tipografia, Skeleton) + imports de ícones novos
+- `src/app/globals.css` — removido token dead code `--radius-input: 8px`
+- `src/app/design-system/page.tsx` — 3 novas seções (Formatação, Responsividade, Ícones) + 6 seções atualizadas + fix de formatação monetária com `centsToDisplayValue` + `tabular-nums` nos labels de barras de progresso + import de `centsToDisplayValue`
 - `_bmad-output/implementation-artifacts/sprint-status.yaml` — status atualizado para in-progress → review
-- `_bmad-output/implementation-artifacts/2-5-3-unificacao-do-design-system.md` — tasks marcadas, status, dev agent record
+- `_bmad-output/implementation-artifacts/2-5-3-unificacao-do-design-system.md` — tasks marcadas, review follow-ups resolvidos, status, dev agent record
 
 ### Change Log
 
 - **2026-03-27:** Implementação completa da Story 2.5.3 — Gap analysis + correção de token CSS + 3 novas seções no DS (Formatação, Responsividade, Ícones) + 6 seções existentes atualizadas para alinhar com regras canônicas. Zero divergências entre DS e canonical rules. Build e testes OK.
+- **2026-03-27:** Code Review R1 — 1 HIGH, 2 MEDIUM, 3 LOW encontrados. Action items criados para H1 (input monetário sem separador de milhar), M1 (tabular-nums faltando nas barras de progresso), M2 (token --radius-input contradiz canonical rules e é dead code). LOWs aceitos como backlog. Status → ready-for-dev.
+- **2026-03-27:** Fixes do Code Review R1 — 3 action items resolvidos: (H1) formatação monetária usando `centsToDisplayValue` com separador de milhar, (M1) `tabular-nums` adicionado nos labels de barras de progresso, (M2) token `--radius-input` dead code removido. Build OK, 663 testes passando.

@@ -50,6 +50,7 @@ import {
 } from "@/client/components/ui/sheet"
 import { ChevronDown, ChevronLeft, ChevronRight, Plus, Pencil, Archive, Loader2, Clock, X, AlertTriangle, CheckCircle2, LayoutDashboard, PiggyBank, CheckSquare, TrendingUp, ShoppingCart, GraduationCap, Home, Fuel, Bus, UtensilsCrossed, Package, MoreVertical, Settings, Building2, Users, GripVertical, Trash2, Copy, CreditCard, Smartphone, Tablet, Monitor, BookText, Wallet, Tags, Landmark, LogOut } from "lucide-react"
 import { toast } from "sonner"
+import { centsToDisplayValue } from "@/client/utils/currency-input"
 
 /* ─── helpers ─── */
 
@@ -272,8 +273,7 @@ function FormatacaoMoneyInput() {
       return
     }
     const cents = parseInt(raw, 10)
-    const reais = (cents / 100).toFixed(2).replace(".", ",")
-    setValue(`R$ ${reais}`)
+    setValue(`R$ ${centsToDisplayValue(cents)}`)
   }
 
   return (
@@ -297,8 +297,7 @@ function FormatacaoPercentInput() {
       return
     }
     const num = parseInt(raw, 10)
-    const formatted = (num / 100).toFixed(2).replace(".", ",")
-    setValue(formatted)
+    setValue(centsToDisplayValue(num))
   }
 
   return (
@@ -636,8 +635,7 @@ function FormulariosSection() {
       return
     }
     const cents = parseInt(raw, 10)
-    const reais = (cents / 100).toFixed(2).replace(".", ",")
-    setMoneyValue(`R$ ${reais}`)
+    setMoneyValue(`R$ ${centsToDisplayValue(cents)}`)
   }
 
   return (
@@ -1261,7 +1259,7 @@ function BarrasProgressoSection() {
             <div>
               <div className="mb-1 flex justify-between text-sm">
                 <span>Ok — 45,00%</span>
-                <span className="font-semibold text-positive-text">45,00%</span>
+                <span className="font-semibold tabular-nums text-positive-text">45,00%</span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div className="h-full rounded-full bg-positive transition-all" style={{ width: "45%" }} />
@@ -1270,7 +1268,7 @@ function BarrasProgressoSection() {
             <div>
               <div className="mb-1 flex justify-between text-sm">
                 <span>Atenção — 78,00%</span>
-                <span className="font-semibold text-attention-text">78,00%</span>
+                <span className="font-semibold tabular-nums text-attention-text">78,00%</span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div className="h-full rounded-full bg-attention transition-all" style={{ width: "78%" }} />
@@ -1279,7 +1277,7 @@ function BarrasProgressoSection() {
             <div>
               <div className="mb-1 flex justify-between text-sm">
                 <span>Alerta — 92,00%</span>
-                <span className="font-semibold text-alert-text">92,00%</span>
+                <span className="font-semibold tabular-nums text-alert-text">92,00%</span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div className="h-full rounded-full bg-alert transition-all" style={{ width: "92%" }} />
@@ -1288,7 +1286,7 @@ function BarrasProgressoSection() {
             <div>
               <div className="mb-1 flex justify-between text-sm">
                 <span>Crítico — 110,00%</span>
-                <span className="font-semibold text-critical-text">110,00%</span>
+                <span className="font-semibold tabular-nums text-critical-text">110,00%</span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div className="h-full rounded-full bg-critical transition-all" style={{ width: "100%" }} />
@@ -1297,7 +1295,7 @@ function BarrasProgressoSection() {
             <div>
               <div className="mb-1 flex justify-between text-sm">
                 <span>Fixo — 100,00%</span>
-                <span className="font-semibold text-primary">100,00%</span>
+                <span className="font-semibold tabular-nums text-primary">100,00%</span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div className="h-full rounded-full bg-primary transition-all" style={{ width: "100%" }} />
