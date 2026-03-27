@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caderninho — Categorias</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF9;
+    --surface: #FFF;
+    --border: #E7E5E4;
+    --border-hover: #D6D3D1;
+    --text-primary: #1C1917;
+    --text-secondary: #78716C;
+    --text-tertiary: #A8A29E;
+    --primary: #4F46E5;
+    --primary-hover: #4338CA;
+    --primary-light: #EEF2FF;
+    --positive: #22C55E;
+    --positive-bg: #DCFCE7;
+    --positive-text: #166534;
+    --attention: #EAB308;
+    --attention-bg: #FEF9C3;
+    --attention-text: #854D0E;
+    --alert: #F97316;
+    --alert-bg: #FFF7ED;
+    --alert-text: #9A3412;
+    --critical: #DC2626;
+    --critical-bg: #FEE2E2;
+    --critical-text: #991B1B;
+    --muted: #F5F5F4;
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== DESKTOP LAYOUT ===== */
+  .desktop-frame { display: flex; min-height: 100vh; margin-left: 220px; }
+
+  /* --- Sidebar Canônico --- */
+  .sidebar { width: 220px; height: 100%; min-height: 820px; position: fixed; left: 0; top: 0; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 40; flex-shrink: 0; }
+  .sidebar-logo { display: flex; align-items: center; padding: 20px 16px 16px; gap: 8px; }
+  .sidebar-logo-icon { color: var(--primary); display: flex; align-items: center; }
+  .sidebar-logo-text { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: var(--primary); }
+  .sidebar-separator { height: 1px; background: var(--border); margin: 4px 16px; }
+  .sidebar-nav { flex: 1; overflow-y: auto; }
+  .sidebar-section-label { padding: 16px 16px 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); }
+  .sidebar-items { list-style: none; margin: 0; padding: 0 8px; display: flex; flex-direction: column; gap: 2px; }
+  .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: all 150ms; cursor: pointer; }
+  .sidebar-item:hover { background: var(--bg); color: var(--text-primary); }
+  .sidebar-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+  .sidebar-icon { width: 18px; height: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .sidebar-icon svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding: 12px; }
+  .sidebar-user { display: flex; align-items: center; gap: 10px; }
+  .sidebar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+  .sidebar-user-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .sidebar-user-role { font-size: 11px; color: var(--text-tertiary); }
+  .sidebar-logout { display: flex; align-items: center; gap: 10px; margin-top: 0; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 150ms; border: none; background: none; width: 100%; font-family: inherit; }
+  .sidebar-logout:hover { background: var(--bg); color: var(--text-primary); }
+  .sidebar-logout svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* --- Main Content --- */
+  .main-content { flex: 1; padding: 32px 40px; max-width: 1100px; }
+  .page-header-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
+  .page-title { font-size: 24px; font-weight: 700; color: var(--text-primary); }
+  .page-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 28px; }
+  .collapse-all-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text-secondary); font-size: 12px; font-weight: 500; font-family: inherit; cursor: pointer; transition: all 150ms; white-space: nowrap; }
+  .collapse-all-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+  .collapse-all-btn svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ===== COLLAPSIBLE TREE ===== */
+
+  /* --- Shared chevron (SVG) --- */
+  .chevron { flex-shrink: 0; stroke: currentColor; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; color: var(--text-tertiary); transition: transform 200ms, color 150ms; cursor: pointer; }
+  .chevron.lg { width: 22px; height: 22px; }
+  .chevron.md { width: 18px; height: 18px; }
+  .chevron.sm { width: 16px; height: 16px; }
+
+  /* --- Action buttons (shared) --- */
+  .clf-btn { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text-secondary); font-size: 14px; cursor: pointer; transition: all 150ms; flex-shrink: 0; line-height: 1; }
+  .clf-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+  /* --- Budget Bar (shared) --- */
+  .budget-bar { height: 6px; width: 100%; border-radius: 100px; background: var(--muted); overflow: visible; }
+  .budget-bar-fill { height: 100%; border-radius: 100px; transition: width 0.3s ease; }
+  .budget-bar-fill.st-pos { background: var(--positive); }
+  .budget-bar-fill.st-att { background: var(--attention); }
+  .budget-bar-fill.st-alt { background: var(--alert); }
+  .budget-bar-fill.st-crt { background: var(--critical); }
+  .budget-bar-fill.st-none { background: #D6D3D1; }
+  .budget-label { font-size: 11px; color: var(--text-tertiary); margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .budget-label.st-pos { color: var(--positive-text); }
+  .budget-label.st-att { color: var(--attention-text); }
+  .budget-label.st-alt { color: var(--alert-text); }
+  .budget-label.st-crt { color: var(--critical-text); }
+
+  /* --- Level 1: Classificação --- */
+  .clf { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 12px; overflow: hidden; box-shadow: var(--shadow-sm); }
+  .clf.open { box-shadow: var(--shadow-md); border-color: var(--border-hover); }
+  .clf-header { display: flex; align-items: center; gap: 10px; padding: 16px 20px; cursor: pointer; user-select: none; transition: background 100ms; }
+  .clf-header:hover { background: var(--muted); }
+  .clf.open > .clf-header .chevron { transform: rotate(90deg); color: var(--primary); }
+  .clf-emoji { font-size: 22px; flex-shrink: 0; }
+  .clf-info { flex: 0 1 auto; min-width: 0; }
+  .clf-name { font-size: 16px; font-weight: 700; color: var(--text-primary); }
+  .clf-meta { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+  .clf-budget { flex: 1; min-width: 0; }
+  .clf-budget-text { font-size: 13px; font-variant-numeric: tabular-nums; color: var(--text-secondary); margin-bottom: 3px; }
+  .clf-budget-text strong { color: var(--text-primary); font-weight: 600; }
+  .clf-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .clf-body { display: none; border-top: 1px solid var(--border); }
+  .clf.open > .clf-body { display: block; }
+
+  /* --- Level 2: Categoria --- */
+  .cat { border-top: 1px solid var(--border); }
+  .cat:first-child { border-top: none; }
+  .cat-header { display: flex; align-items: center; gap: 10px; padding: 12px 20px 12px 36px; border-left: 4px solid var(--primary-light); cursor: pointer; user-select: none; transition: background 100ms; }
+  .cat-header:hover { background: var(--muted); }
+  .cat.open > .cat-header { border-left-color: var(--primary); }
+  .cat.open > .cat-header .chevron { transform: rotate(90deg); color: var(--primary); }
+  .cat-emoji { font-size: 18px; flex-shrink: 0; }
+  .cat-info { flex: 0 1 auto; min-width: 0; }
+  .cat-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .cat-meta { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
+  .cat-budget { flex: 1; min-width: 0; }
+  .cat-budget-text { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--text-secondary); margin-bottom: 2px; }
+  .cat-budget-text strong { color: var(--text-primary); font-weight: 600; }
+  .cat-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .cat-body { display: none; background: rgba(0,0,0,0.015); }
+  .cat.open > .cat-body { display: block; }
+
+  /* --- Level 3: Subcategoria --- */
+  .sub { border-top: 1px solid var(--border); }
+  .sub:first-child { border-top: none; }
+  .sub-header { display: flex; align-items: center; gap: 10px; padding: 10px 20px 10px 56px; border-left: 4px solid var(--border); cursor: pointer; user-select: none; transition: background 100ms; }
+  .sub-header:hover { background: rgba(0,0,0,0.02); }
+  .sub.open > .sub-header { border-left-color: var(--text-tertiary); }
+  .sub.open > .sub-header .chevron { transform: rotate(90deg); color: var(--primary); }
+  .sub-info { flex: 0 1 auto; min-width: 0; }
+  .sub-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .sub-meta { font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 1px; }
+  .sub-budget { flex: 1; min-width: 0; }
+  .sub-budget-text { font-size: 11px; font-variant-numeric: tabular-nums; color: var(--text-secondary); margin-bottom: 2px; }
+  .sub-budget-text strong { color: var(--text-primary); font-weight: 600; }
+  .sub-budget .budget-bar { height: 4px; }
+  .sub-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .sub-body { display: none; }
+  .sub.open > .sub-body { display: block; }
+
+  /* --- Level 4: Estabelecimento --- */
+  .est { display: flex; align-items: center; gap: 10px; padding: 10px 20px 10px 76px; border-top: 1px solid var(--border); border-left: 4px solid transparent; font-size: 13px; background: var(--muted); }
+  .est:first-child { border-top: none; }
+  .est-name { font-weight: 500; color: var(--text-primary); display: flex; align-items: center; gap: 6px; }
+  .est-info { flex: 0 1 auto; min-width: 0; }
+  .est-detail { font-size: 11px; color: var(--text-tertiary); margin-top: 1px; }
+  .est-amount { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text-primary); flex-shrink: 0; }
+  .est-budget { flex: 1; min-width: 0; }
+  .est-budget .budget-bar { height: 3px; margin-top: 3px; }
+  .est-btn { width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--muted); color: var(--text-tertiary); font-size: 12px; cursor: pointer; transition: all 150ms; flex-shrink: 0; }
+  .est-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+  /* --- Method Badge --- */
+  .method-badge { display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px; background: var(--muted); border-radius: 100px; font-size: 10px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
+  .method-brand { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 12px; border-radius: 2px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.06); font-size: 5px; font-style: italic; font-weight: 800; }
+  .method-brand-visa { background: #1A1F71; color: #FFFFFF; }
+  .method-brand-master { background: #EB001B; color: #FFFFFF; }
+  .method-brand-itau { background: #003778; color: #F47920; }
+  .sub-emoji { font-size: 15px; flex-shrink: 0; }
+  .est-emoji { font-size: 13px; flex-shrink: 0; }
+
+  /* --- Source Badge --- */
+  .source-badge { padding: 1px 6px; border-radius: 100px; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+  .source-auto { background: var(--positive-bg); color: var(--positive-text); }
+  .source-manual { background: var(--primary-light); color: var(--primary); }
+
+  /* --- Unallocated + Add rows --- */
+  .unalloc { padding: 8px 20px 8px 40px; font-size: 12px; color: var(--text-tertiary); background: var(--muted); border-top: 1px solid var(--border); }
+  .unalloc-cat { padding-left: 60px; }
+  .add-row { padding: 10px 20px 10px 44px; border-top: 1px solid var(--border); }
+  .add-row-cat { padding-left: 72px; }
+  .add-row-sub { padding-left: 100px; }
+  .add-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: none; border: 1px dashed var(--border); border-radius: var(--radius-sm); color: var(--text-secondary); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 150ms; font-family: inherit; }
+  .add-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+  .add-clf-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 20px; background: var(--surface); border: 2px dashed var(--border); border-radius: var(--radius-lg); color: var(--text-secondary); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 150ms; font-family: inherit; width: 100%; }
+  .add-clf-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+  /* --- Edit Sheet (right panel) --- */
+  .sheet-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.25); backdrop-filter: blur(2px); z-index: 100; }
+  .sheet-overlay.open { display: block; }
+  .sheet-panel { position: fixed; top: 0; right: -420px; width: 420px; height: 100vh; background: var(--surface); border-left: 1px solid var(--border); box-shadow: -8px 0 24px rgba(0,0,0,0.08); z-index: 101; transition: right 0.25s ease; overflow-y: auto; }
+  .sheet-panel.open { right: 0; }
+  .sheet-header { display: flex; align-items: center; justify-content: space-between; padding: 24px 24px 16px; border-bottom: 1px solid var(--border); }
+  .sheet-title { font-size: 18px; font-weight: 700; }
+  .sheet-close { width: 32px; height: 32px; border: none; background: none; color: var(--text-tertiary); cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); transition: all 150ms; }
+  .sheet-close:hover { background: var(--muted); color: var(--text-primary); }
+  .sheet-body { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+  .sheet-form-group { display: flex; flex-direction: column; gap: 6px; }
+  .sheet-form-group label { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+  .sheet-form-group .optional { font-weight: 400; color: var(--text-tertiary); font-size: 12px; }
+  .sheet-form-group input, .sheet-form-group select { height: 36px; padding: 0 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; color: var(--text-primary); background: var(--surface); outline: none; transition: border-color 150ms; }
+  .sheet-form-group input:focus, .sheet-form-group select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+  .sheet-emoji-trigger { width: 48px; height: 48px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 150ms; }
+  .sheet-emoji-trigger:hover { border-color: var(--primary); background: var(--primary-light); }
+  .sheet-actions { display: flex; gap: 10px; padding: 20px 24px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+  .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; background: var(--primary); color: #fff; border: none; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 150ms; font-family: inherit; }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .sheet-actions .btn-primary { flex: 1; }
+  .btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; background: var(--surface); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 150ms; font-family: inherit; }
+  .btn-secondary:hover { background: var(--bg); }
+  .btn-danger-outline { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; background: var(--surface); color: var(--critical); border: 1px solid var(--critical); border-radius: var(--radius-md); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 150ms; font-family: inherit; margin-right: auto; }
+  .btn-danger-outline:hover { background: var(--critical-bg); }
+
+  /* Sheet: budget range row */
+  .sheet-budget-range { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  /* Sheet: danger zone */
+  .sheet-danger-zone { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 4px; }
+  .sheet-danger-zone-title { font-size: 12px; font-weight: 600; color: var(--critical); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 12px; }
+  .sheet-danger-action { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 8px; cursor: pointer; transition: all 150ms; }
+  .sheet-danger-action:hover { border-color: var(--border-hover); background: var(--muted); }
+  .sheet-danger-action-icon { font-size: 18px; flex-shrink: 0; }
+  .sheet-danger-action-info { flex: 1; }
+  .sheet-danger-action-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .sheet-danger-action-desc { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
+  /* Budget range display in tree */
+  .budget-range { font-size: 11px; color: var(--text-tertiary); }
+
+  /* ===== MOBILE ===== */
+  .mobile-section { max-width: 430px; margin: 60px auto; padding: 0 20px 40px; }
+  .mobile-section-title { font-size: 14px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; text-align: center; margin-bottom: 20px; }
+  .phone-frame { width: 390px; height: 844px; border: 3px solid #1C1917; border-radius: 40px; overflow: hidden; background: var(--bg); margin: 0 auto; box-shadow: 0 25px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; position: relative; }
+  .phone-status-bar { height: 54px; background: var(--surface); display: flex; align-items: flex-end; justify-content: space-between; padding: 0 28px 8px; flex-shrink: 0; }
+  .phone-time { font-size: 15px; font-weight: 600; }
+  .phone-indicators { display: flex; gap: 6px; font-size: 12px; color: var(--text-secondary); }
+  .phone-body { flex: 1; overflow-y: auto; }
+  .phone-header { padding: 12px 16px 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
+  .phone-header-title-row { display: flex; align-items: center; justify-content: space-between; }
+  .phone-header-title { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+  .phone-collapse-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text-secondary); font-size: 10px; font-weight: 500; font-family: inherit; cursor: pointer; white-space: nowrap; }
+  .phone-collapse-btn svg { width: 12px; height: 12px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .phone-header-sub { font-size: 12px; color: var(--text-secondary); }
+  .phone-content { padding: 12px; }
+
+  /* Mobile collapsible */
+  .m-clf { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 8px; overflow: hidden; }
+  .m-clf-header { display: flex; align-items: center; gap: 8px; padding: 12px; cursor: pointer; user-select: none; }
+  .m-clf-header:active { background: var(--muted); }
+  .m-chevron { font-size: 10px; color: var(--text-tertiary); transition: transform 200ms; flex-shrink: 0; width: 12px; }
+  .m-clf.open > .m-clf-header .m-chevron { transform: rotate(90deg); }
+  /* SVG chevron rotation for mobile */
+  .m-clf.open > .m-clf-header .chevron { transform: rotate(90deg); color: var(--primary); }
+  .m-cat.open > .m-cat-header .chevron { transform: rotate(90deg); color: var(--primary); }
+  .m-sub.open > .m-sub-header .chevron { transform: rotate(90deg); color: var(--primary); }
+  .m-sub-emoji { font-size: 13px; flex-shrink: 0; }
+  .m-budget-label { font-size: 9px; color: var(--text-tertiary); margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .m-budget-label.st-pos { color: var(--positive-text); }
+  .m-budget-label.st-att { color: var(--attention-text); }
+  .m-budget-label.st-alt { color: var(--alert-text); }
+  .m-budget-label.st-crt { color: var(--critical-text); }
+  .m-est-emoji { font-size: 11px; flex-shrink: 0; }
+  .m-clf-emoji { font-size: 18px; flex-shrink: 0; }
+  .m-clf-info { flex: 0 1 auto; min-width: 0; }
+  .m-clf-name { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+  .m-clf-meta { font-size: 10px; color: var(--text-secondary); }
+  .m-clf-right { flex: 1; min-width: 0; text-align: right; }
+  .m-clf-amount { font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .m-clf-body { display: none; border-top: 1px solid var(--border); }
+  .m-clf.open > .m-clf-body { display: block; }
+
+  .m-cat { border-top: 1px solid var(--border); }
+  .m-cat:first-child { border-top: none; }
+  .m-cat-header { display: flex; align-items: center; gap: 6px; padding: 10px 12px 10px 28px; cursor: pointer; user-select: none; }
+  .m-cat-header:active { background: var(--muted); }
+  .m-cat.open > .m-cat-header .m-chevron { transform: rotate(90deg); }
+  .m-cat-emoji { font-size: 14px; flex-shrink: 0; }
+  .m-cat-info { flex: 0 1 auto; min-width: 0; }
+  .m-cat-name { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+  .m-cat-meta { font-size: 10px; color: var(--text-secondary); }
+  .m-cat-right { flex: 1; min-width: 0; text-align: right; }
+  .m-cat-amount { font-size: 10px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .m-cat-body { display: none; background: var(--bg); }
+  .m-cat.open > .m-cat-body { display: block; }
+
+  .m-sub { border-top: 1px solid var(--border); }
+  .m-sub:first-child { border-top: none; }
+  .m-sub-header { display: flex; align-items: center; gap: 6px; padding: 8px 12px 8px 44px; cursor: pointer; user-select: none; }
+  .m-sub-header:active { background: #F0EFED; }
+  .m-sub.open > .m-sub-header .m-chevron { transform: rotate(90deg); }
+  .m-sub-info { flex: 0 1 auto; min-width: 0; }
+  .m-sub-name { font-size: 11px; font-weight: 600; color: var(--text-primary); }
+  .m-sub-meta { font-size: 10px; color: var(--text-secondary); }
+  .m-sub-right { flex: 1; min-width: 0; text-align: right; }
+  .m-sub-amount { font-size: 10px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .m-sub-body { display: none; }
+  .m-sub.open > .m-sub-body { display: block; }
+
+  .m-est { display: flex; align-items: center; gap: 6px; padding: 6px 12px 6px 56px; border-top: 1px solid var(--border); font-size: 10px; background: #F5F4F2; }
+  .m-est-name { font-weight: 500; color: var(--text-primary); flex: 1; display: flex; align-items: center; gap: 4px; }
+  .m-est-amount { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  .m-budget-bar { height: 3px; width: 100%; border-radius: 100px; background: var(--muted); margin-top: 3px; }
+  .m-budget-bar-fill { height: 100%; border-radius: 100px; }
+  .m-unalloc { padding: 6px 12px 6px 28px; font-size: 10px; color: var(--text-tertiary); border-top: 1px solid var(--border); background: var(--muted); }
+  .m-add { padding: 8px 12px; border-top: 1px solid var(--border); }
+  .m-add-clf { padding: 8px 12px; }
+  .m-add-cat { padding-left: 28px; }
+  .m-add-sub { padding-left: 44px; }
+  .m-add-btn { font-size: 11px; color: var(--text-secondary); background: none; border: 1px dashed var(--border); border-radius: var(--radius-sm); padding: 4px 10px; cursor: pointer; font-family: inherit; }
+  .m-action-btn { width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text-tertiary); font-size: 11px; cursor: pointer; flex-shrink: 0; }
+
+  /* Bottom Nav Canônico */
+  .bottom-nav { position: relative; height: 56px; background: var(--surface); border-top: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-around; z-index: 50; flex-shrink: 0; }
+  .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px 0; min-height: 44px; color: var(--text-tertiary); text-decoration: none; font-size: 10px; font-weight: 500; cursor: pointer; }
+  .bottom-nav-item.active { color: var(--primary); }
+  .bottom-nav-icon { width: 20px; height: 20px; }
+  .bottom-nav-icon svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .bottom-nav-fab { display: flex; flex-direction: column; align-items: center; text-decoration: none; margin-top: -16px; }
+  .bottom-nav-fab-icon { width: 48px; height: 48px; background: var(--primary); color: #FFFFFF; border-radius: 50%; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; }
+  .bottom-nav-fab-icon svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .bottom-nav-fab-label { margin-top: 2px; font-size: 10px; font-weight: 500; color: var(--text-tertiary); }
+
+  /* ===== SEPARATOR ===== */
+  .section-separator { width: 100%; border: none; border-top: 2px dashed var(--border); margin: 60px 0; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .desktop-frame { margin-left: 0; }
+    .main-content { padding: 24px 20px; }
+  }
+  @media (max-width: 600px) {
+    .mobile-section { padding: 0 8px 40px; }
+    .phone-frame { width: 100%; max-width: 390px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================ -->
+<!-- DESKTOP LAYOUT                               -->
+<!-- ============================================ -->
+<div class="desktop-frame">
+
+  <!-- SIDEBAR CANÔNICO -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="sidebar-logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/><path d="M8 11h8"/><path d="M8 7h6"/></svg></span>
+      <span class="sidebar-logo-text">Caderninho</span>
+    </div>
+    <div class="sidebar-separator"></div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Navegação</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>Dashboard</li>
+        <li class="sidebar-item"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"/><path d="M16 10h.01"/><path d="M2 8v1a2 2 0 0 0 2 2h1"/></svg></span>Orçamentos</li>
+        <li class="sidebar-item"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span>Checklist</li>
+        <li class="sidebar-item"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>Projeção</li>
+      </ul>
+      <div class="sidebar-separator"></div>
+      <div class="sidebar-section-label">Configurações</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M10 12h4"/><path d="M10 8h4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/></svg></span>Contas</li>
+        <li class="sidebar-item"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>Cartões</li>
+        <li class="sidebar-item"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M10 18v-7"/><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></svg></span>Investimentos</li>
+        <li class="sidebar-item"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>Receitas</li>
+        <li class="sidebar-item active"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z"/><path d="M2 7v6.172a2 2 0 0 0 .586 1.414l6.71 6.71a2.4 2.4 0 0 0 3.191.193"/><circle cx="10.5" cy="6.5" r=".5" fill="currentColor"/></svg></span>Categorias</li>
+        <li class="sidebar-item" onclick="window.location.href='proto-17-configuracoes.html'" style="cursor:pointer;"><span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span>Configurações</li>
+      </ul>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">V</div>
+        <div><div class="sidebar-user-name">Vitor</div><div class="sidebar-user-role">Administrador</div></div>
+      </div>
+      <div class="sidebar-separator"></div>
+      <button class="sidebar-logout"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>Sair</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="page-header-row">
+      <h1 class="page-title">Categorias</h1>
+      <button class="collapse-all-btn" onclick="collapseAll()">
+        <svg viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
+        Recolher tudo
+      </button>
+    </div>
+    <p class="page-subtitle">Gerencie classificações, categorias, subcategorias e estabelecimentos</p>
+
+    <!-- ====== CLF 1: Essenciais fixos (ABERTO) ====== -->
+    <div class="clf open">
+      <div class="clf-header" onclick="toggle(this.parentElement)">
+        <svg class="chevron lg" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        <span class="clf-emoji">📊</span>
+        <div class="clf-info">
+          <div class="clf-name">Essenciais fixos</div>
+          <div class="clf-meta">2 categorias</div>
+        </div>
+        <div class="clf-budget">
+          <div class="clf-budget-text"><strong>R$ 4.200,00</strong> / R$ 5.000–6.000</div>
+          <div class="budget-bar"><div class="budget-bar-fill st-att" style="width:70%"></div></div>
+          <div class="budget-label st-att">70% do máx — resta R$ 1.800,00</div>
+        </div>
+        <div class="clf-actions">
+          <button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar categoria">＋</button>
+          <button class="clf-btn" onclick="event.stopPropagation(); openSheet('classification')">✏️</button>
+        </div>
+      </div>
+      <div class="clf-body">
+        <!-- CAT: Moradia -->
+        <div class="cat open">
+          <div class="cat-header" onclick="toggle(this.parentElement)">
+            <svg class="chevron md" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+            <span class="cat-emoji">🏠</span>
+            <div class="cat-info">
+              <div class="cat-name">Moradia</div>
+              <div class="cat-meta">4 subcategorias</div>
+            </div>
+            <div class="cat-budget">
+              <div class="cat-budget-text"><strong>R$ 3.400,00</strong> / R$ 3.500–4.000</div>
+              <div class="budget-bar"><div class="budget-bar-fill st-alt" style="width:85%"></div></div>
+              <div class="budget-label st-alt">85% do máx — resta R$ 600,00</div>
+            </div>
+            <div class="cat-actions">
+              <button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar subcategoria">＋</button>
+              <button class="clf-btn" onclick="event.stopPropagation(); openSheet('category')">✏️</button>
+            </div>
+          </div>
+          <div class="cat-body">
+            <div class="sub">
+              <div class="sub-header" onclick="toggle(this.parentElement)">
+                <svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+                <span class="sub-emoji">🔑</span>
+                <div class="sub-info">
+                  <div class="sub-name">Aluguel</div>
+                  <div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-itau">ITÚ</span> Débito Itaú</span></div>
+                </div>
+                <div class="sub-budget"><div class="sub-budget-text"><strong>R$ 2.200,00</strong> / R$ 2.200,00</div><div class="budget-bar"><div class="budget-bar-fill st-pos" style="width:100%"></div></div><div class="budget-label st-pos">100% — em dia</div></div>
+                <div class="sub-actions">
+                  <button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button>
+                  <button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button>
+                </div>
+              </div>
+              <div class="sub-body">
+                <div class="est">
+                  <span class="est-emoji">📍</span>
+                  <div class="est-info"><div class="est-name">Imobiliária XYZ <span class="source-badge source-auto">auto</span></div><div class="est-detail">3 pagamentos · último 01/03</div></div>
+                  <div class="est-budget"><div class="est-amount">R$ 2.200,00</div><div class="budget-bar"><div class="budget-bar-fill st-none" style="width:100%"></div></div><div class="budget-label">100% de Aluguel</div></div>
+                  <button class="est-btn" onclick="openSheet('establishment')">✏️</button>
+                </div>
+              </div>
+            </div>
+            <div class="sub">
+              <div class="sub-header" onclick="toggle(this.parentElement)">
+                <svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+                <span class="sub-emoji">🏢</span>
+                <div class="sub-info">
+                  <div class="sub-name">Condomínio</div>
+                  <div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-itau">ITÚ</span> Débito Itaú</span></div>
+                </div>
+                <div class="sub-budget"><div class="sub-budget-text"><strong>R$ 800,00</strong> / R$ 800,00</div><div class="budget-bar"><div class="budget-bar-fill st-pos" style="width:100%"></div></div><div class="budget-label st-pos">100% — em dia</div></div>
+                <div class="sub-actions">
+                  <button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button>
+                  <button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button>
+                </div>
+              </div>
+              <div class="sub-body"></div>
+            </div>
+            <div class="sub">
+              <div class="sub-header" onclick="toggle(this.parentElement)">
+                <svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+                <span class="sub-emoji">💡</span>
+                <div class="sub-info">
+                  <div class="sub-name">Luz</div>
+                  <div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-itau">ITÚ</span> Débito Itaú</span></div>
+                </div>
+                <div class="sub-budget"><div class="sub-budget-text"><strong>R$ 242,00</strong> <span style="color:var(--text-tertiary)">(sem orç.)</span></div><div class="budget-bar"><div class="budget-bar-fill st-none" style="width:45%"></div></div><div class="budget-label">6,05% de Moradia</div></div>
+                <div class="sub-actions">
+                  <button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button>
+                  <button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button>
+                </div>
+              </div>
+              <div class="sub-body"></div>
+            </div>
+            <div class="sub">
+              <div class="sub-header" onclick="toggle(this.parentElement)">
+                <svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+                <span class="sub-emoji">🌐</span>
+                <div class="sub-info">
+                  <div class="sub-name">Internet</div>
+                  <div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> PDA Visa</span></div>
+                </div>
+                <div class="sub-budget"><div class="sub-budget-text"><strong>R$ 158,00</strong> / R$ 158,00</div><div class="budget-bar"><div class="budget-bar-fill st-pos" style="width:100%"></div></div><div class="budget-label st-pos">100% — em dia</div></div>
+                <div class="sub-actions">
+                  <button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button>
+                  <button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button>
+                </div>
+              </div>
+              <div class="sub-body"></div>
+            </div>
+          </div>
+        </div>
+        <!-- CAT: Assinaturas -->
+        <div class="cat">
+          <div class="cat-header" onclick="toggle(this.parentElement)">
+            <svg class="chevron md" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+            <span class="cat-emoji">📱</span>
+            <div class="cat-info">
+              <div class="cat-name">Assinaturas</div>
+              <div class="cat-meta">2 subcategorias</div>
+            </div>
+            <div class="cat-budget">
+              <div class="cat-budget-text"><strong>R$ 180,00</strong> / R$ 200,00</div>
+              <div class="budget-bar"><div class="budget-bar-fill st-alt" style="width:90%"></div></div>
+              <div class="budget-label st-alt">90% — resta R$ 20,00</div>
+            </div>
+            <div class="cat-actions">
+              <button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar subcategoria">＋</button>
+              <button class="clf-btn" onclick="event.stopPropagation(); openSheet('category')">✏️</button>
+            </div>
+          </div>
+          <div class="cat-body">
+            <div class="sub">
+              <div class="sub-header" onclick="toggle(this.parentElement)">
+                <svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+                <span class="sub-emoji">📺</span>
+                <div class="sub-info">
+                  <div class="sub-name">Streaming</div>
+                  <div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> Latam Pass</span></div>
+                </div>
+                <div class="sub-budget"><div class="sub-budget-text"><strong>R$ 120,00</strong> <span style="color:var(--text-tertiary)">(sem orç.)</span></div><div class="budget-bar"><div class="budget-bar-fill st-none" style="width:67%"></div></div><div class="budget-label">60% de Assinaturas</div></div>
+                <div class="sub-actions">
+                  <button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button>
+                  <button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button>
+                </div>
+              </div>
+              <div class="sub-body"></div>
+            </div>
+            <div class="sub">
+              <div class="sub-header" onclick="toggle(this.parentElement)">
+                <svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+                <span class="sub-emoji">📲</span>
+                <div class="sub-info">
+                  <div class="sub-name">Apps</div>
+                  <div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> Latam Pass</span></div>
+                </div>
+                <div class="sub-budget"><div class="sub-budget-text"><strong>R$ 60,00</strong> <span style="color:var(--text-tertiary)">(sem orç.)</span></div><div class="budget-bar"><div class="budget-bar-fill st-none" style="width:33%"></div></div><div class="budget-label">30% de Assinaturas</div></div>
+                <div class="sub-actions">
+                  <button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button>
+                  <button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button>
+                </div>
+              </div>
+              <div class="sub-body"></div>
+            </div>
+          </div>
+        </div>
+        <div class="unalloc">Não alocado: R$ 620,00 de R$ 6.000,00</div>
+      </div>
+    </div>
+
+    <!-- ====== CLF 2: Essenciais variáveis (ABERTO, com drill-down completo) ====== -->
+    <div class="clf open">
+      <div class="clf-header" onclick="toggle(this.parentElement)">
+        <svg class="chevron lg" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        <span class="clf-emoji">📊</span>
+        <div class="clf-info">
+          <div class="clf-name">Essenciais variáveis</div>
+          <div class="clf-meta">2 categorias</div>
+        </div>
+        <div class="clf-budget">
+          <div class="clf-budget-text"><strong>R$ 6.800,00</strong> / R$ 7.000–8.000</div>
+          <div class="budget-bar"><div class="budget-bar-fill st-alt" style="width:85%"></div></div>
+          <div class="budget-label st-alt">85% do máx — resta R$ 1.200,00</div>
+        </div>
+        <div class="clf-actions">
+          <button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar categoria">＋</button>
+          <button class="clf-btn" onclick="event.stopPropagation(); openSheet('classification')">✏️</button>
+        </div>
+      </div>
+      <div class="clf-body">
+        <!-- CAT: Alimentação (aberto com subcats expandidas) -->
+        <div class="cat open">
+          <div class="cat-header" onclick="toggle(this.parentElement)">
+            <svg class="chevron md" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+            <span class="cat-emoji">🍽</span>
+            <div class="cat-info">
+              <div class="cat-name">Alimentação</div>
+              <div class="cat-meta">3 subcategorias</div>
+            </div>
+            <div class="cat-budget">
+              <div class="cat-budget-text"><strong>R$ 5.100,00</strong> / R$ 5.500,00</div>
+              <div class="budget-bar"><div class="budget-bar-fill st-alt" style="width:93%"></div></div>
+              <div class="budget-label st-alt">93% — resta R$ 400,00</div>
+            </div>
+            <div class="cat-actions">
+              <button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar subcategoria">＋</button>
+              <button class="clf-btn" onclick="event.stopPropagation(); openSheet('category')">✏️</button>
+            </div>
+          </div>
+          <div class="cat-body">
+            <!-- SUB: Supermercado (aberto com estabelecimentos) -->
+            <div class="sub open">
+              <div class="sub-header" onclick="toggle(this.parentElement)">
+                <svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+                <span class="sub-emoji">🛒</span>
+                <div class="sub-info">
+                  <div class="sub-name">Supermercado</div>
+                  <div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> Latam Pass</span> <span>3 estabelecimentos</span></div>
+                </div>
+                <div class="sub-budget"><div class="sub-budget-text"><strong>R$ 2.800,00</strong> / R$ 2.500–3.000</div><div class="budget-bar"><div class="budget-bar-fill st-alt" style="width:93%"></div></div><div class="budget-label st-alt">93% do máx — resta R$ 200,00</div></div>
+                <div class="sub-actions">
+                  <button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button>
+                  <button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button>
+                </div>
+              </div>
+              <div class="sub-body">
+                <div class="est">
+                  <span class="est-emoji">📍</span>
+                  <div class="est-info"><div class="est-name">Pão de Açúcar <span class="source-badge source-auto">auto</span></div><div class="est-detail"><span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> Latam Pass</span> · 8 visitas · último 20/03</div></div>
+                  <div class="est-budget"><div class="est-amount">R$ 1.200,00</div><div class="budget-bar"><div class="budget-bar-fill st-none" style="width:43%"></div></div><div class="budget-label">43% de Supermercado</div></div>
+                  <button class="est-btn" onclick="openSheet('establishment')">✏️</button>
+                </div>
+                <div class="est">
+                  <span class="est-emoji">📍</span>
+                  <div class="est-info"><div class="est-name">Bistek <span class="source-badge source-auto">auto</span></div><div class="est-detail"><span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> Latam Pass</span> · 4 visitas · último 18/03</div></div>
+                  <div class="est-budget"><div class="est-amount">R$ 950,00</div><div class="budget-bar"><div class="budget-bar-fill st-none" style="width:34%"></div></div><div class="budget-label">34% de Supermercado</div></div>
+                  <button class="est-btn" onclick="openSheet('establishment')">✏️</button>
+                </div>
+                <div class="est">
+                  <span class="est-emoji">📍</span>
+                  <div class="est-info"><div class="est-name">Angeloni <span class="source-badge source-manual">manual</span></div><div class="est-detail">adicionado manualmente · sem uso ainda</div></div>
+                  <div class="est-budget"><div class="est-amount" style="color:var(--text-tertiary)">—</div></div>
+                  <button class="est-btn" onclick="openSheet('establishment')">✏️</button>
+                </div>
+              </div>
+            </div>
+            <!-- SUB: Restaurante trabalho -->
+            <div class="sub">
+              <div class="sub-header" onclick="toggle(this.parentElement)">
+                <svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+                <span class="sub-emoji">🍽️</span>
+                <div class="sub-info">
+                  <div class="sub-name">Restaurante trabalho</div>
+                  <div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> PDA Visa</span> <span>2 estab.</span></div>
+                </div>
+                <div class="sub-budget"><div class="sub-budget-text"><strong>R$ 1.400,00</strong> / R$ 1.500,00</div><div class="budget-bar"><div class="budget-bar-fill st-alt" style="width:93%"></div></div><div class="budget-label st-alt">93% — resta R$ 100,00</div></div>
+                <div class="sub-actions">
+                  <button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button>
+                  <button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button>
+                </div>
+              </div>
+              <div class="sub-body">
+                <div class="est">
+                  <span class="est-emoji">📍</span>
+                  <div class="est-info"><div class="est-name">Da Terra <span class="source-badge source-auto">auto</span></div><div class="est-detail">5 visitas · último 22/03</div></div>
+                  <div class="est-budget"><div class="est-amount">R$ 900,00</div><div class="budget-bar"><div class="budget-bar-fill st-none" style="width:64%"></div></div><div class="budget-label">64% de Rest. trabalho</div></div>
+                  <button class="est-btn" onclick="openSheet('establishment')">✏️</button>
+                </div>
+                <div class="est">
+                  <span class="est-emoji">📍</span>
+                  <div class="est-info"><div class="est-name">Frango e Fritas <span class="source-badge source-auto">auto</span></div><div class="est-detail">3 visitas · último 19/03</div></div>
+                  <div class="est-budget"><div class="est-amount">R$ 500,00</div><div class="budget-bar"><div class="budget-bar-fill st-none" style="width:36%"></div></div><div class="budget-label">36% de Rest. trabalho</div></div>
+                  <button class="est-btn" onclick="openSheet('establishment')">✏️</button>
+                </div>
+              </div>
+            </div>
+            <!-- SUB: Feira/Hortifruti -->
+            <div class="sub">
+              <div class="sub-header" onclick="toggle(this.parentElement)">
+                <svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+                <span class="sub-emoji">🥬</span>
+                <div class="sub-info">
+                  <div class="sub-name">Feira/Hortifruti</div>
+                  <div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> Latam Pass</span> <span>1 estab.</span></div>
+                </div>
+                <div class="sub-budget"><div class="sub-budget-text"><strong>R$ 450,00</strong> / R$ 500,00</div><div class="budget-bar"><div class="budget-bar-fill st-alt" style="width:90%"></div></div><div class="budget-label st-alt">90% — resta R$ 50,00</div></div>
+                <div class="sub-actions">
+                  <button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button>
+                  <button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button>
+                </div>
+              </div>
+              <div class="sub-body">
+                <div class="est">
+                  <span class="est-emoji">📍</span>
+                  <div class="est-info"><div class="est-name">Feira do bairro <span class="source-badge source-auto">auto</span></div><div class="est-detail">4 visitas · último 23/03</div></div>
+                  <div class="est-budget"><div class="est-amount">R$ 450,00</div><div class="budget-bar"><div class="budget-bar-fill st-none" style="width:90%"></div></div><div class="budget-label">90% de Feira/Hortifruti</div></div>
+                  <button class="est-btn" onclick="openSheet('establishment')">✏️</button>
+                </div>
+              </div>
+            </div>
+            <div class="unalloc unalloc-cat">Não alocado: R$ 500,00 de R$ 5.500,00</div>
+          </div>
+        </div>
+        <!-- CAT: Transporte -->
+        <div class="cat">
+          <div class="cat-header" onclick="toggle(this.parentElement)">
+            <svg class="chevron md" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+            <span class="cat-emoji">🚗</span>
+            <div class="cat-info">
+              <div class="cat-name">Transporte</div>
+              <div class="cat-meta">4 subcategorias</div>
+            </div>
+            <div class="cat-budget">
+              <div class="cat-budget-text"><strong>R$ 1.200,00</strong> / R$ 1.500,00</div>
+              <div class="budget-bar"><div class="budget-bar-fill st-att" style="width:80%"></div></div>
+              <div class="budget-label st-att">80% — resta R$ 300,00</div>
+            </div>
+            <div class="cat-actions">
+              <button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar subcategoria">＋</button>
+              <button class="clf-btn" onclick="event.stopPropagation(); openSheet('category')">✏️</button>
+            </div>
+          </div>
+          <div class="cat-body">
+            <div class="sub"><div class="sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="sub-emoji">⛽</span><div class="sub-info"><div class="sub-name">Gasolina</div><div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> Latam Pass</span></div></div><div class="sub-budget"><div class="sub-budget-text"><strong>R$ 520,00</strong> / R$ 600,00</div><div class="budget-bar"><div class="budget-bar-fill st-alt" style="width:87%"></div></div><div class="budget-label st-alt">87% — resta R$ 80,00</div></div><div class="sub-actions"><button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button></div></div><div class="sub-body"></div></div>
+            <div class="sub"><div class="sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="sub-emoji">🅿️</span><div class="sub-info"><div class="sub-name">Estacionamento</div><div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> PDA Visa</span></div></div><div class="sub-budget"><div class="sub-budget-text"><strong>R$ 280,00</strong> / R$ 300,00</div><div class="budget-bar"><div class="budget-bar-fill st-alt" style="width:93%"></div></div><div class="budget-label st-alt">93% — resta R$ 20,00</div></div><div class="sub-actions"><button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button></div></div><div class="sub-body"></div></div>
+            <div class="sub"><div class="sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="sub-emoji">🛣️</span><div class="sub-info"><div class="sub-name">Pedágio</div><div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-itau">ITÚ</span> Débito Itaú</span></div></div><div class="sub-budget"><div class="sub-budget-text"><strong>R$ 180,00</strong> / R$ 200,00</div><div class="budget-bar"><div class="budget-bar-fill st-alt" style="width:90%"></div></div><div class="budget-label st-alt">90% — resta R$ 20,00</div></div><div class="sub-actions"><button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button></div></div><div class="sub-body"></div></div>
+            <div class="sub"><div class="sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="sub-emoji">🔧</span><div class="sub-info"><div class="sub-name">Manutenção</div><div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> PDA Visa</span></div></div><div class="sub-budget"><div class="sub-budget-text"><strong>R$ 220,00</strong> / R$ 400,00</div><div class="budget-bar"><div class="budget-bar-fill st-pos" style="width:55%"></div></div><div class="budget-label st-pos">55% — resta R$ 180,00</div></div><div class="sub-actions"><button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button></div></div><div class="sub-body"></div></div>
+          </div>
+        </div>
+        <div class="unalloc">Não alocado: R$ 1.000,00 de R$ 8.000,00</div>
+      </div>
+    </div>
+
+    <!-- ====== CLF 3: Qualidade de vida (FECHADO) ====== -->
+    <div class="clf">
+      <div class="clf-header" onclick="toggle(this.parentElement)">
+        <svg class="chevron lg" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        <span class="clf-emoji">📊</span>
+        <div class="clf-info">
+          <div class="clf-name">Qualidade de vida</div>
+          <div class="clf-meta">2 categorias · Restaurante, Viagem</div>
+        </div>
+        <div class="clf-budget">
+          <div class="clf-budget-text"><strong>R$ 3.200,00</strong> / R$ 4.000,00</div>
+          <div class="budget-bar"><div class="budget-bar-fill st-att" style="width:80%"></div></div>
+          <div class="budget-label st-att">80% — resta R$ 800,00</div>
+        </div>
+        <div class="clf-actions">
+          <button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar categoria">＋</button>
+          <button class="clf-btn" onclick="event.stopPropagation(); openSheet('classification')">✏️</button>
+        </div>
+      </div>
+      <div class="clf-body">
+        <div class="cat"><div class="cat-header" onclick="toggle(this.parentElement)"><svg class="chevron md" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="cat-emoji">🍔</span><div class="cat-info"><div class="cat-name">Restaurante</div><div class="cat-meta">3 subcategorias · Fast Food, Delivery, Jantar fora</div></div><div class="cat-budget"><div class="cat-budget-text"><strong>R$ 1.800,00</strong> / R$ 2.000,00</div><div class="budget-bar"><div class="budget-bar-fill st-alt" style="width:90%"></div></div><div class="budget-label st-alt">90% — resta R$ 200,00</div></div><div class="cat-actions"><button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar subcategoria">＋</button><button class="clf-btn" onclick="event.stopPropagation(); openSheet('category')">✏️</button></div></div><div class="cat-body">
+          <div class="sub"><div class="sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="sub-emoji">🍟</span><div class="sub-info"><div class="sub-name">Fast Food</div><div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> PDA Visa</span></div></div><div class="sub-budget"><div class="sub-budget-text"><strong>R$ 420,00</strong> / R$ 500,00</div><div class="budget-bar"><div class="budget-bar-fill st-alt" style="width:84%"></div></div><div class="budget-label st-alt">84% — resta R$ 80,00</div></div><div class="sub-actions"><button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button></div></div><div class="sub-body"></div></div>
+          <div class="sub"><div class="sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="sub-emoji">📦</span><div class="sub-info"><div class="sub-name">Delivery</div><div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> PDA Visa</span></div></div><div class="sub-budget"><div class="sub-budget-text"><strong>R$ 680,00</strong> / R$ 800,00</div><div class="budget-bar"><div class="budget-bar-fill st-alt" style="width:85%"></div></div><div class="budget-label st-alt">85% — resta R$ 120,00</div></div><div class="sub-actions"><button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button></div></div><div class="sub-body"></div></div>
+          <div class="sub"><div class="sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="sub-emoji">🍷</span><div class="sub-info"><div class="sub-name">Jantar fora</div><div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> PDA Visa</span></div></div><div class="sub-budget"><div class="sub-budget-text"><strong>R$ 700,00</strong> / R$ 700,00</div><div class="budget-bar"><div class="budget-bar-fill st-pos" style="width:100%"></div></div><div class="budget-label st-pos">100% — em dia</div></div><div class="sub-actions"><button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button></div></div><div class="sub-body"></div></div>
+        </div></div>
+        <div class="cat"><div class="cat-header" onclick="toggle(this.parentElement)"><svg class="chevron md" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="cat-emoji">✈️</span><div class="cat-info"><div class="cat-name">Viagem</div><div class="cat-meta">4 subcategorias</div></div><div class="cat-budget"><div class="cat-budget-text"><strong>R$ 1.400,00</strong> / R$ 2.000,00</div><div class="budget-bar"><div class="budget-bar-fill st-att" style="width:70%"></div></div><div class="budget-label st-att">70% — resta R$ 600,00</div></div><div class="cat-actions"><button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar subcategoria">＋</button><button class="clf-btn" onclick="event.stopPropagation(); openSheet('category')">✏️</button></div></div><div class="cat-body">
+          <div class="sub"><div class="sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="sub-emoji">🏨</span><div class="sub-info"><div class="sub-name">Hospedagem</div><div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> Latam Pass</span></div></div><div class="sub-budget"><div class="sub-budget-text"><strong>R$ 800,00</strong> <span style="color:var(--text-tertiary)">(sem orç.)</span></div><div class="budget-bar"><div class="budget-bar-fill st-none" style="width:57%"></div></div><div class="budget-label">57% de Viagem</div></div><div class="sub-actions"><button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button></div></div><div class="sub-body"></div></div>
+          <div class="sub"><div class="sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="sub-emoji">🍴</span><div class="sub-info"><div class="sub-name">Alimentação viagem</div><div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> PDA Visa</span></div></div><div class="sub-budget"><div class="sub-budget-text"><strong>R$ 350,00</strong> <span style="color:var(--text-tertiary)">(sem orç.)</span></div><div class="budget-bar"><div class="budget-bar-fill st-none" style="width:25%"></div></div><div class="budget-label">25% de Viagem</div></div><div class="sub-actions"><button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button></div></div><div class="sub-body"></div></div>
+          <div class="sub"><div class="sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="sub-emoji">🚌</span><div class="sub-info"><div class="sub-name">Transporte viagem</div><div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> Latam Pass</span></div></div><div class="sub-budget"><div class="sub-budget-text"><strong>R$ 200,00</strong> <span style="color:var(--text-tertiary)">(sem orç.)</span></div><div class="budget-bar"><div class="budget-bar-fill st-none" style="width:14%"></div></div><div class="budget-label">14% de Viagem</div></div><div class="sub-actions"><button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button></div></div><div class="sub-body"></div></div>
+          <div class="sub"><div class="sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="sub-emoji">🎡</span><div class="sub-info"><div class="sub-name">Passeios</div><div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> PDA Visa</span></div></div><div class="sub-budget"><div class="sub-budget-text"><strong>R$ 50,00</strong> <span style="color:var(--text-tertiary)">(sem orç.)</span></div><div class="budget-bar"><div class="budget-bar-fill st-none" style="width:4%"></div></div><div class="budget-label">4% de Viagem</div></div><div class="sub-actions"><button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button></div></div><div class="sub-body"></div></div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- ====== CLF 4: Investimentos (FECHADO) ====== -->
+    <div class="clf">
+      <div class="clf-header" onclick="toggle(this.parentElement)">
+        <svg class="chevron lg" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        <span class="clf-emoji">📊</span>
+        <div class="clf-info">
+          <div class="clf-name">Investimentos</div>
+          <div class="clf-meta">1 categoria · Educação</div>
+        </div>
+        <div class="clf-budget">
+          <div class="clf-budget-text"><strong>R$ 1.500,00</strong> <span style="color:var(--text-tertiary)">(sem orçamento)</span></div>
+          <div class="budget-bar"><div class="budget-bar-fill st-none" style="width:40%"></div></div>
+          <div class="budget-label">sem orçamento definido</div>
+        </div>
+        <div class="clf-actions">
+          <button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar categoria">＋</button>
+          <button class="clf-btn" onclick="event.stopPropagation(); openSheet('classification')">✏️</button>
+        </div>
+      </div>
+      <div class="clf-body">
+        <div class="cat"><div class="cat-header" onclick="toggle(this.parentElement)"><svg class="chevron md" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="cat-emoji">📈</span><div class="cat-info"><div class="cat-name">Educação</div><div class="cat-meta">2 subcategorias</div></div><div class="cat-budget"><div class="cat-budget-text"><strong>R$ 1.500,00</strong> / R$ 2.800,00</div><div class="budget-bar"><div class="budget-bar-fill st-pos" style="width:54%"></div></div><div class="budget-label st-pos">54% — em dia</div></div><div class="cat-actions"><button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar subcategoria">＋</button><button class="clf-btn" onclick="event.stopPropagation(); openSheet('category')">✏️</button></div></div><div class="cat-body">
+          <div class="sub"><div class="sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="sub-emoji">📚</span><div class="sub-info"><div class="sub-name">Cursos</div><div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-itau">ITÚ</span> Débito Itaú</span></div></div><div class="sub-budget"><div class="sub-budget-text"><strong>R$ 1.200,00</strong> <span style="color:var(--text-tertiary)">(sem orç.)</span></div><div class="budget-bar"><div class="budget-bar-fill st-none" style="width:80%"></div></div><div class="budget-label">80% de Educação</div></div><div class="sub-actions"><button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button></div></div><div class="sub-body"></div></div>
+          <div class="sub"><div class="sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="sub-emoji">📖</span><div class="sub-info"><div class="sub-name">Livros</div><div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-visa">VISA</span> Latam Pass</span></div></div><div class="sub-budget"><div class="sub-budget-text"><strong>R$ 300,00</strong> <span style="color:var(--text-tertiary)">(sem orç.)</span></div><div class="budget-bar"><div class="budget-bar-fill st-none" style="width:20%"></div></div><div class="budget-label">20% de Educação</div></div><div class="sub-actions"><button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button></div></div><div class="sub-body"></div></div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- ====== CLF 5: Proteção (FECHADO) ====== -->
+    <div class="clf">
+      <div class="clf-header" onclick="toggle(this.parentElement)">
+        <svg class="chevron lg" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        <span class="clf-emoji">📊</span>
+        <div class="clf-info">
+          <div class="clf-name">Proteção</div>
+          <div class="clf-meta">1 categoria · Seguros</div>
+        </div>
+        <div class="clf-budget">
+          <div class="clf-budget-text"><strong>R$ 450,00</strong> / R$ 500,00</div>
+          <div class="budget-bar"><div class="budget-bar-fill st-alt" style="width:90%"></div></div>
+          <div class="budget-label st-alt">90% — resta R$ 50,00</div>
+        </div>
+        <div class="clf-actions">
+          <button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar categoria">＋</button>
+          <button class="clf-btn" onclick="event.stopPropagation(); openSheet('classification')">✏️</button>
+        </div>
+      </div>
+      <div class="clf-body">
+        <div class="cat"><div class="cat-header" onclick="toggle(this.parentElement)"><svg class="chevron md" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="cat-emoji">🛡</span><div class="cat-info"><div class="cat-name">Seguros</div><div class="cat-meta">2 subcategorias</div></div><div class="cat-budget"><div class="cat-budget-text"><strong>R$ 450,00</strong> / R$ 500,00</div><div class="budget-bar"><div class="budget-bar-fill st-alt" style="width:90%"></div></div><div class="budget-label st-alt">90% — resta R$ 50,00</div></div><div class="cat-actions"><button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar subcategoria">＋</button><button class="clf-btn" onclick="event.stopPropagation(); openSheet('category')">✏️</button></div></div><div class="cat-body">
+          <div class="sub"><div class="sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="sub-emoji">🚙</span><div class="sub-info"><div class="sub-name">Seguro carro</div><div class="sub-meta"><span class="method-badge"><span class="method-brand method-brand-itau">ITÚ</span> Débito Itaú</span></div></div><div class="sub-budget"><div class="sub-budget-text"><strong>R$ 250,00</strong> <span style="color:var(--text-tertiary)">(sem orç.)</span></div><div class="budget-bar"><div class="budget-bar-fill st-none" style="width:56%"></div></div><div class="budget-label">56% de Seguros</div></div><div class="sub-actions"><button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button></div></div><div class="sub-body"></div></div>
+          <div class="sub"><div class="sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="sub-emoji">🏥</span><div class="sub-info"><div class="sub-name">Plano saúde</div><div class="sub-meta"><span class="method-badge">Boleto</span></div></div><div class="sub-budget"><div class="sub-budget-text"><strong>R$ 200,00</strong> <span style="color:var(--text-tertiary)">(sem orç.)</span></div><div class="budget-bar"><div class="budget-bar-fill st-none" style="width:44%"></div></div><div class="budget-label">44% de Seguros</div></div><div class="sub-actions"><button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="clf-btn" onclick="event.stopPropagation(); openSheet('subcategory')">✏️</button></div></div><div class="sub-body"></div></div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- ====== CLF 6: Imprevistos (FECHADO) ====== -->
+    <div class="clf">
+      <div class="clf-header" onclick="toggle(this.parentElement)">
+        <svg class="chevron lg" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        <span class="clf-emoji">📊</span>
+        <div class="clf-info">
+          <div class="clf-name">Imprevistos</div>
+          <div class="clf-meta">sem categorias</div>
+        </div>
+        <div class="clf-budget">
+          <div class="clf-budget-text"><strong>R$ 0,00</strong> / R$ 1.000,00</div>
+          <div class="budget-bar"><div class="budget-bar-fill st-pos" style="width:0%"></div></div>
+          <div class="budget-label st-pos">0% — resta R$ 1.000,00</div>
+        </div>
+        <div class="clf-actions">
+          <button class="clf-btn" onclick="event.stopPropagation()" title="Adicionar categoria">＋</button>
+          <button class="clf-btn" onclick="event.stopPropagation(); openSheet('classification')">✏️</button>
+        </div>
+      </div>
+      <div class="clf-body">
+        <div style="padding:24px 20px 24px 44px; text-align:center;">
+          <div style="font-size:28px; color:var(--text-tertiary); margin-bottom:8px;">📂</div>
+          <div style="font-size:13px; color:var(--text-secondary);">Nenhuma categoria ainda</div>
+          <div style="font-size:12px; color:var(--text-tertiary); margin-top:4px;">Categorias serão criadas conforme o uso</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="add-clf-btn" style="margin-top:4px;">+ Adicionar classificação</button>
+
+  </main>
+</div>
+
+<!-- Edit Sheet -->
+<div class="sheet-overlay" id="sheet-overlay" onclick="closeSheet()"></div>
+<div class="sheet-panel" id="sheet-panel">
+  <div class="sheet-header">
+    <span class="sheet-title" id="sheet-title">Editar</span>
+    <button class="sheet-close" onclick="closeSheet()">✕</button>
+  </div>
+  <div class="sheet-body" id="sheet-body"></div>
+  <div class="sheet-actions">
+    <button class="btn-danger-outline">Excluir</button>
+    <button class="btn-secondary" onclick="closeSheet()">Cancelar</button>
+    <button class="btn-primary" onclick="closeSheet()">Salvar</button>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SEPARATOR                                    -->
+<!-- ============================================ -->
+<hr class="section-separator">
+
+<!-- ============================================ -->
+<!-- MOBILE VERSION (390px phone frame)           -->
+<!-- ============================================ -->
+<div class="mobile-section">
+  <div class="mobile-section-title">Versão Mobile — 390px</div>
+
+  <div class="phone-frame">
+    <div class="phone-status-bar">
+      <span class="phone-time">9:41</span>
+      <div class="phone-indicators"><span>●●●●</span><span>📶</span><span>🔋</span></div>
+    </div>
+
+    <div class="phone-body">
+      <div class="phone-header">
+        <div class="phone-header-title-row">
+          <div class="phone-header-title">Categorias</div>
+          <button class="phone-collapse-btn" onclick="collapseAll()">
+            <svg viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
+            Recolher
+          </button>
+        </div>
+        <div class="phone-header-sub">Gerencie sua hierarquia</div>
+      </div>
+      <div class="phone-content">
+
+        <!-- M-CLF 1: Essenciais fixos (aberto) -->
+        <div class="m-clf open">
+          <div class="m-clf-header" onclick="toggle(this.parentElement)">
+            <svg class="chevron md" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="m9 18 6-6-6-6"/></svg>
+            <span class="m-clf-emoji">📊</span>
+            <div class="m-clf-info"><div class="m-clf-name">Essenciais fixos</div><div class="m-clf-meta">2 categorias</div></div>
+            <div class="m-clf-right"><div class="m-clf-amount">R$ 4.200</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-att" style="width:70%"></div></div><div class="m-budget-label st-att">70% do máx</div></div>
+            <button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar categoria">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('classification')" style="margin-left:2px">✏️</button>
+          </div>
+          <div class="m-clf-body">
+            <div class="m-cat open">
+              <div class="m-cat-header" onclick="toggle(this.parentElement)">
+                <svg class="chevron sm" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="m9 18 6-6-6-6"/></svg><span class="m-cat-emoji">🏠</span>
+                <div class="m-cat-info"><div class="m-cat-name">Moradia</div><div class="m-cat-meta">4 subcats</div></div>
+                <div class="m-cat-right"><div class="m-cat-amount">R$ 3.400</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-alt" style="width:85%"></div></div><div class="m-budget-label st-alt">85%</div></div>
+                <button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar subcategoria">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('category')" style="margin-left:2px">✏️</button>
+              </div>
+              <div class="m-cat-body">
+                <div class="m-sub"><div class="m-sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24" style="width:11px;height:11px"><path d="m9 18 6-6-6-6"/></svg><span class="m-sub-emoji">🔑</span><div class="m-sub-info"><div class="m-sub-name">Aluguel</div><div class="m-sub-meta">Débito Itaú</div></div><div class="m-sub-right"><div class="m-sub-amount">R$ 2.200</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-pos" style="width:100%"></div></div></div><button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('subcategory')" style="margin-left:2px">✏️</button></div><div class="m-sub-body"></div></div>
+                <div class="m-sub"><div class="m-sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24" style="width:11px;height:11px"><path d="m9 18 6-6-6-6"/></svg><span class="m-sub-emoji">🏢</span><div class="m-sub-info"><div class="m-sub-name">Condomínio</div><div class="m-sub-meta">Débito Itaú</div></div><div class="m-sub-right"><div class="m-sub-amount">R$ 800</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-pos" style="width:100%"></div></div></div><button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('subcategory')" style="margin-left:2px">✏️</button></div><div class="m-sub-body"></div></div>
+                <div class="m-sub"><div class="m-sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24" style="width:11px;height:11px"><path d="m9 18 6-6-6-6"/></svg><span class="m-sub-emoji">💡</span><div class="m-sub-info"><div class="m-sub-name">Luz</div><div class="m-sub-meta">Débito Itaú</div></div><div class="m-sub-right"><div class="m-sub-amount">R$ 242</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-none" style="width:45%"></div></div></div><button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('subcategory')" style="margin-left:2px">✏️</button></div><div class="m-sub-body"></div></div>
+                <div class="m-sub"><div class="m-sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24" style="width:11px;height:11px"><path d="m9 18 6-6-6-6"/></svg><span class="m-sub-emoji">🌐</span><div class="m-sub-info"><div class="m-sub-name">Internet</div><div class="m-sub-meta">PDA Visa</div></div><div class="m-sub-right"><div class="m-sub-amount">R$ 158</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-pos" style="width:100%"></div></div></div><button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('subcategory')" style="margin-left:2px">✏️</button></div><div class="m-sub-body"></div></div>
+              </div>
+            </div>
+            <div class="m-cat">
+              <div class="m-cat-header" onclick="toggle(this.parentElement)">
+                <svg class="chevron sm" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="m9 18 6-6-6-6"/></svg><span class="m-cat-emoji">📱</span>
+                <div class="m-cat-info"><div class="m-cat-name">Assinaturas</div><div class="m-cat-meta">2 subcats</div></div>
+                <div class="m-cat-right"><div class="m-cat-amount">R$ 180</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-alt" style="width:90%"></div></div><div class="m-budget-label st-alt">90%</div></div>
+                <button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar subcategoria">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('category')" style="margin-left:2px">✏️</button>
+              </div>
+              <div class="m-cat-body">
+                <div class="m-sub"><div class="m-sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24" style="width:11px;height:11px"><path d="m9 18 6-6-6-6"/></svg><span class="m-sub-emoji">📺</span><div class="m-sub-info"><div class="m-sub-name">Streaming</div><div class="m-sub-meta">Latam Pass</div></div><div class="m-sub-right"><div class="m-sub-amount">R$ 120</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-none" style="width:67%"></div></div></div><button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('subcategory')" style="margin-left:2px">✏️</button></div><div class="m-sub-body"></div></div>
+                <div class="m-sub"><div class="m-sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24" style="width:11px;height:11px"><path d="m9 18 6-6-6-6"/></svg><span class="m-sub-emoji">📲</span><div class="m-sub-info"><div class="m-sub-name">Apps</div><div class="m-sub-meta">Latam Pass</div></div><div class="m-sub-right"><div class="m-sub-amount">R$ 60</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-none" style="width:33%"></div></div></div><button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('subcategory')" style="margin-left:2px">✏️</button></div><div class="m-sub-body"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- M-CLF 2: Essenciais variáveis (aberto com drill-down) -->
+        <div class="m-clf open">
+          <div class="m-clf-header" onclick="toggle(this.parentElement)">
+            <svg class="chevron md" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="m9 18 6-6-6-6"/></svg>
+            <span class="m-clf-emoji">📊</span>
+            <div class="m-clf-info"><div class="m-clf-name">Essenciais variáveis</div><div class="m-clf-meta">2 categorias</div></div>
+            <div class="m-clf-right"><div class="m-clf-amount">R$ 6.800</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-alt" style="width:85%"></div></div><div class="m-budget-label st-alt">85% do máx</div></div>
+            <button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar categoria">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('classification')" style="margin-left:2px">✏️</button>
+          </div>
+          <div class="m-clf-body">
+            <div class="m-cat open">
+              <div class="m-cat-header" onclick="toggle(this.parentElement)">
+                <svg class="chevron sm" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="m9 18 6-6-6-6"/></svg><span class="m-cat-emoji">🍽</span>
+                <div class="m-cat-info"><div class="m-cat-name">Alimentação</div><div class="m-cat-meta">3 subcats</div></div>
+                <div class="m-cat-right"><div class="m-cat-amount">R$ 5.100</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-alt" style="width:93%"></div></div><div class="m-budget-label st-alt">93%</div></div>
+                <button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar subcategoria">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('category')" style="margin-left:2px">✏️</button>
+              </div>
+              <div class="m-cat-body">
+                <div class="m-sub open">
+                  <div class="m-sub-header" onclick="toggle(this.parentElement)">
+                    <svg class="chevron sm" viewBox="0 0 24 24" style="width:11px;height:11px"><path d="m9 18 6-6-6-6"/></svg>
+                    <span class="m-sub-emoji">🛒</span>
+                    <div class="m-sub-info"><div class="m-sub-name">Supermercado</div><div class="m-sub-meta">Latam Pass · 3 estab.</div></div>
+                    <div class="m-sub-right"><div class="m-sub-amount">R$ 2.800</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-alt" style="width:93%"></div></div></div>
+                    <button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('subcategory')" style="margin-left:2px">✏️</button>
+                  </div>
+                  <div class="m-sub-body">
+                    <div class="m-est"><div class="m-est-name"><span class="m-est-emoji">📍</span> Pão de Açúcar <span class="source-badge source-auto">auto</span></div><div class="m-est-amount">R$ 1.200</div><button class="m-action-btn" onclick="openSheet('establishment')" style="margin-left:4px">✏️</button></div>
+                    <div class="m-est"><div class="m-est-name"><span class="m-est-emoji">📍</span> Bistek <span class="source-badge source-auto">auto</span></div><div class="m-est-amount">R$ 950</div><button class="m-action-btn" onclick="openSheet('establishment')" style="margin-left:4px">✏️</button></div>
+                    <div class="m-est"><div class="m-est-name"><span class="m-est-emoji">📍</span> Angeloni <span class="source-badge source-manual">manual</span></div><div class="m-est-amount" style="color:var(--text-tertiary)">—</div><button class="m-action-btn" onclick="openSheet('establishment')" style="margin-left:4px">✏️</button></div>
+                  </div>
+                </div>
+                <div class="m-sub"><div class="m-sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24" style="width:11px;height:11px"><path d="m9 18 6-6-6-6"/></svg><span class="m-sub-emoji">🍽️</span><div class="m-sub-info"><div class="m-sub-name">Rest. trabalho</div><div class="m-sub-meta">PDA Visa · 2 estab.</div></div><div class="m-sub-right"><div class="m-sub-amount">R$ 1.400</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-alt" style="width:93%"></div></div></div><button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('subcategory')" style="margin-left:2px">✏️</button></div><div class="m-sub-body"></div></div>
+                <div class="m-sub"><div class="m-sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24" style="width:11px;height:11px"><path d="m9 18 6-6-6-6"/></svg><span class="m-sub-emoji">🥬</span><div class="m-sub-info"><div class="m-sub-name">Feira/Hortifruti</div><div class="m-sub-meta">Latam Pass · 1 estab.</div></div><div class="m-sub-right"><div class="m-sub-amount">R$ 450</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-alt" style="width:90%"></div></div></div><button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('subcategory')" style="margin-left:2px">✏️</button></div><div class="m-sub-body"></div></div>
+              </div>
+            </div>
+            <div class="m-cat">
+              <div class="m-cat-header" onclick="toggle(this.parentElement)">
+                <svg class="chevron sm" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="m9 18 6-6-6-6"/></svg><span class="m-cat-emoji">🚗</span>
+                <div class="m-cat-info"><div class="m-cat-name">Transporte</div><div class="m-cat-meta">4 subcats</div></div>
+                <div class="m-cat-right"><div class="m-cat-amount">R$ 1.200</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-att" style="width:80%"></div></div><div class="m-budget-label st-att">80%</div></div>
+                <button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar subcategoria">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('category')" style="margin-left:2px">✏️</button>
+              </div>
+              <div class="m-cat-body">
+                <div class="m-sub"><div class="m-sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24" style="width:11px;height:11px"><path d="m9 18 6-6-6-6"/></svg><span class="m-sub-emoji">⛽</span><div class="m-sub-info"><div class="m-sub-name">Gasolina</div><div class="m-sub-meta">Latam Pass</div></div><div class="m-sub-right"><div class="m-sub-amount">R$ 520</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-alt" style="width:87%"></div></div></div><button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('subcategory')" style="margin-left:2px">✏️</button></div><div class="m-sub-body"></div></div>
+                <div class="m-sub"><div class="m-sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24" style="width:11px;height:11px"><path d="m9 18 6-6-6-6"/></svg><span class="m-sub-emoji">🅿️</span><div class="m-sub-info"><div class="m-sub-name">Estacionamento</div><div class="m-sub-meta">PDA Visa</div></div><div class="m-sub-right"><div class="m-sub-amount">R$ 280</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-alt" style="width:93%"></div></div></div><button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('subcategory')" style="margin-left:2px">✏️</button></div><div class="m-sub-body"></div></div>
+                <div class="m-sub"><div class="m-sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24" style="width:11px;height:11px"><path d="m9 18 6-6-6-6"/></svg><span class="m-sub-emoji">🛣️</span><div class="m-sub-info"><div class="m-sub-name">Pedágio</div><div class="m-sub-meta">Débito Itaú</div></div><div class="m-sub-right"><div class="m-sub-amount">R$ 180</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-alt" style="width:90%"></div></div></div><button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('subcategory')" style="margin-left:2px">✏️</button></div><div class="m-sub-body"></div></div>
+                <div class="m-sub"><div class="m-sub-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24" style="width:11px;height:11px"><path d="m9 18 6-6-6-6"/></svg><span class="m-sub-emoji">🔧</span><div class="m-sub-info"><div class="m-sub-name">Manutenção</div><div class="m-sub-meta">PDA Visa</div></div><div class="m-sub-right"><div class="m-sub-amount">R$ 220</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-pos" style="width:55%"></div></div></div><button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar estabelecimento">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('subcategory')" style="margin-left:2px">✏️</button></div><div class="m-sub-body"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- M-CLF 3: Qualidade de vida (fechado) -->
+        <div class="m-clf">
+          <div class="m-clf-header" onclick="toggle(this.parentElement)">
+            <svg class="chevron md" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="m9 18 6-6-6-6"/></svg><span class="m-clf-emoji">📊</span>
+            <div class="m-clf-info"><div class="m-clf-name">Qualidade de vida</div><div class="m-clf-meta">2 categorias</div></div>
+            <div class="m-clf-right"><div class="m-clf-amount">R$ 3.200</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-att" style="width:80%"></div></div><div class="m-budget-label st-att">80% do máx</div></div>
+            <button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar categoria">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('classification')" style="margin-left:2px">✏️</button>
+          </div>
+          <div class="m-clf-body">
+            <div class="m-cat"><div class="m-cat-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="m9 18 6-6-6-6"/></svg><span class="m-cat-emoji">🍔</span><div class="m-cat-info"><div class="m-cat-name">Restaurante</div><div class="m-cat-meta">3 subcats</div></div><div class="m-cat-right"><div class="m-cat-amount">R$ 1.800</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-alt" style="width:90%"></div></div><div class="m-budget-label st-alt">90%</div></div><button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar subcategoria">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('category')" style="margin-left:2px">✏️</button></div><div class="m-cat-body"></div></div>
+            <div class="m-cat"><div class="m-cat-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="m9 18 6-6-6-6"/></svg><span class="m-cat-emoji">✈️</span><div class="m-cat-info"><div class="m-cat-name">Viagem</div><div class="m-cat-meta">4 subcats</div></div><div class="m-cat-right"><div class="m-cat-amount">R$ 1.400</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-att" style="width:70%"></div></div><div class="m-budget-label st-att">70%</div></div><button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar subcategoria">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('category')" style="margin-left:2px">✏️</button></div><div class="m-cat-body"></div></div>
+          </div>
+        </div>
+
+        <!-- M-CLF 4: Investimentos (fechado) -->
+        <div class="m-clf">
+          <div class="m-clf-header" onclick="toggle(this.parentElement)">
+            <svg class="chevron md" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="m9 18 6-6-6-6"/></svg><span class="m-clf-emoji">📊</span>
+            <div class="m-clf-info"><div class="m-clf-name">Investimentos</div><div class="m-clf-meta">1 categoria</div></div>
+            <div class="m-clf-right"><div class="m-clf-amount">R$ 1.500</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-none" style="width:40%"></div></div><div class="m-budget-label">sem orç.</div></div>
+            <button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar categoria">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('classification')" style="margin-left:2px">✏️</button>
+          </div>
+          <div class="m-clf-body">
+            <div class="m-cat"><div class="m-cat-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="m9 18 6-6-6-6"/></svg><span class="m-cat-emoji">📈</span><div class="m-cat-info"><div class="m-cat-name">Educação</div><div class="m-cat-meta">2 subcats</div></div><div class="m-cat-right"><div class="m-cat-amount">R$ 1.500</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-pos" style="width:54%"></div></div><div class="m-budget-label st-pos">54%</div></div><button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar subcategoria">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('category')" style="margin-left:2px">✏️</button></div><div class="m-cat-body"></div></div>
+          </div>
+        </div>
+
+        <!-- M-CLF 5: Proteção (fechado) -->
+        <div class="m-clf">
+          <div class="m-clf-header" onclick="toggle(this.parentElement)">
+            <svg class="chevron md" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="m9 18 6-6-6-6"/></svg><span class="m-clf-emoji">📊</span>
+            <div class="m-clf-info"><div class="m-clf-name">Proteção</div><div class="m-clf-meta">1 categoria</div></div>
+            <div class="m-clf-right"><div class="m-clf-amount">R$ 450</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-alt" style="width:90%"></div></div><div class="m-budget-label st-alt">90% do máx</div></div>
+            <button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar categoria">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('classification')" style="margin-left:2px">✏️</button>
+          </div>
+          <div class="m-clf-body">
+            <div class="m-cat"><div class="m-cat-header" onclick="toggle(this.parentElement)"><svg class="chevron sm" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="m9 18 6-6-6-6"/></svg><span class="m-cat-emoji">🛡</span><div class="m-cat-info"><div class="m-cat-name">Seguros</div><div class="m-cat-meta">2 subcats</div></div><div class="m-cat-right"><div class="m-cat-amount">R$ 450</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-alt" style="width:90%"></div></div><div class="m-budget-label st-alt">90%</div></div><button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar subcategoria">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('category')" style="margin-left:2px">✏️</button></div><div class="m-cat-body"></div></div>
+          </div>
+        </div>
+
+        <!-- M-CLF 6: Imprevistos (fechado) -->
+        <div class="m-clf">
+          <div class="m-clf-header" onclick="toggle(this.parentElement)">
+            <svg class="chevron md" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="m9 18 6-6-6-6"/></svg><span class="m-clf-emoji">📊</span>
+            <div class="m-clf-info"><div class="m-clf-name">Imprevistos</div><div class="m-clf-meta">sem categorias</div></div>
+            <div class="m-clf-right"><div class="m-clf-amount">R$ 0</div><div class="m-budget-bar"><div class="m-budget-bar-fill st-pos" style="width:0%"></div></div><div class="m-budget-label st-pos">0%</div></div>
+            <button class="m-action-btn" onclick="event.stopPropagation()" title="Adicionar categoria">＋</button><button class="m-action-btn" onclick="event.stopPropagation(); openSheet('classification')" style="margin-left:2px">✏️</button>
+          </div>
+          <div class="m-clf-body">
+            <div style="padding:16px; text-align:center; font-size:11px; color:var(--text-tertiary);">Nenhuma categoria ainda</div>
+          </div>
+        </div>
+
+        <button class="m-add-btn" style="width:100%; margin-top:4px; padding:10px;">+ Adicionar classificação</button>
+
+      </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+      <a class="bottom-nav-item"><span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span><span>Dashboard</span></a>
+      <a class="bottom-nav-item"><span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span><span>Cartões</span></a>
+      <a class="bottom-nav-fab"><span class="bottom-nav-fab-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span><span class="bottom-nav-fab-label">Registrar</span></a>
+      <a class="bottom-nav-item"><span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></span><span>Checklist</span></a>
+      <a class="bottom-nav-item"><span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span><span>Projeção</span></a>
+      <a class="bottom-nav-item"><span class="bottom-nav-icon"><svg viewBox="0 0 24 24"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg></span><span>Sair</span></a>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggle(el) {
+    el.classList.toggle('open');
+  }
+
+  function collapseAll() {
+    document.querySelectorAll('.clf.open, .cat.open, .sub.open, .m-clf.open, .m-cat.open, .m-sub.open').forEach(el => el.classList.remove('open'));
+  }
+
+  const budgetRangeFields = '' +
+    '<div class="sheet-form-group"><label>Orçamento mensal <span class="optional">(opcional)</span></label>' +
+    '<div class="sheet-budget-range">' +
+    '<div><label style="font-size:12px; color:var(--text-secondary)">Mínimo</label><input type="text" value="{min}" placeholder="R$ 0,00" inputmode="numeric" style="width:100%"></div>' +
+    '<div><label style="font-size:12px; color:var(--text-secondary)">Máximo</label><input type="text" value="{max}" placeholder="R$ 0,00" inputmode="numeric" style="width:100%"></div>' +
+    '</div></div>';
+
+  const sheetForms = {
+    classification: {
+      title: 'Editar classificação',
+      fields: '<div class="sheet-form-group"><label>Emoji</label><button type="button" class="sheet-emoji-trigger">📊</button></div>' +
+        '<div class="sheet-form-group"><label>Nome</label><input type="text" value="Essenciais fixos"></div>' +
+        budgetRangeFields.replace('{min}', 'R$ 5.000,00').replace('{max}', 'R$ 6.000,00') +
+        '<div class="sheet-danger-zone">' +
+          '<div class="sheet-danger-zone-title">Ações</div>' +
+          '<div class="sheet-danger-action" onclick="alert(\'Selecione a classificação destino para mesclar\')">' +
+            '<div class="sheet-danger-action-icon">🔀</div>' +
+            '<div class="sheet-danger-action-info"><div class="sheet-danger-action-name">Mesclar com outra</div><div class="sheet-danger-action-desc">Move todas as categorias para outra classificação e exclui esta</div></div>' +
+          '</div>' +
+          '<div class="sheet-danger-action" onclick="alert(\'Classificação arquivada\')">' +
+            '<div class="sheet-danger-action-icon">📦</div>' +
+            '<div class="sheet-danger-action-info"><div class="sheet-danger-action-name">Arquivar</div><div class="sheet-danger-action-desc">Oculta da listagem principal, preserva o histórico</div></div>' +
+          '</div>' +
+        '</div>'
+    },
+    category: {
+      title: 'Editar categoria',
+      fields: '<div class="sheet-form-group"><label>Emoji</label><button type="button" class="sheet-emoji-trigger">🏠</button></div>' +
+        '<div class="sheet-form-group"><label>Nome</label><input type="text" value="Moradia"></div>' +
+        '<div class="sheet-form-group"><label>Classificação</label><select><option selected>Essenciais fixos</option><option>Essenciais variáveis</option><option>Qualidade de vida</option><option>Investimentos</option><option>Proteção</option><option>Imprevistos</option></select></div>' +
+        budgetRangeFields.replace('{min}', 'R$ 3.500,00').replace('{max}', 'R$ 4.000,00') +
+        '<div class="sheet-danger-zone">' +
+          '<div class="sheet-danger-zone-title">Ações</div>' +
+          '<div class="sheet-danger-action" onclick="alert(\'Selecione a categoria destino para mesclar\')">' +
+            '<div class="sheet-danger-action-icon">🔀</div>' +
+            '<div class="sheet-danger-action-info"><div class="sheet-danger-action-name">Mesclar com outra</div><div class="sheet-danger-action-desc">Move todas as subcategorias para outra categoria e exclui esta</div></div>' +
+          '</div>' +
+          '<div class="sheet-danger-action" onclick="alert(\'Categoria arquivada\')">' +
+            '<div class="sheet-danger-action-icon">📦</div>' +
+            '<div class="sheet-danger-action-info"><div class="sheet-danger-action-name">Arquivar</div><div class="sheet-danger-action-desc">Oculta da listagem, preserva o histórico</div></div>' +
+          '</div>' +
+        '</div>'
+    },
+    subcategory: {
+      title: 'Editar subcategoria',
+      fields: '<div class="sheet-form-group"><label>Emoji</label><button type="button" class="sheet-emoji-trigger">🛒</button></div>' +
+        '<div class="sheet-form-group"><label>Nome</label><input type="text" value="Supermercado"></div>' +
+        '<div class="sheet-form-group"><label>Categoria</label><select><option selected>Alimentação</option><option>Moradia</option><option>Assinaturas</option><option>Transporte</option><option>Restaurante</option><option>Viagem</option></select></div>' +
+        '<div class="sheet-form-group"><label>Método de pagamento</label><select><option selected>Latam Pass Visa</option><option>PDA Visa</option><option>Débito Itaú</option><option>Boleto</option></select></div>' +
+        budgetRangeFields.replace('{min}', 'R$ 2.500,00').replace('{max}', 'R$ 3.000,00') +
+        '<div class="sheet-danger-zone">' +
+          '<div class="sheet-danger-zone-title">Ações</div>' +
+          '<div class="sheet-danger-action" onclick="alert(\'Selecione a subcategoria destino para mesclar\')">' +
+            '<div class="sheet-danger-action-icon">🔀</div>' +
+            '<div class="sheet-danger-action-info"><div class="sheet-danger-action-name">Mesclar com outra</div><div class="sheet-danger-action-desc">Move todos os estabelecimentos para outra subcategoria e exclui esta</div></div>' +
+          '</div>' +
+          '<div class="sheet-danger-action" onclick="alert(\'Subcategoria arquivada\')">' +
+            '<div class="sheet-danger-action-icon">📦</div>' +
+            '<div class="sheet-danger-action-info"><div class="sheet-danger-action-name">Arquivar</div><div class="sheet-danger-action-desc">Oculta da listagem, preserva o histórico</div></div>' +
+          '</div>' +
+        '</div>'
+    },
+    establishment: {
+      title: 'Editar estabelecimento',
+      fields: '<div class="sheet-form-group"><label>Emoji</label><button type="button" class="sheet-emoji-trigger">📍</button></div>' +
+        '<div class="sheet-form-group"><label>Nome</label><input type="text" value="Pão de Açúcar"></div>' +
+        '<div class="sheet-form-group"><label>Subcategoria</label><select><option selected>Supermercado</option><option>Restaurante trabalho</option><option>Feira/Hortifruti</option></select></div>' +
+        '<div class="sheet-form-group"><label>Método de pagamento padrão <span class="optional">(aprendido do uso)</span></label><select><option selected>Latam Pass Visa</option><option>PDA Visa</option><option>Débito Itaú</option><option>Boleto</option></select></div>' +
+        budgetRangeFields.replace('{min}', '').replace('{max}', '') +
+        '<div style="padding:12px; background:var(--muted); border-radius:var(--radius-sm); font-size:12px; color:var(--text-secondary);">8 visitas · último uso 20/03/2026</div>' +
+        '<div class="sheet-danger-zone">' +
+          '<div class="sheet-danger-zone-title">Ações</div>' +
+          '<div class="sheet-danger-action" onclick="alert(\'Estabelecimento excluído\')">' +
+            '<div class="sheet-danger-action-icon">🗑️</div>' +
+            '<div class="sheet-danger-action-info"><div class="sheet-danger-action-name">Excluir</div><div class="sheet-danger-action-desc">Remove o estabelecimento — o histórico de transações é mantido</div></div>' +
+          '</div>' +
+        '</div>'
+    }
+  };
+
+  function openSheet(type) {
+    const form = sheetForms[type];
+    if (!form) return;
+    document.getElementById('sheet-title').textContent = form.title;
+    document.getElementById('sheet-body').innerHTML = form.fields;
+    document.getElementById('sheet-overlay').classList.add('open');
+    document.getElementById('sheet-panel').classList.add('open');
+  }
+
+  function closeSheet() {
+    document.getElementById('sheet-overlay').classList.remove('open');
+    document.getElementById('sheet-panel').classList.remove('open');
+  }
+</script>
+</body>
+</html>
