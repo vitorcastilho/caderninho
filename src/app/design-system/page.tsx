@@ -48,7 +48,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/client/components/ui/sheet"
-import { ChevronDown, ChevronLeft, ChevronRight, Plus, Pencil, Archive, Loader2, Clock, X, AlertTriangle, CheckCircle2, LayoutDashboard, PiggyBank, CheckSquare, TrendingUp, ShoppingCart, GraduationCap, Home, Fuel, Bus, UtensilsCrossed, Package, MoreVertical, Settings, Building2, Users, GripVertical, Trash2, Copy, CreditCard, Smartphone, Tablet, Monitor, BookText, Wallet, Tags, Landmark, LogOut } from "lucide-react"
+import { ChevronDown, ChevronLeft, ChevronRight, Plus, Pencil, Archive, Loader2, Clock, X, AlertTriangle, CheckCircle2, LayoutDashboard, PiggyBank, CheckSquare, TrendingUp, ShoppingCart, GraduationCap, Home, Fuel, Bus, UtensilsCrossed, Package, MoreVertical, Settings, Building2, Users, GripVertical, Trash2, Copy, CreditCard, Smartphone, Tablet, Monitor, Wallet, Tags, Landmark, LogOut } from "lucide-react"
 import { toast } from "sonner"
 import { centsToDisplayValue } from "@/client/utils/currency-input"
 
@@ -3749,6 +3749,22 @@ function ResponsividadeSection() {
 
 /* ─── Ícones ─── */
 
+function IconGrid({ items }: { items: { icon: React.ComponentType<{ className?: string }>; name: string; use: string }[] }) {
+  return (
+    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+      {items.map(({ icon: Icon, name, use }) => (
+        <div key={name} className="flex items-center gap-3 rounded-md border px-3 py-2">
+          <Icon className="size-5 shrink-0 text-muted-foreground" />
+          <div className="min-w-0">
+            <p className="truncate text-xs font-medium">{name}</p>
+            <p className="truncate text-[11px] text-muted-foreground">{use}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function IconesSection() {
   const navIcons = [
     { icon: LayoutDashboard, name: "LayoutDashboard", use: "Dashboard" },
@@ -3779,22 +3795,6 @@ function IconesSection() {
     { icon: Clock, name: "Clock", use: "Informativo / Pendente" },
     { icon: Loader2, name: "Loader2", use: "Loading (animate-spin)" },
   ]
-
-  function IconGrid({ items }: { items: { icon: React.ComponentType<{ className?: string }>; name: string; use: string }[] }) {
-    return (
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
-        {items.map(({ icon: Icon, name, use }) => (
-          <div key={name} className="flex items-center gap-3 rounded-md border px-3 py-2">
-            <Icon className="size-5 shrink-0 text-muted-foreground" />
-            <div className="min-w-0">
-              <p className="truncate text-xs font-medium">{name}</p>
-              <p className="truncate text-[11px] text-muted-foreground">{use}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    )
-  }
 
   return (
     <Section id="icones" title="Ícones">
