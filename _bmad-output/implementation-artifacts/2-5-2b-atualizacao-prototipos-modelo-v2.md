@@ -1,6 +1,6 @@
 # Story 2.5.2b: Atualização dos Protótipos para Modelo de Categorização v2
 
-Status: in-progress
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -356,16 +356,24 @@ N/A — sem erros de build/runtime (story de protótipos HTML, sem código de pr
 - Proto-08: Etapa 4 redesenhada com 6 classificações colapsáveis, campos editáveis (nome/emoji/orçamento), contagem de subcategorias, e botão "+ Adicionar classificação". Mobile e desktop atualizados.
 - Proto-15: Hierarquia de drill-down atualizada para 4 níveis com 6 classificações do PO. Stacked bar, breakdown items, treeData JavaScript, e desktop transactions todos atualizados com dados do proto-09.
 - Cross-prototype: Validação de consistência entre proto-07, 08, 09, 14, 15. Corrigidos acentos faltantes em proto-15 (Classificações, variáveis, Proteção, Alimentação, etc.).
+- Review follow-up R1: Resolvido finding MEDIUM — adicionado indicador de contagem de subcategorias em cada categoria do proto-08 (mobile: `category-subcategories`, desktop: `desktop-category-subcategories`). 8 categorias atualizadas em ambos os layouts.
+- Review follow-up R1: Resolvido finding MEDIUM — File List atualizado com proto-14-categorias.html e proto-17-configuracoes.html.
 
 ### Review Follow-ups (AI)
 
-- [ ] [AI-Review][MEDIUM] Atualizar File List da story com proto-14-categorias.html e proto-17-configuracoes.html (escopo expandido durante implementação)
-- [ ] [AI-Review][MEDIUM] Proto-08: Adicionar indicador de contagem de subcategorias nas categorias do onboarding (ex: "3 subcategorias"). AC 2 exige mas não foi implementado.
+- [x] [AI-Review][MEDIUM] Atualizar File List da story com proto-14-categorias.html e proto-17-configuracoes.html (escopo expandido durante implementação)
+- [x] [AI-Review][MEDIUM] Proto-08: Adicionar indicador de contagem de subcategorias nas categorias do onboarding (ex: "3 subcategorias"). AC 2 exige mas não foi implementado.
 - [ ] [AI-Review][LOW] Proto-08: Não é claro como editar classificações existentes no onboarding — só tem botão remover (×), mas AC 2 pede "nome editável, emoji editável, orçamento editável". Considerar adicionar botão de edição ou tornar campos inline editáveis.
 - [ ] [AI-Review][LOW] Proto-15: Percentuais de classificação têm variação de arredondamento (ex: 24,65% vs AC esperado 24,69%). Diferença cosmética, não funcional.
 
 ### File List
 
 - `_bmad-output/prototypes/proto-07-cascade-input.html` — Cascade input com hierarquia de 4 níveis (Estado 2 pills + Estado 2b subcategorias + desktop selects)
-- `_bmad-output/prototypes/proto-08-onboarding.html` — Onboarding Etapa 4 com 6 classificações customizáveis (mobile + desktop)
+- `_bmad-output/prototypes/proto-08-onboarding.html` — Onboarding Etapa 4 com 6 classificações customizáveis, indicadores de subcategorias (mobile + desktop)
 - `_bmad-output/prototypes/proto-15-drill-down.html` — Drill-down analítico com dados v2 (6 classificações, 4 níveis, treeData completo)
+- `_bmad-output/prototypes/proto-14-categorias.html` — Settings aba Categorias com hierarquia v2 (renomeado de proto-14-settings durante implementação)
+- `_bmad-output/prototypes/proto-17-configuracoes.html` — Settings aba Configurações (extraído de proto-14 durante redesign layout 3 colunas)
+
+### Change Log
+
+- 2026-03-27: Resolvidos 2 action items MEDIUM do code review R1 — indicador de subcategorias adicionado ao proto-08 (mobile + desktop) e File List atualizado com proto-14-categorias.html e proto-17-configuracoes.html
