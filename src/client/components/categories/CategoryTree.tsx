@@ -6,6 +6,8 @@ import { Info, Tags, X } from 'lucide-react';
 
 import { Button } from '@/client/components/ui/button';
 import { Breadcrumb } from '@/client/components/ui/breadcrumb';
+import { EmptyState } from '@/client/components/ui/empty-state';
+import { PageHeader } from '@/client/components/ui/page-header';
 import {
   Dialog,
   DialogContent,
@@ -161,15 +163,14 @@ export function CategoryTree({
           ]}
           className="mb-1"
         />
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">Categorias</h1>
+        <PageHeader
+          title="Categorias"
+          description="Organize seus gastos em uma hierarquia: classificação → categoria → subcategoria"
+        >
           <Button onClick={() => setShowCreateClassification(true)}>
             + Nova classificação
           </Button>
-        </div>
-        <p className="text-sm text-muted-foreground mt-1">
-          Organize seus gastos em uma hierarquia: classificação &rarr; categoria &rarr; subcategoria
-        </p>
+        </PageHeader>
       </div>
 
       {showOnboarding && (
@@ -355,14 +356,13 @@ export function CategoryTree({
 
       {/* Classification sections */}
       {activeClassifications.length === 0 && archivedClassifications.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border px-6 py-8 text-center">
-          <Tags className="size-8 text-muted-foreground/60" />
-          <p className="text-sm font-medium text-foreground">Nenhuma classificação cadastrada</p>
-          <p className="text-xs text-muted-foreground">Classificações organizam suas categorias por tipo de necessidade.</p>
-          <Button variant="secondary" size="sm" onClick={() => setShowCreateClassification(true)}>
-            + Nova classificação
-          </Button>
-        </div>
+        <EmptyState
+          icon={Tags}
+          title="Nenhuma classificação cadastrada"
+          description="Classificações organizam suas categorias por tipo de necessidade."
+          actionLabel="+ Nova classificação"
+          onAction={() => setShowCreateClassification(true)}
+        />
       ) : (
         <>
           {activeClassifications.length === 0 ? (

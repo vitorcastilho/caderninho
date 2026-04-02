@@ -7,6 +7,8 @@ import { listCreditCardsAction, getCreditCardAction } from '@/server/actions/cre
 import { CreditCard as CreditCardIcon } from 'lucide-react';
 import { Button } from '@/client/components/ui/button';
 import { Breadcrumb } from '@/client/components/ui/breadcrumb';
+import { EmptyState } from '@/client/components/ui/empty-state';
+import { PageHeader } from '@/client/components/ui/page-header';
 import {
   Dialog,
   DialogContent,
@@ -89,10 +91,9 @@ export function CreditCardList({ initialCards }: CreditCardListProps) {
           ]}
           className="mb-1"
         />
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">Cartões de Crédito</h1>
+        <PageHeader title="Cartões de Crédito">
           <Button onClick={() => setShowCreateForm(true)}>Novo Cartão</Button>
-        </div>
+        </PageHeader>
       </div>
 
       {/* Create Form Dialog */}
@@ -134,14 +135,13 @@ export function CreditCardList({ initialCards }: CreditCardListProps) {
 
       {/* Active Cards */}
       {activeCards.length === 0 && archivedCards.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border px-6 py-8 text-center">
-          <CreditCardIcon className="size-8 text-muted-foreground/60" />
-          <p className="text-sm font-medium text-foreground">Nenhum cartão cadastrado</p>
-          <p className="text-xs text-muted-foreground">Cadastre seus cartões de crédito para acompanhar limites e faturas.</p>
-          <Button variant="secondary" size="sm" onClick={() => setShowCreateForm(true)}>
-            Novo Cartão
-          </Button>
-        </div>
+        <EmptyState
+          icon={CreditCardIcon}
+          title="Nenhum cartão cadastrado"
+          description="Cadastre seus cartões de crédito para acompanhar limites e faturas."
+          actionLabel="Novo Cartão"
+          onAction={() => setShowCreateForm(true)}
+        />
       ) : (
         <>
           {activeCards.length === 0 ? (

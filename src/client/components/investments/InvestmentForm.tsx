@@ -4,12 +4,12 @@ import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { createInvestmentAction, updateInvestmentAction } from '@/server/actions/investment.actions';
-import { centsToDisplayValue, displayValueToCents } from '@/client/utils/currency-input';
-import { basisPointsToDisplayValue, displayValueToBasisPoints } from '@/client/utils/percentage-input';
 import { INVESTMENT_TYPE_LABELS } from '@/shared/constants/investment.constants';
 import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
+import { CurrencyInput } from '@/client/components/ui/currency-input';
+import { PercentageInput } from '@/client/components/ui/percentage-input';
 import {
   Select,
   SelectContent,
@@ -44,14 +44,8 @@ export function InvestmentForm({ mode, defaultValues, onSuccess, onCancel }: Inv
   const [name, setName] = useState(defaultValues?.name ?? '');
   const [institution, setInstitution] = useState(defaultValues?.institution ?? '');
   const [type, setType] = useState<InvestmentType>(defaultValues?.type ?? 'renda_fixa');
-  const [balanceDisplay, setBalanceDisplay] = useState(
-    defaultValues ? centsToDisplayValue(defaultValues.balanceCents) : '0,00',
-  );
-  const [yieldDisplay, setYieldDisplay] = useState(
-    defaultValues?.yieldRateBasisPoints != null
-      ? basisPointsToDisplayValue(defaultValues.yieldRateBasisPoints)
-      : '0,00',
-  );
+  const [balanceCents, setBalanceCents] = useState(defaultValues?.balanceCents ?? 0);
+  const [yieldBasisPoints, setYieldBasisPoints] = useState(defaultValues?.yieldRateBasisPoints ?? 0);
   const [maturityDate, setMaturityDate] = useState(defaultValues?.maturityDate ?? '');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -59,9 +53,8 @@ export function InvestmentForm({ mode, defaultValues, onSuccess, onCancel }: Inv
     e.preventDefault();
     setErrors({});
 
-    const balanceCents = displayValueToCents(balanceDisplay);
     const yieldRateBasisPoints = showYieldAndMaturity(type)
-      ? displayValueToBasisPoints(yieldDisplay)
+      ? yieldBasisPoints
       : undefined;
 
     startTransition(async () => {
@@ -83,7 +76,7 @@ export function InvestmentForm({ mode, defaultValues, onSuccess, onCancel }: Inv
                 type,
                 balanceCents,
                 yieldRateBasisPoints: showYieldAndMaturity(type)
-                  ? displayValueToBasisPoints(yieldDisplay)
+                  ? yieldBasisPoints
                   : null,
                 maturityDate: maturityDate || null,
               },
@@ -150,49 +143,23 @@ export function InvestmentForm({ mode, defaultValues, onSuccess, onCancel }: Inv
         {errors.type && <p className="text-xs text-destructive">{errors.type}</p>}
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="balance">Saldo atual (R$)</Label>
-        <Input
-          id="balance"
-          value={`R$ ${balanceDisplay}`}
-          onChange={(e) => {
-            const digits = e.target.value.replace(/\D/g, '');
-            const cents = parseInt(digits || '0', 10);
-            setBalanceDisplay(centsToDisplayValue(cents));
-          }}
-          placeholder="R$ 0,00"
-          inputMode="numeric"
-          aria-invalid={!!errors.balanceCents}
-        />
-        {errors.balanceCents && <p className="text-xs text-destructive">{errors.balanceCents}</p>}
-      </div>
+      <CurrencyInput
+        value={balanceCents}
+        onChange={setBalanceCents}
+        label="Saldo atual (R$)"
+        id="balance"
+        error={errors.balanceCents}
+      />
 
       {showYieldAndMaturity(type) && (
         <>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="yield">Rendimento (% CDI)</Label>
-            <div className="relative">
-              <Input
-                id="yield"
-                value={yieldDisplay}
-                onChange={(e) => {
-                  const digits = e.target.value.replace(/\D/g, '');
-                  const bp = parseInt(digits || '0', 10);
-                  setYieldDisplay(basisPointsToDisplayValue(bp));
-                }}
-                placeholder="0,00"
-                inputMode="numeric"
-                className="pr-8"
-                aria-invalid={!!errors.yieldRateBasisPoints}
-              />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">
-                %
-              </span>
-            </div>
-            {errors.yieldRateBasisPoints && (
-              <p className="text-xs text-destructive">{errors.yieldRateBasisPoints}</p>
-            )}
-          </div>
+          <PercentageInput
+            value={yieldBasisPoints}
+            onChange={setYieldBasisPoints}
+            label="Rendimento (% CDI)"
+            id="yield"
+            error={errors.yieldRateBasisPoints}
+          />
 
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="maturityDate">Data de vencimento (opcional)</Label>

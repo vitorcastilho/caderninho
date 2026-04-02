@@ -4,11 +4,11 @@ import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { createIncomeSourceAction, updateIncomeSourceAction } from '@/server/actions/income-source.actions';
-import { centsToDisplayValue, displayValueToCents } from '@/client/utils/currency-input';
 import { EMPLOYMENT_TYPE_LABELS } from '@/shared/constants/income-source.constants';
 import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
+import { CurrencyInput } from '@/client/components/ui/currency-input';
 import {
   Select,
   SelectContent,
@@ -40,11 +40,7 @@ export function IncomeSourceForm({ mode, defaultValues, onSuccess, onCancel }: I
     defaultValues?.employmentType ?? 'clt',
   );
   const [isRecurring, setIsRecurring] = useState(defaultValues?.isRecurring ?? true);
-  const [baseAmountDisplay, setBaseAmountDisplay] = useState(
-    defaultValues?.baseAmountCents != null
-      ? centsToDisplayValue(defaultValues.baseAmountCents)
-      : '',
-  );
+  const [baseAmountCents, setBaseAmountCents] = useState(defaultValues?.baseAmountCents ?? 0);
   const [usualPaymentDay, setUsualPaymentDay] = useState(
     defaultValues?.usualPaymentDay?.toString() ?? '',
   );
@@ -54,9 +50,7 @@ export function IncomeSourceForm({ mode, defaultValues, onSuccess, onCancel }: I
     e.preventDefault();
     setErrors({});
 
-    const baseAmountCents = baseAmountDisplay
-      ? displayValueToCents(baseAmountDisplay)
-      : undefined;
+    const baseAmountCentsValue = baseAmountCents > 0 ? baseAmountCents : undefined;
     const paymentDay = usualPaymentDay ? parseInt(usualPaymentDay, 10) : undefined;
 
     startTransition(async () => {
@@ -66,7 +60,7 @@ export function IncomeSourceForm({ mode, defaultValues, onSuccess, onCancel }: I
               name,
               employmentType,
               isRecurring,
-              baseAmountCents: baseAmountCents || undefined,
+              baseAmountCents: baseAmountCentsValue,
               usualPaymentDay: paymentDay,
             })
           : await updateIncomeSourceAction({
@@ -75,9 +69,7 @@ export function IncomeSourceForm({ mode, defaultValues, onSuccess, onCancel }: I
                 name,
                 employmentType,
                 isRecurring,
-                baseAmountCents: baseAmountDisplay
-                  ? displayValueToCents(baseAmountDisplay)
-                  : null,
+                baseAmountCents: baseAmountCents > 0 ? baseAmountCents : null,
                 usualPaymentDay: usualPaymentDay ? parseInt(usualPaymentDay, 10) : null,
               },
             });
@@ -148,28 +140,13 @@ export function IncomeSourceForm({ mode, defaultValues, onSuccess, onCancel }: I
         </Label>
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="baseAmount">Valor base mensal (R$) — opcional</Label>
-        <Input
-          id="baseAmount"
-          value={baseAmountDisplay ? `R$ ${baseAmountDisplay}` : ''}
-          onChange={(e) => {
-            const digits = e.target.value.replace(/\D/g, '');
-            if (digits === '' || digits === '0') {
-              setBaseAmountDisplay('');
-              return;
-            }
-            const cents = parseInt(digits, 10);
-            setBaseAmountDisplay(centsToDisplayValue(cents));
-          }}
-          placeholder="R$ 0,00"
-          inputMode="numeric"
-          aria-invalid={!!errors.baseAmountCents}
-        />
-        {errors.baseAmountCents && (
-          <p className="text-xs text-destructive">{errors.baseAmountCents}</p>
-        )}
-      </div>
+      <CurrencyInput
+        value={baseAmountCents}
+        onChange={setBaseAmountCents}
+        label="Valor base mensal (R$) — opcional"
+        id="baseAmount"
+        error={errors.baseAmountCents}
+      />
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="paymentDay">Dia habitual de pagamento — opcional</Label>
