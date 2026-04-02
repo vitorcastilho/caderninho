@@ -7,9 +7,17 @@ import { Pencil } from 'lucide-react';
 import { createCategoryAction } from '@/server/actions/category.actions';
 import { ONBOARDING_CATEGORY_SUGGESTIONS } from '@/shared/constants/onboarding-suggestions';
 import { centsToDisplayValue, displayValueToCents } from '@/client/utils/currency-input';
+import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
 import { EmojiPicker } from '@/client/components/ui/emoji-picker';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/client/components/ui/select';
 
 interface Classification {
   id: string;
@@ -78,7 +86,6 @@ export function CategoriesStep({
     setNewName(s.name);
     setNewEmoji(s.emoji);
     setNewBudgetDisplay(centsToDisplayValue(s.budgetCents));
-    // Encontrar o id da classificação pelo nome
     const classification = classifications.find((c) => c.name === s.classificationName);
     setNewClassification(classification?.id ?? '');
     setShowForm(true);
@@ -109,7 +116,6 @@ export function CategoriesStep({
     if (!classificationName) return;
 
     if (editingIndex !== null) {
-      // Atualizar sugestão existente
       setSuggestions((prev) =>
         prev.map((s, i) =>
           i === editingIndex
@@ -118,7 +124,6 @@ export function CategoriesStep({
         ),
       );
     } else {
-      // Adicionar nova
       setSuggestions((prev) => [
         ...prev,
         {
@@ -200,16 +205,16 @@ export function CategoriesStep({
 
   return (
     <div className="flex flex-1 flex-col">
-      <h2 className="text-lg font-bold text-stone-900 mb-1">Organize seus gastos</h2>
-      <p className="text-[13px] text-stone-500 mb-4 leading-relaxed">
+      <h2 className="text-lg font-bold text-foreground mb-1">Organize seus gastos</h2>
+      <p className="text-[13px] text-muted-foreground mb-4 leading-relaxed">
         Sugerimos categorias com base nos mais comuns. Ajuste os valores.
       </p>
 
       <div className="flex flex-col gap-3.5 mb-3">
         {Object.entries(grouped).map(([groupName, group]) => (
           <div key={groupName} className="flex flex-col gap-2">
-            <div className="border-b border-stone-200 pb-1">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-indigo-600">
+            <div className="border-b border-border pb-1">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">
                 {groupName}
               </span>
             </div>
@@ -224,57 +229,57 @@ export function CategoriesStep({
                   key={suggestion.index}
                   className={`rounded-md border px-2.5 py-2 transition-colors ${
                     suggestion.enabled && !existsAlready
-                      ? 'border-stone-200 bg-stone-50 hover:border-stone-300'
-                      : 'border-stone-100 bg-stone-50/50 opacity-60'
+                      ? 'border-border bg-secondary hover:border-border-hover'
+                      : 'border-border/50 bg-secondary/50 opacity-60'
                   }`}
                 >
                   <div className="flex items-center gap-2">
                     <span className="text-lg shrink-0 w-6 text-center">{suggestion.emoji}</span>
-                    <span className="text-[13px] font-medium text-stone-900 flex-1 min-w-0">
+                    <span className="text-[13px] font-medium text-foreground flex-1 min-w-0">
                       {suggestion.name}
                       {existsAlready && (
-                        <span className="ml-1 text-[10px] text-stone-400">(já existe)</span>
+                        <span className="ml-1 text-[10px] text-text-tertiary">(já existe)</span>
                       )}
                     </span>
 
                     {!existsAlready && (
                       <div className="flex items-center gap-0.5 shrink-0">
-                        <span className="text-xs text-stone-500">R$</span>
-                        <input
-                          type="text"
+                        <span className="text-xs text-muted-foreground">R$</span>
+                        <Input
                           value={centsToDisplayValue(suggestion.budgetCents)}
                           onChange={(e) => handleBudgetChange(suggestion.index, e.target.value)}
                           inputMode="numeric"
                           disabled={!suggestion.enabled}
-                          className="w-[100px] rounded border border-stone-200 bg-white px-2 py-1.5 text-right text-sm font-medium text-stone-900 outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600/20 disabled:opacity-50"
+                          className="w-[100px] h-7 text-right text-sm font-medium"
                         />
-                        <span className="text-[11px] text-stone-400">/ mês</span>
+                        <span className="text-[11px] text-text-tertiary">/ mês</span>
                       </div>
                     )}
 
                     {!existsAlready && (
-                      <button
-                        type="button"
+                      <Button
+                        variant="ghost"
+                        size="icon-xs"
                         onClick={() => handleStartEdit(suggestion.index)}
-                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded text-stone-400 transition-colors hover:bg-stone-200 hover:text-stone-600"
                         title="Editar categoria"
                       >
                         <Pencil className="size-3.5" />
-                      </button>
+                      </Button>
                     )}
 
                     {!existsAlready && (
-                      <button
-                        type="button"
+                      <Button
+                        variant="ghost"
+                        size="icon-xs"
                         onClick={() => toggleSuggestion(suggestion.index)}
-                        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded text-[10px] transition-colors ${
+                        className={
                           suggestion.enabled
-                            ? 'bg-green-50 text-green-800'
-                            : 'bg-stone-100 text-stone-400 hover:bg-red-50 hover:text-red-500'
-                        }`}
+                            ? 'text-positive-text bg-positive-bg hover:bg-positive-bg'
+                            : 'text-muted-foreground bg-muted hover:bg-muted'
+                        }
                       >
-                        {suggestion.enabled ? '✓' : '✕'}
-                      </button>
+                        <span className="text-[10px]">{suggestion.enabled ? '✓' : '✕'}</span>
+                      </Button>
                     )}
                   </div>
                 </div>
@@ -286,18 +291,18 @@ export function CategoriesStep({
 
       {/* Formulário inline (adicionar ou editar) */}
       {showForm && (
-        <div className="mb-3 rounded-md border border-indigo-200 bg-indigo-50 p-3">
-          <div className="text-xs font-semibold text-indigo-600 mb-2">
+        <div className="mb-3 rounded-md border border-primary/20 bg-primary-light p-3">
+          <div className="text-xs font-semibold text-primary mb-2">
             {editingIndex !== null ? 'Editar categoria' : 'Adicionar categoria'}
           </div>
           <div className="flex flex-col gap-2.5">
             <div className="flex gap-2">
               <div className="flex flex-col gap-1">
-                <Label className="text-xs text-stone-500">Ícone</Label>
+                <Label className="text-xs text-muted-foreground">Ícone</Label>
                 <EmojiPicker value={newEmoji} onChange={setNewEmoji} />
               </div>
               <div className="flex flex-1 flex-col gap-1">
-                <Label htmlFor="onb-cat-name" className="text-xs text-stone-500">Nome da categoria</Label>
+                <Label htmlFor="onb-cat-name" className="text-xs text-muted-foreground">Nome da categoria</Label>
                 <Input
                   id="onb-cat-name"
                   value={newName}
@@ -309,21 +314,20 @@ export function CategoriesStep({
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div className="flex flex-col gap-1">
-                <Label htmlFor="onb-cat-class" className="text-xs text-stone-500">Classificação</Label>
-                <select
-                  id="onb-cat-class"
-                  value={newClassification}
-                  onChange={(e) => setNewClassification(e.target.value)}
-                  className="h-8 rounded-md border border-stone-200 bg-white px-2 text-xs text-stone-900 outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600/20"
-                >
-                  <option value="">Selecionar...</option>
-                  {classifications.map((c) => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </select>
+                <Label className="text-xs text-muted-foreground">Classificação</Label>
+                <Select value={newClassification} onValueChange={(val) => setNewClassification(val ?? '')}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Selecionar..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {classifications.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex flex-col gap-1">
-                <Label htmlFor="onb-cat-budget" className="text-xs text-stone-500">Orçamento / mês</Label>
+                <Label htmlFor="onb-cat-budget" className="text-xs text-muted-foreground">Orçamento / mês</Label>
                 <Input
                   id="onb-cat-budget"
                   value={`R$ ${newBudgetDisplay}`}
@@ -339,29 +343,34 @@ export function CategoriesStep({
             </div>
             <div className="flex gap-2">
               {editingIndex !== null && (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => handleRemoveSuggestion(editingIndex)}
-                  className="rounded-md px-3 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50"
+                  className="text-destructive hover:text-destructive"
                 >
                   Remover
-                </button>
+                </Button>
               )}
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={resetForm}
-                className="flex-1 rounded-md px-3 py-1.5 text-xs font-medium text-stone-500 hover:text-stone-700"
+                className="flex-1"
               >
                 Cancelar
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                size="sm"
                 onClick={handleSaveCategory}
                 disabled={!newName.trim() || !newClassification}
-                className="flex-1 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
+                className="flex-1"
               >
                 {editingIndex !== null ? 'Salvar' : 'Adicionar'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -369,29 +378,32 @@ export function CategoriesStep({
 
       {/* Botão adicionar categoria */}
       {!showForm && (
-        <button
+        <Button
+          variant="outline"
           onClick={() => { resetForm(); setShowForm(true); }}
-          className="w-full rounded-md border border-dashed border-indigo-400 px-4 py-2.5 text-[13px] font-medium text-indigo-600 transition-colors hover:border-indigo-500 hover:bg-indigo-50"
+          className="w-full border-dashed border-primary/40 text-primary hover:border-primary/60 hover:bg-primary-light"
         >
           + Adicionar categoria
-        </button>
+        </Button>
       )}
 
       <div className="mt-auto flex flex-col gap-1.5 pt-4">
-        <button
+        <Button
           onClick={handleCreateCategories}
           disabled={isPending}
-          className="w-full rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
+          className="w-full"
+          size="lg"
         >
           {isPending ? 'Criando categorias...' : 'Próximo'}
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={onSkip}
           disabled={isPending}
-          className="w-full rounded-md px-4 py-2.5 text-[13px] font-medium text-stone-500 transition-colors hover:text-indigo-600 hover:bg-indigo-50 disabled:opacity-50"
+          className="w-full text-muted-foreground"
         >
           Pular
-        </button>
+        </Button>
       </div>
     </div>
   );

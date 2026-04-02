@@ -7,6 +7,7 @@ import { Pencil } from 'lucide-react';
 import { createBankAccountAction, updateBankAccountAction, archiveBankAccountAction } from '@/server/actions/bank-account.actions';
 import { centsToDisplayValue, displayValueToCents } from '@/client/utils/currency-input';
 import { BankLogo } from '@/client/components/ui/bank-logo';
+import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
 
@@ -72,7 +73,6 @@ export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAd
         const result = await updateBankAccountAction({ id: editingId, data: { name, bank, balanceCents } });
         if (result.success) {
           toast.success('Conta atualizada!');
-          // Remove a antiga e adiciona a atualizada
           onAccountRemoved(editingId);
           onAccountAdded(result.data as BankAccountItem);
           resetForm();
@@ -96,8 +96,8 @@ export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAd
 
   return (
     <div className="flex flex-1 flex-col">
-      <h2 className="text-lg font-bold text-stone-900 mb-1">Suas contas bancárias</h2>
-      <p className="text-[13px] text-stone-500 mb-4 leading-relaxed">
+      <h2 className="text-lg font-bold text-foreground mb-1">Suas contas bancárias</h2>
+      <p className="text-[13px] text-muted-foreground mb-4 leading-relaxed">
         Adicione as contas que você usa no dia a dia
       </p>
 
@@ -107,24 +107,24 @@ export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAd
           {activeAccounts.map((account) => (
             <div
               key={account.id}
-              className="flex items-center gap-2.5 rounded-md border border-stone-200 bg-stone-50 px-3 py-2.5 transition-colors hover:border-stone-300"
+              className="flex items-center gap-2.5 rounded-md border border-border bg-secondary px-3 py-2.5 transition-colors hover:border-border-hover"
             >
               <BankLogo bank={account.bank} size="md" />
               <div className="flex-1 min-w-0">
-                <div className="text-[13px] font-semibold text-stone-900">{account.name}</div>
-                <div className="text-[11px] text-stone-500">
+                <div className="text-[13px] font-semibold text-foreground">{account.name}</div>
+                <div className="text-[11px] text-muted-foreground">
                   Saldo: R$ {centsToDisplayValue(account.balanceCents)}
                 </div>
               </div>
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="icon-xs"
                 onClick={() => handleStartEdit(account)}
                 disabled={isPending}
-                className="flex h-7 w-7 shrink-0 items-center justify-center rounded text-stone-400 transition-colors hover:bg-stone-200 hover:text-stone-600 disabled:opacity-50"
                 title="Editar conta"
               >
                 <Pencil className="size-3.5" />
-              </button>
+              </Button>
             </div>
           ))}
         </div>
@@ -132,13 +132,13 @@ export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAd
 
       {/* Formulário inline (criar ou editar) */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="mb-3 rounded-md border border-indigo-200 bg-indigo-50 p-3">
-          <div className="text-xs font-semibold text-indigo-600 mb-2">
+        <form onSubmit={handleSubmit} className="mb-3 rounded-md border border-primary/20 bg-primary-light p-3">
+          <div className="text-xs font-semibold text-primary mb-2">
             {editingId ? 'Editar conta' : 'Adicionar conta'}
           </div>
           <div className="flex flex-col gap-2.5">
             <div className="flex flex-col gap-1">
-              <Label htmlFor="onb-bank-name" className="text-xs text-stone-500">Nome do banco</Label>
+              <Label htmlFor="onb-bank-name" className="text-xs text-muted-foreground">Nome do banco</Label>
               <Input
                 id="onb-bank-name"
                 value={bank}
@@ -148,7 +148,7 @@ export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAd
               />
             </div>
             <div className="flex flex-col gap-1">
-              <Label htmlFor="onb-account-name" className="text-xs text-stone-500">Nome da conta</Label>
+              <Label htmlFor="onb-account-name" className="text-xs text-muted-foreground">Nome da conta</Label>
               <Input
                 id="onb-account-name"
                 value={name}
@@ -158,7 +158,7 @@ export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAd
               />
             </div>
             <div className="flex flex-col gap-1">
-              <Label htmlFor="onb-balance" className="text-xs text-stone-500">Saldo atual</Label>
+              <Label htmlFor="onb-balance" className="text-xs text-muted-foreground">Saldo atual</Label>
               <Input
                 id="onb-balance"
                 value={`R$ ${balanceDisplay}`}
@@ -174,29 +174,34 @@ export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAd
             </div>
             <div className="flex gap-2">
               {editingId && (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => handleRemoveAccount(editingId)}
                   disabled={isPending}
-                  className="rounded-md px-3 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 disabled:opacity-50"
+                  className="text-destructive hover:text-destructive"
                 >
                   Remover
-                </button>
+                </Button>
               )}
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={resetForm}
-                className="flex-1 rounded-md px-3 py-1.5 text-xs font-medium text-stone-500 hover:text-stone-700"
+                className="flex-1"
               >
                 Cancelar
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
+                size="sm"
                 disabled={isPending || !name.trim() || !bank.trim()}
-                className="flex-1 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
+                className="flex-1"
               >
                 {isPending ? 'Salvando...' : editingId ? 'Salvar' : 'Adicionar'}
-              </button>
+              </Button>
             </div>
           </div>
         </form>
@@ -204,28 +209,27 @@ export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAd
 
       {/* Botão adicionar */}
       {!showForm && (
-        <button
+        <Button
+          variant="outline"
           onClick={() => { resetForm(); setShowForm(true); }}
-          className="w-full rounded-md border border-dashed border-indigo-400 px-4 py-2.5 text-[13px] font-medium text-indigo-600 transition-colors hover:border-indigo-500 hover:bg-indigo-50"
+          className="w-full border-dashed border-primary/40 text-primary hover:border-primary/60 hover:bg-primary-light"
         >
           + Adicionar conta
-        </button>
+        </Button>
       )}
 
       {/* Ações do step */}
       <div className="mt-auto flex flex-col gap-1.5 pt-4">
-        <button
-          onClick={onNext}
-          className="w-full rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700"
-        >
+        <Button onClick={onNext} className="w-full" size="lg">
           Próximo
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={onSkip}
-          className="w-full rounded-md px-4 py-2.5 text-[13px] font-medium text-stone-500 transition-colors hover:text-indigo-600 hover:bg-indigo-50"
+          className="w-full text-muted-foreground"
         >
           Pular
-        </button>
+        </Button>
       </div>
     </div>
   );

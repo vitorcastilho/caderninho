@@ -3,6 +3,7 @@
 import { useState, useTransition, useCallback } from 'react';
 import { toast } from 'sonner';
 
+import { Building2 } from 'lucide-react';
 import { Button } from '@/client/components/ui/button';
 import { Breadcrumb } from '@/client/components/ui/breadcrumb';
 import {
@@ -83,7 +84,7 @@ export function BankAccountList({ initialAccounts }: BankAccountListProps) {
           className="mb-1"
         />
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-foreground">Contas Bancárias</h1>
+          <h1 className="text-2xl font-bold text-foreground">Contas Bancárias</h1>
           <Button onClick={() => setShowCreateForm(true)}>Nova Conta</Button>
         </div>
       </div>
@@ -127,12 +128,13 @@ export function BankAccountList({ initialAccounts }: BankAccountListProps) {
 
       {/* Active Accounts */}
       {activeAccounts.length === 0 && archivedAccounts.length === 0 ? (
-        <div className="flex flex-col items-center gap-4 rounded-card border border-dashed border-border px-6 py-8 text-center">
-          <p className="text-sm text-muted-foreground">Nenhuma conta cadastrada.</p>
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border px-6 py-8 text-center">
+          <Building2 className="size-8 text-muted-foreground/60" />
+          <p className="text-sm font-medium text-foreground">Nenhuma conta cadastrada</p>
+          <p className="text-xs text-muted-foreground">Cadastre suas contas bancárias para acompanhar saldos.</p>
           <Button variant="secondary" size="sm" onClick={() => setShowCreateForm(true)}>
             Nova Conta
           </Button>
-          <p className="text-xs text-muted-foreground">Cadastre suas contas bancárias para acompanhar saldos.</p>
         </div>
       ) : (
         <>

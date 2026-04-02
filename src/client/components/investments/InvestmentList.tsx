@@ -3,6 +3,7 @@
 import { useState, useTransition, useCallback } from 'react';
 import { toast } from 'sonner';
 
+import { Landmark } from 'lucide-react';
 import { Button } from '@/client/components/ui/button';
 import { Breadcrumb } from '@/client/components/ui/breadcrumb';
 import {
@@ -93,7 +94,7 @@ export function InvestmentList({ initialInvestments }: InvestmentListProps) {
           className="mb-1"
         />
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-foreground">Investimentos</h1>
+          <h1 className="text-2xl font-bold text-foreground">Investimentos</h1>
           <Button onClick={() => setShowCreateForm(true)}>Novo Investimento</Button>
         </div>
       </div>
@@ -134,12 +135,13 @@ export function InvestmentList({ initialInvestments }: InvestmentListProps) {
       </Dialog>
 
       {activeInvestments.length === 0 && archivedInvestments.length === 0 ? (
-        <div className="flex flex-col items-center gap-4 rounded-card border border-dashed border-border px-6 py-8 text-center">
-          <p className="text-sm text-muted-foreground">Nenhum investimento cadastrado.</p>
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border px-6 py-8 text-center">
+          <Landmark className="size-8 text-muted-foreground/60" />
+          <p className="text-sm font-medium text-foreground">Nenhum investimento cadastrado</p>
+          <p className="text-xs text-muted-foreground">Ex: CDB, Tesouro Direto, Ações...</p>
           <Button variant="secondary" size="sm" onClick={() => setShowCreateForm(true)}>
             Novo Investimento
           </Button>
-          <p className="text-xs text-muted-foreground">Ex: CDB, Tesouro Direto, Ações...</p>
         </div>
       ) : (
         <>

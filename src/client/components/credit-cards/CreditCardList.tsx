@@ -4,6 +4,7 @@ import { useState, useTransition, useCallback } from 'react';
 import { toast } from 'sonner';
 
 import { listCreditCardsAction, getCreditCardAction } from '@/server/actions/credit-card.actions';
+import { CreditCard as CreditCardIcon } from 'lucide-react';
 import { Button } from '@/client/components/ui/button';
 import { Breadcrumb } from '@/client/components/ui/breadcrumb';
 import {
@@ -89,7 +90,7 @@ export function CreditCardList({ initialCards }: CreditCardListProps) {
           className="mb-1"
         />
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-foreground">Cartões de Crédito</h1>
+          <h1 className="text-2xl font-bold text-foreground">Cartões de Crédito</h1>
           <Button onClick={() => setShowCreateForm(true)}>Novo Cartão</Button>
         </div>
       </div>
@@ -133,12 +134,13 @@ export function CreditCardList({ initialCards }: CreditCardListProps) {
 
       {/* Active Cards */}
       {activeCards.length === 0 && archivedCards.length === 0 ? (
-        <div className="flex flex-col items-center gap-4 rounded-card border border-dashed border-border px-6 py-8 text-center">
-          <p className="text-sm text-muted-foreground">Nenhum cartão cadastrado.</p>
-          <Button onClick={() => setShowCreateForm(true)} variant="secondary" size="sm">
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border px-6 py-8 text-center">
+          <CreditCardIcon className="size-8 text-muted-foreground/60" />
+          <p className="text-sm font-medium text-foreground">Nenhum cartão cadastrado</p>
+          <p className="text-xs text-muted-foreground">Cadastre seus cartões de crédito para acompanhar limites e faturas.</p>
+          <Button variant="secondary" size="sm" onClick={() => setShowCreateForm(true)}>
             Novo Cartão
           </Button>
-          <p className="text-xs text-muted-foreground">Cadastre seus cartões de crédito para acompanhar limites e faturas.</p>
         </div>
       ) : (
         <>

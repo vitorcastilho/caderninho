@@ -13,6 +13,7 @@ import {
   Wallet,
   Tags,
   Building2,
+  BookText,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -89,9 +90,9 @@ export function Sidebar({ userName }: SidebarProps) {
           collapsed && "lg:justify-center"
         )}
       >
-        <span className="text-base font-bold tracking-[-0.01em] text-primary">
-          <span>✎</span>
-          <span className={expandedOnly(collapsed)}> Caderninho</span>
+        <span className="flex items-center text-base font-bold tracking-[-0.01em] text-primary">
+          <BookText className="size-[18px] shrink-0" />
+          <span className={expandedOnly(collapsed)}>&nbsp;Caderninho</span>
         </span>
       </div>
 
