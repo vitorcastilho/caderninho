@@ -3060,19 +3060,23 @@ function EmptyStatesSection() {
   return (
     <Section id="empty-states" title="Empty States">
       <div className="max-w-md space-y-6">
-        <div className="flex flex-col items-center gap-3 rounded-[var(--radius-card)] border border-dashed border-border px-6 py-8 text-center">
-          <Tags className="size-10 text-muted-foreground" />
-          <p className="text-sm font-medium">Nenhuma categoria ainda</p>
-          <p className="text-sm text-muted-foreground">
-            Crie categorias para organizar seus gastos e receitas.
-          </p>
-          <Button variant="secondary" size="sm">
-            <Plus data-icon="inline-start" />
-            Adicionar categoria
-          </Button>
-          <p className="text-xs text-muted-foreground">
-            Ex.: Moradia, Alimentação, Transporte...
-          </p>
+        <div>
+          <p className="mb-2 text-xs font-medium text-muted-foreground">Com CTA</p>
+          <EmptyState
+            icon={Tags}
+            title="Nenhuma categoria ainda"
+            description="Crie categorias para organizar seus gastos e receitas."
+            actionLabel="Adicionar categoria"
+            onAction={() => toast.info("Ação de exemplo: adicionar categoria")}
+          />
+        </div>
+        <div>
+          <p className="mb-2 text-xs font-medium text-muted-foreground">Sem CTA</p>
+          <EmptyState
+            icon={Building2}
+            title="Nenhuma conta cadastrada"
+            description="Cadastre suas contas bancárias para acompanhar saldos."
+          />
         </div>
         <p className="text-xs text-muted-foreground">
           Padrão: <code className="rounded bg-muted px-1 py-0.5 text-[11px]">border border-dashed border-border rounded-xl</code> + ícone Lucide + título + descrição + CTA (<code className="rounded bg-muted px-1 py-0.5 text-[11px]">Button variant=&quot;secondary&quot; size=&quot;sm&quot;</code>).

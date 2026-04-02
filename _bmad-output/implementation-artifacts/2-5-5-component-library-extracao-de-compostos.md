@@ -199,6 +199,12 @@ Esta story extrai esses padrões em componentes reais em `src/client/components/
   - [x]15.1: `npm run build` — zero erros
   - [x]15.2: `npm run test` — zero regressões + novos testes passando
 
+### Review Follow-ups (AI) — R1
+
+- [x] [AI-Review][HIGH] EmptyState no Design System usa código inline — migrar `EmptyStatesSection` (design-system/page.tsx:3059-3083) para usar o componente `<EmptyState>` extraído. Mostrar 2 variantes: com CTA e sem CTA, conforme AC #7.
+- [x] [AI-Review][MEDIUM] Imports não utilizados — remover `displayValueToCents` de `currency-input.tsx:4` e `displayValueToBasisPoints` de `percentage-input.tsx:4`
+- [x] [AI-Review][MEDIUM] PercentageInput concatena classes sem `cn()` — usar `cn('pr-8', className)` em `percentage-input.tsx:56` ao invés de template literal, seguindo o padrão dos demais componentes UI
+
 ## Dev Notes
 
 ### Natureza da Story: Refatoração de Componentes
@@ -427,6 +433,9 @@ Nenhum debug necessário.
 - 3 seções adicionadas na página /design-system (CurrencyInput, PercentageInput, PageHeader)
 - EmptyState já tinha seção no DS — reusada
 - Build zero erros, testes zero regressões
+- ✅ Resolved review finding [HIGH]: EmptyStatesSection migrada para usar componente `<EmptyState>` com 2 variantes (com CTA / sem CTA)
+- ✅ Resolved review finding [MEDIUM]: Imports não utilizados removidos de currency-input.tsx e percentage-input.tsx
+- ✅ Resolved review finding [MEDIUM]: PercentageInput agora usa `cn()` para concatenação de classes
 
 ### File List
 

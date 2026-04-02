@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { centsToDisplayValue, displayValueToCents } from '@/client/utils/currency-input';
+import { centsToDisplayValue } from '@/client/utils/currency-input';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
 

@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { basisPointsToDisplayValue, displayValueToBasisPoints } from '@/client/utils/percentage-input';
+import { basisPointsToDisplayValue } from '@/client/utils/percentage-input';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
+import { cn } from '@/client/utils/utils';
 
 interface PercentageInputProps {
   value: number;
@@ -53,7 +54,7 @@ export function PercentageInput({
           inputMode="numeric"
           disabled={disabled}
           aria-invalid={!!error}
-          className={`pr-8 ${className ?? ''}`}
+          className={cn('pr-8', className)}
         />
         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">
           %
