@@ -20,9 +20,11 @@ interface ImpactPreviewProps {
 }
 
 function getBorderColor(items: ImpactPreviewItem[], warningThreshold: number): string {
-  const hasExceeded = items.some(
-    (item) => item.budget !== undefined && item.after > item.budget
-  );
+  const hasExceeded = items.some((item) => {
+    if (item.budget === undefined || item.budget === 0) return false;
+    const pct = (item.after / item.budget) * 100;
+    return pct > warningThreshold;
+  });
   if (hasExceeded) return 'border-red-500';
 
   const hasWarning = items.some((item) => {
@@ -62,13 +64,13 @@ export function ImpactPreview({
       )}
     >
       <div className="flex flex-col gap-3">
-        {items.map((item) => {
+        {items.map((item, index) => {
           const isIncrease = item.after > item.before;
           const isDecrease = item.after < item.before;
           const exceedsBudget = item.budget !== undefined && item.after > item.budget;
 
           return (
-            <div key={item.label} className="flex flex-col gap-1.5">
+            <div key={`${item.label}-${index}`} className="flex flex-col gap-1.5">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">{item.label}</span>
                 {exceedsBudget && (

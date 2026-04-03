@@ -13,11 +13,11 @@ describe('SummaryCard', () => {
       expect(screen.getByText('R$ 5.200,00')).toBeInTheDocument();
     });
 
-    it('gera aria-label com label e valor', () => {
-      const { container } = render(<SummaryCard label="Saldo Total" value="R$ 5.200,00" />);
-      const card = container.querySelector('[aria-label]');
-      expect(card?.getAttribute('aria-label')).toContain('Saldo Total');
-      expect(card?.getAttribute('aria-label')).toContain('R$ 5.200,00');
+    it('gera aria-label com label e valor em role="region"', () => {
+      render(<SummaryCard label="Saldo Total" value="R$ 5.200,00" />);
+      const card = screen.getByRole('region');
+      expect(card.getAttribute('aria-label')).toContain('Saldo Total');
+      expect(card.getAttribute('aria-label')).toContain('R$ 5.200,00');
     });
   });
 
@@ -71,7 +71,7 @@ describe('SummaryCard', () => {
     });
 
     it('positive: aria-label inclui tendência positiva', () => {
-      const { container } = render(
+      render(
         <SummaryCard
           label="Receita"
           value="R$ 8.000,00"
@@ -79,20 +79,20 @@ describe('SummaryCard', () => {
           trendLabel="+12%"
         />
       );
-      const card = container.querySelector('[aria-label]');
-      expect(card?.getAttribute('aria-label')).toContain('tendência positiva');
+      const card = screen.getByRole('region');
+      expect(card.getAttribute('aria-label')).toContain('tendência positiva');
     });
 
     it('negative: aria-label inclui tendência negativa', () => {
-      const { container } = render(
+      render(
         <SummaryCard
           label="Gastos"
           value="R$ 3.000,00"
           trend="negative"
         />
       );
-      const card = container.querySelector('[aria-label]');
-      expect(card?.getAttribute('aria-label')).toContain('tendência negativa');
+      const card = screen.getByRole('region');
+      expect(card.getAttribute('aria-label')).toContain('tendência negativa');
     });
   });
 

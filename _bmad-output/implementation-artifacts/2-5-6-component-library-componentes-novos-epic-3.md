@@ -233,6 +233,15 @@ A UX Spec define 14 custom components divididos em 3 fases. Esta story implement
   - [x] 12.1: `npm run build` — zero erros
   - [x] 12.2: `npm run test` — zero regressões + novos testes passando
 
+### Review Follow-ups (AI)
+
+- [x] [AI-Review][MEDIUM] CascadeInput: mover `aria-live="polite"` para wrapper persistente em vez de containers condicionalmente renderizados — screen readers podem não anunciar transições de step [src/client/components/ui/cascade-input.tsx:137,158,217,294]
+- [x] [AI-Review][LOW] Dev Agent Record: corrigir contagem de testes (60→63, ImpactPreview 12→15) e atualizar nota de suite (755/755, falha pré-existente resolvida) [_bmad-output/implementation-artifacts/2-5-6-component-library-componentes-novos-epic-3.md]
+- [x] [AI-Review][LOW] ImpactPreview: `warningThreshold` não-default cria gap na faixa orange (items entre threshold e 100% caem para indigo) [src/client/components/ui/impact-preview.tsx:30-31]
+- [x] [AI-Review][LOW] BottomNavigation: label "Novo" no NAV_ITEMS nunca é renderizado no branch do FAB — dado não utilizado [src/client/components/ui/bottom-navigation.tsx:23]
+- [x] [AI-Review][LOW] SummaryCard: `aria-label` em `<div>` sem role semântico — considerar `role="region"` quando aria-label presente [src/client/components/ui/summary-card.tsx:43]
+- [x] [AI-Review][LOW] ImpactPreview: `key={item.label}` pode causar conflito se items tiverem labels iguais [src/client/components/ui/impact-preview.tsx:71]
+
 ## Dev Notes
 
 ### Natureza da Story: Componentes Novos (Apresentacionais)
@@ -389,12 +398,12 @@ Claude Opus 4.6
 ### Debug Log References
 
 - Testes BudgetProgressBar: 16/16 passando (4 faixas cor, 3 variantes, ARIA, edge cases)
-- Testes SummaryCard: 10/10 passando (default/compact, trends, ícones, aria-label)
-- Testes ImpactPreview: 12/12 passando (items, setas, budget bar, badge excede, border colors)
+- Testes SummaryCard: 10/10 passando (default/compact, trends, ícones, aria-label com role="region")
+- Testes ImpactPreview: 15/15 passando (items, setas, budget bar, badge excede, border colors, warningThreshold não-default)
 - Testes BottomNavigation: 10/10 passando (5 itens, aria-current, FAB, navigate, badges)
 - Testes CascadeInput: 12/12 passando (steps, navegação, cancelar, confirmar, validação, categorias filtradas)
 - Build: 0 erros TypeScript, 0 erros Next.js
-- Suite completa: 754/755 passando (1 falha pré-existente em client.test.ts — timeout, não relacionada)
+- Suite completa: 758/758 passando (falha pré-existente em client.test.ts resolvida)
 
 ### Completion Notes List
 
@@ -406,13 +415,21 @@ Claude Opus 4.6
 - CascadeInput: progressive disclosure em 4 steps com step indicator, integra CurrencyInput e ImpactPreview, categorias filtradas por classificação, validação inline
 - Tipo exportado CascadeInputData disponível para uso futuro no Épico 3
 - Todos os componentes seguem o padrão existente: 'use client', interface explícita, named export, cn() para classes, tokens Tailwind (nunca hex hardcoded)
-- 60 novos testes (Vitest + React Testing Library) cobrindo renderização, interações, ARIA, edge cases
+- 63 testes (Vitest + React Testing Library) cobrindo renderização, interações, ARIA, edge cases, warningThreshold
 - 5 novas seções interativas na página /design-system com exemplos representativos
 - O import path de cn() é @/client/utils/utils (não @/client/lib/utils como mencionado no Dev Notes — seguido padrão real do codebase)
+- ✅ Resolved review finding [MEDIUM]: CascadeInput — aria-live movido para wrapper persistente com aria-atomic="true"
+- ✅ Resolved review finding [LOW]: ImpactPreview — warningThreshold agora usado consistentemente em getBorderColor (hasExceeded usa pct > warningThreshold)
+- ✅ Resolved review finding [LOW]: BottomNavigation — label vazio no FAB (dado não utilizado removido)
+- ✅ Resolved review finding [LOW]: SummaryCard — adicionado role="region" para semântica correta com aria-label
+- ✅ Resolved review finding [LOW]: ImpactPreview — key usa `${item.label}-${index}` para evitar conflitos
+- ✅ Resolved review finding [LOW]: Dev Agent Record — contagens corrigidas (63 testes, ImpactPreview 15/15, suite 758/758)
 
 ### Change Log
 
 - 2026-04-03: Implementação completa da Story 2.5.6 — 5 componentes novos (BudgetProgressBar, SummaryCard, ImpactPreview, BottomNavigation, CascadeInput), 5 arquivos de teste (60 testes), 5 novas seções no Design System
+- 2026-04-03: Code Review R1 — 0 HIGH, 1 MEDIUM (aria-live no CascadeInput), 5 LOW. 6 action items criados. Status → in-progress.
+- 2026-04-03: Fixes de Code Review R1 — 6/6 action items resolvidos (1 MEDIUM + 5 LOW). Suite: 758/758 testes passando, build sem erros.
 
 ### File List
 

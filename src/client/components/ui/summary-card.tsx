@@ -40,6 +40,7 @@ export function SummaryCard({
     <Card
       size={isCompact ? 'sm' : 'default'}
       className={cn('transition-shadow hover:shadow-sm', className)}
+      role="region"
       aria-label={ariaLabel}
     >
       <CardContent className={cn(isCompact ? 'flex items-center gap-3' : 'flex flex-col gap-2')}>

@@ -20,7 +20,7 @@ interface BottomNavigationProps {
 const NAV_ITEMS = [
   { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { key: 'budgets', label: 'Orçamentos', icon: PiggyBank },
-  { key: 'fab', label: 'Novo', icon: Plus },
+  { key: 'fab', label: '', icon: Plus },
   { key: 'checklist', label: 'Checklist', icon: CheckSquare },
   { key: 'projection', label: 'Projeção', icon: TrendingUp },
 ] as const;

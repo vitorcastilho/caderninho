@@ -128,6 +128,39 @@ describe('ImpactPreview', () => {
       );
       expect(container.firstChild).toHaveClass('border-red-500');
     });
+
+    it('warningThreshold não-default: border-orange entre 85% e threshold', () => {
+      // 72000/80000 = 90%, threshold=95 → orange (90 >= 85 && 90 <= 95)
+      const { container } = render(
+        <ImpactPreview
+          items={[{ label: 'Alimentação', before: 50000, after: 72000, budget: 80000 }]}
+          warningThreshold={95}
+        />
+      );
+      expect(container.firstChild).toHaveClass('border-orange-500');
+    });
+
+    it('warningThreshold não-default: border-red acima do threshold', () => {
+      // 78000/80000 = 97.5%, threshold=95 → red (97.5 > 95)
+      const { container } = render(
+        <ImpactPreview
+          items={[{ label: 'Alimentação', before: 50000, after: 78000, budget: 80000 }]}
+          warningThreshold={95}
+        />
+      );
+      expect(container.firstChild).toHaveClass('border-red-500');
+    });
+
+    it('warningThreshold não-default: sem gap entre threshold e 100%', () => {
+      // 76000/80000 = 95%, threshold=90 → red (95 > 90)
+      const { container } = render(
+        <ImpactPreview
+          items={[{ label: 'Alimentação', before: 50000, after: 76000, budget: 80000 }]}
+          warningThreshold={90}
+        />
+      );
+      expect(container.firstChild).toHaveClass('border-red-500');
+    });
   });
 
   describe('items vazio', () => {
