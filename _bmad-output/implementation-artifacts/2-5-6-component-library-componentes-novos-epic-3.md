@@ -1,6 +1,6 @@
 # Story 2.5.6: Component Library — Componentes Novos (Épico 3)
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -430,6 +430,7 @@ Claude Opus 4.6
 - 2026-04-03: Implementação completa da Story 2.5.6 — 5 componentes novos (BudgetProgressBar, SummaryCard, ImpactPreview, BottomNavigation, CascadeInput), 5 arquivos de teste (60 testes), 5 novas seções no Design System
 - 2026-04-03: Code Review R1 — 0 HIGH, 1 MEDIUM (aria-live no CascadeInput), 5 LOW. 6 action items criados. Status → in-progress.
 - 2026-04-03: Fixes de Code Review R1 — 6/6 action items resolvidos (1 MEDIUM + 5 LOW). Suite: 758/758 testes passando, build sem erros.
+- 2026-04-03: Code Review R2 — APROVADO. Todos os 6 fixes validados, zero findings novos. Status → done.
 
 ### File List
 
