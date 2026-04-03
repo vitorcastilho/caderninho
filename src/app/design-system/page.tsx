@@ -55,6 +55,11 @@ import { CurrencyInput } from "@/client/components/ui/currency-input"
 import { PercentageInput } from "@/client/components/ui/percentage-input"
 import { EmptyState } from "@/client/components/ui/empty-state"
 import { PageHeader } from "@/client/components/ui/page-header"
+import { BudgetProgressBar } from "@/client/components/ui/budget-progress-bar"
+import { SummaryCard } from "@/client/components/ui/summary-card"
+import { ImpactPreview } from "@/client/components/ui/impact-preview"
+import { BottomNavigation } from "@/client/components/ui/bottom-navigation"
+import { CascadeInput } from "@/client/components/ui/cascade-input"
 
 /* ─── helpers ─── */
 
@@ -140,6 +145,12 @@ export default function DesignSystemPage() {
       <CurrencyInputSection />
       <PercentageInputSection />
       <PageHeaderSection />
+      {/* Componentes Novos (Épico 3) */}
+      <BudgetProgressBarSection />
+      <SummaryCardSection />
+      <ImpactPreviewSection />
+      <BottomNavigationComponentSection />
+      <CascadeInputSection />
       {/* Visualizações */}
       <GraficoBarrasSection />
       <GradeTimelineSection />
@@ -5000,6 +5011,245 @@ function PageHeaderSection() {
           <div className="space-y-1">
             <p className="font-medium">Layout</p>
             <p className="text-muted-foreground">flex items-center justify-between. Título H1 text-2xl font-bold, descrição text-sm text-muted-foreground.</p>
+          </div>
+        </div>
+      </div>
+    </Section>
+  )
+}
+
+/* ─── Componentes Novos (Épico 3): BudgetProgressBar ─── */
+
+function BudgetProgressBarSection() {
+  return (
+    <Section id="budget-progress-bar" title="BudgetProgressBar">
+      <div className="max-w-lg space-y-8">
+        {/* 4 faixas de cor */}
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-muted-foreground">Faixas de cor (inline)</p>
+          <div className="space-y-3 rounded-[var(--radius-card)] border p-4">
+            <BudgetProgressBar spent={30000} budget={100000} label="Verde (30%)" showPercentage variant="inline" />
+            <BudgetProgressBar spent={75000} budget={100000} label="Amarelo (75%)" showPercentage variant="inline" />
+            <BudgetProgressBar spent={92000} budget={100000} label="Laranja (92%)" showPercentage variant="inline" />
+            <BudgetProgressBar spent={115000} budget={100000} label="Vermelho (115%)" showPercentage variant="inline" />
+          </div>
+        </div>
+
+        {/* Expanded */}
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-muted-foreground">Variante expanded</p>
+          <div className="rounded-[var(--radius-card)] border p-4">
+            <BudgetProgressBar spent={75000} budget={100000} label="Alimentação" showValues showPercentage variant="expanded" />
+          </div>
+        </div>
+
+        {/* Mini */}
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-muted-foreground">Variante mini</p>
+          <div className="flex items-center gap-4 rounded-[var(--radius-card)] border p-4">
+            <span className="text-sm text-muted-foreground">Dentro de card</span>
+            <BudgetProgressBar spent={60000} budget={100000} variant="mini" className="flex-1" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 text-[13px]">
+          <div className="space-y-1">
+            <p className="font-medium">Props</p>
+            <p className="text-muted-foreground">spent, budget (centavos), label?, showValues?, showPercentage?, variant? (inline|expanded|mini)</p>
+          </div>
+          <div className="space-y-1">
+            <p className="font-medium">Cores</p>
+            <p className="text-muted-foreground">&lt;70% verde, 70-85% amarelo, 85-100% laranja, &gt;100% vermelho</p>
+          </div>
+        </div>
+      </div>
+    </Section>
+  )
+}
+
+/* ─── Componentes Novos (Épico 3): SummaryCard ─── */
+
+function SummaryCardSection() {
+  return (
+    <Section id="summary-card-component" title="SummaryCard (Componente)">
+      <div className="space-y-8">
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-muted-foreground">Variante default</p>
+          <div className="grid max-w-2xl grid-cols-3 gap-4">
+            <SummaryCard label="Receita" value="R$ 8.200,00" trend="positive" trendLabel="+12% vs mês anterior" />
+            <SummaryCard label="Gastos" value="R$ 5.300,00" trend="negative" trendLabel="-8% vs mês anterior" />
+            <SummaryCard label="Saldo" value="R$ 2.900,00" trend="neutral" trendLabel="Sem variação" />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-muted-foreground">Variante compact com ícone</p>
+          <div className="grid max-w-2xl grid-cols-3 gap-4">
+            <SummaryCard label="Carteira" value="R$ 3.500,00" icon={Wallet} variant="compact" trend="positive" trendLabel="+5%" />
+            <SummaryCard label="Investimentos" value="R$ 12.000,00" icon={TrendingUp} variant="compact" />
+            <SummaryCard label="Dívidas" value="R$ 0,00" icon={CreditCard} variant="compact" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 text-[13px]">
+          <div className="space-y-1">
+            <p className="font-medium">Props</p>
+            <p className="text-muted-foreground">label, value, trend? (positive|negative|neutral), trendLabel?, icon?, variant? (default|compact)</p>
+          </div>
+          <div className="space-y-1">
+            <p className="font-medium">Base</p>
+            <p className="text-muted-foreground">Usa Card shadcn. Trend positivo = verde + seta up, negativo = vermelho + seta down.</p>
+          </div>
+        </div>
+      </div>
+    </Section>
+  )
+}
+
+/* ─── Componentes Novos (Épico 3): ImpactPreview ─── */
+
+function ImpactPreviewSection() {
+  return (
+    <Section id="impact-preview" title="ImpactPreview">
+      <div className="max-w-md space-y-8">
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-muted-foreground">Normal (dentro do orçamento)</p>
+          <ImpactPreview
+            items={[
+              { label: "Alimentação", before: 45000, after: 48500, budget: 80000 },
+              { label: "Transporte", before: 15000, after: 12000 },
+            ]}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-muted-foreground">Atenção (&gt;85% do orçamento)</p>
+          <ImpactPreview
+            items={[
+              { label: "Alimentação", before: 65000, after: 72000, budget: 80000 },
+            ]}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-muted-foreground">Excede orçamento</p>
+          <ImpactPreview
+            items={[
+              { label: "Alimentação", before: 75000, after: 92000, budget: 80000 },
+            ]}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 text-[13px]">
+          <div className="space-y-1">
+            <p className="font-medium">Props</p>
+            <p className="text-muted-foreground">items (label, before, after, budget?), variant? (inline|sheet), warningThreshold?</p>
+          </div>
+          <div className="space-y-1">
+            <p className="font-medium">Comportamento</p>
+            <p className="text-muted-foreground">Seta verde = diminui, vermelha = aumenta. Mini budget bar se item tem budget. Badge vermelho se excede.</p>
+          </div>
+        </div>
+      </div>
+    </Section>
+  )
+}
+
+/* ─── Componentes Novos (Épico 3): BottomNavigation (Componente) ─── */
+
+function BottomNavigationComponentSection() {
+  const [active, setActive] = useState("dashboard")
+
+  return (
+    <Section id="bottom-navigation-component" title="BottomNavigation (Componente)">
+      <div className="space-y-6">
+        <div>
+          <p className="mb-3 text-xs font-medium text-muted-foreground">Barra completa com badge</p>
+          <div className="mx-auto w-[375px] overflow-hidden rounded-[24px] border-2 border-foreground/10 bg-background">
+            <div className="flex h-48 items-center justify-center bg-muted/30">
+              <span className="text-sm text-muted-foreground">Item ativo: {active}</span>
+            </div>
+            <BottomNavigation
+              activeItem={active}
+              onNavigate={setActive}
+              onFabClick={() => toast.info("FAB clicado! Abre CascadeInput")}
+              badges={{ checklist: 3 }}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 text-[13px]">
+          <div className="space-y-1">
+            <p className="font-medium">Props</p>
+            <p className="text-muted-foreground">activeItem, onNavigate, onFabClick, badges?</p>
+          </div>
+          <div className="space-y-1">
+            <p className="font-medium">FAB</p>
+            <p className="text-muted-foreground">48px circular, bg-indigo-600, elevado. Clique dispara onFabClick.</p>
+          </div>
+        </div>
+      </div>
+    </Section>
+  )
+}
+
+/* ─── Componentes Novos (Épico 3): CascadeInput ─── */
+
+function CascadeInputSection() {
+  const [result, setResult] = useState<string | null>(null)
+
+  const mockClassifications = [
+    { id: "ess", name: "Essencial", emoji: "🏠" },
+    { id: "des", name: "Desejável", emoji: "🎯" },
+    { id: "sup", name: "Supérfluo", emoji: "✨" },
+  ]
+
+  const mockCategories = [
+    { id: "alim", name: "Alimentação", classificationId: "ess", budget: 80000 },
+    { id: "trans", name: "Transporte", classificationId: "ess", budget: 30000 },
+    { id: "moradia", name: "Moradia", classificationId: "ess", budget: 150000 },
+    { id: "lazer", name: "Lazer", classificationId: "des", budget: 40000 },
+    { id: "educ", name: "Educação", classificationId: "des", budget: 50000 },
+    { id: "luxo", name: "Luxo", classificationId: "sup" },
+  ]
+
+  const mockPaymentMethods = [
+    { id: "pix", label: "Pix", type: "pix" as const },
+    { id: "deb-nu", label: "Débito Nubank", type: "debit" as const },
+    { id: "cred-nu", label: "Crédito Nubank", type: "credit" as const },
+  ]
+
+  return (
+    <Section id="cascade-input-component" title="CascadeInput">
+      <div className="space-y-6">
+        <p className="text-xs font-medium text-muted-foreground">Fluxo interativo de registro rápido (4 etapas)</p>
+        <div className="mx-auto max-w-sm rounded-[var(--radius-card)] border p-6">
+          <CascadeInput
+            classifications={mockClassifications}
+            categories={mockCategories}
+            suggestedEstablishments={["Supermercado BH", "iFood", "Posto Shell", "Padaria Real", "Uber"]}
+            paymentMethods={mockPaymentMethods}
+            defaultPaymentMethodId="pix"
+            onConfirm={(data) => setResult(JSON.stringify(data, null, 2))}
+            onCancel={() => setResult("Cancelado")}
+          />
+        </div>
+
+        {result && (
+          <div className="space-y-2">
+            <p className="text-xs font-medium text-muted-foreground">Resultado</p>
+            <pre className="max-w-sm rounded-md bg-muted p-3 text-xs">{result}</pre>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-4 text-[13px]">
+          <div className="space-y-1">
+            <p className="font-medium">Steps</p>
+            <p className="text-muted-foreground">1. Valor (CurrencyInput) → 2. Classificação + Categoria → 3. Estabelecimento + Pagamento + ImpactPreview → 4. Confirmação</p>
+          </div>
+          <div className="space-y-1">
+            <p className="font-medium">Props principais</p>
+            <p className="text-muted-foreground">classifications, categories, paymentMethods, onConfirm, onCancel. Emite CascadeInputData.</p>
           </div>
         </div>
       </div>
