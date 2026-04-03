@@ -1,6 +1,6 @@
 # Story 2.5.5: Component Library — Extração de Compostos
 
-Status: review
+Status: done
 
 ## Story
 
