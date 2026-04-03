@@ -5,11 +5,12 @@ import { toast } from 'sonner';
 import { Pencil } from 'lucide-react';
 
 import { createCreditCardAction, updateCreditCardAction, archiveCreditCardAction } from '@/server/actions/credit-card.actions';
-import { centsToDisplayValue, displayValueToCents } from '@/client/utils/currency-input';
+import { centsToDisplayValue } from '@/client/utils/currency-input';
 import { CreditCardBrandBadge } from '@/client/components/ui/credit-card-brand-badge';
 import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
+import { CurrencyInput } from '@/client/components/ui/currency-input';
 import {
   Select,
   SelectContent,
@@ -44,14 +45,14 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded, on
   const [isPending, startTransition] = useTransition();
   const [name, setName] = useState('');
   const [brand, setBrand] = useState('');
-  const [limitDisplay, setLimitDisplay] = useState('0,00');
+  const [limitCents, setLimitCents] = useState(0);
   const [closingDay, setClosingDay] = useState('');
   const [dueDay, setDueDay] = useState('');
 
   function resetForm() {
     setName('');
     setBrand('');
-    setLimitDisplay('0,00');
+    setLimitCents(0);
     setClosingDay('');
     setDueDay('');
     setEditingId(null);
@@ -62,7 +63,7 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded, on
     setEditingId(card.id);
     setName(card.name);
     setBrand(card.brand);
-    setLimitDisplay(centsToDisplayValue(card.limitCents));
+    setLimitCents(card.limitCents);
     setClosingDay(String(card.closingDay));
     setDueDay(String(card.dueDay));
     setShowForm(true);
@@ -84,7 +85,6 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded, on
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const limitCents = displayValueToCents(limitDisplay);
     const closingDayNum = parseInt(closingDay || '0', 10);
     const dueDayNum = parseInt(dueDay || '0', 10);
 
@@ -200,20 +200,14 @@ export function CreditCardsStep({ existingCards, onNext, onSkip, onCardAdded, on
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex flex-col gap-1">
-                <Label htmlFor="onb-card-limit" className="text-xs text-muted-foreground">Limite (R$)</Label>
-                <Input
-                  id="onb-card-limit"
-                  value={`R$ ${limitDisplay}`}
-                  onChange={(e) => {
-                    const digits = e.target.value.replace(/\D/g, '');
-                    const cents = parseInt(digits || '0', 10);
-                    setLimitDisplay(centsToDisplayValue(cents));
-                  }}
-                  inputMode="numeric"
-                  className="h-8 text-sm"
-                />
-              </div>
+              <CurrencyInput
+                value={limitCents}
+                onChange={setLimitCents}
+                label="Limite (R$)"
+                id="onb-card-limit"
+                className="h-8 text-sm"
+                labelClassName="text-xs text-muted-foreground"
+              />
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div className="flex flex-col gap-1">

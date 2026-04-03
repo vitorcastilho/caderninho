@@ -4,10 +4,10 @@ import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { createBankAccountAction, updateBankAccountAction } from '@/server/actions/bank-account.actions';
-import { centsToDisplayValue, displayValueToCents } from '@/client/utils/currency-input';
 import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
+import { CurrencyInput } from '@/client/components/ui/currency-input';
 
 interface BankAccountFormProps {
   mode: 'create' | 'edit';
@@ -25,16 +25,12 @@ export function BankAccountForm({ mode, defaultValues, onSuccess, onCancel }: Ba
   const [isPending, startTransition] = useTransition();
   const [name, setName] = useState(defaultValues?.name ?? '');
   const [bank, setBank] = useState(defaultValues?.bank ?? '');
-  const [balanceDisplay, setBalanceDisplay] = useState(
-    defaultValues ? centsToDisplayValue(defaultValues.balanceCents) : '0,00',
-  );
+  const [balanceCents, setBalanceCents] = useState(defaultValues?.balanceCents ?? 0);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErrors({});
-
-    const balanceCents = displayValueToCents(balanceDisplay);
 
     startTransition(async () => {
       const result =
@@ -84,22 +80,13 @@ export function BankAccountForm({ mode, defaultValues, onSuccess, onCancel }: Ba
         {errors.bank && <p className="text-xs text-destructive">{errors.bank}</p>}
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="balance">Saldo inicial (R$)</Label>
-        <Input
-          id="balance"
-          value={`R$ ${balanceDisplay}`}
-          onChange={(e) => {
-            const digits = e.target.value.replace(/\D/g, '');
-            const cents = parseInt(digits || '0', 10);
-            setBalanceDisplay(centsToDisplayValue(cents));
-          }}
-          placeholder="R$ 0,00"
-          inputMode="numeric"
-          aria-invalid={!!errors.balanceCents}
-        />
-        {errors.balanceCents && <p className="text-xs text-destructive">{errors.balanceCents}</p>}
-      </div>
+      <CurrencyInput
+        value={balanceCents}
+        onChange={setBalanceCents}
+        label="Saldo inicial (R$)"
+        id="balance"
+        error={errors.balanceCents}
+      />
 
       <div className="flex gap-2 justify-end">
         {onCancel && (

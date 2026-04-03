@@ -6,6 +6,8 @@ import { toast } from 'sonner';
 import { Landmark } from 'lucide-react';
 import { Button } from '@/client/components/ui/button';
 import { Breadcrumb } from '@/client/components/ui/breadcrumb';
+import { EmptyState } from '@/client/components/ui/empty-state';
+import { PageHeader } from '@/client/components/ui/page-header';
 import {
   Dialog,
   DialogContent,
@@ -93,10 +95,9 @@ export function InvestmentList({ initialInvestments }: InvestmentListProps) {
           ]}
           className="mb-1"
         />
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">Investimentos</h1>
+        <PageHeader title="Investimentos">
           <Button onClick={() => setShowCreateForm(true)}>Novo Investimento</Button>
-        </div>
+        </PageHeader>
       </div>
 
       <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
@@ -135,14 +136,13 @@ export function InvestmentList({ initialInvestments }: InvestmentListProps) {
       </Dialog>
 
       {activeInvestments.length === 0 && archivedInvestments.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border px-6 py-8 text-center">
-          <Landmark className="size-8 text-muted-foreground/60" />
-          <p className="text-sm font-medium text-foreground">Nenhum investimento cadastrado</p>
-          <p className="text-xs text-muted-foreground">Ex: CDB, Tesouro Direto, Ações...</p>
-          <Button variant="secondary" size="sm" onClick={() => setShowCreateForm(true)}>
-            Novo Investimento
-          </Button>
-        </div>
+        <EmptyState
+          icon={Landmark}
+          title="Nenhum investimento cadastrado"
+          description="Ex: CDB, Tesouro Direto, Ações..."
+          actionLabel="Novo Investimento"
+          onAction={() => setShowCreateForm(true)}
+        />
       ) : (
         <>
           {activeInvestments.length === 0 ? (

@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
+import { CurrencyInput } from '@/client/components/ui/currency-input';
 import {
   Select,
   SelectContent,
@@ -14,7 +15,6 @@ import {
   SelectValue,
 } from '@/client/components/ui/select';
 import { CreditCardBrandBadge } from '@/client/components/ui/credit-card-brand-badge';
-import { centsToDisplayValue, displayValueToCents } from '@/client/utils/currency-input';
 import {
   createCategoryAction,
   updateCategoryAction,
@@ -101,12 +101,8 @@ export function CategoryForm({
   const [budgetType, setBudgetType] = useState<BudgetType>(
     defaultValues ? inferBudgetType(defaultValues.budgetMinCents, defaultValues.budgetMaxCents) : 'none',
   );
-  const [budgetMinDisplay, setBudgetMinDisplay] = useState(
-    defaultValues?.budgetMinCents ? centsToDisplayValue(defaultValues.budgetMinCents) : '0,00',
-  );
-  const [budgetMaxDisplay, setBudgetMaxDisplay] = useState(
-    defaultValues?.budgetMaxCents ? centsToDisplayValue(defaultValues.budgetMaxCents) : '0,00',
-  );
+  const [budgetMinCents, setBudgetMinCents] = useState(defaultValues?.budgetMinCents ?? 0);
+  const [budgetMaxCents, setBudgetMaxCents] = useState(defaultValues?.budgetMaxCents ?? 0);
   const [paymentType, setPaymentType] = useState<PaymentType>(
     (defaultValues?.defaultPaymentMethodType as PaymentMethodType) ?? 'none',
   );
@@ -130,8 +126,8 @@ export function CategoryForm({
     e.preventDefault();
     setErrors({});
 
-    const budgetMinCents = budgetType !== 'none' ? displayValueToCents(budgetMinDisplay) : undefined;
-    const budgetMaxCents = budgetType === 'range' ? displayValueToCents(budgetMaxDisplay) : undefined;
+    const budgetMinCentsValue = budgetType !== 'none' ? budgetMinCents : undefined;
+    const budgetMaxCentsValue = budgetType === 'range' ? budgetMaxCents : undefined;
 
     const defaultPaymentMethodType = paymentType !== 'none' ? paymentType : null;
     const defaultPaymentMethodId = paymentType !== 'none' && paymentMethodId ? paymentMethodId : null;
@@ -142,8 +138,8 @@ export function CategoryForm({
           ? await createCategoryAction({
               name: name.trim(),
               classificationId: selectedClassificationId,
-              budgetMinCents,
-              budgetMaxCents,
+              budgetMinCents: budgetMinCentsValue,
+              budgetMaxCents: budgetMaxCentsValue,
               defaultPaymentMethodType,
               defaultPaymentMethodId,
             })
@@ -152,8 +148,8 @@ export function CategoryForm({
               data: {
                 name: name.trim(),
                 classificationId: selectedClassificationId,
-                budgetMinCents: budgetMinCents ?? null,
-                budgetMaxCents: budgetMaxCents ?? null,
+                budgetMinCents: budgetMinCentsValue ?? null,
+                budgetMaxCents: budgetMaxCentsValue ?? null,
                 defaultPaymentMethodType,
                 defaultPaymentMethodId,
               },
@@ -231,58 +227,31 @@ export function CategoryForm({
 
       {/* Budget inputs */}
       {budgetType === 'fixed' && (
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="budget-fixed">Valor</Label>
-          <Input
-            id="budget-fixed"
-            value={`R$ ${budgetMinDisplay}`}
-            onChange={(e) => {
-              const digits = e.target.value.replace(/\D/g, '');
-              const cents = parseInt(digits || '0', 10);
-              setBudgetMinDisplay(centsToDisplayValue(cents));
-            }}
-            placeholder="R$ 0,00"
-            inputMode="numeric"
-            aria-invalid={!!errors.budgetMinCents}
-          />
-          {errors.budgetMinCents && <p className="text-xs text-destructive">{errors.budgetMinCents}</p>}
-        </div>
+        <CurrencyInput
+          value={budgetMinCents}
+          onChange={setBudgetMinCents}
+          label="Valor"
+          id="budget-fixed"
+          error={errors.budgetMinCents}
+        />
       )}
 
       {budgetType === 'range' && (
         <div className="grid grid-cols-2 gap-3">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="budget-min">Mínimo</Label>
-            <Input
-              id="budget-min"
-              value={`R$ ${budgetMinDisplay}`}
-              onChange={(e) => {
-                const digits = e.target.value.replace(/\D/g, '');
-                const cents = parseInt(digits || '0', 10);
-                setBudgetMinDisplay(centsToDisplayValue(cents));
-              }}
-              placeholder="R$ 0,00"
-              inputMode="numeric"
-              aria-invalid={!!errors.budgetMinCents}
-            />
-            {errors.budgetMinCents && <p className="text-xs text-destructive">{errors.budgetMinCents}</p>}
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="budget-max">Máximo</Label>
-            <Input
-              id="budget-max"
-              value={`R$ ${budgetMaxDisplay}`}
-              onChange={(e) => {
-                const digits = e.target.value.replace(/\D/g, '');
-                const cents = parseInt(digits || '0', 10);
-                setBudgetMaxDisplay(centsToDisplayValue(cents));
-              }}
-              placeholder="R$ 0,00"
-              inputMode="numeric"
-              aria-invalid={!!errors.budgetMaxCents}
-            />
-            {errors.budgetMaxCents && <p className="text-xs text-destructive">{errors.budgetMaxCents}</p>}
-          </div>
+          <CurrencyInput
+            value={budgetMinCents}
+            onChange={setBudgetMinCents}
+            label="Mínimo"
+            id="budget-min"
+            error={errors.budgetMinCents}
+          />
+          <CurrencyInput
+            value={budgetMaxCents}
+            onChange={setBudgetMaxCents}
+            label="Máximo"
+            id="budget-max"
+            error={errors.budgetMaxCents}
+          />
         </div>
       )}
 

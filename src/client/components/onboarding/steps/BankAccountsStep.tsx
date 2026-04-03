@@ -5,11 +5,12 @@ import { toast } from 'sonner';
 import { Pencil } from 'lucide-react';
 
 import { createBankAccountAction, updateBankAccountAction, archiveBankAccountAction } from '@/server/actions/bank-account.actions';
-import { centsToDisplayValue, displayValueToCents } from '@/client/utils/currency-input';
+import { centsToDisplayValue } from '@/client/utils/currency-input';
 import { BankLogo } from '@/client/components/ui/bank-logo';
 import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
+import { CurrencyInput } from '@/client/components/ui/currency-input';
 
 interface BankAccountItem {
   id: string;
@@ -33,12 +34,12 @@ export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAd
   const [isPending, startTransition] = useTransition();
   const [name, setName] = useState('');
   const [bank, setBank] = useState('');
-  const [balanceDisplay, setBalanceDisplay] = useState('0,00');
+  const [balanceCents, setBalanceCents] = useState(0);
 
   function resetForm() {
     setName('');
     setBank('');
-    setBalanceDisplay('0,00');
+    setBalanceCents(0);
     setEditingId(null);
     setShowForm(false);
   }
@@ -47,7 +48,7 @@ export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAd
     setEditingId(account.id);
     setName(account.name);
     setBank(account.bank);
-    setBalanceDisplay(centsToDisplayValue(account.balanceCents));
+    setBalanceCents(account.balanceCents);
     setShowForm(true);
   }
 
@@ -66,7 +67,6 @@ export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAd
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const balanceCents = displayValueToCents(balanceDisplay);
 
     startTransition(async () => {
       if (editingId) {
@@ -157,21 +157,14 @@ export function BankAccountsStep({ existingAccounts, onNext, onSkip, onAccountAd
                 className="h-8 text-sm"
               />
             </div>
-            <div className="flex flex-col gap-1">
-              <Label htmlFor="onb-balance" className="text-xs text-muted-foreground">Saldo atual</Label>
-              <Input
-                id="onb-balance"
-                value={`R$ ${balanceDisplay}`}
-                onChange={(e) => {
-                  const digits = e.target.value.replace(/\D/g, '');
-                  const cents = parseInt(digits || '0', 10);
-                  setBalanceDisplay(centsToDisplayValue(cents));
-                }}
-                placeholder="R$ 0,00"
-                inputMode="numeric"
-                className="h-8 text-sm"
-              />
-            </div>
+            <CurrencyInput
+              value={balanceCents}
+              onChange={setBalanceCents}
+              label="Saldo atual"
+              id="onb-balance"
+              className="h-8 text-sm"
+              labelClassName="text-xs text-muted-foreground"
+            />
             <div className="flex gap-2">
               {editingId && (
                 <Button

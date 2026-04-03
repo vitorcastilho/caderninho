@@ -4,10 +4,10 @@ import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { createCreditCardAction, updateCreditCardAction } from '@/server/actions/credit-card.actions';
-import { centsToDisplayValue, displayValueToCents } from '@/client/utils/currency-input';
 import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
+import { CurrencyInput } from '@/client/components/ui/currency-input';
 
 interface CreditCardFormProps {
   mode: 'create' | 'edit';
@@ -27,9 +27,7 @@ export function CreditCardForm({ mode, defaultValues, onSuccess, onCancel }: Cre
   const [isPending, startTransition] = useTransition();
   const [name, setName] = useState(defaultValues?.name ?? '');
   const [brand, setBrand] = useState(defaultValues?.brand ?? '');
-  const [limitDisplay, setLimitDisplay] = useState(
-    defaultValues ? centsToDisplayValue(defaultValues.limitCents) : '0,00',
-  );
+  const [limitCents, setLimitCents] = useState(defaultValues?.limitCents ?? 0);
   const [closingDay, setClosingDay] = useState(defaultValues?.closingDay?.toString() ?? '');
   const [dueDay, setDueDay] = useState(defaultValues?.dueDay?.toString() ?? '');
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -38,7 +36,6 @@ export function CreditCardForm({ mode, defaultValues, onSuccess, onCancel }: Cre
     e.preventDefault();
     setErrors({});
 
-    const limitCents = displayValueToCents(limitDisplay);
     const closingDayNum = parseInt(closingDay || '0', 10);
     const dueDayNum = parseInt(dueDay || '0', 10);
 
@@ -90,22 +87,13 @@ export function CreditCardForm({ mode, defaultValues, onSuccess, onCancel }: Cre
         {errors.brand && <p className="text-xs text-destructive">{errors.brand}</p>}
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="limit">Limite total (R$)</Label>
-        <Input
-          id="limit"
-          value={`R$ ${limitDisplay}`}
-          onChange={(e) => {
-            const digits = e.target.value.replace(/\D/g, '');
-            const cents = parseInt(digits || '0', 10);
-            setLimitDisplay(centsToDisplayValue(cents));
-          }}
-          placeholder="R$ 0,00"
-          inputMode="numeric"
-          aria-invalid={!!errors.limitCents}
-        />
-        {errors.limitCents && <p className="text-xs text-destructive">{errors.limitCents}</p>}
-      </div>
+      <CurrencyInput
+        value={limitCents}
+        onChange={setLimitCents}
+        label="Limite total (R$)"
+        id="limit"
+        error={errors.limitCents}
+      />
 
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-1.5">

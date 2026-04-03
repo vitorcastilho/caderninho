@@ -6,10 +6,11 @@ import { Pencil } from 'lucide-react';
 
 import { createCategoryAction } from '@/server/actions/category.actions';
 import { ONBOARDING_CATEGORY_SUGGESTIONS } from '@/shared/constants/onboarding-suggestions';
-import { centsToDisplayValue, displayValueToCents } from '@/client/utils/currency-input';
+import { centsToDisplayValue } from '@/client/utils/currency-input';
 import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
+import { CurrencyInput } from '@/client/components/ui/currency-input';
 import { EmojiPicker } from '@/client/components/ui/emoji-picker';
 import {
   Select,
@@ -57,7 +58,7 @@ export function CategoriesStep({
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [newName, setNewName] = useState('');
   const [newClassification, setNewClassification] = useState('');
-  const [newBudgetDisplay, setNewBudgetDisplay] = useState('0,00');
+  const [newBudgetCents, setNewBudgetCents] = useState(0);
   const [newEmoji, setNewEmoji] = useState('📂');
 
   // Inicializar sugestões com estado editável
@@ -74,7 +75,7 @@ export function CategoriesStep({
   function resetForm() {
     setNewName('');
     setNewClassification('');
-    setNewBudgetDisplay('0,00');
+    setNewBudgetCents(0);
     setNewEmoji('📂');
     setEditingIndex(null);
     setShowForm(false);
@@ -85,7 +86,7 @@ export function CategoriesStep({
     setEditingIndex(index);
     setNewName(s.name);
     setNewEmoji(s.emoji);
-    setNewBudgetDisplay(centsToDisplayValue(s.budgetCents));
+    setNewBudgetCents(s.budgetCents);
     const classification = classifications.find((c) => c.name === s.classificationName);
     setNewClassification(classification?.id ?? '');
     setShowForm(true);
@@ -111,7 +112,7 @@ export function CategoriesStep({
   }
 
   function handleSaveCategory() {
-    const budgetCents = displayValueToCents(newBudgetDisplay);
+    const budgetCents = newBudgetCents;
     const classificationName = classifications.find((c) => c.id === newClassification)?.name;
     if (!classificationName) return;
 
@@ -326,20 +327,14 @@ export function CategoriesStep({
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex flex-col gap-1">
-                <Label htmlFor="onb-cat-budget" className="text-xs text-muted-foreground">Orçamento / mês</Label>
-                <Input
-                  id="onb-cat-budget"
-                  value={`R$ ${newBudgetDisplay}`}
-                  onChange={(e) => {
-                    const digits = e.target.value.replace(/\D/g, '');
-                    const cents = parseInt(digits || '0', 10);
-                    setNewBudgetDisplay(centsToDisplayValue(cents));
-                  }}
-                  inputMode="numeric"
-                  className="h-8 text-sm"
-                />
-              </div>
+              <CurrencyInput
+                value={newBudgetCents}
+                onChange={setNewBudgetCents}
+                label="Orçamento / mês"
+                id="onb-cat-budget"
+                className="h-8 text-sm"
+                labelClassName="text-xs text-muted-foreground"
+              />
             </div>
             <div className="flex gap-2">
               {editingIndex !== null && (

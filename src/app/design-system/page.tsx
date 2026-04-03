@@ -51,6 +51,10 @@ import {
 import { ChevronDown, ChevronLeft, ChevronRight, Plus, Pencil, Archive, Loader2, Clock, X, AlertTriangle, CheckCircle2, LayoutDashboard, PiggyBank, CheckSquare, TrendingUp, ShoppingCart, GraduationCap, Home, Fuel, Bus, UtensilsCrossed, Package, MoreVertical, Settings, Building2, Users, GripVertical, Trash2, Copy, CreditCard, Smartphone, Tablet, Monitor, Wallet, Tags, Landmark, LogOut } from "lucide-react"
 import { toast } from "sonner"
 import { centsToDisplayValue } from "@/client/utils/currency-input"
+import { CurrencyInput } from "@/client/components/ui/currency-input"
+import { PercentageInput } from "@/client/components/ui/percentage-input"
+import { EmptyState } from "@/client/components/ui/empty-state"
+import { PageHeader } from "@/client/components/ui/page-header"
 
 /* ─── helpers ─── */
 
@@ -133,6 +137,9 @@ export default function DesignSystemPage() {
       <CardCartaoHeroSection />
       <ListaColapsavelSection />
       <EmptyStatesSection />
+      <CurrencyInputSection />
+      <PercentageInputSection />
+      <PageHeaderSection />
       {/* Visualizações */}
       <GraficoBarrasSection />
       <GradeTimelineSection />
@@ -3053,19 +3060,23 @@ function EmptyStatesSection() {
   return (
     <Section id="empty-states" title="Empty States">
       <div className="max-w-md space-y-6">
-        <div className="flex flex-col items-center gap-3 rounded-[var(--radius-card)] border border-dashed border-border px-6 py-8 text-center">
-          <Tags className="size-10 text-muted-foreground" />
-          <p className="text-sm font-medium">Nenhuma categoria ainda</p>
-          <p className="text-sm text-muted-foreground">
-            Crie categorias para organizar seus gastos e receitas.
-          </p>
-          <Button variant="secondary" size="sm">
-            <Plus data-icon="inline-start" />
-            Adicionar categoria
-          </Button>
-          <p className="text-xs text-muted-foreground">
-            Ex.: Moradia, Alimentação, Transporte...
-          </p>
+        <div>
+          <p className="mb-2 text-xs font-medium text-muted-foreground">Com CTA</p>
+          <EmptyState
+            icon={Tags}
+            title="Nenhuma categoria ainda"
+            description="Crie categorias para organizar seus gastos e receitas."
+            actionLabel="Adicionar categoria"
+            onAction={() => toast.info("Ação de exemplo: adicionar categoria")}
+          />
+        </div>
+        <div>
+          <p className="mb-2 text-xs font-medium text-muted-foreground">Sem CTA</p>
+          <EmptyState
+            icon={Building2}
+            title="Nenhuma conta cadastrada"
+            description="Cadastre suas contas bancárias para acompanhar saldos."
+          />
         </div>
         <p className="text-xs text-muted-foreground">
           Padrão: <code className="rounded bg-muted px-1 py-0.5 text-[11px]">border border-dashed border-border rounded-xl</code> + ícone Lucide + título + descrição + CTA (<code className="rounded bg-muted px-1 py-0.5 text-[11px]">Button variant=&quot;secondary&quot; size=&quot;sm&quot;</code>).
@@ -4840,6 +4851,155 @@ function BottomSheetSection() {
           <div className="space-y-1">
             <p className="font-medium">Shadow</p>
             <p className="text-muted-foreground">shadow para cima: 0 -4px 25px rgba(0,0,0,0.1)</p>
+          </div>
+        </div>
+      </div>
+    </Section>
+  )
+}
+
+/* ─── Componentes Compostos: CurrencyInput ─── */
+
+function CurrencyInputSection() {
+  const [cents, setCents] = useState(0)
+  const [centsWithError, setCentsWithError] = useState(0)
+
+  return (
+    <Section id="currency-input" title="CurrencyInput">
+      <div className="max-w-sm space-y-6">
+        <CurrencyInput
+          value={cents}
+          onChange={setCents}
+          label="Saldo inicial (R$)"
+          id="ds-currency"
+          placeholder="R$ 0,00"
+        />
+        <p className="text-xs text-muted-foreground">
+          Valor em centavos: <code className="rounded bg-muted px-1 py-0.5 text-[11px]">{cents}</code>
+        </p>
+
+        <CurrencyInput
+          value={centsWithError}
+          onChange={setCentsWithError}
+          label="Limite mensal (R$)"
+          id="ds-currency-error"
+          error="Valor deve ser maior que zero"
+        />
+
+        <CurrencyInput
+          value={150000}
+          onChange={() => {}}
+          label="Valor fixo (disabled)"
+          id="ds-currency-disabled"
+          disabled
+        />
+
+        <div className="grid grid-cols-2 gap-4 text-[13px]">
+          <div className="space-y-1">
+            <p className="font-medium">Props</p>
+            <p className="text-muted-foreground">value (cents), onChange, label, placeholder, error, id, disabled, className, labelClassName</p>
+          </div>
+          <div className="space-y-1">
+            <p className="font-medium">Comportamento</p>
+            <p className="text-muted-foreground">Digita só números, vírgula posiciona automaticamente. Prefixo &quot;R$&quot; sempre visível.</p>
+          </div>
+        </div>
+      </div>
+    </Section>
+  )
+}
+
+/* ─── Componentes Compostos: PercentageInput ─── */
+
+function PercentageInputSection() {
+  const [bp, setBp] = useState(0)
+  const [bpWithError, setBpWithError] = useState(0)
+
+  return (
+    <Section id="percentage-input" title="PercentageInput">
+      <div className="max-w-sm space-y-6">
+        <PercentageInput
+          value={bp}
+          onChange={setBp}
+          label="Rendimento anual (%)"
+          id="ds-percentage"
+          placeholder="0,00"
+        />
+        <p className="text-xs text-muted-foreground">
+          Valor em basis points: <code className="rounded bg-muted px-1 py-0.5 text-[11px]">{bp}</code>
+        </p>
+
+        <PercentageInput
+          value={bpWithError}
+          onChange={setBpWithError}
+          label="Taxa de juros (%)"
+          id="ds-percentage-error"
+          error="Informe a taxa"
+        />
+
+        <PercentageInput
+          value={1250}
+          onChange={() => {}}
+          label="Taxa fixa (disabled)"
+          id="ds-percentage-disabled"
+          disabled
+        />
+
+        <div className="grid grid-cols-2 gap-4 text-[13px]">
+          <div className="space-y-1">
+            <p className="font-medium">Props</p>
+            <p className="text-muted-foreground">value (basis points), onChange, label, placeholder, error, id, disabled, className, labelClassName</p>
+          </div>
+          <div className="space-y-1">
+            <p className="font-medium">Comportamento</p>
+            <p className="text-muted-foreground">Digita só números, vírgula automática. Sufixo &quot;%&quot; posicionado à direita.</p>
+          </div>
+        </div>
+      </div>
+    </Section>
+  )
+}
+
+/* ─── Componentes Compostos: PageHeader ─── */
+
+function PageHeaderSection() {
+  return (
+    <Section id="page-header" title="PageHeader">
+      <div className="space-y-8">
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-muted-foreground">Título simples</p>
+          <div className="rounded-card border p-4">
+            <PageHeader title="Contas Bancárias" />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-muted-foreground">Com descrição</p>
+          <div className="rounded-card border p-4">
+            <PageHeader
+              title="Categorias"
+              description="Organize seus gastos em uma hierarquia: classificação → categoria → subcategoria"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-muted-foreground">Com ação (children)</p>
+          <div className="rounded-card border p-4">
+            <PageHeader title="Investimentos">
+              <Button>Novo Investimento</Button>
+            </PageHeader>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 text-[13px]">
+          <div className="space-y-1">
+            <p className="font-medium">Props</p>
+            <p className="text-muted-foreground">title, description?, children?</p>
+          </div>
+          <div className="space-y-1">
+            <p className="font-medium">Layout</p>
+            <p className="text-muted-foreground">flex items-center justify-between. Título H1 text-2xl font-bold, descrição text-sm text-muted-foreground.</p>
           </div>
         </div>
       </div>
