@@ -76,8 +76,8 @@ development_status:
   epic-2-5-retrospective: optional
 
   # Epic 3: Registro e Gestao de Transacoes
-  epic-3: backlog
-  3-1-registro-de-gastos-cascade-input: backlog
+  epic-3: in-progress
+  3-1-registro-de-gastos-cascade-input: done
   3-2-registro-de-receitas-e-transferencias: backlog
   3-3-edicao-e-exclusao-de-transacoes: backlog
   3-4-listagem-e-historico-de-transacoes: backlog

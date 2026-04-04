@@ -8,3 +8,4 @@ export { incomeSources } from './income-sources';
 export { essentialityClassifications } from './essentiality-classifications';
 export { categories } from './categories';
 export { subcategories } from './subcategories';
+export { transactions } from './transactions';
