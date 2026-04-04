@@ -1,6 +1,6 @@
 # Story 2.5.7: Enforcement e Workflow — 4 Barreiras de Design System
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -257,6 +257,7 @@ Nenhum — story de documentação sem código de aplicação.
 - 2026-04-04: Implementação das 4 barreiras de Design System enforcement — templates BMAD, checklist de code review, project-context e MEMORY atualizados
 - 2026-04-04: Code Review R1 — 1 MEDIUM + 3 LOWs. Action items criados. Status → in-progress
 - 2026-04-04: Addressed code review findings — 4 items resolved (1 MEDIUM + 3 LOW). Build zero erros, 758/758 testes passando.
+- 2026-04-04: Code Review R2 — Todos os 4 fixes validados. ACs 1-7 implementados. Build zero erros, 758/758 testes. Status → done.
 
 ### File List
 
