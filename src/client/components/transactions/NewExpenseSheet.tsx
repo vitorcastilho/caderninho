@@ -69,12 +69,12 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
   useEffect(() => {
     if (!open) return;
 
-    // F8: resetar estado ao reabrir
-    setSuggestedEstablishments([]);
-    setImpactData(null);
-    setSheetOpenCount((c) => c + 1);
-
     startTransition(async () => {
+      // F8: resetar estado ao reabrir
+      setSuggestedEstablishments([]);
+      setImpactData(null);
+      setSheetOpenCount((c) => c + 1);
+
       const [classResult, catResult, subResult, bankResult, ccResult] = await Promise.all([
         listClassificationsAction(undefined),
         listCategoriesAction(undefined),
@@ -228,12 +228,7 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
           duration: 5000,
         });
       } else {
-        toast.error(result.error.message, {
-          action: {
-            label: 'Tentar novamente',
-            onClick: () => handleConfirm(data),
-          },
-        });
+        toast.error(result.error.message);
       }
     },
     [paymentMethods, onOpenChange],

@@ -68,8 +68,10 @@ describe('createTransactionSchema', () => {
   });
 
   it('should reject missing categoryId', () => {
-    const { categoryId: _, ...data } = validData;
-    const result = createTransactionSchema.safeParse(data);
+    const result = createTransactionSchema.safeParse({
+      amountCents: validData.amountCents,
+      paymentMethodType: validData.paymentMethodType,
+    });
     expect(result.success).toBe(false);
   });
 
@@ -82,8 +84,10 @@ describe('createTransactionSchema', () => {
   });
 
   it('should reject missing paymentMethodType', () => {
-    const { paymentMethodType: _, ...data } = validData;
-    const result = createTransactionSchema.safeParse(data);
+    const result = createTransactionSchema.safeParse({
+      amountCents: validData.amountCents,
+      categoryId: validData.categoryId,
+    });
     expect(result.success).toBe(false);
   });
 
