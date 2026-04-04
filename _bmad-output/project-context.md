@@ -4,7 +4,7 @@ user_name: 'Vitorcastilho'
 date: '2026-03-16'
 sections_completed: ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'code_quality_architecture', 'workflow_rules', 'critical_dont_miss']
 status: 'complete'
-rule_count: 50
+rule_count: 62
 optimized_for_llm: true
 ---
 
@@ -243,6 +243,62 @@ console.log(JSON.stringify({
 - Nenhuma query ao banco pode existir sem ambas as camadas ativas
 - Trilha de auditoria imutável (tabela `audit_logs`, somente INSERT) em toda mutação
 
+### Design System Enforcement Rules
+
+**4 Barreiras de conformidade visual** (acordadas na Retrospectiva do Épico 2):
+
+1. **Barreira Story:** Toda story com UI tem uma Task 0 obrigatória: "Consultar Design System e protótipos relevantes" — consultar `/design-system`, verificar protótipos em `_bmad-output/prototypes/`, listar componentes UI existentes a reutilizar
+2. **Barreira Dev Notes:** Seção "### Design System & Protótipos" obrigatória nos Dev Notes — lista protótipos relevantes, seções DS a consultar, componentes UI existentes, regras visuais
+3. **Barreira Code Review:** Checklist de code review inclui seção "Visual & Design System Compliance" com severidade MEDIUM (blocking) — tokens de cor, border-radius, espaçamentos, componentes DS, validação contra protótipo, tipografia
+4. **Barreira Componente Novo:** Dev nunca cria componente visual ad-hoc em story de feature. Workflow formal: dev identifica necessidade → documenta → UX prototipa no HTML → implementa no DS com testes e seção na página /design-system → dev importa
+
+**Paths do Design System:**
+- Página DS (rota): `/design-system`
+- Página DS (código): `src/app/design-system/page.tsx`
+- Protótipos HTML: `_bmad-output/prototypes/`
+- Componentes UI: `src/client/components/ui/`
+
+**Regras de tokens visuais:**
+- Nunca hex hardcoded — sempre classes Tailwind do DS (ex: `text-muted-foreground`, não `#6b7280`)
+- Tipografia: Inter para texto geral, `tabular-nums` para valores numéricos
+- Espaçamentos: grid base 4px (classes Tailwind padrão)
+- Border-radius: seguir padrão DS
+
+**Workflow de componente novo:**
+- Dev identifica necessidade de componente visual que não existe
+- Dev documenta a necessidade (issue ou documento)
+- UX prototipa no HTML (`_bmad-output/prototypes/`)
+- Dev implementa no DS com testes e seção na página `/design-system`
+- Dev importa e usa na story de feature
+- Componente novo NUNCA é criado ad-hoc dentro de uma story de feature
+
+**Componentes UI disponíveis (`src/client/components/ui/`):**
+- `badge.tsx` — Badge com 4 variants (default/secondary/outline/destructive)
+- `bank-logo.tsx` — Logo de banco
+- `bottom-navigation.tsx` — Navegação mobile com FAB central
+- `breadcrumb.tsx` — Breadcrumb de navegação
+- `budget-progress-bar.tsx` — Barra de progresso de orçamento (3 variantes, 4 faixas de cor)
+- `button.tsx` — Button CVA com variants: default/secondary/ghost/outline/destructive/link
+- `card.tsx` — Card + CardHeader/CardTitle/CardDescription/CardContent/CardFooter/CardAction
+- `cascade-input.tsx` — Fluxo de registro em cascata (progressive disclosure, 4 steps)
+- `credit-card-brand-badge.tsx` — Badge de bandeira de cartão de crédito
+- `currency-input.tsx` — Input monetário R$ (centavos in/out)
+- `dialog.tsx` — Dialog modal
+- `emoji-picker.tsx` — Seletor de emoji
+- `empty-state.tsx` — Estado vazio com ícone + CTA
+- `impact-preview.tsx` — Preview de impacto antes/depois (integra BudgetProgressBar)
+- `input.tsx` — Input base com cn()
+- `label.tsx` — Label
+- `page-header.tsx` — H1 + description + action button
+- `percentage-input.tsx` — Input percentual (basis points in/out)
+- `select.tsx` — Select dropdown
+- `sheet.tsx` — Sheet (bottom drawer)
+- `skeleton.tsx` — Skeleton loading
+- `sonner.tsx` — Toast notifications (Sonner)
+- `summary-card.tsx` — Card compacto de métricas (default/compact, trends)
+- `table.tsx` — Table
+- `tabs.tsx` — Tabs
+
 ### Development Workflow Rules
 
 **Git & Branching:**
@@ -331,4 +387,4 @@ console.log(JSON.stringify({
 - Revisar periodicamente para remover regras que se tornaram óbvias
 - Adicionar novas regras quando padrões emergirem durante o desenvolvimento
 
-Last Updated: 2026-03-16
+Last Updated: 2026-04-04

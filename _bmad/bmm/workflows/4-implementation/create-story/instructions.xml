@@ -199,6 +199,19 @@
     all learnings that could impact current story implementation</action>
     </check>
 
+    <!-- Design System & Prototypes analysis (Barreira 1 — enforcement automático) -->
+    <action>Scan _bmad-output/prototypes/ directory for HTML prototype files</action>
+    <action>Identify which prototypes are relevant to this story's domain by matching prototype filenames/content to story requirements (e.g., story about transactions → prototype with transaction forms/lists)</action>
+    <action>Read src/app/design-system/page.tsx to understand available DS sections, tokens, and patterns</action>
+    <action>List existing UI components in src/client/components/ui/ that the story should reuse (avoid reinventing)</action>
+    <action>Store DS analysis results for populating the story's "Design System & Protótipos" Dev Notes section:
+      - Relevant prototype paths (e.g., _bmad-output/prototypes/transaction-form.html)
+      - DS sections to consult (e.g., color tokens, spacing, typography)
+      - Existing UI components to reuse (e.g., CurrencyInput, CascadeInput, SummaryCard)
+      - Visual rules: no hardcoded hex, use Tailwind tokens, follow DS border-radius/spacing
+      - New component workflow: if component doesn't exist → document need → UX prototypes → DS implements → dev imports
+    </action>
+
     <!-- Git intelligence for previous work patterns -->
     <check
       if="previous story exists AND git repository detected">
