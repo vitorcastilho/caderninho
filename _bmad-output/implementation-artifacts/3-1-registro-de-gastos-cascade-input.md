@@ -1,6 +1,6 @@
 # Story 3.1: Registro de Gastos (Cascade Input)
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -335,3 +335,13 @@ Nenhum erro encontrado durante a implementação.
 **Resumo:** Backend (schema, use cases, repository, actions) está sólido e bem estruturado seguindo o padrão bank-accounts. Os problemas concentram-se no wiring frontend: (1) componente NewExpenseSheet não integrado em nenhuma página, (2) getImpactPreviewAction e getSuggestedEstablishmentsAction nunca chamados no frontend, (3) ImpactPreview com dados hardcoded, (4) divergências visuais contra proto-07 (summary bar, ImpactPreview no step de confirmação). Também há testes prometidos mas ausentes (categoria inexistente, método inválido) e casting inseguro com `as` na action de impacto.
 
 **Status:** `ready-for-dev` — dev precisa fixar HIGHs/MEDIUMs antes de voltar para review R2.
+
+### Senior Developer Review (AI) — R2
+
+**Reviewer:** Claude Opus 4.6
+**Data:** 2026-04-04
+**Resultado:** Approved
+
+**Resumo:** Todos os 10 fixes da R1 (1 CRITICAL, 4 HIGH, 5 MEDIUM) foram corretamente implementados e validados. F1: AppShell integra NewExpenseSheet, FAB e botão desktop funcionais. F2-F3: actions de establishments e impact chamadas com dados reais. F4: validações e testes de categoria/paymentMethod presentes. F5: Zod schema eliminou `as` casts. F6: query SQL filtrada no repo. F7: summary bar nos steps 2-4. F8: reset via key+cleanup. F9: ImpactPreview no step 5. F10: isSubmitting desabilita botão com spinner. 815 testes passando, TypeScript compilação limpa. F11 (LOW — teclado numérico customizado) permanece como backlog aceito.
+
+**Status:** `done` — code review R2 aprovado.
