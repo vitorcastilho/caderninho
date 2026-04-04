@@ -20,4 +20,16 @@
 - [ ] Sprint status synced (if sprint tracking enabled)
 - [ ] Story saved successfully
 
+## Visual & Design System Compliance (Stories com UI)
+
+_Severidade: MEDIUM (blocking) — violações visuais impedem aprovação_
+
+- [ ] **Tokens de cor DS:** Cores usam classes Tailwind do Design System — nunca hex hardcoded (ex: `text-muted-foreground`, não `#6b7280`)
+- [ ] **Border-radius:** Segue padrão DS (`rounded-lg`, `rounded-xl` etc.) — nunca valores arbitrários
+- [ ] **Espaçamentos:** Seguem grid base 4px do DS — classes Tailwind padrão (`gap-4`, `p-6` etc.)
+- [ ] **Componentes DS reutilizados:** Usa componentes de `src/client/components/ui/` — nunca HTML nativo quando existe componente equivalente (ex: `<Button>` não `<button>`)
+- [ ] **Validação contra protótipo:** Implementação foi validada contra o protótipo HTML correspondente em `_bmad-output/prototypes/`
+- [ ] **Tipografia:** Segue tokens — Inter para texto geral, `tabular-nums` para valores numéricos
+- [ ] **Componentes novos:** Nenhum componente visual foi criado ad-hoc — se necessário, seguiu workflow formal (DS primeiro)
+
 _Reviewer: {{user_name}} on {{date}}_
