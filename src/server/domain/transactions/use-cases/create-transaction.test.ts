@@ -10,6 +10,7 @@ const mockRepository: TransactionRepository = {
   findById: vi.fn(),
   findByOrganization: vi.fn(),
   findTopEstablishments: vi.fn(),
+  sumMonthlySpentByCategory: vi.fn(),
 };
 
 const mockBankAccountRepository: BankAccountRepository = {
@@ -147,6 +148,32 @@ describe('createTransaction', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.code).toBe('INVALID_AMOUNT');
+    }
+    expect(mockRepository.create).not.toHaveBeenCalled();
+  });
+
+  it('deve retornar erro para categoria vazia', async () => {
+    const result = await createTransaction(deps, {
+      ...baseParams,
+      categoryId: '',
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.code).toBe('INVALID_CATEGORY');
+    }
+    expect(mockRepository.create).not.toHaveBeenCalled();
+  });
+
+  it('deve retornar erro para metodo de pagamento invalido', async () => {
+    const result = await createTransaction(deps, {
+      ...baseParams,
+      paymentMethodType: 'bitcoin',
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.code).toBe('INVALID_PAYMENT_METHOD');
     }
     expect(mockRepository.create).not.toHaveBeenCalled();
   });

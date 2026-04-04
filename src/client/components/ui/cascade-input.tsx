@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Check } from 'lucide-react';
+import { Check, Loader2 } from 'lucide-react';
 import { cn } from '@/client/utils/utils';
 import { formatCurrency } from '@/client/utils/format-currency';
 import { CurrencyInput } from '@/client/components/ui/currency-input';
@@ -16,6 +16,16 @@ export interface CascadeInputData {
   subcategoryId: string;
   establishment: string;
   paymentMethodId: string;
+}
+
+export interface CascadeImpactData {
+  paymentMethodLabel: string;
+  balanceBefore: number;
+  balanceAfter: number;
+  categoryLabel: string;
+  budgetSpent: number;
+  budgetTotal: number;
+  budgetPercentage: number;
 }
 
 interface Classification {
@@ -52,8 +62,16 @@ interface CascadeInputProps {
   suggestedEstablishments?: string[];
   paymentMethods: PaymentMethod[];
   defaultPaymentMethodId?: string;
+  impactData?: CascadeImpactData | null;
+  isSubmitting?: boolean;
   onConfirm: (data: CascadeInputData) => void;
   onCancel: () => void;
+  onSubcategorySelect?: (subcategoryId: string) => void;
+  onRequestImpact?: (data: {
+    amountCents: number;
+    paymentMethodId: string;
+    categoryId: string;
+  }) => void;
   className?: string;
 }
 
@@ -66,8 +84,12 @@ export function CascadeInput({
   suggestedEstablishments = [],
   paymentMethods,
   defaultPaymentMethodId,
+  impactData,
+  isSubmitting = false,
   onConfirm,
   onCancel,
+  onSubcategorySelect,
+  onRequestImpact,
   className,
 }: CascadeInputProps) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -111,13 +133,25 @@ export function CascadeInput({
   const handleSelectSubcategory = useCallback(
     (sub: Subcategory) => {
       setSubcategoryId(sub.id);
-      // Pre-selecionar metodo de pagamento padrao da subcategoria
       if (sub.defaultPaymentMethodId) {
         setPaymentMethodId(sub.defaultPaymentMethodId);
       }
+      onSubcategorySelect?.(sub.id);
     },
-    [],
+    [onSubcategorySelect],
   );
+
+  const handleAdvanceToStep5 = useCallback(() => {
+    // Solicitar dados de impacto antes de avançar para confirmação
+    if (onRequestImpact && paymentMethodId && categoryId) {
+      onRequestImpact({
+        amountCents: valueCents,
+        paymentMethodId,
+        categoryId,
+      });
+    }
+    goNext();
+  }, [onRequestImpact, paymentMethodId, categoryId, valueCents, goNext]);
 
   const handleConfirm = useCallback(() => {
     onConfirm({
@@ -129,6 +163,23 @@ export function CascadeInput({
       paymentMethodId,
     });
   }, [onConfirm, valueCents, classificationId, categoryId, subcategoryId, establishment, paymentMethodId]);
+
+  // Summary bar — mostra dados já preenchidos nos steps 2-4
+  const renderSummaryBar = () => {
+    const parts: string[] = [];
+    if (valueCents > 0) parts.push(formatCurrency(valueCents));
+    if (selectedClassification) parts.push(selectedClassification.name);
+    if (selectedCategory) parts.push(selectedCategory.name);
+    if (selectedSubcategory) parts.push(selectedSubcategory.name);
+
+    if (parts.length === 0) return null;
+
+    return (
+      <div className="rounded-lg bg-stone-100 px-3 py-2 text-sm text-stone-600">
+        {parts.join(' · ')}
+      </div>
+    );
+  };
 
   return (
     <div className={cn('flex flex-col gap-6', className)}>
@@ -188,6 +239,7 @@ export function CascadeInput({
         {/* Step 2: Classificação + Categoria */}
         {currentStep === 2 && (
           <div aria-label="Etapa 2: Classificação e Categoria" className="flex flex-col gap-4">
+            {renderSummaryBar()}
             <h3 className="text-center text-lg font-semibold">Classificação e Categoria</h3>
 
             {/* Classification pills */}
@@ -251,6 +303,7 @@ export function CascadeInput({
         {/* Step 3: Subcategoria */}
         {currentStep === 3 && (
           <div aria-label="Etapa 3: Subcategoria" className="flex flex-col gap-4">
+            {renderSummaryBar()}
             <h3 className="text-center text-lg font-semibold">Subcategoria</h3>
 
             {filteredSubcategories.length > 0 ? (
@@ -303,6 +356,7 @@ export function CascadeInput({
         {/* Step 4: Estabelecimento + Pagamento */}
         {currentStep === 4 && (
           <div aria-label="Etapa 4: Estabelecimento e Pagamento" className="flex flex-col gap-4">
+            {renderSummaryBar()}
             <h3 className="text-center text-lg font-semibold">Detalhes</h3>
 
             <div className="flex flex-col gap-1.5">
@@ -352,25 +406,11 @@ export function CascadeInput({
               </div>
             </div>
 
-            {/* Impact Preview se a categoria tem budget */}
-            {selectedCategory?.budget !== undefined && (
-              <ImpactPreview
-                items={[
-                  {
-                    label: selectedCategory.name,
-                    before: 0,
-                    after: valueCents,
-                    budget: selectedCategory.budget,
-                  },
-                ]}
-              />
-            )}
-
             <div className="flex gap-2">
               <Button variant="outline" onClick={goBack} className="flex-1">
                 Voltar
               </Button>
-              <Button onClick={goNext} disabled={!canAdvanceStep4} className="flex-1">
+              <Button onClick={handleAdvanceToStep5} disabled={!canAdvanceStep4} className="flex-1">
                 Avançar
               </Button>
             </div>
@@ -417,12 +457,42 @@ export function CascadeInput({
               </dl>
             </div>
 
+            {/* Impact Preview — F9: mostra na confirmação conforme proto-07 */}
+            {impactData && (
+              <ImpactPreview
+                items={[
+                  {
+                    label: impactData.paymentMethodLabel,
+                    before: impactData.balanceBefore,
+                    after: impactData.balanceAfter,
+                  },
+                  ...(impactData.budgetTotal > 0
+                    ? [
+                        {
+                          label: impactData.categoryLabel,
+                          before: impactData.budgetSpent - valueCents,
+                          after: impactData.budgetSpent,
+                          budget: impactData.budgetTotal,
+                        },
+                      ]
+                    : []),
+                ]}
+              />
+            )}
+
             <div className="flex gap-2">
-              <Button variant="outline" onClick={goBack} className="flex-1">
+              <Button variant="outline" onClick={goBack} disabled={isSubmitting} className="flex-1">
                 Voltar
               </Button>
-              <Button onClick={handleConfirm} className="flex-1">
-                Confirmar
+              <Button onClick={handleConfirm} disabled={isSubmitting} className="flex-1">
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 size-4 animate-spin" />
+                    Enviando...
+                  </>
+                ) : (
+                  'Confirmar'
+                )}
               </Button>
             </div>
           </div>

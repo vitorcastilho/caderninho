@@ -26,12 +26,22 @@ interface CreateTransactionDeps {
   bankAccountRepository: BankAccountRepository;
 }
 
+const VALID_PAYMENT_METHOD_TYPES = ['debit', 'credit', 'pix'];
+
 export async function createTransaction(
   deps: CreateTransactionDeps,
   params: CreateTransactionParams,
 ): Promise<Result<Transaction>> {
   if (params.amountCents <= 0) {
     return err('INVALID_AMOUNT', 'Valor deve ser maior que zero');
+  }
+
+  if (!params.categoryId) {
+    return err('INVALID_CATEGORY', 'Categoria é obrigatória');
+  }
+
+  if (!VALID_PAYMENT_METHOD_TYPES.includes(params.paymentMethodType)) {
+    return err('INVALID_PAYMENT_METHOD', `Método de pagamento inválido: ${params.paymentMethodType}`);
   }
 
   const transactionDate = params.transactionDate ?? new Date();

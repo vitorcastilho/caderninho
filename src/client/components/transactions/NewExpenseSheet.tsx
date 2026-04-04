@@ -4,7 +4,7 @@ import { useState, useEffect, useTransition, useCallback } from 'react';
 import { toast } from 'sonner';
 
 import { CascadeInput } from '@/client/components/ui/cascade-input';
-import type { CascadeInputData } from '@/client/components/ui/cascade-input';
+import type { CascadeInputData, CascadeImpactData } from '@/client/components/ui/cascade-input';
 import {
   Sheet,
   SheetContent,
@@ -19,6 +19,7 @@ import { listCreditCardsAction } from '@/server/actions/credit-card.actions';
 import {
   createTransactionAction,
   getSuggestedEstablishmentsAction,
+  getImpactPreviewAction,
 } from '@/server/actions/transaction.actions';
 
 interface Classification {
@@ -59,11 +60,19 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [suggestedEstablishments, setSuggestedEstablishments] = useState<string[]>([]);
+  const [impactData, setImpactData] = useState<CascadeImpactData | null>(null);
   const [isLoading, startTransition] = useTransition();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // F8: contador para resetar o CascadeInput quando o sheet reabre
+  const [sheetOpenCount, setSheetOpenCount] = useState(0);
 
   useEffect(() => {
     if (!open) return;
+
+    // F8: resetar estado ao reabrir
+    setSuggestedEstablishments([]);
+    setImpactData(null);
+    setSheetOpenCount((c) => c + 1);
 
     startTransition(async () => {
       const [classResult, catResult, subResult, bankResult, ccResult] = await Promise.all([
@@ -139,11 +148,50 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
     });
   }, [open]);
 
+  // F2: buscar sugestões de estabelecimento ao selecionar subcategoria
+  const handleSubcategorySelect = useCallback(async (subcategoryId: string) => {
+    const result = await getSuggestedEstablishmentsAction({ subcategoryId });
+    if (result.success) {
+      setSuggestedEstablishments(result.data);
+    }
+  }, []);
+
+  // F3: buscar dados reais de impacto
+  const handleRequestImpact = useCallback(
+    async (data: { amountCents: number; paymentMethodId: string; categoryId: string }) => {
+      const method = paymentMethods.find((m) => m.id === data.paymentMethodId);
+      if (!method) return;
+
+      const category = categories.find((c) => c.id === data.categoryId);
+      if (!category) return;
+
+      // Resolver id real do método (PIX usa id composto)
+      let realPaymentMethodId = method.id;
+      if (method.type === 'pix') {
+        realPaymentMethodId = method.id.replace('pix-', '');
+      }
+
+      const result = await getImpactPreviewAction({
+        amountCents: data.amountCents,
+        paymentMethodType: method.type,
+        paymentMethodId: realPaymentMethodId,
+        categoryId: data.categoryId,
+        categoryName: category.name,
+        categoryBudgetCents: category.budget ?? 0,
+        paymentMethodLabel: method.label,
+      });
+
+      if (result.success) {
+        setImpactData(result.data);
+      }
+    },
+    [paymentMethods, categories],
+  );
+
   const handleConfirm = useCallback(
     async (data: CascadeInputData) => {
       setIsSubmitting(true);
 
-      // Resolver o tipo e id real do método de pagamento
       let paymentMethodType: 'debit' | 'credit' | 'pix' = 'debit';
       let paymentMethodId: string | undefined;
 
@@ -151,7 +199,6 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
       if (method) {
         paymentMethodType = method.type;
         if (method.type === 'pix') {
-          // PIX ids são "pix-{bankAccountId}"
           paymentMethodId = method.id.replace('pix-', '');
         } else {
           paymentMethodId = method.id;
@@ -209,13 +256,18 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
             </div>
           ) : (
             <CascadeInput
+              key={sheetOpenCount}
               classifications={classifications}
               categories={categories}
               subcategories={subcategories}
               suggestedEstablishments={suggestedEstablishments}
               paymentMethods={paymentMethods}
+              impactData={impactData}
+              isSubmitting={isSubmitting}
               onConfirm={handleConfirm}
               onCancel={handleCancel}
+              onSubcategorySelect={handleSubcategorySelect}
+              onRequestImpact={handleRequestImpact}
             />
           )}
         </div>

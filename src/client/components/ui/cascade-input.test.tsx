@@ -180,6 +180,129 @@ describe('CascadeInput', () => {
       const creditBtn = screen.getByText('Crédito Nubank');
       expect(creditBtn).toHaveClass('border-indigo-500');
     });
+
+    it('chama onSubcategorySelect ao selecionar subcategoria (F2)', async () => {
+      const onSubcategorySelect = vi.fn();
+      const user = userEvent.setup();
+      render(<CascadeInput {...defaultProps} onSubcategorySelect={onSubcategorySelect} />);
+
+      const input = screen.getByDisplayValue('R$ 0,00');
+      await user.clear(input);
+      await user.type(input, '5000');
+      await user.click(screen.getByText('Avançar'));
+
+      await user.click(screen.getByText('🏠 Essencial'));
+      await user.click(screen.getByText('Alimentação'));
+      await user.click(screen.getByText('Avançar'));
+
+      await user.click(screen.getByText('Supermercado'));
+      expect(onSubcategorySelect).toHaveBeenCalledWith('super');
+    });
+  });
+
+  describe('summary bar (F7)', () => {
+    it('mostra summary bar no step 2 com valor', async () => {
+      const user = userEvent.setup();
+      render(<CascadeInput {...defaultProps} />);
+
+      const input = screen.getByDisplayValue('R$ 0,00');
+      await user.clear(input);
+      await user.type(input, '5000');
+      await user.click(screen.getByText('Avançar'));
+
+      // Step 2 deve mostrar o valor na summary bar
+      expect(screen.getByText('R$ 50,00')).toBeInTheDocument();
+    });
+
+    it('mostra summary bar no step 3 com valor e categoria', async () => {
+      const user = userEvent.setup();
+      render(<CascadeInput {...defaultProps} />);
+
+      const input = screen.getByDisplayValue('R$ 0,00');
+      await user.clear(input);
+      await user.type(input, '5000');
+      await user.click(screen.getByText('Avançar'));
+
+      await user.click(screen.getByText('🏠 Essencial'));
+      await user.click(screen.getByText('Alimentação'));
+      await user.click(screen.getByText('Avançar'));
+
+      // Step 3 deve mostrar summary bar com valor, classificação e categoria
+      expect(screen.getByText(/R\$ 50,00 · Essencial · Alimentação/)).toBeInTheDocument();
+    });
+  });
+
+  describe('impact preview no step 5 (F9)', () => {
+    it('mostra ImpactPreview quando impactData é fornecido', async () => {
+      const user = userEvent.setup();
+      const impactData = {
+        paymentMethodLabel: 'Nubank Conta Corrente',
+        balanceBefore: 50000,
+        balanceAfter: 42000,
+        categoryLabel: 'Alimentação',
+        budgetSpent: 45000,
+        budgetTotal: 80000,
+        budgetPercentage: 56,
+      };
+
+      render(
+        <CascadeInput
+          {...defaultProps}
+          defaultPaymentMethodId="pix"
+          impactData={impactData}
+        />
+      );
+
+      // Navegar até step 5
+      const input = screen.getByDisplayValue('R$ 0,00');
+      await user.clear(input);
+      await user.type(input, '5000');
+      await user.click(screen.getByText('Avançar'));
+
+      await user.click(screen.getByText('🏠 Essencial'));
+      await user.click(screen.getByText('Alimentação'));
+      await user.click(screen.getByText('Avançar'));
+
+      await user.click(screen.getByText('Supermercado'));
+      await user.click(screen.getByText('Avançar'));
+
+      await user.click(screen.getByText('Avançar'));
+
+      // Step 5: deve mostrar ImpactPreview com dados reais
+      expect(screen.getByText('Nubank Conta Corrente')).toBeInTheDocument();
+    });
+  });
+
+  describe('isSubmitting (F10)', () => {
+    it('desabilita botao Confirmar quando isSubmitting=true', async () => {
+      const user = userEvent.setup();
+      render(
+        <CascadeInput
+          {...defaultProps}
+          defaultPaymentMethodId="pix"
+          isSubmitting
+        />
+      );
+
+      // Navegar até step 5
+      const input = screen.getByDisplayValue('R$ 0,00');
+      await user.clear(input);
+      await user.type(input, '5000');
+      await user.click(screen.getByText('Avançar'));
+
+      await user.click(screen.getByText('🏠 Essencial'));
+      await user.click(screen.getByText('Alimentação'));
+      await user.click(screen.getByText('Avançar'));
+
+      await user.click(screen.getByText('Supermercado'));
+      await user.click(screen.getByText('Avançar'));
+
+      await user.click(screen.getByText('Avançar'));
+
+      // Step 5: botão deve mostrar "Enviando..." e estar desabilitado
+      expect(screen.getByText('Enviando...')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /enviando/i })).toBeDisabled();
+    });
   });
 
   describe('cancelar', () => {
@@ -281,6 +404,41 @@ describe('CascadeInput', () => {
       expect(screen.getByText('Lazer')).toBeInTheDocument();
       expect(screen.queryByText('Alimentação')).not.toBeInTheDocument();
       expect(screen.queryByText('Transporte')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('onRequestImpact (F3)', () => {
+    it('chama onRequestImpact ao avançar do step 4 para step 5', async () => {
+      const onRequestImpact = vi.fn();
+      const user = userEvent.setup();
+      render(
+        <CascadeInput
+          {...defaultProps}
+          defaultPaymentMethodId="pix"
+          onRequestImpact={onRequestImpact}
+        />
+      );
+
+      const input = screen.getByDisplayValue('R$ 0,00');
+      await user.clear(input);
+      await user.type(input, '5000');
+      await user.click(screen.getByText('Avançar'));
+
+      await user.click(screen.getByText('🏠 Essencial'));
+      await user.click(screen.getByText('Alimentação'));
+      await user.click(screen.getByText('Avançar'));
+
+      await user.click(screen.getByText('Supermercado'));
+      await user.click(screen.getByText('Avançar'));
+
+      // Step 4 → Step 5: deve chamar onRequestImpact
+      await user.click(screen.getByText('Avançar'));
+
+      expect(onRequestImpact).toHaveBeenCalledWith({
+        amountCents: 5000,
+        paymentMethodId: 'cred',
+        categoryId: 'alim',
+      });
     });
   });
 });

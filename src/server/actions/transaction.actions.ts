@@ -7,7 +7,7 @@ import { validateInput } from '@/server/infrastructure/validation/validate';
 import { err } from '@/shared/types/result';
 import {
   createTransactionSchema,
-  transactionIdSchema,
+  getImpactPreviewSchema,
 } from '@/shared/schemas/transaction.schema';
 import { idSchema } from '@/shared/schemas/common.schema';
 import { transactionDeps } from '@/server/factories/transaction';
@@ -64,26 +64,9 @@ export const getSuggestedEstablishmentsAction = withAuth(
 );
 
 export const getImpactPreviewAction = withAuth(
-  async (
-    session,
-    input: {
-      amountCents: unknown;
-      paymentMethodType: unknown;
-      paymentMethodId?: unknown;
-      categoryId: unknown;
-      categoryName: unknown;
-      categoryBudgetCents: unknown;
-      paymentMethodLabel: unknown;
-    },
-  ) => {
-    const amountValidation = validateInput(
-      createTransactionSchema.shape.amountCents,
-      input.amountCents,
-    );
-    if (!amountValidation.success) return amountValidation;
-
-    const categoryValidation = validateInput(idSchema, input.categoryId);
-    if (!categoryValidation.success) return categoryValidation;
+  async (session, input: unknown) => {
+    const validation = validateInput(getImpactPreviewSchema, input);
+    if (!validation.success) return validation;
 
     const organizationId = getOrganizationId(session);
     if (!organizationId) {
@@ -96,13 +79,7 @@ export const getImpactPreviewAction = withAuth(
         transactionRepository: transactionDeps.repository,
       },
       {
-        amountCents: amountValidation.data,
-        paymentMethodType: input.paymentMethodType as string,
-        paymentMethodId: input.paymentMethodId as string | undefined,
-        categoryId: categoryValidation.data,
-        categoryName: input.categoryName as string,
-        categoryBudgetCents: input.categoryBudgetCents as number,
-        paymentMethodLabel: input.paymentMethodLabel as string,
+        ...validation.data,
         organizationId,
       },
     );

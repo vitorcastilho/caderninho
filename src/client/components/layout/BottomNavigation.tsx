@@ -25,12 +25,16 @@ interface NavItem {
 export const navItems: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/credit-cards", label: "Cartões", icon: CreditCard },
-  { href: "/registrar", label: "Registrar", icon: Plus, isFab: true },
+  { href: "#registrar", label: "Registrar", icon: Plus, isFab: true },
   { href: "/checklist", label: "Checklist", icon: CheckSquare },
   { href: "/projecao", label: "Projeção", icon: TrendingUp },
 ];
 
-export function BottomNavigation() {
+interface BottomNavigationProps {
+  onFabClick: () => void;
+}
+
+export function BottomNavigation({ onFabClick }: BottomNavigationProps) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -46,31 +50,27 @@ export function BottomNavigation() {
     >
       <ul className="flex w-full items-end justify-around">
         {navItems.map((item) => {
-          const isActive = pathname?.startsWith(item.href);
           const Icon = item.icon;
 
           if (item.isFab) {
             return (
-              <li key={item.href} className="flex flex-col items-center -mt-4">
-                <Link
-                  href={item.href}
-                  aria-current={isActive ? "page" : undefined}
-                  aria-label={item.label}
+              <li key={item.label} className="flex flex-col items-center -mt-4">
+                <button
+                  type="button"
+                  onClick={onFabClick}
+                  aria-label="Registrar nova transação"
                   className="flex items-center justify-center size-12 rounded-full bg-primary text-primary-foreground shadow-lg transition-transform duration-150 ease-in-out active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
                   <Icon className="size-6" />
-                </Link>
-                <span
-                  className={cn(
-                    "mt-0.5 text-[10px] font-medium",
-                    isActive ? "text-primary" : "text-muted-foreground"
-                  )}
-                >
+                </button>
+                <span className="mt-0.5 text-[10px] font-medium text-muted-foreground">
                   {item.label}
                 </span>
               </li>
             );
           }
+
+          const isActive = pathname?.startsWith(item.href);
 
           return (
             <li key={item.href} className="flex-1">

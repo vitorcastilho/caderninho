@@ -51,17 +51,14 @@ export async function getImpactPreview(
 
   const balanceAfter = balanceBefore - params.amountCents;
 
-  // Calcular orcamento gasto da categoria no mes atual
+  // Calcular orcamento gasto da categoria no mes atual via query filtrada
   const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const transactions = await deps.transactionRepository.findByOrganization(params.organizationId);
-  const monthlySpent = transactions
-    .filter(
-      (t) =>
-        t.categoryId === params.categoryId &&
-        t.transactionDate >= startOfMonth,
-    )
-    .reduce((sum, t) => sum + t.amountCents, 0);
+  const monthlySpent = await deps.transactionRepository.sumMonthlySpentByCategory(
+    params.categoryId,
+    params.organizationId,
+    now.getFullYear(),
+    now.getMonth() + 1,
+  );
 
   const budgetSpent = monthlySpent + params.amountCents;
   const budgetTotal = params.categoryBudgetCents;

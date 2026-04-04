@@ -43,4 +43,11 @@ export interface TransactionRepository {
     limit: number,
     sinceDays: number,
   ): Promise<string[]>;
+
+  sumMonthlySpentByCategory(
+    categoryId: string,
+    organizationId: string,
+    year: number,
+    month: number,
+  ): Promise<number>;
 }

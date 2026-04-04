@@ -20,6 +20,10 @@ vi.mock("@/client/utils/auth-client", () => ({
   },
 }));
 
+const defaultProps = {
+  onFabClick: vi.fn(),
+};
+
 describe("BottomNavigation", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -27,7 +31,7 @@ describe("BottomNavigation", () => {
   });
 
   it("deve renderizar 5 itens de navegacao", () => {
-    render(<BottomNavigation />);
+    render(<BottomNavigation {...defaultProps} />);
 
     expect(screen.getByText("Dashboard")).toBeInTheDocument();
     expect(screen.getByText("Cartões")).toBeInTheDocument();
@@ -38,7 +42,7 @@ describe("BottomNavigation", () => {
 
   it("deve marcar item ativo com aria-current=page", () => {
     mockPathname.mockReturnValue("/dashboard");
-    render(<BottomNavigation />);
+    render(<BottomNavigation {...defaultProps} />);
 
     const dashboardLink = screen.getByRole("link", { name: /dashboard/i });
     expect(dashboardLink).toHaveAttribute("aria-current", "page");
@@ -46,21 +50,25 @@ describe("BottomNavigation", () => {
 
   it("deve nao marcar itens inativos com aria-current", () => {
     mockPathname.mockReturnValue("/dashboard");
-    render(<BottomNavigation />);
+    render(<BottomNavigation {...defaultProps} />);
 
     const checklistLink = screen.getByRole("link", { name: /checklist/i });
     expect(checklistLink).not.toHaveAttribute("aria-current");
   });
 
-  it("deve ter o FAB central como botao", () => {
-    render(<BottomNavigation />);
+  it("deve ter o FAB central como botao que chama onFabClick", async () => {
+    const user = userEvent.setup();
+    render(<BottomNavigation {...defaultProps} />);
 
-    const fab = screen.getByRole("link", { name: /registrar/i });
+    const fab = screen.getByRole("button", { name: /registrar nova transação/i });
     expect(fab).toBeInTheDocument();
+
+    await user.click(fab);
+    expect(defaultProps.onFabClick).toHaveBeenCalledTimes(1);
   });
 
   it("deve ter role=navigation", () => {
-    render(<BottomNavigation />);
+    render(<BottomNavigation {...defaultProps} />);
 
     expect(screen.getByRole("navigation", { name: /navegação inferior/i })).toBeInTheDocument();
   });
@@ -69,7 +77,7 @@ describe("BottomNavigation", () => {
     const original = navItems[0].badge;
     navItems[0].badge = 5;
     try {
-      render(<BottomNavigation />);
+      render(<BottomNavigation {...defaultProps} />);
       expect(screen.getByText("5")).toBeInTheDocument();
       expect(screen.getByLabelText("5 notificações")).toBeInTheDocument();
     } finally {
@@ -78,7 +86,7 @@ describe("BottomNavigation", () => {
   });
 
   it("deve exibir botao de logout", () => {
-    render(<BottomNavigation />);
+    render(<BottomNavigation {...defaultProps} />);
 
     expect(screen.getByText("Sair")).toBeInTheDocument();
   });
@@ -87,7 +95,7 @@ describe("BottomNavigation", () => {
     const original = navItems[0].badge;
     navItems[0].badge = 150;
     try {
-      render(<BottomNavigation />);
+      render(<BottomNavigation {...defaultProps} />);
       expect(screen.getByText("99+")).toBeInTheDocument();
       expect(screen.getByLabelText("150 notificações")).toBeInTheDocument();
     } finally {
@@ -97,7 +105,7 @@ describe("BottomNavigation", () => {
 
   it("deve chamar signOut e redirecionar para /login ao clicar em Sair", async () => {
     const user = userEvent.setup();
-    render(<BottomNavigation />);
+    render(<BottomNavigation {...defaultProps} />);
 
     const logoutButton = screen.getByRole("button", { name: /sair/i });
     await user.click(logoutButton);

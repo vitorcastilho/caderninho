@@ -108,6 +108,27 @@ so that I can capture spending in ~5 seconds at the moment it happens.
   - [x] 8.3: Recálculo de orçamento da categoria: somar transações do mês atual por categoria → comparar com `budget_min_cents`/`budget_max_cents`
   - [x] 8.4: Recálculo em < 500ms (NFR-P3)
 
+### Review Follow-ups (AI) — R1 (2026-04-04)
+
+#### CRITICAL
+- [x] [AI-Review][CRITICAL] F1: Tasks 7.2 e 7.3 marcadas [x] mas NÃO integradas — NewExpenseSheet criado mas nenhum page.tsx, layout ou BottomNavigation foi modificado. O componente é dead code. Integrar FAB no BottomNavigation (mobile) e botão no header/dashboard (desktop) [src/client/components/transactions/NewExpenseSheet.tsx]
+
+#### HIGH
+- [x] [AI-Review][HIGH] F2: AC #4 — `getSuggestedEstablishmentsAction` importado mas nunca chamado. Quando subcategoria é selecionada, buscar top 5 estabelecimentos e atualizar `suggestedEstablishments` no CascadeInput [src/client/components/transactions/NewExpenseSheet.tsx:22,61,215]
+- [x] [AI-Review][HIGH] F3: AC #5 — ImpactPreview usa `before: 0` e `after: valueCents` hardcoded. Chamar `getImpactPreviewAction` com dados reais (saldo da conta, orçamento gasto do mês) e passar resultado ao ImpactPreview [src/client/components/ui/cascade-input.tsx:357-366]
+- [x] [AI-Review][HIGH] F4: Task 3.3 — Testes "categoria inexistente (erro)" e "método pagamento inválido (erro)" prometidos mas ausentes. Implementar validação no use case (retornar Result de erro) e adicionar testes [src/server/domain/transactions/use-cases/create-transaction.ts, create-transaction.test.ts]
+- [x] [AI-Review][HIGH] F5: `getImpactPreviewAction` — `paymentMethodType`, `categoryName`, `categoryBudgetCents`, `paymentMethodLabel` castados com `as` sem validação Zod. Criar schema Zod para o input completo e validar com `validateInput` [src/server/actions/transaction.actions.ts:100-105]
+
+#### MEDIUM
+- [x] [AI-Review][MEDIUM] F6: `getImpactPreview` carrega TODAS as transações via `findByOrganization` e filtra em memória. Criar método específico no repository (ex: `sumMonthlySpentByCategory`) com query filtrada no banco [src/server/domain/transactions/use-cases/get-impact-preview.ts:57-64]
+- [x] [AI-Review][MEDIUM] F7: Divergência visual proto-07 — Summary bar ("R$ 87,00 · Alimentação") ausente nos steps 2-4. Adicionar barra de contexto no topo de cada step mostrando dados já preenchidos [src/client/components/ui/cascade-input.tsx]
+- [x] [AI-Review][MEDIUM] F8: CascadeInput não reseta estado ao fechar/reabrir o sheet. Usar `key={open}` ou resetar useState ao reabrir [src/client/components/transactions/NewExpenseSheet.tsx, src/client/components/ui/cascade-input.tsx]
+- [x] [AI-Review][MEDIUM] F9: Step 5 (confirmação) não mostra ImpactPreview — proto-07 State 4 mostra saldo e barra de orçamento na tela de confirmação. Adicionar ImpactPreview no step 5 [src/client/components/ui/cascade-input.tsx:381-429]
+- [x] [AI-Review][MEDIUM] F10: `isSubmitting` rastreado mas nunca usado na UI. Botão "Confirmar" não desabilitado nem mostra spinner durante submit — permite double-click e transações duplicadas. Passar `isSubmitting` ao CascadeInput e desabilitar botão [src/client/components/transactions/NewExpenseSheet.tsx:63, src/client/components/ui/cascade-input.tsx:424]
+
+#### LOW
+- [ ] [AI-Review][LOW] F11: Teclado numérico customizado do proto-07 não implementado — usa CurrencyInput padrão. Divergência visual aceitável mas documentada [src/client/components/ui/cascade-input.tsx]
+
 ## Dev Notes
 
 - O domínio `transactions` é NOVO — não existe nenhum schema, use case, action ou repository de transações ainda
@@ -236,6 +257,18 @@ Nenhum erro encontrado durante a implementação.
 - Task 8: Recálculo implementado no use case create-transaction — débito/pix debita conta, crédito não altera saldo
 - 112 arquivos de teste, 806 testes passando, zero regressões
 - TypeScript compilação limpa (tsc --noEmit)
+- ✅ Resolved review finding [CRITICAL]: F1 — Integrado NewExpenseSheet via AppShell wrapper, FAB no BottomNavigation abre sheet, botão "Registrar gasto" adicionado no Sidebar (desktop)
+- ✅ Resolved review finding [HIGH]: F2 — `getSuggestedEstablishmentsAction` chamado via `onSubcategorySelect` callback quando subcategoria é selecionada
+- ✅ Resolved review finding [HIGH]: F3 — `getImpactPreviewAction` chamado com dados reais via `onRequestImpact` callback ao avançar para step 5
+- ✅ Resolved review finding [HIGH]: F4 — Validação de categoryId vazia e paymentMethodType inválido adicionada no use case + 2 testes novos
+- ✅ Resolved review finding [HIGH]: F5 — Schema Zod `getImpactPreviewSchema` criado, `as` casts eliminados do `getImpactPreviewAction`
+- ✅ Resolved review finding [MEDIUM]: F6 — Método `sumMonthlySpentByCategory` adicionado ao repo com query SQL filtrada, eliminou carregamento de todas as transações
+- ✅ Resolved review finding [MEDIUM]: F7 — Summary bar adicionada nos steps 2-4 mostrando dados já preenchidos (valor · classificação · categoria · subcategoria)
+- ✅ Resolved review finding [MEDIUM]: F8 — CascadeInput resetado via `key={sheetOpenCount}` ao reabrir sheet + limpa suggestedEstablishments e impactData
+- ✅ Resolved review finding [MEDIUM]: F9 — ImpactPreview adicionado no step 5 (confirmação) com saldo e barra de orçamento
+- ✅ Resolved review finding [MEDIUM]: F10 — `isSubmitting` passado ao CascadeInput, botão "Confirmar" mostra spinner e fica desabilitado durante submit
+- 112 arquivos de teste, 815 testes passando, zero regressões (pós review fixes)
+- TypeScript compilação limpa (tsc --noEmit)
 
 ### File List
 
@@ -243,25 +276,30 @@ Nenhum erro encontrado durante a implementação.
 - `src/server/infrastructure/database/schema/transactions.ts` — Schema Drizzle da tabela transactions
 - `src/server/infrastructure/database/schema/transactions.test.ts` — Testes do schema (6 testes)
 - `src/server/infrastructure/database/migrations/0012_old_bill_hollister.sql` — Migration gerada
-- `src/shared/schemas/transaction.schema.ts` — Schemas Zod compartilhados
+- `src/shared/schemas/transaction.schema.ts` — Schemas Zod compartilhados (createTransactionSchema + getImpactPreviewSchema)
 - `src/shared/schemas/transaction.schema.test.ts` — Testes Zod (15 testes)
-- `src/server/domain/transactions/repositories/transaction.repository.ts` — Interface do repository
-- `src/server/domain/transactions/use-cases/create-transaction.ts` — Use case criar transação
-- `src/server/domain/transactions/use-cases/create-transaction.test.ts` — Testes (9 testes)
+- `src/server/domain/transactions/repositories/transaction.repository.ts` — Interface do repository (com sumMonthlySpentByCategory)
+- `src/server/domain/transactions/use-cases/create-transaction.ts` — Use case criar transação (com validação de categoryId e paymentMethodType)
+- `src/server/domain/transactions/use-cases/create-transaction.test.ts` — Testes (11 testes)
 - `src/server/domain/transactions/use-cases/get-suggested-establishments.ts` — Use case sugestões
 - `src/server/domain/transactions/use-cases/get-suggested-establishments.test.ts` — Testes (2 testes)
-- `src/server/domain/transactions/use-cases/get-impact-preview.ts` — Use case impacto
-- `src/server/domain/transactions/use-cases/get-impact-preview.test.ts` — Testes (7 testes)
-- `src/server/infrastructure/database/repositories/transaction.repository.impl.ts` — Implementação Drizzle
+- `src/server/domain/transactions/use-cases/get-impact-preview.ts` — Use case impacto (via sumMonthlySpentByCategory)
+- `src/server/domain/transactions/use-cases/get-impact-preview.test.ts` — Testes (8 testes)
+- `src/server/infrastructure/database/repositories/transaction.repository.impl.ts` — Implementação Drizzle (com sumMonthlySpentByCategory)
 - `src/server/factories/transaction.ts` — Factory DI
-- `src/server/actions/transaction.actions.ts` — Server actions
+- `src/server/actions/transaction.actions.ts` — Server actions (com validação Zod completa no getImpactPreviewAction)
 - `src/server/actions/transaction.actions.test.ts` — Testes actions (6 testes)
-- `src/client/components/transactions/NewExpenseSheet.tsx` — Componente wrapper
+- `src/client/components/transactions/NewExpenseSheet.tsx` — Componente wrapper (integrado com establishments, impact e isSubmitting)
+- `src/client/components/layout/AppShell.tsx` — Client wrapper para layout com sheet state compartilhado
 
 **Modificados:**
 - `src/server/infrastructure/database/schema/index.ts` — Export de transactions
-- `src/client/components/ui/cascade-input.tsx` — Adaptado de 4 para 5 steps (subcategoria)
-- `src/client/components/ui/cascade-input.test.tsx` — Testes atualizados (15 testes)
+- `src/client/components/ui/cascade-input.tsx` — Adaptado de 4 para 5 steps, summary bar, ImpactPreview no step 5, isSubmitting, onSubcategorySelect, onRequestImpact
+- `src/client/components/ui/cascade-input.test.tsx` — Testes atualizados (21 testes)
+- `src/app/(app)/layout.tsx` — Refatorado para usar AppShell
+- `src/client/components/layout/BottomNavigation.tsx` — FAB alterado de Link para button com onFabClick prop
+- `src/client/components/layout/BottomNavigation.test.tsx` — Testes atualizados para nova prop
+- `src/client/components/layout/Sidebar.tsx` — Botão "Registrar gasto" adicionado com onRegisterClick prop
 
 ### Change Log
 
@@ -274,3 +312,26 @@ Nenhum erro encontrado durante a implementação.
 | PIX com id `pix-{bankAccountId}` | Distinguir PIX de débito na mesma conta bancária |
 | Toast "Desfazer" 5s | AC #6 — undo temporário (implementação real em Story 3.3) |
 | Débito/PIX debita conta, crédito não | Crédito será calculado na consulta (Epic 5) |
+| AppShell wrapper para layout | F1 — Centralizar state do sheet, compartilhar entre BottomNav e Sidebar |
+| BottomNavigation FAB: Link → button | F1 — FAB abre sheet em vez de navegar para /registrar |
+| Sidebar: botão "Registrar gasto" | F1 — Trigger desktop para abrir sheet |
+| getSuggestedEstablishmentsAction integrado | F2 — Busca top 5 ao selecionar subcategoria |
+| getImpactPreviewAction com dados reais | F3 — Saldo/limite e orçamento calculados no backend |
+| Validação categoryId + paymentMethodType | F4 — Testes de erro no use case + validação explícita |
+| getImpactPreviewSchema Zod | F5 — Eliminados `as` casts inseguros na action |
+| sumMonthlySpentByCategory no repository | F6 — Query SQL filtrada substitui carregamento em memória |
+| Summary bar steps 2-4 | F7 — Contexto visual dos dados já preenchidos (proto-07) |
+| key={sheetOpenCount} reset | F8 — CascadeInput reseta estado ao reabrir sheet |
+| ImpactPreview no step 5 | F9 — Saldo + barra de orçamento na confirmação (proto-07) |
+| isSubmitting → spinner + disabled | F10 — Previne double-click e transações duplicadas |
+| Addressed code review findings — 10 items resolved (Date: 2026-04-04) |
+
+### Senior Developer Review (AI) — R1
+
+**Reviewer:** Claude Opus 4.6
+**Data:** 2026-04-04
+**Resultado:** Changes Requested (1 CRITICAL, 4 HIGH, 5 MEDIUM, 1 LOW)
+
+**Resumo:** Backend (schema, use cases, repository, actions) está sólido e bem estruturado seguindo o padrão bank-accounts. Os problemas concentram-se no wiring frontend: (1) componente NewExpenseSheet não integrado em nenhuma página, (2) getImpactPreviewAction e getSuggestedEstablishmentsAction nunca chamados no frontend, (3) ImpactPreview com dados hardcoded, (4) divergências visuais contra proto-07 (summary bar, ImpactPreview no step de confirmação). Também há testes prometidos mas ausentes (categoria inexistente, método inválido) e casting inseguro com `as` na action de impacto.
+
+**Status:** `ready-for-dev` — dev precisa fixar HIGHs/MEDIUMs antes de voltar para review R2.

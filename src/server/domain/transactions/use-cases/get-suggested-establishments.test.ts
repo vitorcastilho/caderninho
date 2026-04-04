@@ -8,6 +8,7 @@ const mockRepository: TransactionRepository = {
   findById: vi.fn(),
   findByOrganization: vi.fn(),
   findTopEstablishments: vi.fn(),
+  sumMonthlySpentByCategory: vi.fn(),
 };
 
 describe('getSuggestedEstablishments', () => {

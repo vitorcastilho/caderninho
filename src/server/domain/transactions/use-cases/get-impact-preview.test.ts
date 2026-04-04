@@ -9,6 +9,7 @@ const mockTransactionRepository: TransactionRepository = {
   findById: vi.fn(),
   findByOrganization: vi.fn(),
   findTopEstablishments: vi.fn(),
+  sumMonthlySpentByCategory: vi.fn(),
 };
 
 const mockBankAccountRepository: BankAccountRepository = {
@@ -50,7 +51,7 @@ describe('getImpactPreview', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(mockBankAccountRepository.findById).mockResolvedValue(sampleBankAccount);
-    vi.mocked(mockTransactionRepository.findByOrganization).mockResolvedValue([]);
+    vi.mocked(mockTransactionRepository.sumMonthlySpentByCategory).mockResolvedValue(0);
   });
 
   it('deve calcular impacto com debito (saldo diminui)', async () => {
@@ -92,25 +93,7 @@ describe('getImpactPreview', () => {
 
   it('deve calcular orcamento entre 70-85%', async () => {
     // Gastos anteriores: 200000 + novo: 8700 = 208700 / 300000 = 69.5% → Math.round = 70%
-    vi.mocked(mockTransactionRepository.findByOrganization).mockResolvedValue([
-      {
-        id: 'tx-1',
-        type: 'expense',
-        amountCents: 200000,
-        categoryId: 'cat-123',
-        subcategoryId: null,
-        establishment: null,
-        paymentMethodType: 'debit',
-        paymentMethodId: null,
-        description: null,
-        transactionDate: new Date(),
-        referenceMonth: null,
-        organizationId: 'org-123',
-        createdBy: 'user-1',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ]);
+    vi.mocked(mockTransactionRepository.sumMonthlySpentByCategory).mockResolvedValue(200000);
 
     const result = await getImpactPreview(deps, baseParams);
 
@@ -123,25 +106,7 @@ describe('getImpactPreview', () => {
 
   it('deve calcular orcamento entre 85-100%', async () => {
     // Gastos anteriores: 250000 + novo: 8700 = 258700 / 300000 = 86.2%
-    vi.mocked(mockTransactionRepository.findByOrganization).mockResolvedValue([
-      {
-        id: 'tx-1',
-        type: 'expense',
-        amountCents: 250000,
-        categoryId: 'cat-123',
-        subcategoryId: null,
-        establishment: null,
-        paymentMethodType: 'debit',
-        paymentMethodId: null,
-        description: null,
-        transactionDate: new Date(),
-        referenceMonth: null,
-        organizationId: 'org-123',
-        createdBy: 'user-1',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ]);
+    vi.mocked(mockTransactionRepository.sumMonthlySpentByCategory).mockResolvedValue(250000);
 
     const result = await getImpactPreview(deps, baseParams);
 
@@ -154,25 +119,7 @@ describe('getImpactPreview', () => {
 
   it('deve calcular orcamento acima de 100%', async () => {
     // Gastos anteriores: 295000 + novo: 8700 = 303700 / 300000 = 101.2%
-    vi.mocked(mockTransactionRepository.findByOrganization).mockResolvedValue([
-      {
-        id: 'tx-1',
-        type: 'expense',
-        amountCents: 295000,
-        categoryId: 'cat-123',
-        subcategoryId: null,
-        establishment: null,
-        paymentMethodType: 'debit',
-        paymentMethodId: null,
-        description: null,
-        transactionDate: new Date(),
-        referenceMonth: null,
-        organizationId: 'org-123',
-        createdBy: 'user-1',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ]);
+    vi.mocked(mockTransactionRepository.sumMonthlySpentByCategory).mockResolvedValue(295000);
 
     const result = await getImpactPreview(deps, baseParams);
 
@@ -194,5 +141,17 @@ describe('getImpactPreview', () => {
       expect(result.data.balanceBefore).toBe(421300);
       expect(result.data.balanceAfter).toBe(421300 - 8700);
     }
+  });
+
+  it('deve usar sumMonthlySpentByCategory em vez de findByOrganization', async () => {
+    await getImpactPreview(deps, baseParams);
+
+    expect(mockTransactionRepository.sumMonthlySpentByCategory).toHaveBeenCalledWith(
+      'cat-123',
+      'org-123',
+      expect.any(Number),
+      expect.any(Number),
+    );
+    expect(mockTransactionRepository.findByOrganization).not.toHaveBeenCalled();
   });
 });

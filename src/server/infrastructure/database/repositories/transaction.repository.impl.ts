@@ -79,4 +79,30 @@ export class DrizzleTransactionRepository implements TransactionRepository {
       .map((r) => r.establishment)
       .filter((e): e is string => e !== null);
   }
+
+  async sumMonthlySpentByCategory(
+    categoryId: string,
+    organizationId: string,
+    year: number,
+    month: number,
+  ): Promise<number> {
+    const startOfMonth = new Date(year, month - 1, 1);
+    const startOfNextMonth = new Date(year, month, 1);
+
+    const result = await db
+      .select({
+        total: sql<number>`COALESCE(SUM(${transactions.amountCents}), 0)`.as('total'),
+      })
+      .from(transactions)
+      .where(
+        and(
+          eq(transactions.categoryId, categoryId),
+          eq(transactions.organizationId, organizationId),
+          gte(transactions.transactionDate, startOfMonth),
+          sql`${transactions.transactionDate} < ${startOfNextMonth}`,
+        ),
+      );
+
+    return Number(result[0]?.total ?? 0);
+  }
 }

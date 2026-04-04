@@ -14,6 +14,7 @@ import {
   Tags,
   Building2,
   BookText,
+  Plus,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -61,9 +62,10 @@ const expandedOnly = (collapsed: boolean) =>
 
 interface SidebarProps {
   userName: string;
+  onRegisterClick?: () => void;
 }
 
-export function Sidebar({ userName }: SidebarProps) {
+export function Sidebar({ userName, onRegisterClick }: SidebarProps) {
   const { collapsed, toggle } = useSidebarState();
   const pathname = usePathname();
   const router = useRouter();
@@ -98,6 +100,22 @@ export function Sidebar({ userName }: SidebarProps) {
 
       {/* Separator — DS: mx-4 my-1 */}
       <div className="mx-4 my-1 h-px bg-border" />
+
+      {/* Registrar gasto — ação principal */}
+      {onRegisterClick && (
+        <div className="px-2 pt-3 pb-1">
+          <Button
+            onClick={onRegisterClick}
+            className={cn(
+              "w-full gap-[10px]",
+              collapsed && "lg:px-0 lg:justify-center"
+            )}
+          >
+            <Plus className="size-[18px] shrink-0" />
+            <span className={expandedOnly(collapsed)}>Registrar gasto</span>
+          </Button>
+        </div>
+      )}
 
       {/* Navigation */}
       <nav aria-label="Menu lateral" className="flex-1 overflow-y-auto">
