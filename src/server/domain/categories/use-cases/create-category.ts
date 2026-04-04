@@ -39,7 +39,7 @@ export async function createCategory(
   }
 
   if (params.defaultPaymentMethodType && params.defaultPaymentMethodId) {
-    if (params.defaultPaymentMethodType === 'credit_card') {
+    if (params.defaultPaymentMethodType === 'credit') {
       const card = await deps.creditCardRepository.findById(
         params.defaultPaymentMethodId, params.organizationId,
       );

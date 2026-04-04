@@ -1,8 +1,8 @@
-export const PAYMENT_METHOD_TYPES = ['credit_card', 'debit', 'pix'] as const;
+export const PAYMENT_METHOD_TYPES = ['credit', 'debit', 'pix'] as const;
 export type PaymentMethodType = typeof PAYMENT_METHOD_TYPES[number];
 
 export const PAYMENT_METHOD_TYPE_LABELS: Record<PaymentMethodType, string> = {
-  credit_card: 'Cartão de crédito',
+  credit: 'Cartão de crédito',
   debit: 'Débito',
   pix: 'Pix',
 };

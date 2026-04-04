@@ -21,6 +21,7 @@ import {
   getSuggestedEstablishmentsAction,
   getImpactPreviewAction,
 } from '@/server/actions/transaction.actions';
+import { listEstablishmentsBySubcategoryAction } from '@/server/actions/establishment.actions';
 
 interface Classification {
   id: string;
@@ -130,16 +131,21 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
           subResult.data
             .filter((s: { status: string }) => s.status === 'active')
             .map((s: { id: string; name: string; categoryId: string; defaultPaymentMethodType?: string | null; defaultPaymentMethodId?: string | null }) => {
+              let resolvedPaymentMethodId: string | null = null;
               let paymentLabel: string | null = null;
-              if (s.defaultPaymentMethodId) {
-                const method = methods.find((m) => m.id === s.defaultPaymentMethodId);
+              if (s.defaultPaymentMethodType && s.defaultPaymentMethodId) {
+                // PIX usa ID composto na UI (pix-{bankAccountId}), DB guarda ID cru
+                resolvedPaymentMethodId = s.defaultPaymentMethodType === 'pix'
+                  ? `pix-${s.defaultPaymentMethodId}`
+                  : s.defaultPaymentMethodId;
+                const method = methods.find((m) => m.id === resolvedPaymentMethodId);
                 paymentLabel = method?.label ?? null;
               }
               return {
                 id: s.id,
                 name: s.name,
                 categoryId: s.categoryId,
-                defaultPaymentMethodId: s.defaultPaymentMethodId ?? null,
+                defaultPaymentMethodId: resolvedPaymentMethodId,
                 defaultPaymentMethodLabel: paymentLabel,
               };
             }),
@@ -148,12 +154,21 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
     });
   }, [open]);
 
-  // F2: buscar sugestões de estabelecimento ao selecionar subcategoria
+  // F2: buscar estabelecimentos da entidade + sugestões do histórico ao selecionar subcategoria
   const handleSubcategorySelect = useCallback(async (subcategoryId: string) => {
-    const result = await getSuggestedEstablishmentsAction({ subcategoryId });
-    if (result.success) {
-      setSuggestedEstablishments(result.data);
-    }
+    const [entitiesResult, suggestionsResult] = await Promise.all([
+      listEstablishmentsBySubcategoryAction({ subcategoryId }),
+      getSuggestedEstablishmentsAction({ subcategoryId }),
+    ]);
+
+    // Priorizar nomes de entidades, complementar com sugestões do histórico
+    const entityNames = entitiesResult.success
+      ? entitiesResult.data.map((e: { name: string }) => e.name)
+      : [];
+    const historyNames = suggestionsResult.success ? suggestionsResult.data : [];
+
+    const uniqueNames = [...new Set([...entityNames, ...historyNames])];
+    setSuggestedEstablishments(uniqueNames);
   }, []);
 
   // F3: buscar dados reais de impacto

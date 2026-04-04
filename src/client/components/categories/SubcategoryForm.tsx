@@ -83,7 +83,7 @@ export function SubcategoryForm({
   const activeBankAccounts = bankAccounts.filter((a) => a.status === 'active');
   const activeCreditCards = creditCards.filter((c) => c.status === 'active');
 
-  const instrumentOptions: { id: string; label: string; brand?: string; bank?: string }[] = paymentType === 'credit_card'
+  const instrumentOptions: { id: string; label: string; brand?: string; bank?: string }[] = paymentType === 'credit'
     ? activeCreditCards.map((c) => ({ id: c.id, label: c.name, brand: c.brand }))
     : paymentType === 'debit' || paymentType === 'pix'
       ? activeBankAccounts.map((a) => ({ id: a.id, label: `${a.bank} - ${a.name}`, bank: a.bank }))
@@ -179,7 +179,7 @@ export function SubcategoryForm({
       {paymentType !== 'none' && instrumentOptions.length > 0 && (
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="subcategory-payment-instrument">
-            {paymentType === 'credit_card' ? 'Cartão' : 'Conta'}
+            {paymentType === 'credit' ? 'Cartão' : 'Conta'}
           </Label>
           <Select key={paymentType} value={paymentMethodId} onValueChange={(val) => setPaymentMethodId(val ?? '')}>
             <SelectTrigger className="w-full" id="subcategory-payment-instrument">
@@ -232,7 +232,7 @@ export function SubcategoryForm({
 
       {paymentType !== 'none' && instrumentOptions.length === 0 && (
         <p className="text-xs text-muted-foreground">
-          {paymentType === 'credit_card'
+          {paymentType === 'credit'
             ? 'Nenhum cartão de crédito ativo cadastrado.'
             : 'Nenhuma conta bancária ativa cadastrada.'}
         </p>

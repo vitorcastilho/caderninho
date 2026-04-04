@@ -19,9 +19,11 @@ import { ClassificationForm } from './ClassificationForm';
 import { ClassificationMergeDialog } from './ClassificationMergeDialog';
 import { CategoryForm } from './CategoryForm';
 import { SubcategoryForm } from './SubcategoryForm';
+import { EstablishmentForm } from './EstablishmentForm';
 import { listClassificationsAction } from '@/server/actions/classification.actions';
 import { listCategoriesAction } from '@/server/actions/category.actions';
 import { listSubcategoriesAction } from '@/server/actions/subcategory.actions';
+import { listEstablishmentsBySubcategoryAction } from '@/server/actions/establishment.actions';
 
 interface Classification {
   id: string;
@@ -65,10 +67,22 @@ interface CreditCard {
   status: 'active' | 'archived';
 }
 
+interface Establishment {
+  id: string;
+  name: string;
+  emoji: string;
+  subcategoryId: string;
+  source: 'auto' | 'manual';
+  visitCount: number;
+  lastVisitAt: string | null;
+  status: 'active' | 'archived';
+}
+
 interface CategoryTreeProps {
   initialClassifications: Classification[];
   initialCategories: Category[];
   initialSubcategories: Subcategory[];
+  initialEstablishments: Establishment[];
   bankAccounts: BankAccount[];
   creditCards: CreditCard[];
 }
@@ -77,12 +91,14 @@ export function CategoryTree({
   initialClassifications,
   initialCategories,
   initialSubcategories,
+  initialEstablishments,
   bankAccounts,
   creditCards,
 }: CategoryTreeProps) {
   const [classifications, setClassifications] = useState<Classification[]>(initialClassifications);
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [subcategories, setSubcategories] = useState<Subcategory[]>(initialSubcategories);
+  const [establishments, setEstablishments] = useState<Establishment[]>(initialEstablishments);
   const [showArchived, setShowArchived] = useState(false);
   const [, startTransition] = useTransition();
 
@@ -108,6 +124,12 @@ export function CategoryTree({
     defaultPaymentMethodType: string | null;
     defaultPaymentMethodId: string | null;
   } | null>(null);
+  const [creatingEstablishmentForSubcategory, setCreatingEstablishmentForSubcategory] = useState<string | null>(null);
+  const [editingEstablishment, setEditingEstablishment] = useState<{
+    id: string;
+    name: string;
+    emoji: string;
+  } | null>(null);
 
   const refreshData = useCallback(() => {
     startTransition(async () => {
@@ -118,7 +140,18 @@ export function CategoryTree({
       ]);
       if (classResult.success) setClassifications(classResult.data);
       if (catResult.success) setCategories(catResult.data);
-      if (subResult.success) setSubcategories(subResult.data);
+      if (subResult.success) {
+        setSubcategories(subResult.data);
+        // Buscar establishments de todas as subcategorias ativas
+        const activeSubs = subResult.data.filter((s: { status: string }) => s.status === 'active');
+        const estResults = await Promise.all(
+          activeSubs.map((s: { id: string }) => listEstablishmentsBySubcategoryAction({ subcategoryId: s.id })),
+        );
+        const allEstablishments = estResults
+          .filter((r) => r.success)
+          .flatMap((r) => (r.success ? r.data : []));
+        setEstablishments(allEstablishments as Establishment[]);
+      }
       if (!classResult.success || !catResult.success || !subResult.success) {
         toast.error('Erro ao atualizar dados.');
       }
@@ -165,7 +198,7 @@ export function CategoryTree({
         />
         <PageHeader
           title="Categorias"
-          description="Organize seus gastos em uma hierarquia: classificação → categoria → subcategoria"
+          description="Organize seus gastos em uma hierarquia: classificação → categoria → subcategoria → estabelecimento"
         >
           <Button onClick={() => setShowCreateClassification(true)}>
             + Nova classificação
@@ -354,6 +387,46 @@ export function CategoryTree({
         </DialogContent>
       </Dialog>
 
+      {/* Create Establishment Dialog */}
+      <Dialog open={!!creatingEstablishmentForSubcategory} onOpenChange={(open) => !open && setCreatingEstablishmentForSubcategory(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Novo Estabelecimento</DialogTitle>
+          </DialogHeader>
+          {creatingEstablishmentForSubcategory && (
+            <EstablishmentForm
+              mode="create"
+              subcategoryId={creatingEstablishmentForSubcategory}
+              onSuccess={() => {
+                setCreatingEstablishmentForSubcategory(null);
+                refreshData();
+              }}
+              onCancel={() => setCreatingEstablishmentForSubcategory(null)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Establishment Dialog */}
+      <Dialog open={!!editingEstablishment} onOpenChange={(open) => !open && setEditingEstablishment(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Editar Estabelecimento</DialogTitle>
+          </DialogHeader>
+          {editingEstablishment && (
+            <EstablishmentForm
+              mode="edit"
+              defaultValues={editingEstablishment}
+              onSuccess={() => {
+                setEditingEstablishment(null);
+                refreshData();
+              }}
+              onCancel={() => setEditingEstablishment(null)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Classification sections */}
       {activeClassifications.length === 0 && archivedClassifications.length === 0 ? (
         <EmptyState
@@ -375,6 +448,7 @@ export function CategoryTree({
                   classification={classification}
                   categories={categoriesByClassification.get(classification.id) ?? []}
                   subcategoriesByCategory={subcategoriesByCategory}
+                  establishments={establishments}
                   onEditClassification={(c) => setEditingClassification({ id: c.id, name: c.name })}
                   onMergeClassification={(c) => setMergingClassification({ id: c.id, name: c.name })}
                   onAddCategory={(classificationId) => setCreatingCategoryForClassification(classificationId)}
@@ -399,6 +473,8 @@ export function CategoryTree({
                       defaultPaymentMethodType: sub.defaultPaymentMethodType,
                       defaultPaymentMethodId: sub.defaultPaymentMethodId,
                     })}
+                  onAddEstablishment={(subcategoryId) => setCreatingEstablishmentForSubcategory(subcategoryId)}
+                  onEditEstablishment={(est) => setEditingEstablishment({ id: est.id, name: est.name, emoji: est.emoji })}
                   onStatusChange={refreshData}
                 />
               ))}
@@ -424,6 +500,7 @@ export function CategoryTree({
                       classification={classification}
                       categories={categoriesByClassification.get(classification.id) ?? []}
                       subcategoriesByCategory={subcategoriesByCategory}
+                      establishments={establishments}
                       bankAccounts={bankAccounts}
                       creditCards={creditCards}
                       onEditClassification={(c) => setEditingClassification({ id: c.id, name: c.name })}
@@ -448,6 +525,8 @@ export function CategoryTree({
                       defaultPaymentMethodType: sub.defaultPaymentMethodType,
                       defaultPaymentMethodId: sub.defaultPaymentMethodId,
                     })}
+                      onAddEstablishment={(subcategoryId) => setCreatingEstablishmentForSubcategory(subcategoryId)}
+                      onEditEstablishment={(est) => setEditingEstablishment({ id: est.id, name: est.name, emoji: est.emoji })}
                       onStatusChange={refreshData}
                     />
                   ))}

@@ -26,6 +26,7 @@ import {
   archiveSubcategoryAction,
   reactivateSubcategoryAction,
 } from '@/server/actions/subcategory.actions';
+import { EstablishmentRow } from './EstablishmentRow';
 
 interface Category {
   id: string;
@@ -61,14 +62,28 @@ interface CreditCard {
   status: 'active' | 'archived';
 }
 
+interface Establishment {
+  id: string;
+  name: string;
+  emoji: string;
+  subcategoryId: string;
+  source: 'auto' | 'manual';
+  visitCount: number;
+  lastVisitAt: string | null;
+  status: 'active' | 'archived';
+}
+
 interface CategoryCardProps {
   category: Category;
   subcategories: Subcategory[];
+  establishments: Establishment[];
   bankAccounts: BankAccount[];
   creditCards: CreditCard[];
   onEdit: () => void;
   onAddSubcategory: () => void;
   onEditSubcategory: (subcategory: Subcategory) => void;
+  onAddEstablishment: (subcategoryId: string) => void;
+  onEditEstablishment: (establishment: Establishment) => void;
   onStatusChange: () => void;
 }
 
@@ -85,7 +100,7 @@ function resolvePaymentMethodDisplay(
   creditCards: CreditCard[],
 ): React.ReactNode | null {
   if (!type || !id) return null;
-  if (type === 'credit_card') {
+  if (type === 'credit') {
     const card = creditCards.find((c) => c.id === id);
     if (!card) return null;
     return (
@@ -108,11 +123,14 @@ function resolvePaymentMethodDisplay(
 export function CategoryCard({
   category,
   subcategories,
+  establishments,
   bankAccounts,
   creditCards,
   onEdit,
   onAddSubcategory,
   onEditSubcategory,
+  onAddEstablishment,
+  onEditEstablishment,
   onStatusChange,
 }: CategoryCardProps) {
   const [expanded, setExpanded] = useState(true);
@@ -278,37 +296,62 @@ export function CategoryCard({
               bankAccounts,
               creditCards,
             );
+            const subEstablishments = establishments.filter(
+              (e) => e.subcategoryId === sub.id && e.status === 'active',
+            );
             return (
-            <div
-              key={sub.id}
-              className="group/sub flex items-center gap-3 border-b border-border bg-card py-3 pr-4 pl-16 transition-colors last:border-b-0 hover:bg-muted/30"
-            >
-              <div className="size-1 shrink-0 rounded-full bg-muted-foreground/60" />
-              <span className="flex-1 text-sm">{sub.name}</span>
-              {subPaymentDisplay && (
-                <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                  {subPaymentDisplay}
-                </span>
-              )}
-              <div className="flex gap-1 opacity-0 transition-opacity group-hover/sub:opacity-100">
-                <Button
-                  variant="ghost"
-                  size="xs"
-                  className="h-6 text-xs"
-                  onClick={() => onEditSubcategory(sub)}
-                >
-                  Editar
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="xs"
-                  className="h-6 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
-                  onClick={() => handleArchiveSubcategory(sub)}
-                  disabled={isPending}
-                >
-                  Arquivar
-                </Button>
+            <div key={sub.id}>
+              <div
+                className="group/sub flex items-center gap-3 border-b border-border bg-card py-3 pr-4 pl-16 transition-colors hover:bg-muted/30"
+              >
+                <div className="size-1 shrink-0 rounded-full bg-muted-foreground/60" />
+                <span className="flex-1 text-sm">{sub.name}</span>
+                {subPaymentDisplay && (
+                  <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                    {subPaymentDisplay}
+                  </span>
+                )}
+                {subEstablishments.length > 0 && (
+                  <span className="text-xs text-muted-foreground">
+                    {subEstablishments.length} estab.
+                  </span>
+                )}
+                <div className="flex gap-1 opacity-0 transition-opacity group-hover/sub:opacity-100">
+                  <Button
+                    variant="ghost"
+                    size="xs"
+                    className="h-6 text-xs"
+                    onClick={() => onAddEstablishment(sub.id)}
+                  >
+                    + Estab
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="xs"
+                    className="h-6 text-xs"
+                    onClick={() => onEditSubcategory(sub)}
+                  >
+                    Editar
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="xs"
+                    className="h-6 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    onClick={() => handleArchiveSubcategory(sub)}
+                    disabled={isPending}
+                  >
+                    Arquivar
+                  </Button>
+                </div>
               </div>
+              {subEstablishments.map((est) => (
+                <EstablishmentRow
+                  key={est.id}
+                  establishment={est}
+                  onEdit={onEditEstablishment}
+                  onStatusChange={onStatusChange}
+                />
+              ))}
             </div>
             );
           })}

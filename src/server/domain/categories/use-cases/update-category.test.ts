@@ -101,7 +101,7 @@ describe('updateCategory', () => {
   });
 
   it('should update payment method to credit card', async () => {
-    const updated = { ...sampleCategory, defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-1' };
+    const updated = { ...sampleCategory, defaultPaymentMethodType: 'credit', defaultPaymentMethodId: 'card-1' };
     vi.mocked(mockRepository.findById).mockResolvedValue(sampleCategory);
     vi.mocked(mockRepository.update).mockResolvedValue(updated);
     vi.mocked(mockCreditCardRepository.findById).mockResolvedValue({
@@ -112,18 +112,18 @@ describe('updateCategory', () => {
 
     const result = await updateCategory(deps, {
       id: 'cat-1', organizationId: 'org-123', userId: 'user-1',
-      data: { defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-1' },
+      data: { defaultPaymentMethodType: 'credit', defaultPaymentMethodId: 'card-1' },
     });
 
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.defaultPaymentMethodType).toBe('credit_card');
+      expect(result.data.defaultPaymentMethodType).toBe('credit');
       expect(result.data.defaultPaymentMethodId).toBe('card-1');
     }
   });
 
   it('should clear payment method (null/null)', async () => {
-    const existing = { ...sampleCategory, defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-1' };
+    const existing = { ...sampleCategory, defaultPaymentMethodType: 'credit', defaultPaymentMethodId: 'card-1' };
     const updated = { ...sampleCategory, defaultPaymentMethodType: null, defaultPaymentMethodId: null };
     vi.mocked(mockRepository.findById).mockResolvedValue(existing);
     vi.mocked(mockRepository.update).mockResolvedValue(updated);
@@ -146,7 +146,7 @@ describe('updateCategory', () => {
 
     const result = await updateCategory(deps, {
       id: 'cat-1', organizationId: 'org-123', userId: 'user-1',
-      data: { defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-999' },
+      data: { defaultPaymentMethodType: 'credit', defaultPaymentMethodId: 'card-999' },
     });
 
     expect(result.success).toBe(false);

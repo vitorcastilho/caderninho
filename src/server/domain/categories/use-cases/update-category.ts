@@ -49,7 +49,7 @@ export async function updateCategory(
   }
 
   if (params.data.defaultPaymentMethodType && params.data.defaultPaymentMethodId) {
-    if (params.data.defaultPaymentMethodType === 'credit_card') {
+    if (params.data.defaultPaymentMethodType === 'credit') {
       const card = await deps.creditCardRepository.findById(
         params.data.defaultPaymentMethodId, params.organizationId,
       );

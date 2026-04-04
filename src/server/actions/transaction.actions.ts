@@ -11,9 +11,11 @@ import {
 } from '@/shared/schemas/transaction.schema';
 import { idSchema } from '@/shared/schemas/common.schema';
 import { transactionDeps } from '@/server/factories/transaction';
+import { autoCreateEstablishmentDeps } from '@/server/factories/establishment';
 import { createTransaction } from '@/server/domain/transactions/use-cases/create-transaction';
 import { getSuggestedEstablishments } from '@/server/domain/transactions/use-cases/get-suggested-establishments';
 import { getImpactPreview } from '@/server/domain/transactions/use-cases/get-impact-preview';
+import { autoCreateEstablishment } from '@/server/domain/establishments/use-cases/auto-create-establishment';
 
 function getOrganizationId(session: { session: { activeOrganizationId?: string | null } }) {
   const organizationId = session.session.activeOrganizationId;
@@ -39,6 +41,17 @@ export const createTransactionAction = withAuth(async (session, input: unknown) 
   });
 
   if (result.success) {
+    // Auto-criar estabelecimento se nome e subcategoria foram informados
+    if (validation.data.establishment && validation.data.subcategoryId) {
+      autoCreateEstablishment(autoCreateEstablishmentDeps, {
+        name: validation.data.establishment,
+        subcategoryId: validation.data.subcategoryId,
+        organizationId,
+      }).catch(() => {
+        // Falha na auto-criação não deve impedir a transação
+      });
+    }
+
     revalidatePath('/');
     revalidatePath('/transactions');
   }

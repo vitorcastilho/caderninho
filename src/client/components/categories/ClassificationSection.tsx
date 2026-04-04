@@ -64,10 +64,22 @@ interface CreditCard {
   status: 'active' | 'archived';
 }
 
+interface Establishment {
+  id: string;
+  name: string;
+  emoji: string;
+  subcategoryId: string;
+  source: 'auto' | 'manual';
+  visitCount: number;
+  lastVisitAt: string | null;
+  status: 'active' | 'archived';
+}
+
 interface ClassificationSectionProps {
   classification: Classification;
   categories: Category[];
   subcategoriesByCategory: Map<string, Subcategory[]>;
+  establishments: Establishment[];
   bankAccounts: BankAccount[];
   creditCards: CreditCard[];
   onEditClassification: (classification: Classification) => void;
@@ -76,6 +88,8 @@ interface ClassificationSectionProps {
   onEditCategory: (category: Category) => void;
   onAddSubcategory: (categoryId: string) => void;
   onEditSubcategory: (subcategory: Subcategory) => void;
+  onAddEstablishment: (subcategoryId: string) => void;
+  onEditEstablishment: (establishment: Establishment) => void;
   onStatusChange: () => void;
 }
 
@@ -111,6 +125,7 @@ export function ClassificationSection({
   classification,
   categories,
   subcategoriesByCategory,
+  establishments,
   bankAccounts,
   creditCards,
   onEditClassification,
@@ -119,6 +134,8 @@ export function ClassificationSection({
   onEditCategory,
   onAddSubcategory,
   onEditSubcategory,
+  onAddEstablishment,
+  onEditEstablishment,
   onStatusChange,
 }: ClassificationSectionProps) {
   const [expanded, setExpanded] = useState(true);
@@ -322,11 +339,14 @@ export function ClassificationSection({
                   key={category.id}
                   category={category}
                   subcategories={subcategoriesByCategory.get(category.id) ?? []}
+                  establishments={establishments}
                   bankAccounts={bankAccounts}
                   creditCards={creditCards}
                   onEdit={() => onEditCategory(category)}
                   onAddSubcategory={() => onAddSubcategory(category.id)}
                   onEditSubcategory={onEditSubcategory}
+                  onAddEstablishment={onAddEstablishment}
+                  onEditEstablishment={onEditEstablishment}
                   onStatusChange={onStatusChange}
                 />
               ))}
@@ -350,11 +370,14 @@ export function ClassificationSection({
                           key={category.id}
                           category={category}
                           subcategories={subcategoriesByCategory.get(category.id) ?? []}
+                          establishments={establishments}
                           bankAccounts={bankAccounts}
                           creditCards={creditCards}
                           onEdit={() => onEditCategory(category)}
                           onAddSubcategory={() => onAddSubcategory(category.id)}
                           onEditSubcategory={onEditSubcategory}
+                          onAddEstablishment={onAddEstablishment}
+                          onEditEstablishment={onEditEstablishment}
                           onStatusChange={onStatusChange}
                         />
                       ))}

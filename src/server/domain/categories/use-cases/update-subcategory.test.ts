@@ -79,7 +79,7 @@ describe('updateSubcategory', () => {
   });
 
   it('should add payment method override (credit card)', async () => {
-    const updated = { ...sampleSubcategory, defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-1' };
+    const updated = { ...sampleSubcategory, defaultPaymentMethodType: 'credit', defaultPaymentMethodId: 'card-1' };
     vi.mocked(mockRepository.findById).mockResolvedValue(sampleSubcategory);
     vi.mocked(mockRepository.update).mockResolvedValue(updated);
     vi.mocked(mockCreditCardRepository.findById).mockResolvedValue({
@@ -90,18 +90,18 @@ describe('updateSubcategory', () => {
 
     const result = await updateSubcategory(deps, {
       id: 'sub-1', organizationId: 'org-123', userId: 'user-1',
-      data: { defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-1' },
+      data: { defaultPaymentMethodType: 'credit', defaultPaymentMethodId: 'card-1' },
     });
 
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.defaultPaymentMethodType).toBe('credit_card');
+      expect(result.data.defaultPaymentMethodType).toBe('credit');
       expect(result.data.defaultPaymentMethodId).toBe('card-1');
     }
   });
 
   it('should change payment method override', async () => {
-    const existing = { ...sampleSubcategory, defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-1' };
+    const existing = { ...sampleSubcategory, defaultPaymentMethodType: 'credit', defaultPaymentMethodId: 'card-1' };
     const updated = { ...sampleSubcategory, defaultPaymentMethodType: 'debit', defaultPaymentMethodId: 'acc-1' };
     vi.mocked(mockRepository.findById).mockResolvedValue(existing);
     vi.mocked(mockRepository.update).mockResolvedValue(updated);
@@ -123,7 +123,7 @@ describe('updateSubcategory', () => {
   });
 
   it('should remove payment method override (set null)', async () => {
-    const existing = { ...sampleSubcategory, defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-1' };
+    const existing = { ...sampleSubcategory, defaultPaymentMethodType: 'credit', defaultPaymentMethodId: 'card-1' };
     const updated = { ...sampleSubcategory, defaultPaymentMethodType: null, defaultPaymentMethodId: null };
     vi.mocked(mockRepository.findById).mockResolvedValue(existing);
     vi.mocked(mockRepository.update).mockResolvedValue(updated);
@@ -148,7 +148,7 @@ describe('updateSubcategory', () => {
 
     const result = await updateSubcategory(deps, {
       id: 'sub-1', organizationId: 'org-123', userId: 'user-1',
-      data: { defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-999' },
+      data: { defaultPaymentMethodType: 'credit', defaultPaymentMethodId: 'card-999' },
     });
 
     expect(result.success).toBe(false);
