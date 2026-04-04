@@ -68,6 +68,10 @@ interface Establishment {
   emoji: string;
   subcategoryId: string;
   source: 'auto' | 'manual';
+  defaultPaymentMethodType: string | null;
+  defaultPaymentMethodId: string | null;
+  budgetMinCents: number | null;
+  budgetMaxCents: number | null;
   visitCount: number;
   lastVisitAt: string | null;
   status: 'active' | 'archived';
@@ -134,8 +138,18 @@ export function CategoryCard({
   onStatusChange,
 }: CategoryCardProps) {
   const [expanded, setExpanded] = useState(true);
+  const [expandedSubs, setExpandedSubs] = useState<Set<string>>(new Set());
   const [showArchiveDialog, setShowArchiveDialog] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  function toggleSubExpand(subId: string) {
+    setExpandedSubs((prev) => {
+      const next = new Set(prev);
+      if (next.has(subId)) next.delete(subId);
+      else next.add(subId);
+      return next;
+    });
+  }
 
   const activeSubcategories = subcategories.filter((s) => s.status === 'active');
   const archivedSubcategories = subcategories.filter((s) => s.status === 'archived');
@@ -299,12 +313,19 @@ export function CategoryCard({
             const subEstablishments = establishments.filter(
               (e) => e.subcategoryId === sub.id && e.status === 'active',
             );
+            const isSubExpanded = expandedSubs.has(sub.id);
             return (
             <div key={sub.id}>
               <div
-                className="group/sub flex items-center gap-3 border-b border-border bg-card py-3 pr-4 pl-16 transition-colors hover:bg-muted/30"
+                className="group/sub flex cursor-pointer items-center gap-3 border-b border-border bg-card py-3 pr-4 pl-10 transition-colors hover:bg-muted/30"
+                onClick={() => toggleSubExpand(sub.id)}
               >
-                <div className="size-1 shrink-0 rounded-full bg-muted-foreground/60" />
+                <ChevronDown
+                  className={cn(
+                    'size-3.5 shrink-0 text-muted-foreground transition-transform duration-150',
+                    !isSubExpanded && '-rotate-90'
+                  )}
+                />
                 <span className="flex-1 text-sm">{sub.name}</span>
                 {subPaymentDisplay && (
                   <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
@@ -316,7 +337,10 @@ export function CategoryCard({
                     {subEstablishments.length} estab.
                   </span>
                 )}
-                <div className="flex gap-1 opacity-0 transition-opacity group-hover/sub:opacity-100">
+                <div
+                  className="flex gap-1 opacity-0 transition-opacity group-hover/sub:opacity-100"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <Button
                     variant="ghost"
                     size="xs"
@@ -344,7 +368,7 @@ export function CategoryCard({
                   </Button>
                 </div>
               </div>
-              {subEstablishments.map((est) => (
+              {isSubExpanded && subEstablishments.map((est) => (
                 <EstablishmentRow
                   key={est.id}
                   establishment={est}

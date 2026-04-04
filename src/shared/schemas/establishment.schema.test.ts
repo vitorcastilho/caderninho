@@ -24,6 +24,39 @@ describe('createEstablishmentSchema', () => {
     expect(result.success).toBe(true);
   });
 
+  it('should accept input with payment method and budget fields', () => {
+    const result = createEstablishmentSchema.safeParse({
+      name: 'Pão de Açúcar',
+      subcategoryId: validUUID,
+      defaultPaymentMethodType: 'credit',
+      defaultPaymentMethodId: validUUID,
+      budgetMinCents: 5000,
+      budgetMaxCents: 10000,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should accept null payment method and budget fields', () => {
+    const result = createEstablishmentSchema.safeParse({
+      name: 'Pão de Açúcar',
+      subcategoryId: validUUID,
+      defaultPaymentMethodType: null,
+      defaultPaymentMethodId: null,
+      budgetMinCents: null,
+      budgetMaxCents: null,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject invalid payment method type', () => {
+    const result = createEstablishmentSchema.safeParse({
+      name: 'Pão de Açúcar',
+      subcategoryId: validUUID,
+      defaultPaymentMethodType: 'cash',
+    });
+    expect(result.success).toBe(false);
+  });
+
   it('should reject empty name', () => {
     const result = createEstablishmentSchema.safeParse({
       name: '',
@@ -77,6 +110,26 @@ describe('updateEstablishmentSchema', () => {
       name: 'Novo Nome',
       emoji: '🏪',
       subcategoryId: validUUID,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should accept update with payment method and budget fields', () => {
+    const result = updateEstablishmentSchema.safeParse({
+      defaultPaymentMethodType: 'debit',
+      defaultPaymentMethodId: validUUID,
+      budgetMinCents: 3000,
+      budgetMaxCents: 8000,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should accept update with null payment method and budget fields', () => {
+    const result = updateEstablishmentSchema.safeParse({
+      defaultPaymentMethodType: null,
+      defaultPaymentMethodId: null,
+      budgetMinCents: null,
+      budgetMaxCents: null,
     });
     expect(result.success).toBe(true);
   });

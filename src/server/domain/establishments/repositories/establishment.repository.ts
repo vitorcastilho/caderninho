@@ -4,6 +4,10 @@ export type Establishment = {
   emoji: string;
   subcategoryId: string;
   source: 'auto' | 'manual';
+  defaultPaymentMethodType: string | null;
+  defaultPaymentMethodId: string | null;
+  budgetMinCents: number | null;
+  budgetMaxCents: number | null;
   visitCount: number;
   lastVisitAt: Date | null;
   status: 'active' | 'archived';
@@ -19,6 +23,10 @@ export interface EstablishmentRepository {
     emoji: string;
     subcategoryId: string;
     source: 'auto' | 'manual';
+    defaultPaymentMethodType?: string | null;
+    defaultPaymentMethodId?: string | null;
+    budgetMinCents?: number | null;
+    budgetMaxCents?: number | null;
     organizationId: string;
   }): Promise<Establishment>;
 
@@ -43,6 +51,10 @@ export interface EstablishmentRepository {
       name: string;
       emoji: string;
       subcategoryId: string;
+      defaultPaymentMethodType: string | null;
+      defaultPaymentMethodId: string | null;
+      budgetMinCents: number | null;
+      budgetMaxCents: number | null;
     }>,
   ): Promise<Establishment>;
 

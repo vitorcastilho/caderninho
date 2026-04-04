@@ -73,6 +73,10 @@ interface Establishment {
   emoji: string;
   subcategoryId: string;
   source: 'auto' | 'manual';
+  defaultPaymentMethodType: string | null;
+  defaultPaymentMethodId: string | null;
+  budgetMinCents: number | null;
+  budgetMaxCents: number | null;
   visitCount: number;
   lastVisitAt: string | null;
   status: 'active' | 'archived';
@@ -129,6 +133,13 @@ export function CategoryTree({
     id: string;
     name: string;
     emoji: string;
+    subcategoryId: string;
+    defaultPaymentMethodType: string | null;
+    defaultPaymentMethodId: string | null;
+    budgetMinCents: number | null;
+    budgetMaxCents: number | null;
+    visitCount: number;
+    lastVisitAt: string | null;
   } | null>(null);
 
   const refreshData = useCallback(() => {
@@ -149,8 +160,22 @@ export function CategoryTree({
         );
         const allEstablishments = estResults
           .filter((r) => r.success)
-          .flatMap((r) => (r.success ? r.data : []));
-        setEstablishments(allEstablishments as Establishment[]);
+          .flatMap((r) => (r.success ? r.data : []))
+          .map((e: Record<string, unknown>) => ({
+            id: e.id as string,
+            name: e.name as string,
+            emoji: e.emoji as string,
+            subcategoryId: e.subcategoryId as string,
+            source: e.source as 'auto' | 'manual',
+            defaultPaymentMethodType: (e.defaultPaymentMethodType as string) ?? null,
+            defaultPaymentMethodId: (e.defaultPaymentMethodId as string) ?? null,
+            budgetMinCents: (e.budgetMinCents as number) ?? null,
+            budgetMaxCents: (e.budgetMaxCents as number) ?? null,
+            visitCount: e.visitCount as number,
+            lastVisitAt: e.lastVisitAt ? String(e.lastVisitAt) : null,
+            status: e.status as 'active' | 'archived',
+          }));
+        setEstablishments(allEstablishments);
       }
       if (!classResult.success || !catResult.success || !subResult.success) {
         toast.error('Erro ao atualizar dados.');
@@ -397,6 +422,9 @@ export function CategoryTree({
             <EstablishmentForm
               mode="create"
               subcategoryId={creatingEstablishmentForSubcategory}
+              subcategories={subcategories.filter((s) => s.status === 'active').map((s) => ({ id: s.id, name: s.name }))}
+              bankAccounts={bankAccounts}
+              creditCards={creditCards}
               onSuccess={() => {
                 setCreatingEstablishmentForSubcategory(null);
                 refreshData();
@@ -417,6 +445,9 @@ export function CategoryTree({
             <EstablishmentForm
               mode="edit"
               defaultValues={editingEstablishment}
+              subcategories={subcategories.filter((s) => s.status === 'active').map((s) => ({ id: s.id, name: s.name }))}
+              bankAccounts={bankAccounts}
+              creditCards={creditCards}
               onSuccess={() => {
                 setEditingEstablishment(null);
                 refreshData();
@@ -474,7 +505,18 @@ export function CategoryTree({
                       defaultPaymentMethodId: sub.defaultPaymentMethodId,
                     })}
                   onAddEstablishment={(subcategoryId) => setCreatingEstablishmentForSubcategory(subcategoryId)}
-                  onEditEstablishment={(est) => setEditingEstablishment({ id: est.id, name: est.name, emoji: est.emoji })}
+                  onEditEstablishment={(est) => setEditingEstablishment({
+                      id: est.id,
+                      name: est.name,
+                      emoji: est.emoji,
+                      subcategoryId: est.subcategoryId,
+                      defaultPaymentMethodType: est.defaultPaymentMethodType,
+                      defaultPaymentMethodId: est.defaultPaymentMethodId,
+                      budgetMinCents: est.budgetMinCents,
+                      budgetMaxCents: est.budgetMaxCents,
+                      visitCount: est.visitCount,
+                      lastVisitAt: est.lastVisitAt,
+                    })}
                   onStatusChange={refreshData}
                 />
               ))}
@@ -526,7 +568,18 @@ export function CategoryTree({
                       defaultPaymentMethodId: sub.defaultPaymentMethodId,
                     })}
                       onAddEstablishment={(subcategoryId) => setCreatingEstablishmentForSubcategory(subcategoryId)}
-                      onEditEstablishment={(est) => setEditingEstablishment({ id: est.id, name: est.name, emoji: est.emoji })}
+                      onEditEstablishment={(est) => setEditingEstablishment({
+                      id: est.id,
+                      name: est.name,
+                      emoji: est.emoji,
+                      subcategoryId: est.subcategoryId,
+                      defaultPaymentMethodType: est.defaultPaymentMethodType,
+                      defaultPaymentMethodId: est.defaultPaymentMethodId,
+                      budgetMinCents: est.budgetMinCents,
+                      budgetMaxCents: est.budgetMaxCents,
+                      visitCount: est.visitCount,
+                      lastVisitAt: est.lastVisitAt,
+                    })}
                       onStatusChange={refreshData}
                     />
                   ))}

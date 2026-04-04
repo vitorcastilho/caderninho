@@ -12,6 +12,10 @@ interface UpdateEstablishmentParams {
     name: string;
     emoji: string;
     subcategoryId: string;
+    defaultPaymentMethodType: string | null;
+    defaultPaymentMethodId: string | null;
+    budgetMinCents: number | null;
+    budgetMaxCents: number | null;
   }>;
 }
 

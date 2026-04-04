@@ -12,6 +12,10 @@ export const establishments = pgTable('establishments', {
     .notNull()
     .references(() => subcategories.id),
   source: text('source').notNull(),
+  defaultPaymentMethodType: text('default_payment_method_type'),
+  defaultPaymentMethodId: text('default_payment_method_id'),
+  budgetMinCents: integer('budget_min_cents'),
+  budgetMaxCents: integer('budget_max_cents'),
   visitCount: integer('visit_count').notNull().default(0),
   lastVisitAt: timestamp('last_visit_at', { withTimezone: true }),
   status: text('status').notNull().default('active'),

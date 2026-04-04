@@ -8,6 +8,10 @@ interface CreateEstablishmentParams {
   name: string;
   emoji?: string;
   subcategoryId: string;
+  defaultPaymentMethodType?: string | null;
+  defaultPaymentMethodId?: string | null;
+  budgetMinCents?: number | null;
+  budgetMaxCents?: number | null;
   organizationId: string;
   userId: string;
 }
@@ -48,6 +52,10 @@ export async function createEstablishment(
     emoji: params.emoji ?? '📍',
     subcategoryId: params.subcategoryId,
     source: 'manual',
+    defaultPaymentMethodType: params.defaultPaymentMethodType ?? null,
+    defaultPaymentMethodId: params.defaultPaymentMethodId ?? null,
+    budgetMinCents: params.budgetMinCents ?? null,
+    budgetMaxCents: params.budgetMaxCents ?? null,
     organizationId: params.organizationId,
   });
 

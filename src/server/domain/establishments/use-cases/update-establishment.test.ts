@@ -32,6 +32,8 @@ const deps = {
 const sampleEstablishment = {
   id: 'est-1', name: 'Pão de Açúcar', emoji: '📍',
   subcategoryId: 'sub-1', source: 'manual' as const,
+  defaultPaymentMethodType: null, defaultPaymentMethodId: null,
+  budgetMinCents: null, budgetMaxCents: null,
   visitCount: 3, lastVisitAt: new Date(),
   status: 'active' as const, organizationId: 'org-123',
   createdAt: new Date(), updatedAt: new Date(),

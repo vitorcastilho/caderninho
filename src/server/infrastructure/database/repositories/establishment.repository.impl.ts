@@ -14,6 +14,10 @@ export class DrizzleEstablishmentRepository implements EstablishmentRepository {
     emoji: string;
     subcategoryId: string;
     source: 'auto' | 'manual';
+    defaultPaymentMethodType?: string | null;
+    defaultPaymentMethodId?: string | null;
+    budgetMinCents?: number | null;
+    budgetMaxCents?: number | null;
     organizationId: string;
   }): Promise<Establishment> {
     const [establishment] = await db
@@ -78,6 +82,10 @@ export class DrizzleEstablishmentRepository implements EstablishmentRepository {
       name: string;
       emoji: string;
       subcategoryId: string;
+      defaultPaymentMethodType: string | null;
+      defaultPaymentMethodId: string | null;
+      budgetMinCents: number | null;
+      budgetMaxCents: number | null;
     }>,
   ): Promise<Establishment> {
     const [establishment] = await db

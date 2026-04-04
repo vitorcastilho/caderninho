@@ -33,8 +33,18 @@ export default async function CategoriesPage() {
     .filter((r) => r.success)
     .flatMap((r) => (r.success ? r.data : []))
     .map((e) => ({
-      ...e,
+      id: e.id,
+      name: e.name,
+      emoji: e.emoji,
+      subcategoryId: e.subcategoryId,
+      source: e.source,
+      defaultPaymentMethodType: e.defaultPaymentMethodType ?? null,
+      defaultPaymentMethodId: e.defaultPaymentMethodId ?? null,
+      budgetMinCents: e.budgetMinCents ?? null,
+      budgetMaxCents: e.budgetMaxCents ?? null,
+      visitCount: e.visitCount,
       lastVisitAt: e.lastVisitAt ? e.lastVisitAt.toISOString() : null,
+      status: e.status,
     }));
 
   return (

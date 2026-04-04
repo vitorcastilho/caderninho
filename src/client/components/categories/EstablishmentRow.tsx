@@ -1,10 +1,6 @@
 'use client';
 
-import { useTransition } from 'react';
-import { toast } from 'sonner';
-
 import { Button } from '@/client/components/ui/button';
-import { deleteEstablishmentAction } from '@/server/actions/establishment.actions';
 
 interface Establishment {
   id: string;
@@ -12,6 +8,10 @@ interface Establishment {
   emoji: string;
   subcategoryId: string;
   source: 'auto' | 'manual';
+  defaultPaymentMethodType: string | null;
+  defaultPaymentMethodId: string | null;
+  budgetMinCents: number | null;
+  budgetMaxCents: number | null;
   visitCount: number;
   lastVisitAt: string | null;
   status: 'active' | 'archived';
@@ -31,27 +31,13 @@ function formatLastVisit(dateStr: string | null): string {
   return `${day}/${month}`;
 }
 
-export function EstablishmentRow({ establishment, onEdit, onStatusChange }: EstablishmentRowProps) {
-  const [isPending, startTransition] = useTransition();
-
-  function handleDelete() {
-    startTransition(async () => {
-      const result = await deleteEstablishmentAction({ id: establishment.id });
-      if (result.success) {
-        toast.success(`Estabelecimento "${establishment.name}" removido.`);
-        onStatusChange();
-      } else {
-        toast.error(result.error.message);
-      }
-    });
-  }
-
+export function EstablishmentRow({ establishment, onEdit }: EstablishmentRowProps) {
   const visitInfo = establishment.visitCount > 0
-    ? `${establishment.visitCount} visita${establishment.visitCount > 1 ? 's' : ''}${establishment.lastVisitAt ? ` · último ${formatLastVisit(establishment.lastVisitAt)}` : ''}`
+    ? `${establishment.visitCount} visita${establishment.visitCount > 1 ? 's' : ''}${establishment.lastVisitAt ? ` · ultimo ${formatLastVisit(establishment.lastVisitAt)}` : ''}`
     : establishment.source === 'manual' ? 'adicionado manualmente' : '';
 
   return (
-    <div className="group/est flex items-center gap-2.5 border-t border-border bg-muted/20 py-2.5 pr-4 pl-[88px] text-xs transition-colors hover:bg-muted/40">
+    <div className="group/est flex items-center gap-2.5 border-t border-border bg-muted py-2.5 pr-4 pl-[76px] text-xs transition-colors hover:bg-muted/80">
       <span className="shrink-0 text-sm">{establishment.emoji}</span>
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex items-center gap-1.5">
@@ -78,15 +64,6 @@ export function EstablishmentRow({ establishment, onEdit, onStatusChange }: Esta
           onClick={() => onEdit(establishment)}
         >
           Editar
-        </Button>
-        <Button
-          variant="ghost"
-          size="xs"
-          className="h-6 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
-          onClick={handleDelete}
-          disabled={isPending}
-        >
-          Excluir
         </Button>
       </div>
     </div>

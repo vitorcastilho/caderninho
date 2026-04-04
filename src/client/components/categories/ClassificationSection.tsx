@@ -70,6 +70,10 @@ interface Establishment {
   emoji: string;
   subcategoryId: string;
   source: 'auto' | 'manual';
+  defaultPaymentMethodType: string | null;
+  defaultPaymentMethodId: string | null;
+  budgetMinCents: number | null;
+  budgetMaxCents: number | null;
   visitCount: number;
   lastVisitAt: string | null;
   status: 'active' | 'archived';

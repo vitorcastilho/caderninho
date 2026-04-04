@@ -18,6 +18,8 @@ const deps = { repository: mockRepository };
 const existingEstablishment = {
   id: 'est-1', name: 'Pão de Açúcar', emoji: '📍',
   subcategoryId: 'sub-1', source: 'auto' as const,
+  defaultPaymentMethodType: null, defaultPaymentMethodId: null,
+  budgetMinCents: null, budgetMaxCents: null,
   visitCount: 3, lastVisitAt: new Date('2026-03-20'),
   status: 'active' as const, organizationId: 'org-123',
   createdAt: new Date(), updatedAt: new Date(),
@@ -30,6 +32,8 @@ describe('autoCreateEstablishment', () => {
     const newEstablishment = {
       id: expect.any(String), name: 'Pão de Açúcar', emoji: '📍',
       subcategoryId: 'sub-1', source: 'auto' as const,
+      defaultPaymentMethodType: null, defaultPaymentMethodId: null,
+      budgetMinCents: null, budgetMaxCents: null,
       visitCount: 0, lastVisitAt: null,
       status: 'active' as const, organizationId: 'org-123',
       createdAt: new Date(), updatedAt: new Date(),

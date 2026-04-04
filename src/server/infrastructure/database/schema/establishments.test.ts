@@ -14,6 +14,10 @@ describe('establishments schema', () => {
     expect(columns.emoji).toBeDefined();
     expect(columns.subcategoryId).toBeDefined();
     expect(columns.source).toBeDefined();
+    expect(columns.defaultPaymentMethodType).toBeDefined();
+    expect(columns.defaultPaymentMethodId).toBeDefined();
+    expect(columns.budgetMinCents).toBeDefined();
+    expect(columns.budgetMaxCents).toBeDefined();
     expect(columns.visitCount).toBeDefined();
     expect(columns.lastVisitAt).toBeDefined();
     expect(columns.status).toBeDefined();
@@ -45,14 +49,22 @@ describe('establishments schema', () => {
     expect(columns.updatedAt.hasDefault).toBe(true);
   });
 
-  it('should allow nullable lastVisitAt', () => {
+  it('should allow nullable columns', () => {
     const columns = getTableColumns(establishments);
     expect(columns.lastVisitAt.notNull).toBe(false);
+    expect(columns.defaultPaymentMethodType.notNull).toBe(false);
+    expect(columns.defaultPaymentMethodId.notNull).toBe(false);
+    expect(columns.budgetMinCents.notNull).toBe(false);
+    expect(columns.budgetMaxCents.notNull).toBe(false);
   });
 
   it('should use snake_case for DB column names', () => {
     const columns = getTableColumns(establishments);
     expect(columns.subcategoryId.name).toBe('subcategory_id');
+    expect(columns.defaultPaymentMethodType.name).toBe('default_payment_method_type');
+    expect(columns.defaultPaymentMethodId.name).toBe('default_payment_method_id');
+    expect(columns.budgetMinCents.name).toBe('budget_min_cents');
+    expect(columns.budgetMaxCents.name).toBe('budget_max_cents');
     expect(columns.visitCount.name).toBe('visit_count');
     expect(columns.lastVisitAt.name).toBe('last_visit_at');
     expect(columns.organizationId.name).toBe('organization_id');
