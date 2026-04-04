@@ -13,6 +13,7 @@ export interface CascadeInputData {
   valueCents: number;
   classificationId: string;
   categoryId: string;
+  subcategoryId: string;
   establishment: string;
   paymentMethodId: string;
 }
@@ -30,6 +31,14 @@ interface Category {
   budget?: number;
 }
 
+interface Subcategory {
+  id: string;
+  name: string;
+  categoryId: string;
+  defaultPaymentMethodId?: string | null;
+  defaultPaymentMethodLabel?: string | null;
+}
+
 interface PaymentMethod {
   id: string;
   label: string;
@@ -39,6 +48,7 @@ interface PaymentMethod {
 interface CascadeInputProps {
   classifications: Classification[];
   categories: Category[];
+  subcategories?: Subcategory[];
   suggestedEstablishments?: string[];
   paymentMethods: PaymentMethod[];
   defaultPaymentMethodId?: string;
@@ -47,11 +57,12 @@ interface CascadeInputProps {
   className?: string;
 }
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 5;
 
 export function CascadeInput({
   classifications,
   categories,
+  subcategories = [],
   suggestedEstablishments = [],
   paymentMethods,
   defaultPaymentMethodId,
@@ -63,20 +74,27 @@ export function CascadeInput({
   const [valueCents, setValueCents] = useState(0);
   const [classificationId, setClassificationId] = useState('');
   const [categoryId, setCategoryId] = useState('');
+  const [subcategoryId, setSubcategoryId] = useState('');
   const [establishment, setEstablishment] = useState('');
   const [paymentMethodId, setPaymentMethodId] = useState(defaultPaymentMethodId ?? '');
 
   const selectedCategory = categories.find((c) => c.id === categoryId);
   const selectedClassification = classifications.find((c) => c.id === classificationId);
+  const selectedSubcategory = subcategories.find((s) => s.id === subcategoryId);
   const selectedPayment = paymentMethods.find((p) => p.id === paymentMethodId);
 
   const filteredCategories = classificationId
     ? categories.filter((c) => c.classificationId === classificationId)
     : [];
 
+  const filteredSubcategories = categoryId
+    ? subcategories.filter((s) => s.categoryId === categoryId)
+    : [];
+
   const canAdvanceStep1 = valueCents > 0;
   const canAdvanceStep2 = classificationId !== '' && categoryId !== '';
-  const canAdvanceStep3 = paymentMethodId !== '';
+  const canAdvanceStep3 = subcategoryId !== '' || filteredSubcategories.length === 0;
+  const canAdvanceStep4 = paymentMethodId !== '';
 
   const goNext = useCallback(() => {
     if (currentStep < TOTAL_STEPS) {
@@ -90,15 +108,27 @@ export function CascadeInput({
     }
   }, [currentStep]);
 
+  const handleSelectSubcategory = useCallback(
+    (sub: Subcategory) => {
+      setSubcategoryId(sub.id);
+      // Pre-selecionar metodo de pagamento padrao da subcategoria
+      if (sub.defaultPaymentMethodId) {
+        setPaymentMethodId(sub.defaultPaymentMethodId);
+      }
+    },
+    [],
+  );
+
   const handleConfirm = useCallback(() => {
     onConfirm({
       valueCents,
       classificationId,
       categoryId,
+      subcategoryId,
       establishment,
       paymentMethodId,
     });
-  }, [onConfirm, valueCents, classificationId, categoryId, establishment, paymentMethodId]);
+  }, [onConfirm, valueCents, classificationId, categoryId, subcategoryId, establishment, paymentMethodId]);
 
   return (
     <div className={cn('flex flex-col gap-6', className)}>
@@ -169,6 +199,7 @@ export function CascadeInput({
                   onClick={() => {
                     setClassificationId(cls.id);
                     setCategoryId('');
+                    setSubcategoryId('');
                   }}
                   className={cn(
                     'rounded-full border-[1.5px] px-4 py-2 text-sm font-medium transition-colors',
@@ -189,7 +220,10 @@ export function CascadeInput({
                   <button
                     key={cat.id}
                     type="button"
-                    onClick={() => setCategoryId(cat.id)}
+                    onClick={() => {
+                      setCategoryId(cat.id);
+                      setSubcategoryId('');
+                    }}
                     className={cn(
                       'rounded-[10px] border-[1.5px] p-3 text-center text-sm font-medium transition-colors',
                       categoryId === cat.id
@@ -214,9 +248,61 @@ export function CascadeInput({
           </div>
         )}
 
-        {/* Step 3: Estabelecimento + Pagamento */}
+        {/* Step 3: Subcategoria */}
         {currentStep === 3 && (
-          <div aria-label="Etapa 3: Estabelecimento e Pagamento" className="flex flex-col gap-4">
+          <div aria-label="Etapa 3: Subcategoria" className="flex flex-col gap-4">
+            <h3 className="text-center text-lg font-semibold">Subcategoria</h3>
+
+            {filteredSubcategories.length > 0 ? (
+              <div className="grid grid-cols-2 gap-2">
+                {filteredSubcategories.map((sub) => (
+                  <button
+                    key={sub.id}
+                    type="button"
+                    onClick={() => handleSelectSubcategory(sub)}
+                    className={cn(
+                      'flex flex-col items-start rounded-[10px] border-[1.5px] p-3 text-left text-sm font-medium transition-colors',
+                      subcategoryId === sub.id
+                        ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                        : 'border-stone-200 text-stone-700 hover:border-stone-300',
+                    )}
+                  >
+                    <span>{sub.name}</span>
+                    {sub.defaultPaymentMethodLabel && (
+                      <span
+                        className={cn(
+                          'mt-1 text-xs',
+                          subcategoryId === sub.id
+                            ? 'text-indigo-500'
+                            : 'text-stone-400',
+                        )}
+                      >
+                        {sub.defaultPaymentMethodLabel}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-sm text-muted-foreground">
+                Nenhuma subcategoria disponível
+              </p>
+            )}
+
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={goBack} className="flex-1">
+                Voltar
+              </Button>
+              <Button onClick={goNext} disabled={!canAdvanceStep3} className="flex-1">
+                Avançar
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 4: Estabelecimento + Pagamento */}
+        {currentStep === 4 && (
+          <div aria-label="Etapa 4: Estabelecimento e Pagamento" className="flex flex-col gap-4">
             <h3 className="text-center text-lg font-semibold">Detalhes</h3>
 
             <div className="flex flex-col gap-1.5">
@@ -284,16 +370,16 @@ export function CascadeInput({
               <Button variant="outline" onClick={goBack} className="flex-1">
                 Voltar
               </Button>
-              <Button onClick={goNext} disabled={!canAdvanceStep3} className="flex-1">
+              <Button onClick={goNext} disabled={!canAdvanceStep4} className="flex-1">
                 Avançar
               </Button>
             </div>
           </div>
         )}
 
-        {/* Step 4: Confirmação */}
-        {currentStep === 4 && (
-          <div aria-label="Etapa 4: Confirmação" className="flex flex-col gap-4">
+        {/* Step 5: Confirmação */}
+        {currentStep === 5 && (
+          <div aria-label="Etapa 5: Confirmação" className="flex flex-col gap-4">
             <h3 className="text-center text-lg font-semibold">Confirmar</h3>
 
             <div className="rounded-lg border bg-card p-4">
@@ -312,6 +398,12 @@ export function CascadeInput({
                   <dt className="text-muted-foreground">Categoria</dt>
                   <dd className="font-medium">{selectedCategory?.name ?? '-'}</dd>
                 </div>
+                {selectedSubcategory && (
+                  <div className="flex justify-between">
+                    <dt className="text-muted-foreground">Subcategoria</dt>
+                    <dd className="font-medium">{selectedSubcategory.name}</dd>
+                  </div>
+                )}
                 {establishment && (
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground">Estabelecimento</dt>
