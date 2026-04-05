@@ -254,7 +254,7 @@ export function CategoryCard({
         )}
 
         <div
-          className="flex gap-1 opacity-0 transition-opacity group-hover/cat:opacity-100"
+          className="flex gap-1"
           onClick={(e) => e.stopPropagation()}
         >
           {category.status === 'active' && (
@@ -274,14 +274,6 @@ export function CategoryCard({
                 title="Editar categoria"
               >
                 <Pencil className="size-3.5" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="xs"
-                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                onClick={() => setShowArchiveDialog(true)}
-              >
-                Arquivar
               </Button>
             </>
           )}
@@ -360,7 +352,7 @@ export function CategoryCard({
                   </span>
                 )}
                 <div
-                  className="flex gap-1 opacity-0 transition-opacity group-hover/sub:opacity-100"
+                  className="flex gap-1"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <Button
@@ -378,15 +370,6 @@ export function CategoryCard({
                     title="Editar subcategoria"
                   >
                     <Pencil className="size-3.5" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="xs"
-                    className="h-6 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
-                    onClick={() => handleArchiveSubcategory(sub)}
-                    disabled={isPending}
-                  >
-                    Arquivar
                   </Button>
                 </div>
               </div>

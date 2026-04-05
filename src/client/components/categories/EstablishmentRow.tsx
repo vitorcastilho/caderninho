@@ -57,7 +57,7 @@ export function EstablishmentRow({ establishment, onEdit }: EstablishmentRowProp
           <span className="text-muted-foreground">{visitInfo}</span>
         )}
       </div>
-      <div className="flex gap-1 opacity-0 transition-opacity group-hover/est:opacity-100">
+      <div className="flex gap-1">
         <Button
           variant="outline"
           size="icon-xs"
