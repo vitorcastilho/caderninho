@@ -1,6 +1,6 @@
 # Story 3.1b: Entidade Estabelecimento e Correções de Categorias
 
-Status: review
+Status: done
 
 ## Story
 
@@ -299,6 +299,7 @@ Os seguintes findings foram extraídos para stories dedicadas com escopo menor (
 - **2026-04-04**: Implementação completa da story — Fases 0-4 (entidade estabelecimento, correções credit_card→credit, PIX ID prefix, árvore 4 níveis, cascade input com entidades)
 - **2026-04-04**: Code review R1 — 3 MEDIUMs identificados (M3, M5, M6), demais findings extraídos para stories 3-1c/3-1d/3-1e
 - **2026-04-04**: Fixes R1 — Resolvidos 3 action items MEDIUM + 1 LOW (L2): removido botão excluir duplicado (M3), adicionado emoji 📊 na classificação (M5), texto completo no badge de estabelecimentos (M6), tasks/subtasks e Dev Agent Record atualizados (L2)
+- **2026-04-04**: Code review R2 — Todos os 3 fixes MEDIUM validados. Story aprovada → done
 
 ## Dev Agent Record
 

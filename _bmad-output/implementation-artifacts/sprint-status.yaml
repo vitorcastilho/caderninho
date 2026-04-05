@@ -78,7 +78,7 @@ development_status:
   # Epic 3: Registro e Gestao de Transacoes
   epic-3: in-progress
   3-1-registro-de-gastos-cascade-input: done
-  3-1b-entidade-estabelecimento-e-correcoes-categorias: review
+  3-1b-entidade-estabelecimento-e-correcoes-categorias: done
   3-1c-cascade-input-alinhamento-proto-07: ready-for-dev
   3-1d-budget-bars-arvore-categorias: ready-for-dev
   3-1e-side-sheets-emoji-picker-categorias: ready-for-dev
