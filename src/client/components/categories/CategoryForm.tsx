@@ -50,6 +50,7 @@ interface CategoryFormProps {
   defaultValues?: {
     id: string;
     name: string;
+    emoji: string;
     classificationId: string;
     budgetMinCents: number | null;
     budgetMaxCents: number | null;
@@ -95,6 +96,7 @@ export function CategoryForm({
 }: CategoryFormProps) {
   const [isPending, startTransition] = useTransition();
   const [name, setName] = useState(defaultValues?.name ?? '');
+  const [emoji, setEmoji] = useState(defaultValues?.emoji ?? '📁');
   const [selectedClassificationId, setSelectedClassificationId] = useState(
     defaultValues?.classificationId ?? classificationId ?? '',
   );
@@ -137,6 +139,7 @@ export function CategoryForm({
         mode === 'create'
           ? await createCategoryAction({
               name: name.trim(),
+              emoji,
               classificationId: selectedClassificationId,
               budgetMinCents: budgetMinCentsValue,
               budgetMaxCents: budgetMaxCentsValue,
@@ -147,6 +150,7 @@ export function CategoryForm({
               id: defaultValues!.id,
               data: {
                 name: name.trim(),
+                emoji,
                 classificationId: selectedClassificationId,
                 budgetMinCents: budgetMinCentsValue ?? null,
                 budgetMaxCents: budgetMaxCentsValue ?? null,
@@ -174,6 +178,19 @@ export function CategoryForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      {/* Emoji */}
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="category-emoji">Emoji</Label>
+        <Input
+          id="category-emoji"
+          value={emoji}
+          onChange={(e) => setEmoji(e.target.value)}
+          placeholder="📁"
+          className="w-20"
+          maxLength={10}
+        />
+      </div>
+
       {/* Nome */}
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="category-name">Nome</Label>

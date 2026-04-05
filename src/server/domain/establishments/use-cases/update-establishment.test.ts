@@ -99,7 +99,7 @@ describe('updateEstablishment', () => {
   it('should return error when moving to archived subcategory', async () => {
     vi.mocked(mockRepository.findById).mockResolvedValue(sampleEstablishment);
     vi.mocked(mockSubcategoryRepository.findById).mockResolvedValue({
-      id: 'sub-2', name: 'Outra', categoryId: 'cat-1',
+      id: 'sub-2', name: 'Outra', emoji: '📋', categoryId: 'cat-1',
       defaultPaymentMethodType: null, defaultPaymentMethodId: null,
       status: 'archived' as const, organizationId: 'org-123',
       createdAt: new Date(), updatedAt: new Date(),

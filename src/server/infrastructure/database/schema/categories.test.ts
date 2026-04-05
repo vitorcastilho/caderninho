@@ -11,6 +11,7 @@ describe('categories schema', () => {
     const columns = getTableColumns(categories);
     expect(columns.id).toBeDefined();
     expect(columns.name).toBeDefined();
+    expect(columns.emoji).toBeDefined();
     expect(columns.classificationId).toBeDefined();
     expect(columns.budgetMinCents).toBeDefined();
     expect(columns.budgetMaxCents).toBeDefined();
@@ -24,6 +25,7 @@ describe('categories schema', () => {
     const columns = getTableColumns(categories);
     expect(columns.id.primary).toBe(true);
     expect(columns.name.notNull).toBe(true);
+    expect(columns.emoji.notNull).toBe(true);
     expect(columns.classificationId.notNull).toBe(true);
     expect(columns.status.notNull).toBe(true);
     expect(columns.organizationId.notNull).toBe(true);
@@ -39,6 +41,7 @@ describe('categories schema', () => {
 
   it('should have correct default values', () => {
     const columns = getTableColumns(categories);
+    expect(columns.emoji.hasDefault).toBe(true);
     expect(columns.status.hasDefault).toBe(true);
     expect(columns.createdAt.hasDefault).toBe(true);
     expect(columns.updatedAt.hasDefault).toBe(true);

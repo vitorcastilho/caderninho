@@ -36,6 +36,7 @@ interface Classification {
 interface Category {
   id: string;
   name: string;
+  emoji: string;
   classificationId: string;
   budgetMinCents: number | null;
   budgetMaxCents: number | null;
@@ -47,6 +48,7 @@ interface Category {
 interface Subcategory {
   id: string;
   name: string;
+  emoji: string;
   categoryId: string;
   defaultPaymentMethodType: string | null;
   defaultPaymentMethodId: string | null;
@@ -114,6 +116,7 @@ export function CategoryTree({
   const [editingCategory, setEditingCategory] = useState<{
     id: string;
     name: string;
+    emoji: string;
     classificationId: string;
     budgetMinCents: number | null;
     budgetMaxCents: number | null;
@@ -124,6 +127,7 @@ export function CategoryTree({
   const [editingSubcategory, setEditingSubcategory] = useState<{
     id: string;
     name: string;
+    emoji: string;
     categoryId: string;
     defaultPaymentMethodType: string | null;
     defaultPaymentMethodId: string | null;
@@ -489,6 +493,7 @@ export function CategoryTree({
                     setEditingCategory({
                       id: cat.id,
                       name: cat.name,
+                      emoji: cat.emoji,
                       classificationId: cat.classificationId,
                       budgetMinCents: cat.budgetMinCents,
                       budgetMaxCents: cat.budgetMaxCents,
@@ -500,6 +505,7 @@ export function CategoryTree({
                   onEditSubcategory={(sub) => setEditingSubcategory({
                       id: sub.id,
                       name: sub.name,
+                      emoji: sub.emoji,
                       categoryId: sub.categoryId,
                       defaultPaymentMethodType: sub.defaultPaymentMethodType,
                       defaultPaymentMethodId: sub.defaultPaymentMethodId,
@@ -552,6 +558,7 @@ export function CategoryTree({
                         setEditingCategory({
                           id: cat.id,
                           name: cat.name,
+                          emoji: cat.emoji,
                           classificationId: cat.classificationId,
                           budgetMinCents: cat.budgetMinCents,
                           budgetMaxCents: cat.budgetMaxCents,
@@ -563,6 +570,7 @@ export function CategoryTree({
                       onEditSubcategory={(sub) => setEditingSubcategory({
                       id: sub.id,
                       name: sub.name,
+                      emoji: sub.emoji,
                       categoryId: sub.categoryId,
                       defaultPaymentMethodType: sub.defaultPaymentMethodType,
                       defaultPaymentMethodId: sub.defaultPaymentMethodId,

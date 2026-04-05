@@ -11,6 +11,7 @@ describe('subcategories schema', () => {
     const columns = getTableColumns(subcategories);
     expect(columns.id).toBeDefined();
     expect(columns.name).toBeDefined();
+    expect(columns.emoji).toBeDefined();
     expect(columns.categoryId).toBeDefined();
     expect(columns.status).toBeDefined();
     expect(columns.organizationId).toBeDefined();
@@ -22,6 +23,7 @@ describe('subcategories schema', () => {
     const columns = getTableColumns(subcategories);
     expect(columns.id.primary).toBe(true);
     expect(columns.name.notNull).toBe(true);
+    expect(columns.emoji.notNull).toBe(true);
     expect(columns.categoryId.notNull).toBe(true);
     expect(columns.status.notNull).toBe(true);
     expect(columns.organizationId.notNull).toBe(true);
@@ -31,6 +33,7 @@ describe('subcategories schema', () => {
 
   it('should have correct default values', () => {
     const columns = getTableColumns(subcategories);
+    expect(columns.emoji.hasDefault).toBe(true);
     expect(columns.status.hasDefault).toBe(true);
     expect(columns.createdAt.hasDefault).toBe(true);
     expect(columns.updatedAt.hasDefault).toBe(true);

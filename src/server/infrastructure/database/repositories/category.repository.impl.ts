@@ -11,6 +11,7 @@ export class DrizzleCategoryRepository implements CategoryRepository {
   async create(data: {
     id: string;
     name: string;
+    emoji?: string;
     classificationId: string;
     budgetMinCents: number | null;
     budgetMaxCents: number | null;
@@ -92,6 +93,7 @@ export class DrizzleCategoryRepository implements CategoryRepository {
     organizationId: string,
     data: Partial<{
       name: string;
+      emoji: string;
       classificationId: string;
       budgetMinCents: number | null;
       budgetMaxCents: number | null;

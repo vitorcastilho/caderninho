@@ -30,7 +30,7 @@ const deps = {
 };
 
 const activeSubcategory = {
-  id: 'sub-1', name: 'Supermercado', categoryId: 'cat-1',
+  id: 'sub-1', name: 'Supermercado', emoji: '📋', categoryId: 'cat-1',
   defaultPaymentMethodType: null, defaultPaymentMethodId: null,
   status: 'active' as const, organizationId: 'org-123',
   createdAt: new Date(), updatedAt: new Date(),

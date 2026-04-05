@@ -11,6 +11,7 @@ export class DrizzleSubcategoryRepository implements SubcategoryRepository {
   async create(data: {
     id: string;
     name: string;
+    emoji?: string;
     categoryId: string;
     defaultPaymentMethodType: string | null;
     defaultPaymentMethodId: string | null;
@@ -90,6 +91,7 @@ export class DrizzleSubcategoryRepository implements SubcategoryRepository {
     organizationId: string,
     data: Partial<{
       name: string;
+      emoji: string;
       defaultPaymentMethodType: string | null;
       defaultPaymentMethodId: string | null;
     }>,

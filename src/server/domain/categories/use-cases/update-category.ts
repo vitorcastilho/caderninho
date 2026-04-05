@@ -12,6 +12,7 @@ interface UpdateCategoryParams {
   userId: string;
   data: Partial<{
     name: string;
+    emoji: string;
     classificationId: string;
     budgetMinCents: number | null;
     budgetMaxCents: number | null;

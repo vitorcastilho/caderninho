@@ -7,6 +7,7 @@ import { essentialityClassifications } from './essentiality-classifications';
 export const categories = pgTable('categories', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
+  emoji: text('emoji').notNull().default('📁'),
   classificationId: text('classification_id')
     .notNull()
     .references(() => essentialityClassifications.id),

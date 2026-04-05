@@ -1,5 +1,6 @@
 'use client';
 
+import { Pencil } from 'lucide-react';
 import { Button } from '@/client/components/ui/button';
 
 interface Establishment {
@@ -37,7 +38,7 @@ export function EstablishmentRow({ establishment, onEdit }: EstablishmentRowProp
     : establishment.source === 'manual' ? 'adicionado manualmente' : '';
 
   return (
-    <div className="group/est flex items-center gap-2.5 border-t border-border bg-muted py-2.5 pr-4 pl-[76px] text-xs transition-colors hover:bg-muted/80">
+    <div className="group/est flex items-center gap-2.5 border-t border-border border-l-4 border-l-transparent bg-muted py-2.5 pr-4 pl-[88px] text-xs transition-colors hover:bg-muted/80">
       <span className="shrink-0 text-sm">{establishment.emoji}</span>
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex items-center gap-1.5">
@@ -58,12 +59,12 @@ export function EstablishmentRow({ establishment, onEdit }: EstablishmentRowProp
       </div>
       <div className="flex gap-1 opacity-0 transition-opacity group-hover/est:opacity-100">
         <Button
-          variant="ghost"
-          size="xs"
-          className="h-6 text-xs"
+          variant="outline"
+          size="icon-xs"
           onClick={() => onEdit(establishment)}
+          title="Editar estabelecimento"
         >
-          Editar
+          <Pencil className="size-3.5" />
         </Button>
       </div>
     </div>

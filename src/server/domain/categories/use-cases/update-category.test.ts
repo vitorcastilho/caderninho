@@ -39,7 +39,7 @@ const deps = {
 };
 
 const sampleCategory = {
-  id: 'cat-1', name: 'Moradia', classificationId: 'class-1',
+  id: 'cat-1', name: 'Moradia', emoji: '📁', classificationId: 'class-1',
   budgetMinCents: 220000, budgetMaxCents: null,
   defaultPaymentMethodType: null, defaultPaymentMethodId: null,
   status: 'active' as const,

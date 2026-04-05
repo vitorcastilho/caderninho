@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Plus, Pencil } from 'lucide-react';
 import { cn } from '@/client/utils/utils';
 
 import { BankLogo } from '@/client/components/ui/bank-logo';
@@ -31,6 +31,7 @@ import { EstablishmentRow } from './EstablishmentRow';
 interface Category {
   id: string;
   name: string;
+  emoji: string;
   classificationId: string;
   budgetMinCents: number | null;
   budgetMaxCents: number | null;
@@ -42,6 +43,7 @@ interface Category {
 interface Subcategory {
   id: string;
   name: string;
+  emoji: string;
   categoryId: string;
   defaultPaymentMethodType: string | null;
   defaultPaymentMethodId: string | null;
@@ -217,7 +219,11 @@ export function CategoryCard({
     <div className="border-b border-border last:border-b-0">
       {/* Category header — Level 2 do padrão "Lista Colapsável" do DS */}
       <div
-        className="group/cat flex w-full cursor-pointer items-center gap-2 bg-muted/30 px-4 py-2.5 pl-10 text-left transition-colors hover:bg-muted/60"
+        className={cn(
+          'group/cat flex w-full cursor-pointer items-center gap-2 bg-muted/30 px-4 py-2.5 pl-10 text-left transition-colors hover:bg-muted/60',
+          'border-l-4',
+          expanded ? 'border-l-primary' : 'border-l-primary/30'
+        )}
         onClick={() => setExpanded(!expanded)}
       >
         <ChevronDown
@@ -226,6 +232,7 @@ export function CategoryCard({
             !expanded && '-rotate-90'
           )}
         />
+        <span className="shrink-0 text-sm">{category.emoji}</span>
         <span className="flex-1 text-sm font-medium">{category.name}</span>
 
         {budgetDisplay && (
@@ -252,11 +259,21 @@ export function CategoryCard({
         >
           {category.status === 'active' && (
             <>
-              <Button variant="ghost" size="xs" onClick={onAddSubcategory}>
-                + Sub
+              <Button
+                variant="outline"
+                size="icon-xs"
+                onClick={onAddSubcategory}
+                title="Adicionar subcategoria"
+              >
+                <Plus className="size-3.5" />
               </Button>
-              <Button variant="ghost" size="xs" onClick={onEdit}>
-                Editar
+              <Button
+                variant="outline"
+                size="icon-xs"
+                onClick={onEdit}
+                title="Editar categoria"
+              >
+                <Pencil className="size-3.5" />
               </Button>
               <Button
                 variant="ghost"
@@ -317,7 +334,11 @@ export function CategoryCard({
             return (
             <div key={sub.id}>
               <div
-                className="group/sub flex cursor-pointer items-center gap-3 border-b border-border bg-card py-3 pr-4 pl-10 transition-colors hover:bg-muted/30"
+                className={cn(
+                  'group/sub flex cursor-pointer items-center gap-3 border-b border-border bg-card py-3 pr-4 pl-16 transition-colors hover:bg-muted/30',
+                  'border-l-4',
+                  isSubExpanded ? 'border-l-muted-foreground/40' : 'border-l-border'
+                )}
                 onClick={() => toggleSubExpand(sub.id)}
               >
                 <ChevronDown
@@ -326,6 +347,7 @@ export function CategoryCard({
                     !isSubExpanded && '-rotate-90'
                   )}
                 />
+                <span className="shrink-0 text-sm">{sub.emoji}</span>
                 <span className="flex-1 text-sm">{sub.name}</span>
                 {subPaymentDisplay && (
                   <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
@@ -342,20 +364,20 @@ export function CategoryCard({
                   onClick={(e) => e.stopPropagation()}
                 >
                   <Button
-                    variant="ghost"
-                    size="xs"
-                    className="h-6 text-xs"
+                    variant="outline"
+                    size="icon-xs"
                     onClick={() => onAddEstablishment(sub.id)}
+                    title="Adicionar estabelecimento"
                   >
-                    + Estab
+                    <Plus className="size-3.5" />
                   </Button>
                   <Button
-                    variant="ghost"
-                    size="xs"
-                    className="h-6 text-xs"
+                    variant="outline"
+                    size="icon-xs"
                     onClick={() => onEditSubcategory(sub)}
+                    title="Editar subcategoria"
                   >
-                    Editar
+                    <Pencil className="size-3.5" />
                   </Button>
                   <Button
                     variant="ghost"

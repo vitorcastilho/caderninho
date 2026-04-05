@@ -40,7 +40,7 @@ const deps = {
 };
 
 const activeCategory = {
-  id: 'cat-1', name: 'Moradia', classificationId: 'class-1',
+  id: 'cat-1', name: 'Moradia', emoji: '📁', classificationId: 'class-1',
   budgetMinCents: 220000, budgetMaxCents: null,
   defaultPaymentMethodType: null, defaultPaymentMethodId: null,
   status: 'active' as const,
@@ -48,7 +48,7 @@ const activeCategory = {
 };
 
 const sampleSubcategory = {
-  id: expect.any(String), name: 'Aluguel', categoryId: 'cat-1',
+  id: expect.any(String), name: 'Aluguel', emoji: '📋', categoryId: 'cat-1',
   defaultPaymentMethodType: null, defaultPaymentMethodId: null,
   status: 'active' as const, organizationId: 'org-123',
   createdAt: new Date(), updatedAt: new Date(),

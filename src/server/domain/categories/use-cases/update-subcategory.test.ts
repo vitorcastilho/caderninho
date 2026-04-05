@@ -32,7 +32,7 @@ const deps = {
 };
 
 const sampleSubcategory = {
-  id: 'sub-1', name: 'Aluguel', categoryId: 'cat-1',
+  id: 'sub-1', name: 'Aluguel', emoji: '📋', categoryId: 'cat-1',
   defaultPaymentMethodType: null as string | null,
   defaultPaymentMethodId: null as string | null,
   status: 'active' as const, organizationId: 'org-123',

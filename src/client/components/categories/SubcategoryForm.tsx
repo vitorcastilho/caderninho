@@ -44,6 +44,7 @@ interface SubcategoryFormProps {
   defaultValues?: {
     id: string;
     name: string;
+    emoji: string;
     defaultPaymentMethodType: string | null;
     defaultPaymentMethodId: string | null;
   };
@@ -72,6 +73,7 @@ export function SubcategoryForm({
 }: SubcategoryFormProps) {
   const [isPending, startTransition] = useTransition();
   const [name, setName] = useState(defaultValues?.name ?? '');
+  const [emoji, setEmoji] = useState(defaultValues?.emoji ?? '📋');
   const [paymentType, setPaymentType] = useState<PaymentType>(
     (defaultValues?.defaultPaymentMethodType as PaymentMethodType) ?? 'none',
   );
@@ -101,6 +103,7 @@ export function SubcategoryForm({
         mode === 'create'
           ? await createSubcategoryAction({
               name: name.trim(),
+              emoji,
               categoryId: categoryId!,
               defaultPaymentMethodType,
               defaultPaymentMethodId,
@@ -109,6 +112,7 @@ export function SubcategoryForm({
               id: defaultValues!.id,
               data: {
                 name: name.trim(),
+                emoji,
                 defaultPaymentMethodType,
                 defaultPaymentMethodId,
               },
@@ -133,6 +137,19 @@ export function SubcategoryForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      {/* Emoji */}
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="subcategory-emoji">Emoji</Label>
+        <Input
+          id="subcategory-emoji"
+          value={emoji}
+          onChange={(e) => setEmoji(e.target.value)}
+          placeholder="📋"
+          className="w-20"
+          maxLength={10}
+        />
+      </div>
+
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="subcategory-name">Nome</Label>
         <Input

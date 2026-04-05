@@ -11,6 +11,7 @@ interface UpdateSubcategoryParams {
   userId: string;
   data: Partial<{
     name: string;
+    emoji: string;
     defaultPaymentMethodType: string | null;
     defaultPaymentMethodId: string | null;
   }>;
