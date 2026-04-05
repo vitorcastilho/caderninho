@@ -4,13 +4,21 @@ import { useState, useEffect, useTransition, useCallback } from 'react';
 import { toast } from 'sonner';
 
 import { CascadeInput } from '@/client/components/ui/cascade-input';
-import type { CascadeInputData, CascadeImpactData } from '@/client/components/ui/cascade-input';
+import type {
+  CascadeInputData,
+  CascadeImpactData,
+  Classification,
+  Category,
+  Subcategory,
+  PaymentMethod,
+} from '@/client/components/ui/cascade-input';
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
 } from '@/client/components/ui/sheet';
+import { useIsMobile } from '@/client/hooks/use-is-mobile';
 import { listClassificationsAction } from '@/server/actions/classification.actions';
 import { listCategoriesAction } from '@/server/actions/category.actions';
 import { listSubcategoriesAction } from '@/server/actions/subcategory.actions';
@@ -23,39 +31,13 @@ import {
 } from '@/server/actions/transaction.actions';
 import { listEstablishmentsBySubcategoryAction } from '@/server/actions/establishment.actions';
 
-interface Classification {
-  id: string;
-  name: string;
-  emoji: string;
-}
-
-interface Category {
-  id: string;
-  name: string;
-  classificationId: string;
-  budget?: number;
-}
-
-interface Subcategory {
-  id: string;
-  name: string;
-  categoryId: string;
-  defaultPaymentMethodId?: string | null;
-  defaultPaymentMethodLabel?: string | null;
-}
-
-interface PaymentMethod {
-  id: string;
-  label: string;
-  type: 'debit' | 'credit' | 'pix';
-}
-
 interface NewExpenseSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
+  const isMobile = useIsMobile();
   const [classifications, setClassifications] = useState<Classification[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
@@ -64,14 +46,12 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
   const [impactData, setImpactData] = useState<CascadeImpactData | null>(null);
   const [isLoading, startTransition] = useTransition();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // F8: contador para resetar o CascadeInput quando o sheet reabre
   const [sheetOpenCount, setSheetOpenCount] = useState(0);
 
   useEffect(() => {
     if (!open) return;
 
     startTransition(async () => {
-      // F8: resetar estado ao reabrir
       setSuggestedEstablishments([]);
       setImpactData(null);
       setSheetOpenCount((c) => c + 1);
@@ -121,7 +101,12 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
 
         if (ccResult.success) {
           for (const cc of ccResult.data.filter((c: { status: string }) => c.status === 'active')) {
-            methods.push({ id: cc.id, label: `${cc.brand} ${cc.name}`, type: 'credit' });
+            methods.push({
+              id: cc.id,
+              label: `${cc.brand} ${cc.name}`,
+              type: 'credit',
+              brand: cc.brand,
+            });
           }
         }
 
@@ -133,13 +118,14 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
             .map((s: { id: string; name: string; categoryId: string; defaultPaymentMethodType?: string | null; defaultPaymentMethodId?: string | null }) => {
               let resolvedPaymentMethodId: string | null = null;
               let paymentLabel: string | null = null;
+              let paymentBrand: string | null = null;
               if (s.defaultPaymentMethodType && s.defaultPaymentMethodId) {
-                // PIX usa ID composto na UI (pix-{bankAccountId}), DB guarda ID cru
                 resolvedPaymentMethodId = s.defaultPaymentMethodType === 'pix'
                   ? `pix-${s.defaultPaymentMethodId}`
                   : s.defaultPaymentMethodId;
                 const method = methods.find((m) => m.id === resolvedPaymentMethodId);
                 paymentLabel = method?.label ?? null;
+                paymentBrand = method?.brand ?? null;
               }
               return {
                 id: s.id,
@@ -147,6 +133,7 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
                 categoryId: s.categoryId,
                 defaultPaymentMethodId: resolvedPaymentMethodId,
                 defaultPaymentMethodLabel: paymentLabel,
+                defaultPaymentMethodBrand: paymentBrand,
               };
             }),
         );
@@ -154,14 +141,12 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
     });
   }, [open]);
 
-  // F2: buscar estabelecimentos da entidade + sugestões do histórico ao selecionar subcategoria
   const handleSubcategorySelect = useCallback(async (subcategoryId: string) => {
     const [entitiesResult, suggestionsResult] = await Promise.all([
       listEstablishmentsBySubcategoryAction({ subcategoryId }),
       getSuggestedEstablishmentsAction({ subcategoryId }),
     ]);
 
-    // Priorizar nomes de entidades, complementar com sugestões do histórico
     const entityNames = entitiesResult.success
       ? entitiesResult.data.map((e: { name: string }) => e.name)
       : [];
@@ -171,7 +156,6 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
     setSuggestedEstablishments(uniqueNames);
   }, []);
 
-  // F3: buscar dados reais de impacto
   const handleRequestImpact = useCallback(
     async (data: { amountCents: number; paymentMethodId: string; categoryId: string }) => {
       const method = paymentMethods.find((m) => m.id === data.paymentMethodId);
@@ -180,7 +164,6 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
       const category = categories.find((c) => c.id === data.categoryId);
       if (!category) return;
 
-      // Resolver id real do método (PIX usa id composto)
       let realPaymentMethodId = method.id;
       if (method.type === 'pix') {
         realPaymentMethodId = method.id.replace('pix-', '');
@@ -255,11 +238,40 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" showCloseButton className="w-full sm:w-[400px]">
-        <SheetHeader>
-          <SheetTitle>Novo Gasto</SheetTitle>
+      <SheetContent
+        side={isMobile ? 'bottom' : 'right'}
+        showCloseButton={!isMobile}
+        overlayClassName={isMobile ? 'bg-black/45' : undefined}
+        className={
+          isMobile
+            ? 'inset-x-0 bottom-0 h-[85dvh] rounded-t-[20px] border-t-0'
+            : 'w-full sm:w-[400px]'
+        }
+      >
+        {/* Handle bar — mobile only */}
+        {isMobile && (
+          <div className="flex justify-center pt-3">
+            <div className="h-1 w-9 rounded-full bg-stone-200" />
+          </div>
+        )}
+
+        <SheetHeader className={isMobile ? 'flex-row items-center justify-between px-5 py-3' : undefined}>
+          <SheetTitle className={isMobile ? 'text-base font-semibold' : undefined}>
+            Novo Gasto
+          </SheetTitle>
+          {isMobile && (
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="flex size-7 items-center justify-center rounded-full bg-stone-100 text-sm text-stone-500 transition-colors hover:bg-stone-200"
+              aria-label="Fechar"
+            >
+              ✕
+            </button>
+          )}
         </SheetHeader>
-        <div className="flex-1 overflow-y-auto px-4 pb-4">
+
+        <div className="flex min-h-0 flex-1 flex-col">
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
               <div className="size-6 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
@@ -274,6 +286,7 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
               paymentMethods={paymentMethods}
               impactData={impactData}
               isSubmitting={isSubmitting}
+              isMobile={isMobile}
               onConfirm={handleConfirm}
               onCancel={handleCancel}
               onSubcategorySelect={handleSubcategorySelect}

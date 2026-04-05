@@ -18,15 +18,15 @@ const mockCategories = [
 ];
 
 const mockSubcategories = [
-  { id: 'super', name: 'Supermercado', categoryId: 'alim', defaultPaymentMethodId: 'cred', defaultPaymentMethodLabel: 'Crédito Nubank' },
-  { id: 'feira', name: 'Feira', categoryId: 'alim', defaultPaymentMethodId: null, defaultPaymentMethodLabel: null },
-  { id: 'metro', name: 'Metrô', categoryId: 'trans', defaultPaymentMethodId: null, defaultPaymentMethodLabel: null },
+  { id: 'super', name: 'Supermercado', categoryId: 'alim', defaultPaymentMethodId: 'cred', defaultPaymentMethodLabel: 'VISA Latam', defaultPaymentMethodBrand: 'visa' },
+  { id: 'feira', name: 'Feira', categoryId: 'alim', defaultPaymentMethodId: null, defaultPaymentMethodLabel: null, defaultPaymentMethodBrand: null },
+  { id: 'metro', name: 'Metrô', categoryId: 'trans', defaultPaymentMethodId: null, defaultPaymentMethodLabel: null, defaultPaymentMethodBrand: null },
 ];
 
 const mockPaymentMethods = [
-  { id: 'pix', label: 'Pix', type: 'pix' as const },
+  { id: 'pix', label: 'PIX Nubank', type: 'pix' as const },
   { id: 'deb', label: 'Débito Nubank', type: 'debit' as const },
-  { id: 'cred', label: 'Crédito Nubank', type: 'credit' as const },
+  { id: 'cred', label: 'VISA Latam', type: 'credit' as const, brand: 'visa' },
 ];
 
 const defaultProps = {
@@ -38,407 +38,458 @@ const defaultProps = {
   onCancel: vi.fn(),
 };
 
-describe('CascadeInput', () => {
+// ── MOBILE TESTS ──
+
+describe('CascadeInput Mobile', () => {
+  const mobileProps = { ...defaultProps, isMobile: true };
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe('renderização step 1', () => {
-    it('renderiza step 1 com campo de valor', () => {
-      render(<CascadeInput {...defaultProps} />);
-      expect(screen.getByText('Qual o valor?')).toBeInTheDocument();
-      expect(screen.getByLabelText('Valor do gasto')).toBeInTheDocument();
+  describe('step 1: valor com keypad', () => {
+    it('renderiza keypad numérico no step 1', () => {
+      render(<CascadeInput {...mobileProps} />);
+      expect(screen.getByRole('group', { name: /teclado numérico/i })).toBeInTheDocument();
     });
 
-    it('renderiza step indicator com 5 dots', () => {
-      render(<CascadeInput {...defaultProps} />);
-      const stepGroup = screen.getByRole('group', { name: /progresso/i });
-      expect(stepGroup).toBeInTheDocument();
-      const dots = within(stepGroup).getAllByLabelText(/etapa/i);
-      expect(dots).toHaveLength(5);
+    it('mostra placeholder ____ quando vazio', () => {
+      render(<CascadeInput {...mobileProps} />);
+      expect(screen.getByText('____')).toBeInTheDocument();
     });
 
-    it('botão Avançar está desabilitado quando valor é 0', () => {
-      render(<CascadeInput {...defaultProps} />);
-      expect(screen.getByText('Avançar')).toBeDisabled();
+    it('formata valor ao digitar no keypad', async () => {
+      const user = userEvent.setup();
+      render(<CascadeInput {...mobileProps} />);
+
+      await user.click(screen.getByText('8'));
+      await user.click(screen.getByText('7'));
+      await user.click(screen.getByText('0'));
+      await user.click(screen.getByText('0'));
+
+      expect(screen.getByText('87,00')).toBeInTheDocument();
+    });
+
+    it('botão Continuar aparece quando valor > 0', async () => {
+      const user = userEvent.setup();
+      render(<CascadeInput {...mobileProps} />);
+
+      expect(screen.queryByText('Continuar')).not.toBeInTheDocument();
+
+      await user.click(screen.getByText('5'));
+      expect(screen.getByText('Continuar')).toBeInTheDocument();
+    });
+
+    it('backspace remove último dígito', async () => {
+      const user = userEvent.setup();
+      render(<CascadeInput {...mobileProps} />);
+
+      await user.click(screen.getByText('1'));
+      await user.click(screen.getByText('2'));
+      await user.click(screen.getByLabelText('Apagar'));
+
+      expect(screen.getByText('0,01')).toBeInTheDocument();
     });
   });
 
-  describe('navegação entre steps', () => {
-    it('avança para step 2 quando valor > 0', async () => {
+  describe('step 2: classificação + categoria (selection-driven)', () => {
+    async function goToStep2(user: ReturnType<typeof userEvent.setup>) {
+      await user.click(screen.getByText('5'));
+      await user.click(screen.getByText('0'));
+      await user.click(screen.getByText('0'));
+      await user.click(screen.getByText('0'));
+      await user.click(screen.getByText('Continuar'));
+    }
+
+    it('avança para step 2 com classificações', async () => {
       const user = userEvent.setup();
-      render(<CascadeInput {...defaultProps} />);
+      render(<CascadeInput {...mobileProps} />);
+      await goToStep2(user);
 
-      const input = screen.getByDisplayValue('R$ 0,00');
-      await user.clear(input);
-      await user.type(input, '5000');
-
-      await user.click(screen.getByText('Avançar'));
-      expect(screen.getByText('Classificação e Categoria')).toBeInTheDocument();
+      expect(screen.getByText('🏠 Essencial')).toBeInTheDocument();
+      expect(screen.getByText('🎯 Desejável')).toBeInTheDocument();
     });
 
-    it('volta de step 2 para step 1', async () => {
+    it('mostra categorias filtradas ao selecionar classificação', async () => {
       const user = userEvent.setup();
-      render(<CascadeInput {...defaultProps} />);
+      render(<CascadeInput {...mobileProps} />);
+      await goToStep2(user);
 
-      const input = screen.getByDisplayValue('R$ 0,00');
-      await user.clear(input);
-      await user.type(input, '5000');
-      await user.click(screen.getByText('Avançar'));
-
-      await user.click(screen.getByText('Voltar'));
-      expect(screen.getByText('Qual o valor?')).toBeInTheDocument();
+      await user.click(screen.getByText('🏠 Essencial'));
+      expect(screen.getByText('Alimentação')).toBeInTheDocument();
+      expect(screen.getByText('Transporte')).toBeInTheDocument();
+      expect(screen.queryByText('Lazer')).not.toBeInTheDocument();
     });
 
-    it('navega step 1 → 2 → 3 → 4 → 5', async () => {
+    it('auto-avança para step 3 ao selecionar categoria', async () => {
       const user = userEvent.setup();
-      render(<CascadeInput {...defaultProps} defaultPaymentMethodId="pix" />);
+      render(<CascadeInput {...mobileProps} />);
+      await goToStep2(user);
 
-      // Step 1: valor
-      const input = screen.getByDisplayValue('R$ 0,00');
-      await user.clear(input);
-      await user.type(input, '5000');
-      await user.click(screen.getByText('Avançar'));
-
-      // Step 2: classificação + categoria
       await user.click(screen.getByText('🏠 Essencial'));
       await user.click(screen.getByText('Alimentação'));
-      await user.click(screen.getByText('Avançar'));
 
-      // Step 3: subcategoria
-      expect(screen.getByText('Subcategoria')).toBeInTheDocument();
-      await user.click(screen.getByText('Supermercado'));
-      await user.click(screen.getByText('Avançar'));
-
-      // Step 4: estabelecimento + pagamento
-      expect(screen.getByText('Detalhes')).toBeInTheDocument();
-      await user.click(screen.getByText('Avançar'));
-
-      // Step 5: confirmação
-      expect(screen.getByRole('button', { name: 'Confirmar' })).toBeInTheDocument();
-    });
-  });
-
-  describe('subcategoria step', () => {
-    it('mostra subcategorias filtradas pela categoria selecionada', async () => {
-      const user = userEvent.setup();
-      render(<CascadeInput {...defaultProps} />);
-
-      // Step 1: valor
-      const input = screen.getByDisplayValue('R$ 0,00');
-      await user.clear(input);
-      await user.type(input, '5000');
-      await user.click(screen.getByText('Avançar'));
-
-      // Step 2: classificação + categoria
-      await user.click(screen.getByText('🏠 Essencial'));
-      await user.click(screen.getByText('Alimentação'));
-      await user.click(screen.getByText('Avançar'));
-
-      // Step 3: subcategoria — deve mostrar Supermercado e Feira (categoryId: alim)
+      // Deve estar no step 3 (subcategoria)
       expect(screen.getByText('Supermercado')).toBeInTheDocument();
       expect(screen.getByText('Feira')).toBeInTheDocument();
-      // Não deve mostrar subcategorias de outra categoria
-      expect(screen.queryByText('Metrô')).not.toBeInTheDocument();
     });
 
-    it('mostra badge do metodo de pagamento sugerido', async () => {
+    it('mostra summary bar com valor no step 2', async () => {
       const user = userEvent.setup();
-      render(<CascadeInput {...defaultProps} />);
+      render(<CascadeInput {...mobileProps} />);
+      await goToStep2(user);
 
-      const input = screen.getByDisplayValue('R$ 0,00');
-      await user.clear(input);
-      await user.type(input, '5000');
-      await user.click(screen.getByText('Avançar'));
+      expect(screen.getByText('R$ 50,00')).toBeInTheDocument();
+    });
+  });
 
+  describe('step 3: subcategoria (selection-driven)', () => {
+    async function goToStep3(user: ReturnType<typeof userEvent.setup>) {
+      await user.click(screen.getByText('5'));
+      await user.click(screen.getByText('0'));
+      await user.click(screen.getByText('0'));
+      await user.click(screen.getByText('0'));
+      await user.click(screen.getByText('Continuar'));
       await user.click(screen.getByText('🏠 Essencial'));
       await user.click(screen.getByText('Alimentação'));
-      await user.click(screen.getByText('Avançar'));
+    }
 
-      // Deve mostrar badge do método de pagamento
-      expect(screen.getByText('Crédito Nubank')).toBeInTheDocument();
+    it('mostra subcategorias com badge de método de pagamento', async () => {
+      const user = userEvent.setup();
+      render(<CascadeInput {...mobileProps} />);
+      await goToStep3(user);
+
+      expect(screen.getByText('Supermercado')).toBeInTheDocument();
+      expect(screen.getByText('VISA Latam')).toBeInTheDocument();
     });
 
-    it('pre-seleciona metodo de pagamento ao selecionar subcategoria', async () => {
+    it('auto-avança para step 4 ao selecionar subcategoria', async () => {
       const user = userEvent.setup();
-      render(<CascadeInput {...defaultProps} />);
+      render(<CascadeInput {...mobileProps} />);
+      await goToStep3(user);
 
-      const input = screen.getByDisplayValue('R$ 0,00');
-      await user.clear(input);
-      await user.type(input, '5000');
-      await user.click(screen.getByText('Avançar'));
-
-      await user.click(screen.getByText('🏠 Essencial'));
-      await user.click(screen.getByText('Alimentação'));
-      await user.click(screen.getByText('Avançar'));
-
-      // Selecionar Supermercado (tem defaultPaymentMethodId: 'cred')
       await user.click(screen.getByText('Supermercado'));
-      await user.click(screen.getByText('Avançar'));
 
-      // No step 4, "Crédito Nubank" deve estar selecionado (visualmente diferente)
-      const creditBtn = screen.getByText('Crédito Nubank');
-      expect(creditBtn).toHaveClass('border-indigo-500');
+      // Deve estar no step 4 (onde/pagamento)
+      expect(screen.getByText('Onde?', { exact: false })).toBeInTheDocument();
     });
 
-    it('chama onSubcategorySelect ao selecionar subcategoria (F2)', async () => {
+    it('chama onSubcategorySelect ao selecionar', async () => {
       const onSubcategorySelect = vi.fn();
       const user = userEvent.setup();
-      render(<CascadeInput {...defaultProps} onSubcategorySelect={onSubcategorySelect} />);
-
-      const input = screen.getByDisplayValue('R$ 0,00');
-      await user.clear(input);
-      await user.type(input, '5000');
-      await user.click(screen.getByText('Avançar'));
-
-      await user.click(screen.getByText('🏠 Essencial'));
-      await user.click(screen.getByText('Alimentação'));
-      await user.click(screen.getByText('Avançar'));
+      render(<CascadeInput {...mobileProps} onSubcategorySelect={onSubcategorySelect} />);
+      await goToStep3(user);
 
       await user.click(screen.getByText('Supermercado'));
       expect(onSubcategorySelect).toHaveBeenCalledWith('super');
     });
   });
 
-  describe('summary bar (F7)', () => {
-    it('mostra summary bar no step 2 com valor', async () => {
-      const user = userEvent.setup();
-      render(<CascadeInput {...defaultProps} />);
-
-      const input = screen.getByDisplayValue('R$ 0,00');
-      await user.clear(input);
-      await user.type(input, '5000');
-      await user.click(screen.getByText('Avançar'));
-
-      // Step 2 deve mostrar o valor na summary bar
-      expect(screen.getByText('R$ 50,00')).toBeInTheDocument();
-    });
-
-    it('mostra summary bar no step 3 com valor e categoria', async () => {
-      const user = userEvent.setup();
-      render(<CascadeInput {...defaultProps} />);
-
-      const input = screen.getByDisplayValue('R$ 0,00');
-      await user.clear(input);
-      await user.type(input, '5000');
-      await user.click(screen.getByText('Avançar'));
-
+  describe('step 4: onde + pagamento', () => {
+    async function goToStep4(user: ReturnType<typeof userEvent.setup>) {
+      await user.click(screen.getByText('8'));
+      await user.click(screen.getByText('7'));
+      await user.click(screen.getByText('0'));
+      await user.click(screen.getByText('0'));
+      await user.click(screen.getByText('Continuar'));
       await user.click(screen.getByText('🏠 Essencial'));
       await user.click(screen.getByText('Alimentação'));
-      await user.click(screen.getByText('Avançar'));
-
-      // Step 3 deve mostrar summary bar com valor, classificação e categoria
-      expect(screen.getByText(/R\$ 50,00 · Essencial · Alimentação/)).toBeInTheDocument();
-    });
-  });
-
-  describe('impact preview no step 5 (F9)', () => {
-    it('mostra ImpactPreview quando impactData é fornecido', async () => {
-      const user = userEvent.setup();
-      const impactData = {
-        paymentMethodLabel: 'Nubank Conta Corrente',
-        balanceBefore: 50000,
-        balanceAfter: 42000,
-        categoryLabel: 'Alimentação',
-        budgetSpent: 45000,
-        budgetTotal: 80000,
-        budgetPercentage: 56,
-      };
-
-      render(
-        <CascadeInput
-          {...defaultProps}
-          defaultPaymentMethodId="pix"
-          impactData={impactData}
-        />
-      );
-
-      // Navegar até step 5
-      const input = screen.getByDisplayValue('R$ 0,00');
-      await user.clear(input);
-      await user.type(input, '5000');
-      await user.click(screen.getByText('Avançar'));
-
-      await user.click(screen.getByText('🏠 Essencial'));
-      await user.click(screen.getByText('Alimentação'));
-      await user.click(screen.getByText('Avançar'));
-
       await user.click(screen.getByText('Supermercado'));
-      await user.click(screen.getByText('Avançar'));
+    }
 
-      await user.click(screen.getByText('Avançar'));
+    it('mostra chips de estabelecimento + Outro', async () => {
+      const user = userEvent.setup();
+      render(<CascadeInput {...mobileProps} suggestedEstablishments={['Pão de Açúcar', 'Bistek']} />);
+      await goToStep4(user);
 
-      // Step 5: deve mostrar ImpactPreview com dados reais
-      expect(screen.getByText('Nubank Conta Corrente')).toBeInTheDocument();
+      expect(screen.getByText('Pão de Açúcar')).toBeInTheDocument();
+      expect(screen.getByText('Bistek')).toBeInTheDocument();
+      expect(screen.getByText('+ Outro')).toBeInTheDocument();
+    });
+
+    it('mostra input ao clicar + Outro', async () => {
+      const user = userEvent.setup();
+      render(<CascadeInput {...mobileProps} suggestedEstablishments={['Pão de Açúcar']} />);
+      await goToStep4(user);
+
+      await user.click(screen.getByText('+ Outro'));
+      expect(screen.getByPlaceholderText('Nome do estabelecimento')).toBeInTheDocument();
+    });
+
+    it('mostra chips de pagamento com brand badge', async () => {
+      const user = userEvent.setup();
+      render(<CascadeInput {...mobileProps} />);
+      await goToStep4(user);
+
+      expect(screen.getByText('PIX Nubank')).toBeInTheDocument();
+      expect(screen.getByText('VISA Latam')).toBeInTheDocument();
+    });
+
+    it('mostra installment strip quando crédito selecionado', async () => {
+      const user = userEvent.setup();
+      render(<CascadeInput {...mobileProps} />);
+      await goToStep4(user);
+
+      // Crédito está pré-selecionado (defaultPaymentMethodId do Supermercado)
+      expect(screen.getByRole('radiogroup', { name: /parcelas/i })).toBeInTheDocument();
+    });
+
+    it('não mostra installment strip para PIX', async () => {
+      const user = userEvent.setup();
+      render(<CascadeInput {...mobileProps} />);
+      await goToStep4(user);
+
+      await user.click(screen.getByText('PIX Nubank'));
+      expect(screen.queryByRole('radiogroup', { name: /parcelas/i })).not.toBeInTheDocument();
+    });
+
+    it('botão confirmar avança para step 5', async () => {
+      const user = userEvent.setup();
+      render(<CascadeInput {...mobileProps} />);
+      await goToStep4(user);
+
+      await user.click(screen.getByText('✓ Confirmar'));
+
+      // Step 5: tela de confirmação com valor grande
+      expect(screen.getByText('R$ 87,00')).toBeInTheDocument();
+      expect(screen.getByText(/Alimentação/)).toBeInTheDocument();
     });
   });
 
-  describe('isSubmitting (F10)', () => {
-    it('desabilita botao Confirmar quando isSubmitting=true', async () => {
-      const user = userEvent.setup();
-      render(
-        <CascadeInput
-          {...defaultProps}
-          defaultPaymentMethodId="pix"
-          isSubmitting
-        />
-      );
-
-      // Navegar até step 5
-      const input = screen.getByDisplayValue('R$ 0,00');
-      await user.clear(input);
-      await user.type(input, '5000');
-      await user.click(screen.getByText('Avançar'));
-
+  describe('step 5: confirmação', () => {
+    async function goToStep5(user: ReturnType<typeof userEvent.setup>) {
+      await user.click(screen.getByText('8'));
+      await user.click(screen.getByText('7'));
+      await user.click(screen.getByText('0'));
+      await user.click(screen.getByText('0'));
+      await user.click(screen.getByText('Continuar'));
       await user.click(screen.getByText('🏠 Essencial'));
       await user.click(screen.getByText('Alimentação'));
-      await user.click(screen.getByText('Avançar'));
-
       await user.click(screen.getByText('Supermercado'));
-      await user.click(screen.getByText('Avançar'));
+      await user.click(screen.getByText('✓ Confirmar'));
+    }
 
-      await user.click(screen.getByText('Avançar'));
-
-      // Step 5: botão deve mostrar "Enviando..." e estar desabilitado
-      expect(screen.getByText('Enviando...')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /enviando/i })).toBeDisabled();
-    });
-  });
-
-  describe('cancelar', () => {
-    it('chama onCancel ao clicar Cancelar no step 1', async () => {
+    it('mostra valor em 28px bold', async () => {
       const user = userEvent.setup();
-      render(<CascadeInput {...defaultProps} />);
+      render(<CascadeInput {...mobileProps} />);
+      await goToStep5(user);
+
+      const amount = screen.getByText('R$ 87,00');
+      expect(amount).toHaveClass('text-[28px]', 'font-bold');
+    });
+
+    it('mostra breadcrumb visual', async () => {
+      const user = userEvent.setup();
+      render(<CascadeInput {...mobileProps} />);
+      await goToStep5(user);
+
+      expect(screen.getByText(/Alimentação/)).toBeInTheDocument();
+      expect(screen.getByText(/Supermercado/)).toBeInTheDocument();
+    });
+
+    it('mostra link Cancelar (não botão)', async () => {
+      const user = userEvent.setup();
+      render(<CascadeInput {...mobileProps} />);
+      await goToStep5(user);
+
+      expect(screen.getByText('Cancelar')).toBeInTheDocument();
+    });
+
+    it('chama onConfirm com dados completos ao confirmar', async () => {
+      const user = userEvent.setup();
+      render(<CascadeInput {...mobileProps} />);
+      await goToStep5(user);
+
+      // Buscar o botão ✓ Confirmar no step 5
+      const confirmButtons = screen.getAllByText('✓ Confirmar');
+      await user.click(confirmButtons[confirmButtons.length - 1]);
+
+      expect(defaultProps.onConfirm).toHaveBeenCalledWith({
+        valueCents: 8700,
+        classificationId: 'ess',
+        categoryId: 'alim',
+        subcategoryId: 'super',
+        establishment: '',
+        paymentMethodId: 'cred',
+        installments: 0,
+      });
+    });
+
+    it('chama onCancel ao clicar Cancelar', async () => {
+      const user = userEvent.setup();
+      render(<CascadeInput {...mobileProps} />);
+      await goToStep5(user);
 
       await user.click(screen.getByText('Cancelar'));
       expect(defaultProps.onCancel).toHaveBeenCalledTimes(1);
     });
-  });
 
-  describe('confirmar', () => {
-    it('emite CascadeInputData correto ao confirmar', async () => {
+    it('mostra Enviando... quando isSubmitting', async () => {
       const user = userEvent.setup();
-      render(
-        <CascadeInput
-          {...defaultProps}
-          suggestedEstablishments={['Supermercado BH']}
-          defaultPaymentMethodId="pix"
-        />
-      );
+      const { rerender } = render(<CascadeInput {...mobileProps} />);
+      await goToStep5(user);
 
-      // Step 1: valor
-      const input = screen.getByDisplayValue('R$ 0,00');
-      await user.clear(input);
-      await user.type(input, '5000');
-      await user.click(screen.getByText('Avançar'));
+      // Re-render com isSubmitting=true para simular estado de envio
+      rerender(<CascadeInput {...mobileProps} isSubmitting />);
 
-      // Step 2: classificação + categoria
-      await user.click(screen.getByText('🏠 Essencial'));
-      await user.click(screen.getByText('Alimentação'));
-      await user.click(screen.getByText('Avançar'));
-
-      // Step 3: subcategoria
-      await user.click(screen.getByText('Supermercado'));
-      await user.click(screen.getByText('Avançar'));
-
-      // Step 4: estabelecimento (usar sugestão) + pagamento já pré-selecionado
-      await user.click(screen.getByText('Supermercado BH'));
-      await user.click(screen.getByText('Avançar'));
-
-      // Step 5: confirmar
-      await user.click(screen.getByRole('button', { name: 'Confirmar' }));
-
-      expect(defaultProps.onConfirm).toHaveBeenCalledWith({
-        valueCents: 5000,
-        classificationId: 'ess',
-        categoryId: 'alim',
-        subcategoryId: 'super',
-        establishment: 'Supermercado BH',
-        paymentMethodId: 'cred',
-      });
+      expect(screen.getByText('Enviando...')).toBeInTheDocument();
     });
   });
 
-  describe('validação', () => {
-    it('valor 0 não permite avançar', () => {
-      render(<CascadeInput {...defaultProps} />);
-      expect(screen.getByText('Avançar')).toBeDisabled();
-    });
-
-    it('categoria obrigatória: não avança sem selecionar', async () => {
+  describe('summary bar como voltar', () => {
+    it('volta ao step anterior ao clicar na summary bar', async () => {
       const user = userEvent.setup();
-      render(<CascadeInput {...defaultProps} />);
+      render(<CascadeInput {...mobileProps} />);
 
-      const input = screen.getByDisplayValue('R$ 0,00');
-      await user.clear(input);
-      await user.type(input, '5000');
-      await user.click(screen.getByText('Avançar'));
+      // Ir para step 2
+      await user.click(screen.getByText('5'));
+      await user.click(screen.getByText('0'));
+      await user.click(screen.getByText('0'));
+      await user.click(screen.getByText('0'));
+      await user.click(screen.getByText('Continuar'));
 
-      await user.click(screen.getByText('🏠 Essencial'));
-      expect(screen.getByText('Avançar')).toBeDisabled();
+      // Clicar na summary bar para voltar
+      await user.click(screen.getByLabelText('Voltar ao passo anterior'));
+
+      // Deve voltar para step 1 (keypad)
+      expect(screen.getByRole('group', { name: /teclado numérico/i })).toBeInTheDocument();
     });
   });
 
   describe('step indicator', () => {
-    it('step 1 ativo marca primeiro dot como atual', () => {
-      render(<CascadeInput {...defaultProps} />);
+    it('renderiza 5 dots', () => {
+      render(<CascadeInput {...mobileProps} />);
+      const stepGroup = screen.getByRole('group', { name: /progresso/i });
+      const dots = within(stepGroup).getAllByLabelText(/etapa/i);
+      expect(dots).toHaveLength(5);
+    });
+
+    it('marca step 1 como atual', () => {
+      render(<CascadeInput {...mobileProps} />);
       const stepGroup = screen.getByRole('group', { name: /progresso/i });
       const dots = within(stepGroup).getAllByLabelText(/etapa/i);
       expect(dots[0]).toHaveAttribute('aria-label', 'Etapa 1: atual');
       expect(dots[1]).toHaveAttribute('aria-label', 'Etapa 2: pendente');
     });
   });
+});
 
-  describe('categorias filtradas por classificação', () => {
-    it('mostra categorias apenas da classificação selecionada', async () => {
-      const user = userEvent.setup();
-      render(<CascadeInput {...defaultProps} />);
+// ── DESKTOP TESTS ──
 
-      const input = screen.getByDisplayValue('R$ 0,00');
-      await user.clear(input);
-      await user.type(input, '5000');
-      await user.click(screen.getByText('Avançar'));
+describe('CascadeInput Desktop', () => {
+  const desktopProps = { ...defaultProps, isMobile: false };
 
-      await user.click(screen.getByText('🎯 Desejável'));
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
-      expect(screen.getByText('Lazer')).toBeInTheDocument();
-      expect(screen.queryByText('Alimentação')).not.toBeInTheDocument();
-      expect(screen.queryByText('Transporte')).not.toBeInTheDocument();
+  it('renderiza todos os campos visíveis de uma vez', () => {
+    render(<CascadeInput {...desktopProps} />);
+    expect(screen.getByLabelText('Valor')).toBeInTheDocument();
+    expect(screen.getByLabelText('Classificação')).toBeInTheDocument();
+  });
+
+  it('não renderiza keypad numérico no desktop', () => {
+    render(<CascadeInput {...desktopProps} />);
+    expect(screen.queryByRole('group', { name: /teclado numérico/i })).not.toBeInTheDocument();
+  });
+
+  it('não renderiza step indicator no desktop', () => {
+    render(<CascadeInput {...desktopProps} />);
+    expect(screen.queryByRole('group', { name: /progresso/i })).not.toBeInTheDocument();
+  });
+
+  it('usa select dropdown para classificação', () => {
+    render(<CascadeInput {...desktopProps} />);
+    const select = screen.getByRole('combobox', { name: /classificação/i });
+    expect(select).toBeInTheDocument();
+  });
+
+  it('mostra categorias ao selecionar classificação', async () => {
+    const user = userEvent.setup();
+    render(<CascadeInput {...desktopProps} />);
+
+    const select = screen.getByRole('combobox', { name: /classificação/i });
+    await user.selectOptions(select, 'ess');
+
+    expect(screen.getByText('Alimentação')).toBeInTheDocument();
+    expect(screen.getByText('Transporte')).toBeInTheDocument();
+  });
+
+  it('mostra subcategorias ao selecionar categoria', async () => {
+    const user = userEvent.setup();
+    render(<CascadeInput {...desktopProps} />);
+
+    const select = screen.getByRole('combobox', { name: /classificação/i });
+    await user.selectOptions(select, 'ess');
+    await user.click(screen.getByText('Alimentação'));
+
+    expect(screen.getByText('Supermercado')).toBeInTheDocument();
+    expect(screen.getByText('Feira')).toBeInTheDocument();
+  });
+
+  it('mostra Onde? e Pagamento ao selecionar subcategoria', async () => {
+    const user = userEvent.setup();
+    render(<CascadeInput {...desktopProps} />);
+
+    const select = screen.getByRole('combobox', { name: /classificação/i });
+    await user.selectOptions(select, 'ess');
+    await user.click(screen.getByText('Alimentação'));
+    await user.click(screen.getByText('Supermercado'));
+
+    expect(screen.getByText('Onde?', { exact: false })).toBeInTheDocument();
+    expect(screen.getByText('Pagamento', { exact: false })).toBeInTheDocument();
+  });
+
+  it('mostra installment strip quando crédito selecionado', async () => {
+    const user = userEvent.setup();
+    render(<CascadeInput {...desktopProps} />);
+
+    const select = screen.getByRole('combobox', { name: /classificação/i });
+    await user.selectOptions(select, 'ess');
+    await user.click(screen.getByText('Alimentação'));
+    await user.click(screen.getByText('Supermercado'));
+
+    // Crédito pré-selecionado pela subcategoria Supermercado
+    expect(screen.getByRole('radiogroup', { name: /parcelas/i })).toBeInTheDocument();
+  });
+
+  it('confirmar chama onConfirm com dados completos', async () => {
+    const user = userEvent.setup();
+    render(<CascadeInput {...desktopProps} />);
+
+    // Preencher valor
+    const input = screen.getByDisplayValue('R$ 0,00');
+    await user.clear(input);
+    await user.type(input, '5000');
+
+    // Classificação
+    const select = screen.getByRole('combobox', { name: /classificação/i });
+    await user.selectOptions(select, 'ess');
+
+    // Categoria
+    await user.click(screen.getByText('Alimentação'));
+
+    // Subcategoria (pré-seleciona pagamento cred)
+    await user.click(screen.getByText('Supermercado'));
+
+    // Confirmar
+    await user.click(screen.getByText('✓ Confirmar'));
+
+    expect(defaultProps.onConfirm).toHaveBeenCalledWith({
+      valueCents: 5000,
+      classificationId: 'ess',
+      categoryId: 'alim',
+      subcategoryId: 'super',
+      establishment: '',
+      paymentMethodId: 'cred',
+      installments: 0,
     });
   });
 
-  describe('onRequestImpact (F3)', () => {
-    it('chama onRequestImpact ao avançar do step 4 para step 5', async () => {
-      const onRequestImpact = vi.fn();
-      const user = userEvent.setup();
-      render(
-        <CascadeInput
-          {...defaultProps}
-          defaultPaymentMethodId="pix"
-          onRequestImpact={onRequestImpact}
-        />
-      );
-
-      const input = screen.getByDisplayValue('R$ 0,00');
-      await user.clear(input);
-      await user.type(input, '5000');
-      await user.click(screen.getByText('Avançar'));
-
-      await user.click(screen.getByText('🏠 Essencial'));
-      await user.click(screen.getByText('Alimentação'));
-      await user.click(screen.getByText('Avançar'));
-
-      await user.click(screen.getByText('Supermercado'));
-      await user.click(screen.getByText('Avançar'));
-
-      // Step 4 → Step 5: deve chamar onRequestImpact
-      await user.click(screen.getByText('Avançar'));
-
-      expect(onRequestImpact).toHaveBeenCalledWith({
-        amountCents: 5000,
-        paymentMethodId: 'cred',
-        categoryId: 'alim',
-      });
-    });
+  it('botão confirmar desabilitado sem valor', () => {
+    render(<CascadeInput {...desktopProps} />);
+    const btn = screen.getByText('✓ Confirmar');
+    expect(btn).toBeDisabled();
   });
 });
