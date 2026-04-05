@@ -210,6 +210,7 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
         establishment: data.establishment || undefined,
         paymentMethodType,
         paymentMethodId,
+        installments: data.installments > 0 ? data.installments : undefined,
       });
 
       setIsSubmitting(false);

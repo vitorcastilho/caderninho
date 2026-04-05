@@ -115,6 +115,7 @@ export function CascadeInput({
   const [installments, setInstallments] = useState(0);
 
   // ── Derived ──
+  const selectedClassification = classifications.find((c) => c.id === classificationId);
   const selectedCategory = categories.find((c) => c.id === categoryId);
   const selectedSubcategory = subcategories.find((s) => s.id === subcategoryId);
   const selectedPayment = paymentMethods.find((p) => p.id === paymentMethodId);
@@ -280,7 +281,7 @@ export function CascadeInput({
           <>
             <span className="shrink-0 text-[13px] text-stone-400">&middot;</span>
             <span className="inline-flex min-w-0 shrink items-center truncate rounded-full bg-indigo-50 px-2 py-1 text-[13px] font-medium text-indigo-600">
-              {selectedCategory.name}
+              {selectedClassification?.emoji && `${selectedClassification.emoji} `}{selectedCategory.name}
             </span>
           </>
         )}
@@ -720,7 +721,14 @@ export function CascadeInput({
                   type="button"
                   onClick={() => {
                     handleSelectSubcategory(sub);
-                    requestImpactForCurrent();
+                    const resolvedPaymentId = sub.defaultPaymentMethodId ?? paymentMethodId;
+                    if (onRequestImpact && resolvedPaymentId && categoryId) {
+                      onRequestImpact({
+                        amountCents: valueCents,
+                        paymentMethodId: resolvedPaymentId,
+                        categoryId,
+                      });
+                    }
                   }}
                   className={cn(
                     'flex flex-col items-start rounded-xl border p-3 text-left transition-colors',

@@ -17,6 +17,7 @@ export class DrizzleTransactionRepository implements TransactionRepository {
     establishment?: string | null;
     paymentMethodType: string;
     paymentMethodId?: string | null;
+    installments?: number | null;
     description?: string | null;
     transactionDate: Date;
     referenceMonth?: string | null;

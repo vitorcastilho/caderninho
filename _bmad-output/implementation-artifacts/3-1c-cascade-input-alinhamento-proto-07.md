@@ -85,6 +85,12 @@ so that I can register expenses in ~5 seconds with a mobile-optimized experience
   - [x] 6.2: Card brand icons (VISA/Mastercard) nos chips de subcategoria e pagamento
   - [x] 6.3: Tela de confirmação: confirm-amount 28px, breadcrumb visual, btn-confirm full-width
 
+### Review Follow-ups (AI) — R1 2026-04-05
+
+- [x] [AI-Review][HIGH] Bug: desktop impact preview usa paymentMethodId stale — `requestImpactForCurrent()` chamado logo após `handleSelectSubcategory()` captura o estado anterior. Resultado: impact incorreto ou ausente no desktop. [cascade-input.tsx:721-724]
+- [x] [AI-Review][MEDIUM] AC#8: summary bar pill sem emoji — AC exige "categoria como pill indigo com emoji", mas implementação mostra só o nome. Interface `Category` não tem campo emoji. Propagar emoji da Classification ou adicionar à Category. [cascade-input.tsx:282]
+- [x] [AI-Review][MEDIUM] Installments não enviados ao servidor — `CascadeInput.onConfirm` retorna `installments`, mas `NewExpenseSheet.handleConfirm` não passa para `createTransactionAction`. Verificar se a action aceita o campo; se sim, passar; se não, considerar remover seleção de parcelas ou marcar como "em breve". [NewExpenseSheet.tsx:206-213]
+
 ## Dev Notes
 
 ### Design System & Protótipos
@@ -128,9 +134,16 @@ so that I can register expenses in ~5 seconds with a mobile-optimized experience
 | Arquivo | Descrição da mudança |
 |---------|---------------------|
 | `src/client/components/ui/cascade-input.tsx` | Reescrita completa — dual rendering mobile (wizard 5 steps) / desktop (single pane) |
-| `src/client/components/ui/cascade-input.test.tsx` | Reescrita completa — 37 testes (mobile + desktop) |
-| `src/client/components/transactions/NewExpenseSheet.tsx` | Bottom sheet mobile (side="bottom", 85dvh, rounded-t-20px) + side sheet desktop |
+| `src/client/components/ui/cascade-input.test.tsx` | Reescrita completa — 39 testes (mobile + desktop) |
+| `src/client/components/transactions/NewExpenseSheet.tsx` | Bottom sheet mobile + passa `installments` para action |
 | `src/client/components/ui/sheet.tsx` | Adicionada prop `overlayClassName` ao SheetContent |
+| `src/server/infrastructure/database/schema/transactions.ts` | Adicionada coluna `installments` (integer, nullable) |
+| `src/server/infrastructure/database/migrations/0016_neat_screwball.sql` | Migration para coluna `installments` |
+| `src/server/domain/transactions/repositories/transaction.repository.ts` | Adicionado campo `installments` no tipo e interface |
+| `src/server/infrastructure/database/repositories/transaction.repository.impl.ts` | Adicionado `installments` no create |
+| `src/server/domain/transactions/use-cases/create-transaction.ts` | Adicionado `installments` nos params e passagem ao repo |
+| `src/server/domain/transactions/use-cases/create-transaction.test.ts` | +2 testes para installments |
+| `src/shared/schemas/transaction.schema.ts` | Adicionado campo `installments` no schema Zod |
 | `_bmad-output/implementation-artifacts/sprint-status.yaml` | Status atualizado para review |
 
 ## Change Log
@@ -138,6 +151,8 @@ so that I can register expenses in ~5 seconds with a mobile-optimized experience
 | Data | Mudança |
 |------|---------|
 | 2026-04-04 | Implementação completa das 7 fases (0-6) — bottom sheet, numeric keypad, selection-driven flow, establishment chips, installment strip, summary bar, tela confirmação |
+| 2026-04-05 | Code review R1: 1 HIGH (stale state desktop impact), 2 MEDIUM (emoji pill, installments não enviados), 5 LOW (backlog). 3 action items criados. Status → in-progress. |
+| 2026-04-05 | Fixes R1: 3 action items resolvidos — (1) desktop impact usa paymentMethodId da subcategoria diretamente, (2) summary bar pill com emoji da classificação, (3) installments end-to-end (DB→schema→use case→action→frontend). +4 testes, 895 total. Status → review. |
 
 ## Dev Agent Record
 
@@ -159,8 +174,14 @@ so that I can register expenses in ~5 seconds with a mobile-optimized experience
 
 8. **Sheet `overlayClassName`**: Adicionada prop ao `SheetContent` para permitir customização do overlay (mobile usa `bg-black/45`). Mudança mínima e retrocompatível.
 
+### Fixes R1 (2026-04-05)
+
+- ✅ Resolved review finding [HIGH]: Desktop impact preview usava `requestImpactForCurrent()` que capturava `paymentMethodId` stale via closure. Fix: desktop subcategory onClick agora chama `onRequestImpact` diretamente com `sub.defaultPaymentMethodId ?? paymentMethodId`. Teste adicionado.
+- ✅ Resolved review finding [MEDIUM]: Summary bar pill sem emoji. Fix: adicionado `selectedClassification` derivado e renderizado `{selectedClassification?.emoji}` no pill da summary bar. Teste adicionado.
+- ✅ Resolved review finding [MEDIUM]: Installments não enviados ao servidor. Fix: adicionado campo `installments` end-to-end — coluna DB (nullable integer), migration drizzle, tipo Transaction, repository interface/impl, use case params, Zod schema, NewExpenseSheet passa `data.installments` para action. 2 testes adicionados no use case.
+
 ### Validações
 
-- 891 testes passando (121 arquivos)
+- 895 testes passando (121 arquivos)
 - TypeScript compila sem erros
 - ESLint passa sem warnings

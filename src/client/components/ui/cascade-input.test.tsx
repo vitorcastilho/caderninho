@@ -141,6 +141,19 @@ describe('CascadeInput Mobile', () => {
 
       expect(screen.getByText('R$ 50,00')).toBeInTheDocument();
     });
+
+    it('summary bar mostra pill com emoji da classificação + nome da categoria', async () => {
+      const user = userEvent.setup();
+      render(<CascadeInput {...mobileProps} />);
+      await goToStep2(user);
+
+      await user.click(screen.getByText('🏠 Essencial'));
+      await user.click(screen.getByText('Alimentação'));
+
+      // Step 3: summary bar deve ter emoji + nome
+      const summaryBar = screen.getByLabelText('Voltar ao passo anterior');
+      expect(summaryBar).toHaveTextContent('🏠 Alimentação');
+    });
   });
 
   describe('step 3: subcategoria (selection-driven)', () => {
@@ -491,5 +504,26 @@ describe('CascadeInput Desktop', () => {
     render(<CascadeInput {...desktopProps} />);
     const btn = screen.getByText('✓ Confirmar');
     expect(btn).toBeDisabled();
+  });
+
+  it('chama onRequestImpact com paymentMethodId da subcategoria (não stale)', async () => {
+    const onRequestImpact = vi.fn();
+    const user = userEvent.setup();
+    render(<CascadeInput {...desktopProps} onRequestImpact={onRequestImpact} />);
+
+    // Classificação + Categoria
+    const select = screen.getByRole('combobox', { name: /classificação/i });
+    await user.selectOptions(select, 'ess');
+    await user.click(screen.getByText('Alimentação'));
+
+    // Clicar em Supermercado (tem defaultPaymentMethodId='cred')
+    await user.click(screen.getByText('Supermercado'));
+
+    // onRequestImpact deve ser chamado com 'cred' (da subcategoria), não ''  (valor anterior)
+    expect(onRequestImpact).toHaveBeenCalledWith({
+      amountCents: 0,
+      paymentMethodId: 'cred',
+      categoryId: 'alim',
+    });
   });
 });
