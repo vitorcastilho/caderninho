@@ -173,6 +173,7 @@ export function ClassificationSection({
           )}
         />
 
+        <span className="shrink-0 text-sm">📊</span>
         <span className="flex-1 text-sm font-semibold">
           {classification.name}
         </span>

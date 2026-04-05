@@ -292,7 +292,8 @@ export function CategoryCard({
                 )}
                 {subEstablishments.length > 0 && (
                   <span className="text-xs text-muted-foreground">
-                    {subEstablishments.length} estab.
+                    {subEstablishments.length}{' '}
+                    {subEstablishments.length === 1 ? 'estabelecimento' : 'estabelecimentos'}
                   </span>
                 )}
                 <div

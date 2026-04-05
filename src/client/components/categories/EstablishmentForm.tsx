@@ -392,17 +392,6 @@ export function EstablishmentForm({
 
       {/* Botões */}
       <div className="flex gap-2 justify-end">
-        {mode === 'edit' && defaultValues && (
-          <Button
-            type="button"
-            variant="outline"
-            className="text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive mr-auto"
-            onClick={() => setShowDeleteConfirm(true)}
-            disabled={isPending}
-          >
-            Excluir
-          </Button>
-        )}
         {onCancel && (
           <Button type="button" variant="outline" onClick={onCancel} disabled={isPending}>
             Cancelar

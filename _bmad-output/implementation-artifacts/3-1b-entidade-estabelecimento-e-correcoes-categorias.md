@@ -1,6 +1,6 @@
 # Story 3.1b: Entidade Estabelecimento e Correções de Categorias
 
-Status: in-progress
+Status: review
 
 ## Story
 
@@ -30,32 +30,32 @@ so that my expense registration flow uses accurate pre-configured data and I can
 
 ### Fase 0: Design System & Protótipos (Obrigatória para stories com UI)
 
-- [ ] Task 0: Consultar Design System e protótipos relevantes
-  - [ ] 0.1: Consultar página `/design-system` (`src/app/design-system/page.tsx`) — tokens, cores, tipografia, espaçamentos
-  - [ ] 0.2: Verificar protótipos `_bmad-output/prototypes/proto-14-categorias.html` e `_bmad-output/prototypes/categories-ux-v2.html`
-  - [ ] 0.3: Listar componentes UI existentes em `src/client/components/ui/` que serão reutilizados
+- [x] Task 0: Consultar Design System e protótipos relevantes
+  - [x] 0.1: Consultar página `/design-system` (`src/app/design-system/page.tsx`) — tokens, cores, tipografia, espaçamentos
+  - [x] 0.2: Verificar protótipos `_bmad-output/prototypes/proto-14-categorias.html` e `_bmad-output/prototypes/categories-ux-v2.html`
+  - [x] 0.3: Listar componentes UI existentes em `src/client/components/ui/` que serão reutilizados
 
 ### Fase 1: Correções de Mismatch de Tipo de Pagamento (AC: #5, #6)
 
-- [ ] Task 1: Unificar tipo de método de pagamento no sistema inteiro
-  - [ ] 1.1: Alterar `src/shared/constants/category.constants.ts` — mudar `'credit_card'` para `'credit'` no array `PAYMENT_METHOD_TYPES` e no objeto `PAYMENT_METHOD_TYPE_LABELS`
-  - [ ] 1.2: Atualizar `src/shared/schemas/subcategory.schema.ts` que usa `PAYMENT_METHOD_TYPES` — validar que `z.enum(PAYMENT_METHOD_TYPES)` agora aceita `'credit'` ao invés de `'credit_card'`
-  - [ ] 1.3: Atualizar `src/client/components/categories/SubcategoryForm.tsx` — select de método de pagamento deve usar `'credit'` como value (não `'credit_card'`)
-  - [ ] 1.4: Atualizar `src/client/components/categories/CategoryForm.tsx` — mesmo ajuste se usa método de pagamento
-  - [ ] 1.5: Gerar migration Drizzle para atualizar dados existentes no banco: `UPDATE subcategories SET default_payment_method_type = 'credit' WHERE default_payment_method_type = 'credit_card'`
-  - [ ] 1.6: Atualizar testes existentes de subcategoria que referenciam `'credit_card'`
+- [x] Task 1: Unificar tipo de método de pagamento no sistema inteiro
+  - [x] 1.1: Alterar `src/shared/constants/category.constants.ts` — mudar `'credit_card'` para `'credit'` no array `PAYMENT_METHOD_TYPES` e no objeto `PAYMENT_METHOD_TYPE_LABELS`
+  - [x] 1.2: Atualizar `src/shared/schemas/subcategory.schema.ts` que usa `PAYMENT_METHOD_TYPES` — validar que `z.enum(PAYMENT_METHOD_TYPES)` agora aceita `'credit'` ao invés de `'credit_card'`
+  - [x] 1.3: Atualizar `src/client/components/categories/SubcategoryForm.tsx` — select de método de pagamento deve usar `'credit'` como value (não `'credit_card'`)
+  - [x] 1.4: Atualizar `src/client/components/categories/CategoryForm.tsx` — mesmo ajuste se usa método de pagamento
+  - [x] 1.5: Gerar migration Drizzle para atualizar dados existentes no banco: `UPDATE subcategories SET default_payment_method_type = 'credit' WHERE default_payment_method_type = 'credit_card'`
+  - [x] 1.6: Atualizar testes existentes de subcategoria que referenciam `'credit_card'`
 
-- [ ] Task 2: Resolver convenção de PIX ID
-  - [ ] 2.1: Na `src/client/components/transactions/NewExpenseSheet.tsx`, ao construir a lista de `paymentMethods`, PIX usa ID `pix-${acc.id}`. Este é o formato canônico para diferenciar débito/PIX da mesma conta
-  - [ ] 2.2: Na `src/client/components/categories/SubcategoryForm.tsx`, ao salvar método de pagamento PIX, garantir que o ID salvo use o mesmo formato `pix-${bankAccountId}` (hoje salva ID bruto)
-  - [ ] 2.3: Na `src/client/components/categories/CategoryForm.tsx`, mesmo ajuste
-  - [ ] 2.4: No cascade input (`src/client/components/ui/cascade-input.tsx`), na função `handleSelectSubcategory`, ao ler `sub.defaultPaymentMethodId` — validar que agora match com o formato `pix-*` quando tipo é PIX
-  - [ ] 2.5: Gerar migration ou data-fix para subcategories existentes que têm `default_payment_method_type = 'pix'` — prefixar o ID com `pix-`
+- [x] Task 2: Resolver convenção de PIX ID
+  - [x] 2.1: Na `src/client/components/transactions/NewExpenseSheet.tsx`, ao construir a lista de `paymentMethods`, PIX usa ID `pix-${acc.id}`. Este é o formato canônico para diferenciar d��bito/PIX da mesma conta
+  - [x] 2.2: Na `src/client/components/categories/SubcategoryForm.tsx`, ao salvar método de pagamento PIX, garantir que o ID salvo use o mesmo formato `pix-${bankAccountId}` (hoje salva ID bruto)
+  - [x] 2.3: Na `src/client/components/categories/CategoryForm.tsx`, mesmo ajuste
+  - [x] 2.4: No cascade input (`src/client/components/ui/cascade-input.tsx`), na função `handleSelectSubcategory`, ao ler `sub.defaultPaymentMethodId` — validar que agora match com o formato `pix-*` quando tipo é PIX
+  - [x] 2.5: Gerar migration ou data-fix para subcategories existentes que têm `default_payment_method_type = 'pix'` �� prefixar o ID com `pix-`
 
 ### Fase 2: Entidade Estabelecimento — Schema e Backend (AC: #1, #2, #3, #4, #7)
 
-- [ ] Task 3: Schema do banco — tabela `establishments`
-  - [ ] 3.1: Criar schema Drizzle `src/server/infrastructure/database/schema/establishments.ts` com campos:
+- [x] Task 3: Schema do banco — tabela `establishments`
+  - [x] 3.1: Criar schema Drizzle `src/server/infrastructure/database/schema/establishments.ts` com campos:
     - `id` (text PK)
     - `name` (text NOT NULL)
     - `emoji` (text, default '📍')
@@ -66,57 +66,57 @@ so that my expense registration flow uses accurate pre-configured data and I can
     - `status` (text: 'active' | 'archived', default 'active')
     - `organization_id` (FK organizations, NOT NULL)
     - `created_at`, `updated_at`
-  - [ ] 3.2: Adicionar RLS policy `establishments_org_isolation`
-  - [ ] 3.3: Exportar no `schema/index.ts`
-  - [ ] 3.4: Gerar migration via `npx drizzle-kit generate`
-  - [ ] 3.5: Criar testes do schema (`establishments.test.ts`)
+  - [x] 3.2: Adicionar RLS policy `establishments_org_isolation`
+  - [x] 3.3: Exportar no `schema/index.ts`
+  - [x] 3.4: Gerar migration via `npx drizzle-kit generate`
+  - [x] 3.5: Criar testes do schema (`establishments.test.ts`)
 
-- [ ] Task 4: Schema Zod compartilhado
-  - [ ] 4.1: Criar `src/shared/schemas/establishment.schema.ts` com:
+- [x] Task 4: Schema Zod compartilhado
+  - [x] 4.1: Criar `src/shared/schemas/establishment.schema.ts` com:
     - `createEstablishmentSchema` (name, emoji?, subcategoryId)
     - `updateEstablishmentSchema` (name?, emoji?, subcategoryId?)
     - `establishmentIdSchema`
-  - [ ] 4.2: Criar testes `establishment.schema.test.ts`
+  - [x] 4.2: Criar testes `establishment.schema.test.ts`
 
-- [ ] Task 5: Domínio — Repository + Use Cases
-  - [ ] 5.1: Criar `src/server/domain/establishments/repositories/establishment.repository.ts` — interface EstablishmentRepository com: create, findById, findBySubcategory(subcategoryId, orgId), update, delete, incrementVisitCount(id, orgId)
-  - [ ] 5.2: Criar use case `create-establishment.ts` — cria com source='manual', valida nome duplicado na mesma subcategoria
-  - [ ] 5.3: Criar testes `create-establishment.test.ts`
-  - [ ] 5.4: Criar use case `update-establishment.ts`
-  - [ ] 5.5: Criar testes `update-establishment.test.ts`
-  - [ ] 5.6: Criar use case `delete-establishment.ts` — soft delete (status='archived') ou hard delete, preserva transações
-  - [ ] 5.7: Criar testes `delete-establishment.test.ts`
-  - [ ] 5.8: Criar use case `list-establishments-by-subcategory.ts`
-  - [ ] 5.9: Criar testes `list-establishments-by-subcategory.test.ts`
-  - [ ] 5.10: Criar use case `auto-create-establishment.ts` — chamado após criar transação, cria com source='auto' se não existe, incrementa visit_count se já existe
-  - [ ] 5.11: Criar testes `auto-create-establishment.test.ts`
+- [x] Task 5: Domínio — Repository + Use Cases
+  - [x] 5.1: Criar `src/server/domain/establishments/repositories/establishment.repository.ts` — interface EstablishmentRepository com: create, findById, findBySubcategory(subcategoryId, orgId), update, delete, incrementVisitCount(id, orgId)
+  - [x] 5.2: Criar use case `create-establishment.ts` — cria com source='manual', valida nome duplicado na mesma subcategoria
+  - [x] 5.3: Criar testes `create-establishment.test.ts`
+  - [x] 5.4: Criar use case `update-establishment.ts`
+  - [x] 5.5: Criar testes `update-establishment.test.ts`
+  - [x] 5.6: Criar use case `delete-establishment.ts` — soft delete (status='archived') ou hard delete, preserva transações
+  - [x] 5.7: Criar testes `delete-establishment.test.ts`
+  - [x] 5.8: Criar use case `list-establishments-by-subcategory.ts`
+  - [x] 5.9: Criar testes `list-establishments-by-subcategory.test.ts`
+  - [x] 5.10: Criar use case `auto-create-establishment.ts` — chamado após criar transação, cria com source='auto' se não existe, incrementa visit_count se já existe
+  - [x] 5.11: Criar testes `auto-create-establishment.test.ts`
 
-- [ ] Task 6: Repository Implementation
-  - [ ] 6.1: Criar `src/server/infrastructure/database/repositories/establishment.repository.impl.ts`
+- [x] Task 6: Repository Implementation
+  - [x] 6.1: Criar `src/server/infrastructure/database/repositories/establishment.repository.impl.ts`
 
-- [ ] Task 7: Factory + Server Actions
-  - [ ] 7.1: Criar `src/server/factories/establishment.ts`
-  - [ ] 7.2: Criar `src/server/actions/establishment.actions.ts` com: `createEstablishmentAction`, `updateEstablishmentAction`, `deleteEstablishmentAction`, `listEstablishmentsBySubcategoryAction`
+- [x] Task 7: Factory + Server Actions
+  - [x] 7.1: Criar `src/server/factories/establishment.ts`
+  - [x] 7.2: Criar `src/server/actions/establishment.actions.ts` com: `createEstablishmentAction`, `updateEstablishmentAction`, `deleteEstablishmentAction`, `listEstablishmentsBySubcategoryAction`
 
-### Fase 3: Integração — Auto-criação e Cascade Input (AC: #7, #8)
+### Fase 3: Integração — Auto-criaç��o e Cascade Input (AC: #7, #8)
 
-- [ ] Task 8: Auto-criação de estabelecimento ao registrar transação
-  - [ ] 8.1: Modificar `create-transaction.ts` (ou o fluxo no NewExpenseSheet) para após criar a transação, chamar `auto-create-establishment` se `establishment` (texto) foi fornecido
-  - [ ] 8.2: Atualizar testes de create-transaction para cobrir auto-criação
+- [x] Task 8: Auto-criação de estabelecimento ao registrar transação
+  - [x] 8.1: Modificar `create-transaction.ts` (ou o fluxo no NewExpenseSheet) para após criar a transação, chamar `auto-create-establishment` se `establishment` (texto) foi fornecido
+  - [x] 8.2: Atualizar testes de create-transaction para cobrir auto-criação
 
-- [ ] Task 9: Atualizar Cascade Input para usar estabelecimentos como entidade
-  - [ ] 9.1: Modificar `NewExpenseSheet.tsx` — no `handleSubcategorySelect`, além de buscar sugestões, buscar estabelecimentos cadastrados da subcategoria via `listEstablishmentsBySubcategoryAction`
-  - [ ] 9.2: Modificar `cascade-input.tsx` — passo 4 agora mostra estabelecimentos como chips selecionáveis (vindos da entidade) + campo "Outro" para digitar nome livre
-  - [ ] 9.3: Manter backward compatibility — se usuário digita texto livre, funciona igual ao fluxo atual (texto salvo na transação + auto-create da entidade)
+- [x] Task 9: Atualizar Cascade Input para usar estabelecimentos como entidade
+  - [x] 9.1: Modificar `NewExpenseSheet.tsx` — no `handleSubcategorySelect`, além de buscar sugestões, buscar estabelecimentos cadastrados da subcategoria via `listEstablishmentsBySubcategoryAction`
+  - [x] 9.2: Modificar `cascade-input.tsx` — passo 4 agora mostra estabelecimentos como chips selecionáveis (vindos da entidade) + campo "Outro" para digitar nome livre
+  - [x] 9.3: Manter backward compatibility — se usuário digita texto livre, funciona igual ao fluxo atual (texto salvo na transação + auto-create da entidade)
 
-### Fase 4: Nível 4 na Árvore de Categorias (AC: #1, #2, #3, #4)
+### Fase 4: Nível 4 na ��rvore de Categorias (AC: #1, #2, #3, #4)
 
-- [ ] Task 10: Expandir CategoryTree com nível Estabelecimento
-  - [ ] 10.1: Criar componente `src/client/components/categories/EstablishmentRow.tsx` — exibe: emoji, nome, badge source (auto/manual), contagem de visitas, botões editar/excluir
-  - [ ] 10.2: Criar componente `src/client/components/categories/EstablishmentForm.tsx` — form para criar/editar estabelecimento (nome, emoji)
-  - [ ] 10.3: Modificar `CategoryTree.tsx` — dentro de cada subcategoria renderizada, mostrar lista de estabelecimentos + botão "+ Estabelecimento"
-  - [ ] 10.4: No header de cada subcategoria, adicionar badge de contagem de estabelecimentos e badge de método de pagamento padrão (como no proto-14: `<span class="method-badge">VISA Latam Pass</span> 3 estabelecimentos`)
-  - [ ] 10.5: Carregar estabelecimentos na page (`/categories/page.tsx`) via action e passar para CategoryTree
+- [x] Task 10: Expandir CategoryTree com nível Estabelecimento
+  - [x] 10.1: Criar componente `src/client/components/categories/EstablishmentRow.tsx` — exibe: emoji, nome, badge source (auto/manual), contagem de visitas, botões editar/excluir
+  - [x] 10.2: Criar componente `src/client/components/categories/EstablishmentForm.tsx` — form para criar/editar estabelecimento (nome, emoji)
+  - [x] 10.3: Modificar `CategoryTree.tsx` — dentro de cada subcategoria renderizada, mostrar lista de estabelecimentos + botão "+ Estabelecimento"
+  - [x] 10.4: No header de cada subcategoria, adicionar badge de contagem de estabelecimentos e badge de método de pagamento padrão (como no proto-14: `<span class="method-badge">VISA Latam Pass</span> 3 estabelecimentos`)
+  - [x] 10.5: Carregar estabelecimentos na page (`/categories/page.tsx`) via action e passar para CategoryTree
 
 ## Dev Notes
 
@@ -273,12 +273,90 @@ src/app/(app)/categories/page.tsx          # MODIFICADO (carregar establishments
 - Testes unitários usam mock dos repositories (vi.fn()), não acessam banco
 - `vi.stubGlobal` necessário para localStorage em testes jsdom
 
+### Review Follow-ups (AI) — R1 em 2026-04-04
+
+#### Action items desta story (fix rápidos)
+
+- [x] [AI-Review][MEDIUM] M3: Duplicate delete action no EstablishmentForm — removido botão "Excluir" duplicado do footer, mantida apenas seção AÇÕES com card descritivo. [EstablishmentForm.tsx]
+- [x] [AI-Review][MEDIUM] M5: Classificação não mostra emoji — adicionado emoji 📊 antes do nome da classificação, conforme proto-14. [ClassificationSection.tsx]
+- [x] [AI-Review][MEDIUM] M6: Badge "N estabelecimentos" truncado para "N estab." — alterado para texto completo "N estabelecimento(s)". [CategoryCard.tsx]
+
+#### Extraído para novas stories
+
+Os seguintes findings foram extraídos para stories dedicadas com escopo menor (decisão de 2026-04-04):
+
+**→ Story 3-1c (CascadeInput Mobile — alinhamento proto-07):** H3, H4, H5, H6, M7, M8, M9, M10, M11
+**→ Story 3-1d (Budget Bars na Árvore):** H1, H2, M4
+**→ Story 3-1e (Side Sheets e Emoji Picker):** M1, M2
+
+#### LOW (backlog — não blocking)
+
+- [ ] [AI-Review][LOW] L1: Payment method no EstablishmentForm usa two-step selection (tipo + instrumento) vs proto-14 que usa único select direto. Divergência com ganho funcional — aceitar como backlog.
+- [x] [AI-Review][LOW] L2: Story Tasks/Subtasks não atualizados — corrigido: todos os tasks/subtasks marcados como [x], Dev Agent Record preenchido.
+
+## Change Log
+
+- **2026-04-04**: Implementação completa da story — Fases 0-4 (entidade estabelecimento, correções credit_card→credit, PIX ID prefix, árvore 4 níveis, cascade input com entidades)
+- **2026-04-04**: Code review R1 — 3 MEDIUMs identificados (M3, M5, M6), demais findings extraídos para stories 3-1c/3-1d/3-1e
+- **2026-04-04**: Fixes R1 — Resolvidos 3 action items MEDIUM + 1 LOW (L2): removido botão excluir duplicado (M3), adicionado emoji 📊 na classificação (M5), texto completo no badge de estabelecimentos (M6), tasks/subtasks e Dev Agent Record atualizados (L2)
+
 ## Dev Agent Record
 
 ### Agent Model Used
 
+Claude Opus 4.6
+
 ### Debug Log References
+
+Nenhum debug necessário nesta sessão de fixes.
 
 ### Completion Notes List
 
+- ✅ Resolvido review finding [MEDIUM] M3: Removido botão "Excluir" duplicado do footer do EstablishmentForm — mantida apenas seção AÇÕES com card descritivo e fluxo de confirmação
+- ✅ Resolvido review finding [MEDIUM] M5: Adicionado emoji 📊 antes do nome da classificação no header da ClassificationSection, conforme proto-14
+- ✅ Resolvido review finding [MEDIUM] M6: Alterado badge de contagem de estabelecimentos de "N estab." para "N estabelecimento(s)" com plural correto
+- ✅ Resolvido review finding [LOW] L2: Todos os tasks/subtasks marcados como [x], Dev Agent Record preenchido
+- Todos os 861 testes passando (119 arquivos), zero regressões
+- Build Next.js compilando sem erros
+
 ### File List
+
+**Modificados (fixes R1):**
+- `src/client/components/categories/EstablishmentForm.tsx` — removido botão "Excluir" duplicado do footer (M3)
+- `src/client/components/categories/ClassificationSection.tsx` — adicionado emoji 📊 no header da classificação (M5)
+- `src/client/components/categories/CategoryCard.tsx` — badge de estabelecimentos com texto completo (M6)
+
+**Criados (implementação original):**
+- `src/server/infrastructure/database/schema/establishments.ts`
+- `src/server/infrastructure/database/schema/establishments.test.ts`
+- `src/shared/schemas/establishment.schema.ts`
+- `src/shared/schemas/establishment.schema.test.ts`
+- `src/server/domain/establishments/repositories/establishment.repository.ts`
+- `src/server/domain/establishments/use-cases/create-establishment.ts`
+- `src/server/domain/establishments/use-cases/create-establishment.test.ts`
+- `src/server/domain/establishments/use-cases/update-establishment.ts`
+- `src/server/domain/establishments/use-cases/update-establishment.test.ts`
+- `src/server/domain/establishments/use-cases/delete-establishment.ts`
+- `src/server/domain/establishments/use-cases/delete-establishment.test.ts`
+- `src/server/domain/establishments/use-cases/list-establishments-by-subcategory.ts`
+- `src/server/domain/establishments/use-cases/list-establishments-by-subcategory.test.ts`
+- `src/server/domain/establishments/use-cases/auto-create-establishment.ts`
+- `src/server/domain/establishments/use-cases/auto-create-establishment.test.ts`
+- `src/server/infrastructure/database/repositories/establishment.repository.impl.ts`
+- `src/server/factories/establishment.ts`
+- `src/server/actions/establishment.actions.ts`
+- `src/client/components/categories/EstablishmentRow.tsx`
+- `src/client/components/categories/EstablishmentForm.tsx`
+
+**Modificados (implementação original):**
+- `src/shared/constants/category.constants.ts` — credit_card → credit
+- `src/shared/schemas/subcategory.schema.ts`
+- `src/client/components/categories/SubcategoryForm.tsx` — PIX ID prefix
+- `src/client/components/categories/CategoryForm.tsx` — PIX ID prefix
+- `src/client/components/categories/CategoryTree.tsx` — nível 4 estabelecimentos
+- `src/client/components/categories/ClassificationSection.tsx` — props de establishments
+- `src/client/components/categories/CategoryCard.tsx` — subcategoria com estabelecimentos
+- `src/client/components/transactions/NewExpenseSheet.tsx` — auto-criação e cascade input
+- `src/client/components/ui/cascade-input.tsx` — chips de estabelecimento
+- `src/app/(app)/categories/page.tsx` — carregamento de establishments
+- `src/server/infrastructure/database/schema/index.ts` — export establishments
