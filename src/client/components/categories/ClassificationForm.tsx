@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
+import { Archive, Merge } from 'lucide-react';
 import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
@@ -17,6 +18,8 @@ interface ClassificationFormProps {
   nextDisplayOrder?: number;
   onSuccess?: () => void;
   onCancel?: () => void;
+  onArchive?: () => void;
+  onMerge?: () => void;
 }
 
 export function ClassificationForm({
@@ -25,6 +28,8 @@ export function ClassificationForm({
   nextDisplayOrder,
   onSuccess,
   onCancel,
+  onArchive,
+  onMerge,
 }: ClassificationFormProps) {
   const [isPending, startTransition] = useTransition();
   const [name, setName] = useState(defaultValues?.name ?? '');
@@ -77,6 +82,41 @@ export function ClassificationForm({
         />
         {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
       </div>
+
+      {/* AÇÕES — somente em edit mode */}
+      {mode === 'edit' && (onMerge || onArchive) && (
+        <div className="border-t border-destructive/30 pt-4 mt-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-destructive mb-2">Ações</p>
+          <div className="flex flex-col gap-2">
+            {onMerge && (
+              <button
+                type="button"
+                className="flex w-full items-center gap-3 rounded-card border border-border p-3 text-left transition-colors hover:bg-muted/50"
+                onClick={onMerge}
+              >
+                <Merge className="size-5 shrink-0 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Mesclar com outra</p>
+                  <p className="text-xs text-muted-foreground">Move todas as categorias para outra classificação</p>
+                </div>
+              </button>
+            )}
+            {onArchive && (
+              <button
+                type="button"
+                className="flex w-full items-center gap-3 rounded-card border border-border p-3 text-left transition-colors hover:bg-muted/50"
+                onClick={onArchive}
+              >
+                <Archive className="size-5 shrink-0 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Arquivar</p>
+                  <p className="text-xs text-muted-foreground">Oculta da listagem principal, preserva o histórico</p>
+                </div>
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="flex gap-2 justify-end">
         {onCancel && (

@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
+import { Archive } from 'lucide-react';
 import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
@@ -62,6 +63,7 @@ interface CategoryFormProps {
   creditCards: CreditCard[];
   onSuccess?: () => void;
   onCancel?: () => void;
+  onArchive?: () => void;
 }
 
 const BUDGET_TYPE_LABELS: Record<BudgetType, string> = {
@@ -93,6 +95,7 @@ export function CategoryForm({
   creditCards,
   onSuccess,
   onCancel,
+  onArchive,
 }: CategoryFormProps) {
   const [isPending, startTransition] = useTransition();
   const [name, setName] = useState(defaultValues?.name ?? '');
@@ -346,6 +349,26 @@ export function CategoryForm({
             ? 'Nenhum cartão de crédito ativo cadastrado.'
             : 'Nenhuma conta bancária ativa cadastrada.'}
         </p>
+      )}
+
+      {/* AÇÕES — somente em edit mode */}
+      {mode === 'edit' && onArchive && (
+        <>
+          <div className="border-t border-destructive/30 pt-4 mt-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-destructive mb-2">Ações</p>
+            <button
+              type="button"
+              className="flex w-full items-center gap-3 rounded-card border border-border p-3 text-left transition-colors hover:bg-muted/50"
+              onClick={onArchive}
+            >
+              <Archive className="size-5 shrink-0 text-muted-foreground" />
+              <div>
+                <p className="text-sm font-medium">Arquivar</p>
+                <p className="text-xs text-muted-foreground">Oculta da listagem principal, preserva o histórico</p>
+              </div>
+            </button>
+          </div>
+        </>
       )}
 
       <div className="flex gap-2 justify-end">

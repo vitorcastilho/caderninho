@@ -13,6 +13,9 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
 } from '@/client/components/ui/dialog';
 import { ClassificationSection } from './ClassificationSection';
 import { ClassificationForm } from './ClassificationForm';
@@ -20,9 +23,9 @@ import { ClassificationMergeDialog } from './ClassificationMergeDialog';
 import { CategoryForm } from './CategoryForm';
 import { SubcategoryForm } from './SubcategoryForm';
 import { EstablishmentForm } from './EstablishmentForm';
-import { listClassificationsAction } from '@/server/actions/classification.actions';
-import { listCategoriesAction } from '@/server/actions/category.actions';
-import { listSubcategoriesAction } from '@/server/actions/subcategory.actions';
+import { listClassificationsAction, archiveClassificationAction } from '@/server/actions/classification.actions';
+import { listCategoriesAction, archiveCategoryAction } from '@/server/actions/category.actions';
+import { listSubcategoriesAction, archiveSubcategoryAction } from '@/server/actions/subcategory.actions';
 import { listEstablishmentsBySubcategoryAction } from '@/server/actions/establishment.actions';
 
 interface Classification {
@@ -106,11 +109,14 @@ export function CategoryTree({
   const [subcategories, setSubcategories] = useState<Subcategory[]>(initialSubcategories);
   const [establishments, setEstablishments] = useState<Establishment[]>(initialEstablishments);
   const [showArchived, setShowArchived] = useState(false);
-  const [, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
 
   // Dialog states
   const [showCreateClassification, setShowCreateClassification] = useState(false);
   const [editingClassification, setEditingClassification] = useState<{ id: string; name: string } | null>(null);
+  const [archivingClassification, setArchivingClassification] = useState<{ id: string; name: string } | null>(null);
+  const [archivingCategory, setArchivingCategory] = useState<{ id: string; name: string } | null>(null);
+  const [archivingSubcategory, setArchivingSubcategory] = useState<{ id: string; name: string } | null>(null);
   const [mergingClassification, setMergingClassification] = useState<{ id: string; name: string } | null>(null);
   const [creatingCategoryForClassification, setCreatingCategoryForClassification] = useState<string | null>(null);
   const [editingCategory, setEditingCategory] = useState<{
@@ -297,6 +303,16 @@ export function CategoryTree({
                 refreshData();
               }}
               onCancel={() => setEditingClassification(null)}
+              onArchive={() => {
+                const cls = editingClassification;
+                setEditingClassification(null);
+                setArchivingClassification(cls);
+              }}
+              onMerge={() => {
+                const cls = editingClassification;
+                setEditingClassification(null);
+                setMergingClassification(cls);
+              }}
             />
           )}
         </DialogContent>
@@ -319,6 +335,108 @@ export function CategoryTree({
               onCancel={() => setMergingClassification(null)}
             />
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Archive Classification Confirm */}
+      <Dialog open={!!archivingClassification} onOpenChange={(open) => !open && setArchivingClassification(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Arquivar classificação</DialogTitle>
+            <DialogDescription>
+              A classificação &ldquo;{archivingClassification?.name}&rdquo; será arquivada. Ela poderá ser reativada depois.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose render={<Button variant="outline" />}>Cancelar</DialogClose>
+            <Button
+              variant="destructive"
+              disabled={isPending}
+              onClick={() => {
+                if (!archivingClassification) return;
+                startTransition(async () => {
+                  const result = await archiveClassificationAction({ id: archivingClassification.id });
+                  if (result.success) {
+                    toast.success(`Classificação "${archivingClassification.name}" arquivada.`);
+                    setArchivingClassification(null);
+                    refreshData();
+                  } else {
+                    toast.error(result.error.message);
+                  }
+                });
+              }}
+            >
+              {isPending ? 'Arquivando...' : 'Confirmar'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Archive Category Confirm */}
+      <Dialog open={!!archivingCategory} onOpenChange={(open) => !open && setArchivingCategory(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Arquivar categoria</DialogTitle>
+            <DialogDescription>
+              A categoria &ldquo;{archivingCategory?.name}&rdquo; será arquivada. Ela poderá ser reativada depois.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose render={<Button variant="outline" />}>Cancelar</DialogClose>
+            <Button
+              variant="destructive"
+              disabled={isPending}
+              onClick={() => {
+                if (!archivingCategory) return;
+                startTransition(async () => {
+                  const result = await archiveCategoryAction({ id: archivingCategory.id });
+                  if (result.success) {
+                    toast.success(`Categoria "${archivingCategory.name}" arquivada.`);
+                    setArchivingCategory(null);
+                    refreshData();
+                  } else {
+                    toast.error(result.error.message);
+                  }
+                });
+              }}
+            >
+              {isPending ? 'Arquivando...' : 'Confirmar'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Archive Subcategory Confirm */}
+      <Dialog open={!!archivingSubcategory} onOpenChange={(open) => !open && setArchivingSubcategory(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Arquivar subcategoria</DialogTitle>
+            <DialogDescription>
+              A subcategoria &ldquo;{archivingSubcategory?.name}&rdquo; será arquivada. Ela poderá ser reativada depois.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose render={<Button variant="outline" />}>Cancelar</DialogClose>
+            <Button
+              variant="destructive"
+              disabled={isPending}
+              onClick={() => {
+                if (!archivingSubcategory) return;
+                startTransition(async () => {
+                  const result = await archiveSubcategoryAction({ id: archivingSubcategory.id });
+                  if (result.success) {
+                    toast.success(`Subcategoria "${archivingSubcategory.name}" arquivada.`);
+                    setArchivingSubcategory(null);
+                    refreshData();
+                  } else {
+                    toast.error(result.error.message);
+                  }
+                });
+              }}
+            >
+              {isPending ? 'Arquivando...' : 'Confirmar'}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -363,6 +481,11 @@ export function CategoryTree({
                 refreshData();
               }}
               onCancel={() => setEditingCategory(null)}
+              onArchive={() => {
+                const cat = editingCategory;
+                setEditingCategory(null);
+                setArchivingCategory({ id: cat.id, name: cat.name });
+              }}
             />
           )}
         </DialogContent>
@@ -411,6 +534,11 @@ export function CategoryTree({
                 refreshData();
               }}
               onCancel={() => setEditingSubcategory(null)}
+              onArchive={() => {
+                const sub = editingSubcategory;
+                setEditingSubcategory(null);
+                setArchivingSubcategory({ id: sub.id, name: sub.name });
+              }}
             />
           )}
         </DialogContent>
@@ -485,7 +613,7 @@ export function CategoryTree({
                   subcategoriesByCategory={subcategoriesByCategory}
                   establishments={establishments}
                   onEditClassification={(c) => setEditingClassification({ id: c.id, name: c.name })}
-                  onMergeClassification={(c) => setMergingClassification({ id: c.id, name: c.name })}
+
                   onAddCategory={(classificationId) => setCreatingCategoryForClassification(classificationId)}
                   bankAccounts={bankAccounts}
                   creditCards={creditCards}
@@ -552,7 +680,7 @@ export function CategoryTree({
                       bankAccounts={bankAccounts}
                       creditCards={creditCards}
                       onEditClassification={(c) => setEditingClassification({ id: c.id, name: c.name })}
-                      onMergeClassification={(c) => setMergingClassification({ id: c.id, name: c.name })}
+    
                       onAddCategory={(classificationId) => setCreatingCategoryForClassification(classificationId)}
                       onEditCategory={(cat) =>
                         setEditingCategory({

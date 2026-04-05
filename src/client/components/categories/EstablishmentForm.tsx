@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
+import { Trash2 } from 'lucide-react';
 import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
@@ -14,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/client/components/ui/select';
+import { BankLogo } from '@/client/components/ui/bank-logo';
 import { CreditCardBrandBadge } from '@/client/components/ui/credit-card-brand-badge';
 import {
   createEstablishmentAction,
@@ -37,7 +39,6 @@ interface CreditCard {
   status: 'active' | 'archived';
 }
 
-type BudgetType = 'none' | 'fixed' | 'range';
 type PaymentType = 'none' | PaymentMethodType;
 
 interface EstablishmentFormProps {
@@ -60,18 +61,6 @@ interface EstablishmentFormProps {
   creditCards: CreditCard[];
   onSuccess?: () => void;
   onCancel?: () => void;
-}
-
-const BUDGET_TYPE_LABELS: Record<BudgetType, string> = {
-  none: 'Sem orçamento',
-  fixed: 'Valor fixo',
-  range: 'Faixa (min-max)',
-};
-
-function inferBudgetType(minCents: number | null, maxCents: number | null): BudgetType {
-  if (minCents == null) return 'none';
-  if (maxCents == null || maxCents === minCents) return 'fixed';
-  return 'range';
 }
 
 const PAYMENT_TYPE_OPTIONS: { value: PaymentType; label: string }[] = [
@@ -112,20 +101,18 @@ export function EstablishmentForm({
   const [paymentMethodId, setPaymentMethodId] = useState(
     defaultValues?.defaultPaymentMethodId ?? '',
   );
-  const [budgetType, setBudgetType] = useState<BudgetType>(
-    defaultValues ? inferBudgetType(defaultValues.budgetMinCents, defaultValues.budgetMaxCents) : 'none',
-  );
   const [budgetMinCents, setBudgetMinCents] = useState(defaultValues?.budgetMinCents ?? 0);
   const [budgetMaxCents, setBudgetMaxCents] = useState(defaultValues?.budgetMaxCents ?? 0);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const activeBankAccounts = bankAccounts.filter((a) => a.status === 'active');
   const activeCreditCards = creditCards.filter((c) => c.status === 'active');
 
-  const instrumentOptions: { id: string; label: string; brand?: string }[] = paymentType === 'credit'
+  const instrumentOptions: { id: string; label: string; brand?: string; bank?: string }[] = paymentType === 'credit'
     ? activeCreditCards.map((c) => ({ id: c.id, label: c.name, brand: c.brand }))
     : paymentType === 'debit' || paymentType === 'pix'
-      ? activeBankAccounts.map((a) => ({ id: a.id, label: `${a.bank} - ${a.name}` }))
+      ? activeBankAccounts.map((a) => ({ id: a.id, label: `${a.bank} - ${a.name}`, bank: a.bank }))
       : [];
 
   const selectedSubcategory = subcategories.find((s) => s.id === selectedSubcategoryId);
@@ -134,8 +121,8 @@ export function EstablishmentForm({
     e.preventDefault();
     setErrors({});
 
-    const budgetMinCentsValue = budgetType !== 'none' ? budgetMinCents : null;
-    const budgetMaxCentsValue = budgetType === 'range' ? budgetMaxCents : null;
+    const budgetMinCentsValue = budgetMinCents > 0 ? budgetMinCents : null;
+    const budgetMaxCentsValue = budgetMaxCents > 0 ? budgetMaxCents : null;
 
     const defaultPaymentMethodType = paymentType !== 'none' ? paymentType : null;
     const defaultPaymentMethodIdValue = paymentType !== 'none' && paymentMethodId ? paymentMethodId : null;
@@ -242,9 +229,12 @@ export function EstablishmentForm({
         </Select>
       </div>
 
-      {/* Metodo de pagamento padrao */}
+      {/* Método de pagamento padrão */}
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="est-payment-type">Metodo de pagamento padrao</Label>
+        <Label htmlFor="est-payment-type">
+          Método de pagamento padrão{' '}
+          <span className="font-normal text-muted-foreground">(aprendido do uso)</span>
+        </Label>
         <Select
           value={paymentType}
           onValueChange={(val) => {
@@ -272,7 +262,7 @@ export function EstablishmentForm({
       {paymentType !== 'none' && instrumentOptions.length > 0 && (
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="est-payment-instrument">
-            {paymentType === 'credit' ? 'Cartao' : 'Conta'}
+            {paymentType === 'credit' ? 'Cartão' : 'Conta'}
           </Label>
           <Select key={paymentType} value={paymentMethodId} onValueChange={(val) => setPaymentMethodId(val ?? '')}>
             <SelectTrigger className="w-full" id="est-payment-instrument">
@@ -284,6 +274,14 @@ export function EstablishmentForm({
                     return (
                       <span className="inline-flex items-center gap-1.5">
                         <CreditCardBrandBadge brand={selected.brand} />
+                        {selected.label}
+                      </span>
+                    );
+                  }
+                  if (selected.bank) {
+                    return (
+                      <span className="inline-flex items-center gap-1.5">
+                        <BankLogo bank={selected.bank} size="sm" />
                         {selected.label}
                       </span>
                     );
@@ -300,6 +298,11 @@ export function EstablishmentForm({
                       <CreditCardBrandBadge brand={opt.brand} />
                       {opt.label}
                     </span>
+                  ) : opt.bank ? (
+                    <span className="inline-flex items-center gap-1.5">
+                      <BankLogo bank={opt.bank} size="sm" />
+                      {opt.label}
+                    </span>
                   ) : (
                     opt.label
                   )}
@@ -313,68 +316,93 @@ export function EstablishmentForm({
       {paymentType !== 'none' && instrumentOptions.length === 0 && (
         <p className="text-xs text-muted-foreground">
           {paymentType === 'credit'
-            ? 'Nenhum cartao de credito ativo cadastrado.'
-            : 'Nenhuma conta bancaria ativa cadastrada.'}
+            ? 'Nenhum cartão de crédito ativo cadastrado.'
+            : 'Nenhuma conta bancária ativa cadastrada.'}
         </p>
       )}
 
-      {/* Orcamento */}
+      {/* Orçamento mensal */}
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="est-budget-type">Orcamento</Label>
-        <Select value={budgetType} onValueChange={(val) => { if (val) setBudgetType(val as BudgetType); }}>
-          <SelectTrigger className="w-full" id="est-budget-type">
-            <SelectValue>{BUDGET_TYPE_LABELS[budgetType]}</SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            {Object.entries(BUDGET_TYPE_LABELS).map(([value, label]) => (
-              <SelectItem key={value} value={value}>
-                {label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {budgetType === 'fixed' && (
-        <CurrencyInput
-          value={budgetMinCents}
-          onChange={setBudgetMinCents}
-          label="Valor"
-          id="est-budget-fixed"
-          error={errors.budgetMinCents}
-        />
-      )}
-
-      {budgetType === 'range' && (
+        <Label>
+          Orçamento mensal{' '}
+          <span className="font-normal text-muted-foreground">(opcional)</span>
+        </Label>
         <div className="grid grid-cols-2 gap-3">
           <CurrencyInput
             value={budgetMinCents}
             onChange={setBudgetMinCents}
-            label="Minimo"
+            label="Mínimo"
             id="est-budget-min"
             error={errors.budgetMinCents}
           />
           <CurrencyInput
             value={budgetMaxCents}
             onChange={setBudgetMaxCents}
-            label="Maximo"
+            label="Máximo"
             id="est-budget-max"
             error={errors.budgetMaxCents}
           />
         </div>
-      )}
+      </div>
 
       {/* Info de visitas (somente edit) */}
       {mode === 'edit' && defaultValues && (
-        <div className="rounded-lg border border-border bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
+        <div className="rounded-lg bg-muted px-4 py-3 text-sm text-muted-foreground">
           {defaultValues.visitCount > 0
-            ? `${defaultValues.visitCount} visita${defaultValues.visitCount > 1 ? 's' : ''}${defaultValues.lastVisitAt ? ` · ultimo uso ${formatLastVisit(defaultValues.lastVisitAt)}` : ''}`
+            ? `${defaultValues.visitCount} visita${defaultValues.visitCount > 1 ? 's' : ''}${defaultValues.lastVisitAt ? ` · último uso ${formatLastVisit(defaultValues.lastVisitAt)}` : ''}`
             : 'Nenhuma visita registrada'}
         </div>
       )}
 
-      {/* Botoes */}
+      {/* AÇÕES — somente em edit mode */}
+      {mode === 'edit' && defaultValues && (
+        <div className="border-t border-destructive/30 pt-4 mt-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-destructive mb-2">Ações</p>
+          <button
+            type="button"
+            className="flex w-full items-center gap-3 rounded-card border border-border p-3 text-left transition-colors hover:bg-muted/50"
+            onClick={() => setShowDeleteConfirm(true)}
+          >
+            <Trash2 className="size-5 shrink-0 text-muted-foreground" />
+            <div>
+              <p className="text-sm font-medium">Excluir</p>
+              <p className="text-xs text-muted-foreground">Remove o estabelecimento — o histórico de transações é mantido</p>
+            </div>
+          </button>
+        </div>
+      )}
+
+      {/* Confirmação de exclusão */}
+      {showDeleteConfirm && (
+        <div className="rounded-card border border-destructive/30 bg-destructive/5 p-3">
+          <p className="text-sm text-destructive font-medium mb-2">Confirmar exclusão?</p>
+          <p className="text-xs text-muted-foreground mb-3">
+            O estabelecimento &ldquo;{defaultValues?.name}&rdquo; será removido permanentemente.
+          </p>
+          <div className="flex gap-2 justify-end">
+            <Button type="button" variant="outline" size="sm" onClick={() => setShowDeleteConfirm(false)}>
+              Cancelar
+            </Button>
+            <Button type="button" variant="destructive" size="sm" onClick={handleDelete} disabled={isPending}>
+              {isPending ? 'Excluindo...' : 'Confirmar'}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Botões */}
       <div className="flex gap-2 justify-end">
+        {mode === 'edit' && defaultValues && (
+          <Button
+            type="button"
+            variant="outline"
+            className="text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive mr-auto"
+            onClick={() => setShowDeleteConfirm(true)}
+            disabled={isPending}
+          >
+            Excluir
+          </Button>
+        )}
         {onCancel && (
           <Button type="button" variant="outline" onClick={onCancel} disabled={isPending}>
             Cancelar
@@ -387,21 +415,6 @@ export function EstablishmentForm({
           {isPending ? 'Salvando...' : mode === 'create' ? 'Criar' : 'Salvar'}
         </Button>
       </div>
-
-      {/* Danger zone — excluir (somente edit) */}
-      {mode === 'edit' && defaultValues && (
-        <div className="border-t border-border pt-4">
-          <Button
-            type="button"
-            variant="ghost"
-            className="text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
-            onClick={handleDelete}
-            disabled={isPending}
-          >
-            Excluir estabelecimento
-          </Button>
-        </div>
-      )}
     </form>
   );
 }

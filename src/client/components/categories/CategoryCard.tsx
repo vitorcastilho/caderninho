@@ -8,22 +8,11 @@ import { cn } from '@/client/utils/utils';
 import { BankLogo } from '@/client/components/ui/bank-logo';
 import { Button } from '@/client/components/ui/button';
 import { CreditCardBrandBadge } from '@/client/components/ui/credit-card-brand-badge';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogClose,
-} from '@/client/components/ui/dialog';
 import { formatCurrency } from '@/client/utils/format-currency';
 import {
-  archiveCategoryAction,
   reactivateCategoryAction,
 } from '@/server/actions/category.actions';
 import {
-  archiveSubcategoryAction,
   reactivateSubcategoryAction,
 } from '@/server/actions/subcategory.actions';
 import { EstablishmentRow } from './EstablishmentRow';
@@ -141,7 +130,6 @@ export function CategoryCard({
 }: CategoryCardProps) {
   const [expanded, setExpanded] = useState(true);
   const [expandedSubs, setExpandedSubs] = useState<Set<string>>(new Set());
-  const [showArchiveDialog, setShowArchiveDialog] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   function toggleSubExpand(subId: string) {
@@ -166,36 +154,11 @@ export function CategoryCard({
     creditCards,
   );
 
-  function handleArchiveCategory() {
-    startTransition(async () => {
-      const result = await archiveCategoryAction({ id: category.id });
-      if (result.success) {
-        toast.success(`Categoria "${category.name}" arquivada.`);
-        setShowArchiveDialog(false);
-        onStatusChange();
-      } else {
-        toast.error(result.error.message);
-      }
-    });
-  }
-
   function handleReactivateCategory() {
     startTransition(async () => {
       const result = await reactivateCategoryAction({ id: category.id });
       if (result.success) {
         toast.success(`Categoria "${category.name}" reativada.`);
-        onStatusChange();
-      } else {
-        toast.error(result.error.message);
-      }
-    });
-  }
-
-  function handleArchiveSubcategory(sub: Subcategory) {
-    startTransition(async () => {
-      const result = await archiveSubcategoryAction({ id: sub.id });
-      if (result.success) {
-        toast.success(`Subcategoria "${sub.name}" arquivada.`);
         onStatusChange();
       } else {
         toast.error(result.error.message);
@@ -289,25 +252,6 @@ export function CategoryCard({
           )}
         </div>
       </div>
-
-      {/* Archive Confirmation Dialog */}
-      <Dialog open={showArchiveDialog} onOpenChange={setShowArchiveDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Arquivar categoria</DialogTitle>
-            <DialogDescription>
-              A categoria &ldquo;{category.name}&rdquo; será arquivada. Ela poderá ser reativada
-              depois.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <DialogClose render={<Button variant="outline" />}>Cancelar</DialogClose>
-            <Button variant="destructive" onClick={handleArchiveCategory} disabled={isPending}>
-              {isPending ? 'Arquivando...' : 'Confirmar'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Subcategories — Level 3 do padrão "Lista Colapsável" do DS */}
       {expanded && (
@@ -409,7 +353,7 @@ export function CategoryCard({
                       <Button
                         variant="ghost"
                         size="xs"
-                        className="h-6 text-xs opacity-0 group-hover/sub:opacity-100 transition-opacity"
+                        className="h-6 text-xs"
                         onClick={() => handleReactivateSubcategory(sub)}
                         disabled={isPending}
                       >
