@@ -40,7 +40,7 @@ const deps = {
 };
 
 const activeCategory = {
-  id: 'cat-1', name: 'Moradia', classificationId: 'class-1',
+  id: 'cat-1', name: 'Moradia', emoji: '📁', classificationId: 'class-1',
   budgetMinCents: 220000, budgetMaxCents: null,
   defaultPaymentMethodType: null, defaultPaymentMethodId: null,
   status: 'active' as const,
@@ -48,7 +48,7 @@ const activeCategory = {
 };
 
 const sampleSubcategory = {
-  id: expect.any(String), name: 'Aluguel', categoryId: 'cat-1',
+  id: expect.any(String), name: 'Aluguel', emoji: '📋', categoryId: 'cat-1',
   defaultPaymentMethodType: null, defaultPaymentMethodId: null,
   status: 'active' as const, organizationId: 'org-123',
   createdAt: new Date(), updatedAt: new Date(),
@@ -112,7 +112,7 @@ describe('createSubcategory', () => {
     const subcategoryWithPayment = {
       ...sampleSubcategory,
       id: 'sub-1',
-      defaultPaymentMethodType: 'credit_card',
+      defaultPaymentMethodType: 'credit',
       defaultPaymentMethodId: 'card-1',
     };
     vi.mocked(mockRepository.create).mockResolvedValue(subcategoryWithPayment);
@@ -124,13 +124,13 @@ describe('createSubcategory', () => {
 
     const result = await createSubcategory(deps, {
       name: 'Aluguel', categoryId: 'cat-1',
-      defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-1',
+      defaultPaymentMethodType: 'credit', defaultPaymentMethodId: 'card-1',
       organizationId: 'org-123', userId: 'user-1',
     });
 
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.defaultPaymentMethodType).toBe('credit_card');
+      expect(result.data.defaultPaymentMethodType).toBe('credit');
       expect(result.data.defaultPaymentMethodId).toBe('card-1');
     }
   });
@@ -174,7 +174,7 @@ describe('createSubcategory', () => {
 
     const result = await createSubcategory(deps, {
       name: 'Aluguel', categoryId: 'cat-1',
-      defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-999',
+      defaultPaymentMethodType: 'credit', defaultPaymentMethodId: 'card-999',
       organizationId: 'org-123', userId: 'user-1',
     });
 
@@ -191,7 +191,7 @@ describe('createSubcategory', () => {
 
     const result = await createSubcategory(deps, {
       name: 'Aluguel', categoryId: 'cat-1',
-      defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-1',
+      defaultPaymentMethodType: 'credit', defaultPaymentMethodId: 'card-1',
       organizationId: 'org-123', userId: 'user-1',
     });
 

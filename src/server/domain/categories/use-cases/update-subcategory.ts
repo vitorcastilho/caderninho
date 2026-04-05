@@ -11,6 +11,7 @@ interface UpdateSubcategoryParams {
   userId: string;
   data: Partial<{
     name: string;
+    emoji: string;
     defaultPaymentMethodType: string | null;
     defaultPaymentMethodId: string | null;
   }>;
@@ -31,7 +32,7 @@ export async function updateSubcategory(
   }
 
   if (params.data.defaultPaymentMethodType && params.data.defaultPaymentMethodId) {
-    if (params.data.defaultPaymentMethodType === 'credit_card') {
+    if (params.data.defaultPaymentMethodType === 'credit') {
       const card = await deps.creditCardRepository.findById(
         params.data.defaultPaymentMethodId, params.organizationId,
       );

@@ -7,6 +7,7 @@ import { categories } from './categories';
 export const subcategories = pgTable('subcategories', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
+  emoji: text('emoji').notNull().default('📋'),
   categoryId: text('category_id')
     .notNull()
     .references(() => categories.id),

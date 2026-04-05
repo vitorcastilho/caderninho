@@ -13,15 +13,20 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
 } from '@/client/components/ui/dialog';
 import { ClassificationSection } from './ClassificationSection';
 import { ClassificationForm } from './ClassificationForm';
 import { ClassificationMergeDialog } from './ClassificationMergeDialog';
 import { CategoryForm } from './CategoryForm';
 import { SubcategoryForm } from './SubcategoryForm';
-import { listClassificationsAction } from '@/server/actions/classification.actions';
-import { listCategoriesAction } from '@/server/actions/category.actions';
-import { listSubcategoriesAction } from '@/server/actions/subcategory.actions';
+import { EstablishmentForm } from './EstablishmentForm';
+import { listClassificationsAction, archiveClassificationAction } from '@/server/actions/classification.actions';
+import { listCategoriesAction, archiveCategoryAction } from '@/server/actions/category.actions';
+import { listSubcategoriesAction, archiveSubcategoryAction } from '@/server/actions/subcategory.actions';
+import { listEstablishmentsBySubcategoryAction } from '@/server/actions/establishment.actions';
 
 interface Classification {
   id: string;
@@ -34,6 +39,7 @@ interface Classification {
 interface Category {
   id: string;
   name: string;
+  emoji: string;
   classificationId: string;
   budgetMinCents: number | null;
   budgetMaxCents: number | null;
@@ -45,6 +51,7 @@ interface Category {
 interface Subcategory {
   id: string;
   name: string;
+  emoji: string;
   categoryId: string;
   defaultPaymentMethodType: string | null;
   defaultPaymentMethodId: string | null;
@@ -65,10 +72,26 @@ interface CreditCard {
   status: 'active' | 'archived';
 }
 
+interface Establishment {
+  id: string;
+  name: string;
+  emoji: string;
+  subcategoryId: string;
+  source: 'auto' | 'manual';
+  defaultPaymentMethodType: string | null;
+  defaultPaymentMethodId: string | null;
+  budgetMinCents: number | null;
+  budgetMaxCents: number | null;
+  visitCount: number;
+  lastVisitAt: string | null;
+  status: 'active' | 'archived';
+}
+
 interface CategoryTreeProps {
   initialClassifications: Classification[];
   initialCategories: Category[];
   initialSubcategories: Subcategory[];
+  initialEstablishments: Establishment[];
   bankAccounts: BankAccount[];
   creditCards: CreditCard[];
 }
@@ -77,23 +100,29 @@ export function CategoryTree({
   initialClassifications,
   initialCategories,
   initialSubcategories,
+  initialEstablishments,
   bankAccounts,
   creditCards,
 }: CategoryTreeProps) {
   const [classifications, setClassifications] = useState<Classification[]>(initialClassifications);
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [subcategories, setSubcategories] = useState<Subcategory[]>(initialSubcategories);
+  const [establishments, setEstablishments] = useState<Establishment[]>(initialEstablishments);
   const [showArchived, setShowArchived] = useState(false);
-  const [, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
 
   // Dialog states
   const [showCreateClassification, setShowCreateClassification] = useState(false);
   const [editingClassification, setEditingClassification] = useState<{ id: string; name: string } | null>(null);
+  const [archivingClassification, setArchivingClassification] = useState<{ id: string; name: string } | null>(null);
+  const [archivingCategory, setArchivingCategory] = useState<{ id: string; name: string } | null>(null);
+  const [archivingSubcategory, setArchivingSubcategory] = useState<{ id: string; name: string } | null>(null);
   const [mergingClassification, setMergingClassification] = useState<{ id: string; name: string } | null>(null);
   const [creatingCategoryForClassification, setCreatingCategoryForClassification] = useState<string | null>(null);
   const [editingCategory, setEditingCategory] = useState<{
     id: string;
     name: string;
+    emoji: string;
     classificationId: string;
     budgetMinCents: number | null;
     budgetMaxCents: number | null;
@@ -104,9 +133,23 @@ export function CategoryTree({
   const [editingSubcategory, setEditingSubcategory] = useState<{
     id: string;
     name: string;
+    emoji: string;
     categoryId: string;
     defaultPaymentMethodType: string | null;
     defaultPaymentMethodId: string | null;
+  } | null>(null);
+  const [creatingEstablishmentForSubcategory, setCreatingEstablishmentForSubcategory] = useState<string | null>(null);
+  const [editingEstablishment, setEditingEstablishment] = useState<{
+    id: string;
+    name: string;
+    emoji: string;
+    subcategoryId: string;
+    defaultPaymentMethodType: string | null;
+    defaultPaymentMethodId: string | null;
+    budgetMinCents: number | null;
+    budgetMaxCents: number | null;
+    visitCount: number;
+    lastVisitAt: string | null;
   } | null>(null);
 
   const refreshData = useCallback(() => {
@@ -118,7 +161,32 @@ export function CategoryTree({
       ]);
       if (classResult.success) setClassifications(classResult.data);
       if (catResult.success) setCategories(catResult.data);
-      if (subResult.success) setSubcategories(subResult.data);
+      if (subResult.success) {
+        setSubcategories(subResult.data);
+        // Buscar establishments de todas as subcategorias ativas
+        const activeSubs = subResult.data.filter((s: { status: string }) => s.status === 'active');
+        const estResults = await Promise.all(
+          activeSubs.map((s: { id: string }) => listEstablishmentsBySubcategoryAction({ subcategoryId: s.id })),
+        );
+        const allEstablishments = estResults
+          .filter((r) => r.success)
+          .flatMap((r) => (r.success ? r.data : []))
+          .map((e: Record<string, unknown>) => ({
+            id: e.id as string,
+            name: e.name as string,
+            emoji: e.emoji as string,
+            subcategoryId: e.subcategoryId as string,
+            source: e.source as 'auto' | 'manual',
+            defaultPaymentMethodType: (e.defaultPaymentMethodType as string) ?? null,
+            defaultPaymentMethodId: (e.defaultPaymentMethodId as string) ?? null,
+            budgetMinCents: (e.budgetMinCents as number) ?? null,
+            budgetMaxCents: (e.budgetMaxCents as number) ?? null,
+            visitCount: e.visitCount as number,
+            lastVisitAt: e.lastVisitAt ? String(e.lastVisitAt) : null,
+            status: e.status as 'active' | 'archived',
+          }));
+        setEstablishments(allEstablishments);
+      }
       if (!classResult.success || !catResult.success || !subResult.success) {
         toast.error('Erro ao atualizar dados.');
       }
@@ -165,7 +233,7 @@ export function CategoryTree({
         />
         <PageHeader
           title="Categorias"
-          description="Organize seus gastos em uma hierarquia: classificação → categoria → subcategoria"
+          description="Organize seus gastos em uma hierarquia: classificação → categoria → subcategoria → estabelecimento"
         >
           <Button onClick={() => setShowCreateClassification(true)}>
             + Nova classificação
@@ -235,6 +303,16 @@ export function CategoryTree({
                 refreshData();
               }}
               onCancel={() => setEditingClassification(null)}
+              onArchive={() => {
+                const cls = editingClassification;
+                setEditingClassification(null);
+                setArchivingClassification(cls);
+              }}
+              onMerge={() => {
+                const cls = editingClassification;
+                setEditingClassification(null);
+                setMergingClassification(cls);
+              }}
             />
           )}
         </DialogContent>
@@ -257,6 +335,108 @@ export function CategoryTree({
               onCancel={() => setMergingClassification(null)}
             />
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Archive Classification Confirm */}
+      <Dialog open={!!archivingClassification} onOpenChange={(open) => !open && setArchivingClassification(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Arquivar classificação</DialogTitle>
+            <DialogDescription>
+              A classificação &ldquo;{archivingClassification?.name}&rdquo; será arquivada. Ela poderá ser reativada depois.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose render={<Button variant="outline" />}>Cancelar</DialogClose>
+            <Button
+              variant="destructive"
+              disabled={isPending}
+              onClick={() => {
+                if (!archivingClassification) return;
+                startTransition(async () => {
+                  const result = await archiveClassificationAction({ id: archivingClassification.id });
+                  if (result.success) {
+                    toast.success(`Classificação "${archivingClassification.name}" arquivada.`);
+                    setArchivingClassification(null);
+                    refreshData();
+                  } else {
+                    toast.error(result.error.message);
+                  }
+                });
+              }}
+            >
+              {isPending ? 'Arquivando...' : 'Confirmar'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Archive Category Confirm */}
+      <Dialog open={!!archivingCategory} onOpenChange={(open) => !open && setArchivingCategory(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Arquivar categoria</DialogTitle>
+            <DialogDescription>
+              A categoria &ldquo;{archivingCategory?.name}&rdquo; será arquivada. Ela poderá ser reativada depois.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose render={<Button variant="outline" />}>Cancelar</DialogClose>
+            <Button
+              variant="destructive"
+              disabled={isPending}
+              onClick={() => {
+                if (!archivingCategory) return;
+                startTransition(async () => {
+                  const result = await archiveCategoryAction({ id: archivingCategory.id });
+                  if (result.success) {
+                    toast.success(`Categoria "${archivingCategory.name}" arquivada.`);
+                    setArchivingCategory(null);
+                    refreshData();
+                  } else {
+                    toast.error(result.error.message);
+                  }
+                });
+              }}
+            >
+              {isPending ? 'Arquivando...' : 'Confirmar'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Archive Subcategory Confirm */}
+      <Dialog open={!!archivingSubcategory} onOpenChange={(open) => !open && setArchivingSubcategory(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Arquivar subcategoria</DialogTitle>
+            <DialogDescription>
+              A subcategoria &ldquo;{archivingSubcategory?.name}&rdquo; será arquivada. Ela poderá ser reativada depois.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose render={<Button variant="outline" />}>Cancelar</DialogClose>
+            <Button
+              variant="destructive"
+              disabled={isPending}
+              onClick={() => {
+                if (!archivingSubcategory) return;
+                startTransition(async () => {
+                  const result = await archiveSubcategoryAction({ id: archivingSubcategory.id });
+                  if (result.success) {
+                    toast.success(`Subcategoria "${archivingSubcategory.name}" arquivada.`);
+                    setArchivingSubcategory(null);
+                    refreshData();
+                  } else {
+                    toast.error(result.error.message);
+                  }
+                });
+              }}
+            >
+              {isPending ? 'Arquivando...' : 'Confirmar'}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -301,6 +481,11 @@ export function CategoryTree({
                 refreshData();
               }}
               onCancel={() => setEditingCategory(null)}
+              onArchive={() => {
+                const cat = editingCategory;
+                setEditingCategory(null);
+                setArchivingCategory({ id: cat.id, name: cat.name });
+              }}
             />
           )}
         </DialogContent>
@@ -349,6 +534,57 @@ export function CategoryTree({
                 refreshData();
               }}
               onCancel={() => setEditingSubcategory(null)}
+              onArchive={() => {
+                const sub = editingSubcategory;
+                setEditingSubcategory(null);
+                setArchivingSubcategory({ id: sub.id, name: sub.name });
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Establishment Dialog */}
+      <Dialog open={!!creatingEstablishmentForSubcategory} onOpenChange={(open) => !open && setCreatingEstablishmentForSubcategory(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Novo Estabelecimento</DialogTitle>
+          </DialogHeader>
+          {creatingEstablishmentForSubcategory && (
+            <EstablishmentForm
+              mode="create"
+              subcategoryId={creatingEstablishmentForSubcategory}
+              subcategories={subcategories.filter((s) => s.status === 'active').map((s) => ({ id: s.id, name: s.name }))}
+              bankAccounts={bankAccounts}
+              creditCards={creditCards}
+              onSuccess={() => {
+                setCreatingEstablishmentForSubcategory(null);
+                refreshData();
+              }}
+              onCancel={() => setCreatingEstablishmentForSubcategory(null)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Establishment Dialog */}
+      <Dialog open={!!editingEstablishment} onOpenChange={(open) => !open && setEditingEstablishment(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Editar Estabelecimento</DialogTitle>
+          </DialogHeader>
+          {editingEstablishment && (
+            <EstablishmentForm
+              mode="edit"
+              defaultValues={editingEstablishment}
+              subcategories={subcategories.filter((s) => s.status === 'active').map((s) => ({ id: s.id, name: s.name }))}
+              bankAccounts={bankAccounts}
+              creditCards={creditCards}
+              onSuccess={() => {
+                setEditingEstablishment(null);
+                refreshData();
+              }}
+              onCancel={() => setEditingEstablishment(null)}
             />
           )}
         </DialogContent>
@@ -375,8 +611,9 @@ export function CategoryTree({
                   classification={classification}
                   categories={categoriesByClassification.get(classification.id) ?? []}
                   subcategoriesByCategory={subcategoriesByCategory}
+                  establishments={establishments}
                   onEditClassification={(c) => setEditingClassification({ id: c.id, name: c.name })}
-                  onMergeClassification={(c) => setMergingClassification({ id: c.id, name: c.name })}
+
                   onAddCategory={(classificationId) => setCreatingCategoryForClassification(classificationId)}
                   bankAccounts={bankAccounts}
                   creditCards={creditCards}
@@ -384,6 +621,7 @@ export function CategoryTree({
                     setEditingCategory({
                       id: cat.id,
                       name: cat.name,
+                      emoji: cat.emoji,
                       classificationId: cat.classificationId,
                       budgetMinCents: cat.budgetMinCents,
                       budgetMaxCents: cat.budgetMaxCents,
@@ -395,9 +633,23 @@ export function CategoryTree({
                   onEditSubcategory={(sub) => setEditingSubcategory({
                       id: sub.id,
                       name: sub.name,
+                      emoji: sub.emoji,
                       categoryId: sub.categoryId,
                       defaultPaymentMethodType: sub.defaultPaymentMethodType,
                       defaultPaymentMethodId: sub.defaultPaymentMethodId,
+                    })}
+                  onAddEstablishment={(subcategoryId) => setCreatingEstablishmentForSubcategory(subcategoryId)}
+                  onEditEstablishment={(est) => setEditingEstablishment({
+                      id: est.id,
+                      name: est.name,
+                      emoji: est.emoji,
+                      subcategoryId: est.subcategoryId,
+                      defaultPaymentMethodType: est.defaultPaymentMethodType,
+                      defaultPaymentMethodId: est.defaultPaymentMethodId,
+                      budgetMinCents: est.budgetMinCents,
+                      budgetMaxCents: est.budgetMaxCents,
+                      visitCount: est.visitCount,
+                      lastVisitAt: est.lastVisitAt,
                     })}
                   onStatusChange={refreshData}
                 />
@@ -424,15 +676,17 @@ export function CategoryTree({
                       classification={classification}
                       categories={categoriesByClassification.get(classification.id) ?? []}
                       subcategoriesByCategory={subcategoriesByCategory}
+                      establishments={establishments}
                       bankAccounts={bankAccounts}
                       creditCards={creditCards}
                       onEditClassification={(c) => setEditingClassification({ id: c.id, name: c.name })}
-                      onMergeClassification={(c) => setMergingClassification({ id: c.id, name: c.name })}
+    
                       onAddCategory={(classificationId) => setCreatingCategoryForClassification(classificationId)}
                       onEditCategory={(cat) =>
                         setEditingCategory({
                           id: cat.id,
                           name: cat.name,
+                          emoji: cat.emoji,
                           classificationId: cat.classificationId,
                           budgetMinCents: cat.budgetMinCents,
                           budgetMaxCents: cat.budgetMaxCents,
@@ -444,9 +698,23 @@ export function CategoryTree({
                       onEditSubcategory={(sub) => setEditingSubcategory({
                       id: sub.id,
                       name: sub.name,
+                      emoji: sub.emoji,
                       categoryId: sub.categoryId,
                       defaultPaymentMethodType: sub.defaultPaymentMethodType,
                       defaultPaymentMethodId: sub.defaultPaymentMethodId,
+                    })}
+                      onAddEstablishment={(subcategoryId) => setCreatingEstablishmentForSubcategory(subcategoryId)}
+                      onEditEstablishment={(est) => setEditingEstablishment({
+                      id: est.id,
+                      name: est.name,
+                      emoji: est.emoji,
+                      subcategoryId: est.subcategoryId,
+                      defaultPaymentMethodType: est.defaultPaymentMethodType,
+                      defaultPaymentMethodId: est.defaultPaymentMethodId,
+                      budgetMinCents: est.budgetMinCents,
+                      budgetMaxCents: est.budgetMaxCents,
+                      visitCount: est.visitCount,
+                      lastVisitAt: est.lastVisitAt,
                     })}
                       onStatusChange={refreshData}
                     />

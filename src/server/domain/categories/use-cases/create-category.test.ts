@@ -59,7 +59,7 @@ const activeClassification = {
 };
 
 const sampleCategory = {
-  id: expect.any(String), name: 'Moradia', classificationId: 'class-1',
+  id: expect.any(String), name: 'Moradia', emoji: '📁', classificationId: 'class-1',
   budgetMinCents: 220000, budgetMaxCents: null,
   defaultPaymentMethodType: null, defaultPaymentMethodId: null,
   status: 'active' as const,
@@ -123,7 +123,7 @@ describe('createCategory', () => {
   it('should create category with credit card payment method', async () => {
     const categoryWithPayment = {
       ...sampleCategory,
-      defaultPaymentMethodType: 'credit_card',
+      defaultPaymentMethodType: 'credit',
       defaultPaymentMethodId: 'card-1',
     };
     vi.mocked(mockRepository.create).mockResolvedValue(categoryWithPayment);
@@ -135,13 +135,13 @@ describe('createCategory', () => {
 
     const result = await createCategory(deps, {
       name: 'Moradia', classificationId: 'class-1', budgetMinCents: null, budgetMaxCents: null,
-      defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-1',
+      defaultPaymentMethodType: 'credit', defaultPaymentMethodId: 'card-1',
       organizationId: 'org-123', userId: 'user-1',
     });
 
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.defaultPaymentMethodType).toBe('credit_card');
+      expect(result.data.defaultPaymentMethodType).toBe('credit');
       expect(result.data.defaultPaymentMethodId).toBe('card-1');
     }
   });
@@ -172,7 +172,7 @@ describe('createCategory', () => {
 
     const result = await createCategory(deps, {
       name: 'Moradia', classificationId: 'class-1', budgetMinCents: null, budgetMaxCents: null,
-      defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-999',
+      defaultPaymentMethodType: 'credit', defaultPaymentMethodId: 'card-999',
       organizationId: 'org-123', userId: 'user-1',
     });
 
@@ -189,7 +189,7 @@ describe('createCategory', () => {
 
     const result = await createCategory(deps, {
       name: 'Moradia', classificationId: 'class-1', budgetMinCents: null, budgetMaxCents: null,
-      defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-1',
+      defaultPaymentMethodType: 'credit', defaultPaymentMethodId: 'card-1',
       organizationId: 'org-123', userId: 'user-1',
     });
 
@@ -229,7 +229,7 @@ describe('createCategory', () => {
   it('should include payment method fields in audit log', async () => {
     const categoryWithPayment = {
       ...sampleCategory,
-      defaultPaymentMethodType: 'credit_card',
+      defaultPaymentMethodType: 'credit',
       defaultPaymentMethodId: 'card-1',
     };
     vi.mocked(mockRepository.create).mockResolvedValue(categoryWithPayment);
@@ -241,13 +241,13 @@ describe('createCategory', () => {
 
     await createCategory(deps, {
       name: 'Moradia', classificationId: 'class-1', budgetMinCents: null, budgetMaxCents: null,
-      defaultPaymentMethodType: 'credit_card', defaultPaymentMethodId: 'card-1',
+      defaultPaymentMethodType: 'credit', defaultPaymentMethodId: 'card-1',
       organizationId: 'org-123', userId: 'user-1',
     });
 
     expect(mockAuditLogger).toHaveBeenCalledWith(expect.objectContaining({
       newValue: expect.objectContaining({
-        defaultPaymentMethodType: 'credit_card',
+        defaultPaymentMethodType: 'credit',
         defaultPaymentMethodId: 'card-1',
       }),
     }));

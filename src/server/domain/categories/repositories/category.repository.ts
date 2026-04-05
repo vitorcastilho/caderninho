@@ -1,6 +1,7 @@
 export type Category = {
   id: string;
   name: string;
+  emoji: string;
   classificationId: string;
   budgetMinCents: number | null;
   budgetMaxCents: number | null;
@@ -16,6 +17,7 @@ export interface CategoryRepository {
   create(data: {
     id: string;
     name: string;
+    emoji?: string;
     classificationId: string;
     budgetMinCents: number | null;
     budgetMaxCents: number | null;
@@ -47,6 +49,7 @@ export interface CategoryRepository {
     organizationId: string,
     data: Partial<{
       name: string;
+      emoji: string;
       classificationId: string;
       budgetMinCents: number | null;
       budgetMaxCents: number | null;

@@ -2,23 +2,13 @@
 
 import { useState, useTransition, useMemo } from 'react';
 import { toast } from 'sonner';
-import { ChevronDown, Settings } from 'lucide-react';
+import { ChevronDown, Plus, Pencil } from 'lucide-react';
 import { cn } from '@/client/utils/utils';
 
 import { Button } from '@/client/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogClose,
-} from '@/client/components/ui/dialog';
 import { CategoryCard } from './CategoryCard';
 import { formatCurrency } from '@/client/utils/format-currency';
 import {
-  archiveClassificationAction,
   reactivateClassificationAction,
 } from '@/server/actions/classification.actions';
 
@@ -33,6 +23,7 @@ interface Classification {
 interface Category {
   id: string;
   name: string;
+  emoji: string;
   classificationId: string;
   budgetMinCents: number | null;
   budgetMaxCents: number | null;
@@ -44,6 +35,7 @@ interface Category {
 interface Subcategory {
   id: string;
   name: string;
+  emoji: string;
   categoryId: string;
   defaultPaymentMethodType: string | null;
   defaultPaymentMethodId: string | null;
@@ -64,18 +56,35 @@ interface CreditCard {
   status: 'active' | 'archived';
 }
 
+interface Establishment {
+  id: string;
+  name: string;
+  emoji: string;
+  subcategoryId: string;
+  source: 'auto' | 'manual';
+  defaultPaymentMethodType: string | null;
+  defaultPaymentMethodId: string | null;
+  budgetMinCents: number | null;
+  budgetMaxCents: number | null;
+  visitCount: number;
+  lastVisitAt: string | null;
+  status: 'active' | 'archived';
+}
+
 interface ClassificationSectionProps {
   classification: Classification;
   categories: Category[];
   subcategoriesByCategory: Map<string, Subcategory[]>;
+  establishments: Establishment[];
   bankAccounts: BankAccount[];
   creditCards: CreditCard[];
   onEditClassification: (classification: Classification) => void;
-  onMergeClassification: (classification: Classification) => void;
   onAddCategory: (classificationId: string) => void;
   onEditCategory: (category: Category) => void;
   onAddSubcategory: (categoryId: string) => void;
   onEditSubcategory: (subcategory: Subcategory) => void;
+  onAddEstablishment: (subcategoryId: string) => void;
+  onEditEstablishment: (establishment: Establishment) => void;
   onStatusChange: () => void;
 }
 
@@ -111,19 +120,19 @@ export function ClassificationSection({
   classification,
   categories,
   subcategoriesByCategory,
+  establishments,
   bankAccounts,
   creditCards,
   onEditClassification,
-  onMergeClassification,
   onAddCategory,
   onEditCategory,
   onAddSubcategory,
   onEditSubcategory,
+  onAddEstablishment,
+  onEditEstablishment,
   onStatusChange,
 }: ClassificationSectionProps) {
   const [expanded, setExpanded] = useState(true);
-  const [showMenu, setShowMenu] = useState(false);
-  const [showArchiveDialog, setShowArchiveDialog] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const activeCategories = categories.filter((c) => c.status === 'active');
@@ -132,19 +141,6 @@ export function ClassificationSection({
 
   const budgetTotal = useMemo(() => computeBudgetTotal(categories), [categories]);
   const hint = CLASSIFICATION_HINTS[classification.name];
-
-  function handleArchive() {
-    startTransition(async () => {
-      const result = await archiveClassificationAction({ id: classification.id });
-      if (result.success) {
-        toast.success(`Classificação "${classification.name}" arquivada.`);
-        setShowArchiveDialog(false);
-        onStatusChange();
-      } else {
-        toast.error(result.error.message);
-      }
-    });
-  }
 
   function handleReactivate() {
     startTransition(async () => {
@@ -177,6 +173,7 @@ export function ClassificationSection({
           )}
         />
 
+        <span className="shrink-0 text-sm">📊</span>
         <span className="flex-1 text-sm font-semibold">
           {classification.name}
         </span>
@@ -192,109 +189,42 @@ export function ClassificationSection({
           {classification.activeCategoryCount === 1 ? 'categoria' : 'categorias'}
         </span>
 
-        {classification.status === 'active' && (
-          <Button
-            variant="secondary"
-            size="xs"
-            onClick={(e) => {
-              e.stopPropagation();
-              onAddCategory(classification.id);
-            }}
-          >
-            + Categoria
-          </Button>
-        )}
-
-        <div className="relative" onClick={(e) => e.stopPropagation()}>
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            onClick={() => setShowMenu(!showMenu)}
-            title="Opções da classificação"
-          >
-            <Settings className="size-4" />
-          </Button>
-
-          {showMenu && (
+        <div
+          className="flex gap-1"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {classification.status === 'active' && (
             <>
-              <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
-              <div className="absolute right-0 top-full mt-2 z-50 min-w-[200px] rounded-card bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 p-1">
-                <div className="absolute -top-1.5 right-2.5 size-3 rotate-45 bg-popover ring-1 ring-foreground/10 [clip-path:polygon(0%_0%,100%_0%,0%_100%)]" />
-                {classification.status === 'active' ? (
-                  <>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start"
-                      onClick={() => {
-                        setShowMenu(false);
-                        onEditClassification(classification);
-                      }}
-                    >
-                      Renomear
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start"
-                      onClick={() => {
-                        setShowMenu(false);
-                        onMergeClassification(classification);
-                      }}
-                    >
-                      Mesclar com outra
-                    </Button>
-                    <div className="h-px bg-border my-1" />
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start text-destructive hover:bg-destructive/10 hover:text-destructive"
-                      onClick={() => {
-                        setShowMenu(false);
-                        setShowArchiveDialog(true);
-                      }}
-                    >
-                      Arquivar
-                    </Button>
-                  </>
-                ) : (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start"
-                    onClick={() => {
-                      setShowMenu(false);
-                      handleReactivate();
-                    }}
-                    disabled={isPending}
-                  >
-                    {isPending ? 'Reativando...' : 'Reativar'}
-                  </Button>
-                )}
-              </div>
+              <Button
+                variant="outline"
+                size="icon-xs"
+                onClick={() => onAddCategory(classification.id)}
+                title="Adicionar categoria"
+              >
+                <Plus className="size-3.5" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon-xs"
+                onClick={() => onEditClassification(classification)}
+                title="Editar classificação"
+              >
+                <Pencil className="size-3.5" />
+              </Button>
             </>
+          )}
+          {classification.status === 'archived' && (
+            <Button
+              variant="ghost"
+              size="xs"
+              onClick={handleReactivate}
+              disabled={isPending}
+            >
+              {isPending ? 'Reativando...' : 'Reativar'}
+            </Button>
           )}
         </div>
       </div>
-
-      {/* Archive Confirmation Dialog */}
-      <Dialog open={showArchiveDialog} onOpenChange={setShowArchiveDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Arquivar classificação</DialogTitle>
-            <DialogDescription>
-              A classificação &ldquo;{classification.name}&rdquo; será arquivada. Ela poderá ser reativada
-              depois.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <DialogClose render={<Button variant="outline" />}>Cancelar</DialogClose>
-            <Button variant="destructive" onClick={handleArchive} disabled={isPending}>
-              {isPending ? 'Arquivando...' : 'Confirmar'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Body — arredondamento inferior, borda sem topo (continuação visual do header) */}
       {expanded && (
@@ -322,11 +252,14 @@ export function ClassificationSection({
                   key={category.id}
                   category={category}
                   subcategories={subcategoriesByCategory.get(category.id) ?? []}
+                  establishments={establishments}
                   bankAccounts={bankAccounts}
                   creditCards={creditCards}
                   onEdit={() => onEditCategory(category)}
                   onAddSubcategory={() => onAddSubcategory(category.id)}
                   onEditSubcategory={onEditSubcategory}
+                  onAddEstablishment={onAddEstablishment}
+                  onEditEstablishment={onEditEstablishment}
                   onStatusChange={onStatusChange}
                 />
               ))}
@@ -350,11 +283,14 @@ export function ClassificationSection({
                           key={category.id}
                           category={category}
                           subcategories={subcategoriesByCategory.get(category.id) ?? []}
+                          establishments={establishments}
                           bankAccounts={bankAccounts}
                           creditCards={creditCards}
                           onEdit={() => onEditCategory(category)}
                           onAddSubcategory={() => onAddSubcategory(category.id)}
                           onEditSubcategory={onEditSubcategory}
+                          onAddEstablishment={onAddEstablishment}
+                          onEditEstablishment={onEditEstablishment}
                           onStatusChange={onStatusChange}
                         />
                       ))}

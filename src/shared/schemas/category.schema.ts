@@ -40,6 +40,7 @@ const paymentMethodRefineMessage = 'Tipo e instrumento de pagamento devem ser pr
 export const createCategorySchema = z
   .object({
     name: z.string().min(1, 'Nome da categoria é obrigatório').max(100),
+    emoji: z.string().max(10).optional(),
     classificationId: idSchema,
     budgetMinCents: amountCentsSchema.nullable().optional(),
     budgetMaxCents: amountCentsSchema.nullable().optional(),
@@ -59,6 +60,7 @@ export const createCategorySchema = z
 export const updateCategorySchema = z
   .object({
     name: z.string().min(1).max(100).optional(),
+    emoji: z.string().max(10).optional(),
     classificationId: idSchema.optional(),
     budgetMinCents: amountCentsSchema.nullable().optional(),
     budgetMaxCents: amountCentsSchema.nullable().optional(),

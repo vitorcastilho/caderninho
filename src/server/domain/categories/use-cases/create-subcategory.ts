@@ -8,6 +8,7 @@ import type { CreditCardRepository } from '@/server/domain/credit-cards/reposito
 
 interface CreateSubcategoryParams {
   name: string;
+  emoji?: string;
   categoryId: string;
   defaultPaymentMethodType: string | null;
   defaultPaymentMethodId: string | null;
@@ -37,7 +38,7 @@ export async function createSubcategory(
   }
 
   if (params.defaultPaymentMethodType && params.defaultPaymentMethodId) {
-    if (params.defaultPaymentMethodType === 'credit_card') {
+    if (params.defaultPaymentMethodType === 'credit') {
       const card = await deps.creditCardRepository.findById(
         params.defaultPaymentMethodId, params.organizationId,
       );
@@ -57,6 +58,7 @@ export async function createSubcategory(
   const subcategory = await deps.repository.create({
     id,
     name: params.name,
+    emoji: params.emoji,
     categoryId: params.categoryId,
     defaultPaymentMethodType: params.defaultPaymentMethodType,
     defaultPaymentMethodId: params.defaultPaymentMethodId,

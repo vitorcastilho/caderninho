@@ -98,11 +98,11 @@ describe('createCategorySchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('should accept valid payment method (credit_card)', () => {
+  it('should accept valid payment method (credit)', () => {
     const result = createCategorySchema.safeParse({
       name: 'Alimentação',
       classificationId: validUUID,
-      defaultPaymentMethodType: 'credit_card',
+      defaultPaymentMethodType: 'credit',
       defaultPaymentMethodId: validUUID,
     });
     expect(result.success).toBe(true);
@@ -150,7 +150,7 @@ describe('createCategorySchema', () => {
     const result = createCategorySchema.safeParse({
       name: 'Alimentação',
       classificationId: validUUID,
-      defaultPaymentMethodType: 'credit_card',
+      defaultPaymentMethodType: 'credit',
     });
     expect(result.success).toBe(false);
   });
@@ -178,7 +178,7 @@ describe('createCategorySchema', () => {
     const result = createCategorySchema.safeParse({
       name: 'Alimentação',
       classificationId: validUUID,
-      defaultPaymentMethodType: 'credit_card',
+      defaultPaymentMethodType: 'credit',
       defaultPaymentMethodId: 'not-a-uuid',
     });
     expect(result.success).toBe(false);

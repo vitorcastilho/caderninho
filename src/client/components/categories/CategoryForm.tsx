@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
+import { Archive } from 'lucide-react';
 import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
@@ -50,6 +51,7 @@ interface CategoryFormProps {
   defaultValues?: {
     id: string;
     name: string;
+    emoji: string;
     classificationId: string;
     budgetMinCents: number | null;
     budgetMaxCents: number | null;
@@ -61,6 +63,7 @@ interface CategoryFormProps {
   creditCards: CreditCard[];
   onSuccess?: () => void;
   onCancel?: () => void;
+  onArchive?: () => void;
 }
 
 const BUDGET_TYPE_LABELS: Record<BudgetType, string> = {
@@ -92,9 +95,11 @@ export function CategoryForm({
   creditCards,
   onSuccess,
   onCancel,
+  onArchive,
 }: CategoryFormProps) {
   const [isPending, startTransition] = useTransition();
   const [name, setName] = useState(defaultValues?.name ?? '');
+  const [emoji, setEmoji] = useState(defaultValues?.emoji ?? '📁');
   const [selectedClassificationId, setSelectedClassificationId] = useState(
     defaultValues?.classificationId ?? classificationId ?? '',
   );
@@ -116,7 +121,7 @@ export function CategoryForm({
   const activeBankAccounts = bankAccounts.filter((a) => a.status === 'active');
   const activeCreditCards = creditCards.filter((c) => c.status === 'active');
 
-  const instrumentOptions: { id: string; label: string; brand?: string }[] = paymentType === 'credit_card'
+  const instrumentOptions: { id: string; label: string; brand?: string }[] = paymentType === 'credit'
     ? activeCreditCards.map((c) => ({ id: c.id, label: c.name, brand: c.brand }))
     : paymentType === 'debit' || paymentType === 'pix'
       ? activeBankAccounts.map((a) => ({ id: a.id, label: `${a.bank} - ${a.name}` }))
@@ -137,6 +142,7 @@ export function CategoryForm({
         mode === 'create'
           ? await createCategoryAction({
               name: name.trim(),
+              emoji,
               classificationId: selectedClassificationId,
               budgetMinCents: budgetMinCentsValue,
               budgetMaxCents: budgetMaxCentsValue,
@@ -147,6 +153,7 @@ export function CategoryForm({
               id: defaultValues!.id,
               data: {
                 name: name.trim(),
+                emoji,
                 classificationId: selectedClassificationId,
                 budgetMinCents: budgetMinCentsValue ?? null,
                 budgetMaxCents: budgetMaxCentsValue ?? null,
@@ -174,6 +181,19 @@ export function CategoryForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      {/* Emoji */}
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="category-emoji">Emoji</Label>
+        <Input
+          id="category-emoji"
+          value={emoji}
+          onChange={(e) => setEmoji(e.target.value)}
+          placeholder="📁"
+          className="w-20"
+          maxLength={10}
+        />
+      </div>
+
       {/* Nome */}
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="category-name">Nome</Label>
@@ -285,7 +305,7 @@ export function CategoryForm({
       {paymentType !== 'none' && instrumentOptions.length > 0 && (
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="payment-instrument">
-            {paymentType === 'credit_card' ? 'Cartão' : 'Conta'}
+            {paymentType === 'credit' ? 'Cartão' : 'Conta'}
           </Label>
           <Select key={paymentType} value={paymentMethodId} onValueChange={(val) => setPaymentMethodId(val ?? '')}>
             <SelectTrigger className="w-full" id="payment-instrument">
@@ -325,10 +345,30 @@ export function CategoryForm({
 
       {paymentType !== 'none' && instrumentOptions.length === 0 && (
         <p className="text-xs text-muted-foreground">
-          {paymentType === 'credit_card'
+          {paymentType === 'credit'
             ? 'Nenhum cartão de crédito ativo cadastrado.'
             : 'Nenhuma conta bancária ativa cadastrada.'}
         </p>
+      )}
+
+      {/* AÇÕES — somente em edit mode */}
+      {mode === 'edit' && onArchive && (
+        <>
+          <div className="border-t border-destructive/30 pt-4 mt-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-destructive mb-2">Ações</p>
+            <button
+              type="button"
+              className="flex w-full items-center gap-3 rounded-card border border-border p-3 text-left transition-colors hover:bg-muted/50"
+              onClick={onArchive}
+            >
+              <Archive className="size-5 shrink-0 text-muted-foreground" />
+              <div>
+                <p className="text-sm font-medium">Arquivar</p>
+                <p className="text-xs text-muted-foreground">Oculta da listagem principal, preserva o histórico</p>
+              </div>
+            </button>
+          </div>
+        </>
       )}
 
       <div className="flex gap-2 justify-end">

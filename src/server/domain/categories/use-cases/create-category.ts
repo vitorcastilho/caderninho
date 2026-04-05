@@ -8,6 +8,7 @@ import type { CreditCardRepository } from '@/server/domain/credit-cards/reposito
 
 interface CreateCategoryParams {
   name: string;
+  emoji?: string;
   classificationId: string;
   budgetMinCents: number | null;
   budgetMaxCents: number | null;
@@ -39,7 +40,7 @@ export async function createCategory(
   }
 
   if (params.defaultPaymentMethodType && params.defaultPaymentMethodId) {
-    if (params.defaultPaymentMethodType === 'credit_card') {
+    if (params.defaultPaymentMethodType === 'credit') {
       const card = await deps.creditCardRepository.findById(
         params.defaultPaymentMethodId, params.organizationId,
       );
@@ -59,6 +60,7 @@ export async function createCategory(
   const category = await deps.repository.create({
     id,
     name: params.name,
+    emoji: params.emoji,
     classificationId: params.classificationId,
     budgetMinCents: params.budgetMinCents,
     budgetMaxCents: params.budgetMaxCents,

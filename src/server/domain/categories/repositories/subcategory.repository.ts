@@ -1,6 +1,7 @@
 export type Subcategory = {
   id: string;
   name: string;
+  emoji: string;
   categoryId: string;
   defaultPaymentMethodType: string | null;
   defaultPaymentMethodId: string | null;
@@ -14,6 +15,7 @@ export interface SubcategoryRepository {
   create(data: {
     id: string;
     name: string;
+    emoji?: string;
     categoryId: string;
     defaultPaymentMethodType: string | null;
     defaultPaymentMethodId: string | null;
@@ -43,6 +45,7 @@ export interface SubcategoryRepository {
     organizationId: string,
     data: Partial<{
       name: string;
+      emoji: string;
       defaultPaymentMethodType: string | null;
       defaultPaymentMethodId: string | null;
     }>,

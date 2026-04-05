@@ -13,7 +13,7 @@ const mockRepository: SubcategoryRepository = {
 const mockAuditLogger: AuditLogger = vi.fn();
 
 const archivedSubcategory = {
-  id: 'sub-1', name: 'Aluguel', categoryId: 'cat-1',
+  id: 'sub-1', name: 'Aluguel', emoji: '📋', categoryId: 'cat-1',
   status: 'archived' as const, organizationId: 'org-123',
   defaultPaymentMethodType: null, defaultPaymentMethodId: null,
   createdAt: new Date(), updatedAt: new Date(),
