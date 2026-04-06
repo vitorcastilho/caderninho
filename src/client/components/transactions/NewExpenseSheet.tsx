@@ -243,9 +243,10 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
         side={isMobile ? 'bottom' : 'right'}
         showCloseButton={!isMobile}
         overlayClassName={isMobile ? 'bg-black/45' : undefined}
+        style={isMobile ? { height: '85dvh' } : undefined}
         className={
           isMobile
-            ? 'inset-x-0 bottom-0 data-[side=bottom]:h-[85dvh] rounded-t-[20px] border-t-0'
+            ? 'inset-x-0 bottom-0 rounded-t-[20px] border-t-0'
             : 'w-full sm:w-[400px]'
         }
       >
