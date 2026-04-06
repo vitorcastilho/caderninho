@@ -245,56 +245,85 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
         overlayClassName={isMobile ? 'bg-black/45' : undefined}
         className={
           isMobile
-            ? 'inset-x-0 bottom-0 min-h-[85dvh] rounded-t-[20px] border-t-0'
+            ? 'inset-x-0 bottom-0 gap-0 rounded-t-[20px] border-t-0 p-0'
             : 'w-full sm:w-[400px]'
         }
       >
-        {/* Handle bar — mobile only */}
-        {isMobile && (
-          <div className="flex justify-center pt-3">
-            <div className="h-1 w-9 rounded-full bg-stone-200" />
-          </div>
-        )}
-
-        <SheetHeader className={isMobile ? 'flex-row items-center justify-between px-5 py-3' : undefined}>
-          <SheetTitle className={isMobile ? 'text-base font-semibold' : undefined}>
-            Novo Gasto
-          </SheetTitle>
-          {isMobile && (
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="flex size-7 items-center justify-center rounded-full bg-stone-100 text-sm text-stone-500 transition-colors hover:bg-stone-200"
-              aria-label="Fechar"
-            >
-              ✕
-            </button>
-          )}
-        </SheetHeader>
-
-        <div className="flex min-h-0 flex-1 flex-col">
-          {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="size-6 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
+        {isMobile ? (
+          <div className="flex h-[85dvh] flex-col">
+            {/* Handle bar */}
+            <div className="flex justify-center pt-3">
+              <div className="h-1 w-9 rounded-full bg-stone-200" />
             </div>
-          ) : (
-            <CascadeInput
-              key={sheetOpenCount}
-              classifications={classifications}
-              categories={categories}
-              subcategories={subcategories}
-              suggestedEstablishments={suggestedEstablishments}
-              paymentMethods={paymentMethods}
-              impactData={impactData}
-              isSubmitting={isSubmitting}
-              isMobile={isMobile}
-              onConfirm={handleConfirm}
-              onCancel={handleCancel}
-              onSubcategorySelect={handleSubcategorySelect}
-              onRequestImpact={handleRequestImpact}
-            />
-          )}
-        </div>
+
+            <SheetHeader className="flex-row items-center justify-between px-5 py-3">
+              <SheetTitle className="text-base font-semibold">
+                Novo Gasto
+              </SheetTitle>
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="flex size-7 items-center justify-center rounded-full bg-stone-100 text-sm text-stone-500 transition-colors hover:bg-stone-200"
+                aria-label="Fechar"
+              >
+                ✕
+              </button>
+            </SheetHeader>
+
+            <div className="flex min-h-0 flex-1 flex-col">
+              {isLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="size-6 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
+                </div>
+              ) : (
+                <CascadeInput
+                  key={sheetOpenCount}
+                  classifications={classifications}
+                  categories={categories}
+                  subcategories={subcategories}
+                  suggestedEstablishments={suggestedEstablishments}
+                  paymentMethods={paymentMethods}
+                  impactData={impactData}
+                  isSubmitting={isSubmitting}
+                  isMobile
+                  onConfirm={handleConfirm}
+                  onCancel={handleCancel}
+                  onSubcategorySelect={handleSubcategorySelect}
+                  onRequestImpact={handleRequestImpact}
+                />
+              )}
+            </div>
+          </div>
+        ) : (
+          <>
+            <SheetHeader>
+              <SheetTitle>Novo Gasto</SheetTitle>
+            </SheetHeader>
+
+            <div className="flex min-h-0 flex-1 flex-col">
+              {isLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="size-6 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
+                </div>
+              ) : (
+                <CascadeInput
+                  key={sheetOpenCount}
+                  classifications={classifications}
+                  categories={categories}
+                  subcategories={subcategories}
+                  suggestedEstablishments={suggestedEstablishments}
+                  paymentMethods={paymentMethods}
+                  impactData={impactData}
+                  isSubmitting={isSubmitting}
+                  onConfirm={handleConfirm}
+                  onCancel={handleCancel}
+                  onSubcategorySelect={handleSubcategorySelect}
+                  onRequestImpact={handleRequestImpact}
+                />
+              )}
+            </div>
+          </>
+        )}
       </SheetContent>
     </Sheet>
   );
