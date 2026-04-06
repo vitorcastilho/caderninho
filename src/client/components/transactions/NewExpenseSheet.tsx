@@ -245,12 +245,12 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
         overlayClassName={isMobile ? 'bg-black/45' : undefined}
         className={
           isMobile
-            ? 'inset-x-0 bottom-0 gap-0 rounded-t-[20px] border-t-0 p-0'
+            ? 'inset-x-0 bottom-0 gap-0 rounded-t-[20px] border-t-0 p-0 data-[side=bottom]:h-[85dvh]'
             : 'w-full sm:w-[400px]'
         }
       >
         {isMobile ? (
-          <div className="flex h-[85dvh] flex-col">
+          <>
             {/* Handle bar */}
             <div className="flex justify-center pt-3">
               <div className="h-1 w-9 rounded-full bg-stone-200" />
@@ -293,7 +293,7 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
                 />
               )}
             </div>
-          </div>
+          </>
         ) : (
           <>
             <SheetHeader>

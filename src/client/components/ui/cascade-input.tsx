@@ -533,10 +533,10 @@ export function CascadeInput({
         {/* Step 4: Onde + Pagamento (+ Parcelas se crédito) */}
         {currentStep === 4 && (
           <div className="flex min-h-0 flex-1 flex-col">
-            <div className="flex-1 overflow-y-auto">
-              {renderSummaryBar()}
-              {renderStepIndicator()}
+            {renderSummaryBar()}
+            {renderStepIndicator()}
 
+            <div className="flex-1 overflow-y-auto">
               {renderFieldLabel('Onde?')}
               {renderEstablishmentChips('px-5')}
 
