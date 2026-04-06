@@ -70,14 +70,15 @@ describe('CascadeInput Mobile', () => {
       expect(screen.getByText('87,00')).toBeInTheDocument();
     });
 
-    it('botão Continuar aparece quando valor > 0', async () => {
+    it('botão Continuar sempre visível, desabilitado sem valor e habilitado com valor', async () => {
       const user = userEvent.setup();
       render(<CascadeInput {...mobileProps} />);
 
-      expect(screen.queryByText('Continuar')).not.toBeInTheDocument();
+      const btn = screen.getByText('Continuar');
+      expect(btn).toBeDisabled();
 
       await user.click(screen.getByText('5'));
-      expect(screen.getByText('Continuar')).toBeInTheDocument();
+      expect(btn).toBeEnabled();
     });
 
     it('backspace remove último dígito', async () => {

@@ -423,17 +423,16 @@ export function CascadeInput({
               onDigit={handleKeypadDigit}
               onBackspace={handleKeypadBackspace}
             />
-            {valueCents > 0 && (
-              <div className="px-5 pb-4">
-                <button
-                  type="button"
-                  onClick={() => setCurrentStep(2)}
-                  className="flex h-12 w-full items-center justify-center rounded-xl bg-indigo-600 text-[15px] font-semibold text-white transition-colors hover:bg-indigo-700 active:scale-[0.98]"
-                >
-                  Continuar
-                </button>
-              </div>
-            )}
+            <div className="px-5 pb-4">
+              <button
+                type="button"
+                onClick={() => setCurrentStep(2)}
+                disabled={valueCents === 0}
+                className="flex h-12 w-full items-center justify-center rounded-xl bg-indigo-600 text-[15px] font-semibold text-white transition-colors hover:bg-indigo-700 active:scale-[0.98] disabled:opacity-50"
+              >
+                Continuar
+              </button>
+            </div>
           </div>
         )}
 
