@@ -245,7 +245,7 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
         overlayClassName={isMobile ? 'bg-black/45' : undefined}
         className={
           isMobile
-            ? 'inset-x-0 bottom-0 h-[85dvh] rounded-t-[20px] border-t-0'
+            ? 'inset-x-0 bottom-0 data-[side=bottom]:h-[85dvh] rounded-t-[20px] border-t-0'
             : 'w-full sm:w-[400px]'
         }
       >
