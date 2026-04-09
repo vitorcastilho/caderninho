@@ -1,4 +1,4 @@
-import { eq, and, desc, sql, gte } from 'drizzle-orm';
+import { eq, and, desc, sql, gte, lt } from 'drizzle-orm';
 
 import { db } from '@/server/infrastructure/database/client';
 import { transactions } from '@/server/infrastructure/database/schema';
@@ -17,6 +17,7 @@ export class DrizzleTransactionRepository implements TransactionRepository {
     establishment?: string | null;
     paymentMethodType: string;
     paymentMethodId?: string | null;
+    installments?: number | null;
     description?: string | null;
     transactionDate: Date;
     referenceMonth?: string | null;
@@ -99,7 +100,7 @@ export class DrizzleTransactionRepository implements TransactionRepository {
           eq(transactions.categoryId, categoryId),
           eq(transactions.organizationId, organizationId),
           gte(transactions.transactionDate, startOfMonth),
-          sql`${transactions.transactionDate} < ${startOfNextMonth}`,
+          lt(transactions.transactionDate, startOfNextMonth),
         ),
       );
 

@@ -9,6 +9,7 @@ export const createTransactionSchema = z.object({
   establishment: z.string().max(200).optional(),
   paymentMethodType: z.enum(['debit', 'credit', 'pix']),
   paymentMethodId: idSchema.optional(),
+  installments: z.number().int().nonnegative().optional(),
   description: z.string().max(500).optional(),
   transactionDate: z.coerce.date().optional(),
 });

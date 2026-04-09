@@ -32,6 +32,7 @@ const sampleTransaction = {
   establishment: 'Pão de Açúcar',
   paymentMethodType: 'debit',
   paymentMethodId: 'bank-123',
+  installments: null,
   description: null,
   transactionDate: expect.any(Date),
   referenceMonth: null,
@@ -212,6 +213,31 @@ describe('createTransaction', () => {
 
     expect(mockBankAccountRepository.findById).not.toHaveBeenCalled();
     expect(mockBankAccountRepository.update).not.toHaveBeenCalled();
+  });
+
+  it('deve passar installments para o repositorio quando informado', async () => {
+    await createTransaction(deps, {
+      ...baseParams,
+      paymentMethodType: 'credit',
+      paymentMethodId: 'cc-123',
+      installments: 3,
+    });
+
+    expect(mockRepository.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        installments: 3,
+      }),
+    );
+  });
+
+  it('deve passar installments null quando nao informado', async () => {
+    await createTransaction(deps, baseParams);
+
+    expect(mockRepository.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        installments: null,
+      }),
+    );
   });
 
   it('deve registrar auditoria na criacao', async () => {

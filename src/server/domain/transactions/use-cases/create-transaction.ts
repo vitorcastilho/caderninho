@@ -14,6 +14,7 @@ interface CreateTransactionParams {
   establishment?: string | null;
   paymentMethodType: string;
   paymentMethodId?: string | null;
+  installments?: number | null;
   description?: string | null;
   transactionDate?: Date;
   organizationId: string;
@@ -56,6 +57,7 @@ export async function createTransaction(
     establishment: params.establishment ?? null,
     paymentMethodType: params.paymentMethodType,
     paymentMethodId: params.paymentMethodId ?? null,
+    installments: params.installments ?? null,
     description: params.description ?? null,
     transactionDate,
     referenceMonth: null,

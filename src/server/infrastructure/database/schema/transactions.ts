@@ -17,6 +17,7 @@ export const transactions = pgTable('transactions', {
   establishment: text('establishment'),
   paymentMethodType: text('payment_method_type').notNull(), // debit, credit, pix
   paymentMethodId: text('payment_method_id'),
+  installments: integer('installments'),
   description: text('description'),
   transactionDate: timestamp('transaction_date', { withTimezone: true }).notNull().defaultNow(),
   referenceMonth: text('reference_month'), // YYYY-MM (para cartoes de credito, Epic 5)

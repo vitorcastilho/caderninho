@@ -1,6 +1,6 @@
 # Story 3.1c: CascadeInput Mobile — Alinhamento com Proto-07
 
-Status: ready-for-dev
+Status: done
 
 ## Origem
 
@@ -36,54 +36,60 @@ so that I can register expenses in ~5 seconds with a mobile-optimized experience
 
 ### Fase 0: Design System & Protótipos
 
-- [ ] Task 0: Consultar proto-07-cascade-input.html e DS
-  - [ ] 0.1: Ler `_bmad-output/prototypes/proto-07-cascade-input.html` — TODOS os 6 states mobile + desktop
-  - [ ] 0.2: Consultar página `/design-system` — tokens, componentes existentes
-  - [ ] 0.3: Listar componentes UI existentes que serão reutilizados ou criados
+- [x] Task 0: Consultar proto-07-cascade-input.html e DS
+  - [x] 0.1: Ler `_bmad-output/prototypes/proto-07-cascade-input.html` — TODOS os 6 states mobile + desktop
+  - [x] 0.2: Consultar página `/design-system` — tokens, componentes existentes
+  - [x] 0.3: Listar componentes UI existentes que serão reutilizados ou criados
 
 ### Fase 1: Bottom Sheet Mobile
 
-- [ ] Task 1: Criar variante bottom-sheet ou adaptar Sheet para mobile
-  - [ ] 1.1: No mobile, sheet sobe de baixo (overlay escura 45%, handle bar, border-radius 20px topo)
-  - [ ] 1.2: No desktop, manter side sheet lateral (400px) como está
-  - [ ] 1.3: Atualizar NewExpenseSheet.tsx para usar a variante correta por breakpoint
+- [x] Task 1: Criar variante bottom-sheet ou adaptar Sheet para mobile
+  - [x] 1.1: No mobile, sheet sobe de baixo (overlay escura 45%, handle bar, border-radius 20px topo)
+  - [x] 1.2: No desktop, manter side sheet lateral (400px) como está
+  - [x] 1.3: Atualizar NewExpenseSheet.tsx para usar a variante correta por breakpoint
 
 ### Fase 2: Keypad Numérico
 
-- [ ] Task 2: Criar componente NumericKeypad
-  - [ ] 2.1: Grid 3×4 com teclas 0-9 + backspace, altura 52px
-  - [ ] 2.2: Lógica de formatação monetária (digitar "8700" mostra "R$ 87,00")
-  - [ ] 2.3: Integrar no State 1 do CascadeInput (mobile only — desktop mantém input)
+- [x] Task 2: Criar componente NumericKeypad
+  - [x] 2.1: Grid 3×4 com teclas 0-9 + backspace, altura 52px
+  - [x] 2.2: Lógica de formatação monetária (digitar "8700" mostra "R$ 87,00")
+  - [x] 2.3: Integrar no State 1 do CascadeInput (mobile only — desktop mantém input)
 
 ### Fase 3: Fluxo Selection-Driven
 
-- [ ] Task 3: Remover botões Avançar/Voltar e implementar avanço automático
-  - [ ] 3.1: State 1→2: após digitar valor, botão único "Continuar" (ou auto-advance)
-  - [ ] 3.2: State 2→2b: selecionar category chip avança automaticamente para subcategoria
-  - [ ] 3.3: State 2b→3a: selecionar subcategory chip avança automaticamente para onde/pagamento
-  - [ ] 3.4: Manter possibilidade de voltar (swipe ou tap no summary bar, NÃO botão "Voltar")
+- [x] Task 3: Remover botões Avançar/Voltar e implementar avanço automático
+  - [x] 3.1: State 1→2: após digitar valor, botão único "Continuar" (ou auto-advance)
+  - [x] 3.2: State 2→2b: selecionar category chip avança automaticamente para subcategoria
+  - [x] 3.3: State 2b→3a: selecionar subcategory chip avança automaticamente para onde/pagamento
+  - [x] 3.4: Manter possibilidade de voltar (swipe ou tap no summary bar, NÃO botão "Voltar")
 
 ### Fase 4: Estabelecimentos como Chips + Auto-criação
 
-- [ ] Task 4: "Onde?" com chips selecionáveis
-  - [ ] 4.1: Buscar estabelecimentos cadastrados da subcategoria + sugestões do histórico
-  - [ ] 4.2: Renderizar como chip-sm selecionáveis + chip "+ Outro" que abre input
-  - [ ] 4.3: Implementar auto-criação de estabelecimento (source="auto") ao confirmar transação com nome novo
-  - [ ] 4.4: Atualizar create-transaction use case para chamar auto-create-establishment
+- [x] Task 4: "Onde?" com chips selecionáveis
+  - [x] 4.1: Buscar estabelecimentos cadastrados da subcategoria + sugestões do histórico
+  - [x] 4.2: Renderizar como chip-sm selecionáveis + chip "+ Outro" que abre input
+  - [x] 4.3: Implementar auto-criação de estabelecimento (source="auto") ao confirmar transação com nome novo
+  - [x] 4.4: Atualizar create-transaction use case para chamar auto-create-establishment
 
 ### Fase 5: Installment Strip
 
-- [ ] Task 5: UI de parcelamento quando método é crédito
-  - [ ] 5.1: Criar componente InstallmentStrip (à vista, 1x, 2x, 3x, 4x)
-  - [ ] 5.2: Mostrar resultado calculado (ex: "2x de R$ 43,50") e meses
-  - [ ] 5.3: Nota de comprometimento total no cartão
+- [x] Task 5: UI de parcelamento quando método é crédito
+  - [x] 5.1: Criar componente InstallmentStrip (à vista, 1x, 2x, 3x, 4x)
+  - [x] 5.2: Mostrar resultado calculado (ex: "2x de R$ 43,50") e meses
+  - [x] 5.3: Nota de comprometimento total no cartão
 
 ### Fase 6: Ajustes Visuais
 
-- [ ] Task 6: Summary bar, card brand icons, tela de confirmação
-  - [ ] 6.1: Summary bar com summary-amount (18px bold) + summary-cat (pill indigo)
-  - [ ] 6.2: Card brand icons (VISA/Mastercard) nos chips de subcategoria e pagamento
-  - [ ] 6.3: Tela de confirmação: confirm-amount 28px, breadcrumb visual, btn-confirm full-width
+- [x] Task 6: Summary bar, card brand icons, tela de confirmação
+  - [x] 6.1: Summary bar com summary-amount (18px bold) + summary-cat (pill indigo)
+  - [x] 6.2: Card brand icons (VISA/Mastercard) nos chips de subcategoria e pagamento
+  - [x] 6.3: Tela de confirmação: confirm-amount 28px, breadcrumb visual, btn-confirm full-width
+
+### Review Follow-ups (AI) — R1 2026-04-05
+
+- [x] [AI-Review][HIGH] Bug: desktop impact preview usa paymentMethodId stale — `requestImpactForCurrent()` chamado logo após `handleSelectSubcategory()` captura o estado anterior. Resultado: impact incorreto ou ausente no desktop. [cascade-input.tsx:721-724]
+- [x] [AI-Review][MEDIUM] AC#8: summary bar pill sem emoji — AC exige "categoria como pill indigo com emoji", mas implementação mostra só o nome. Interface `Category` não tem campo emoji. Propagar emoji da Classification ou adicionar à Category. [cascade-input.tsx:282]
+- [x] [AI-Review][MEDIUM] Installments não enviados ao servidor — `CascadeInput.onConfirm` retorna `installments`, mas `NewExpenseSheet.handleConfirm` não passa para `createTransactionAction`. Verificar se a action aceita o campo; se sim, passar; se não, considerar remover seleção de parcelas ou marcar como "em breve". [NewExpenseSheet.tsx:206-213]
 
 ## Dev Notes
 
@@ -110,3 +116,73 @@ so that I can register expenses in ~5 seconds with a mobile-optimized experience
 
 - Proto-07: `_bmad-output/prototypes/proto-07-cascade-input.html`
 - Findings originais: Story 3.1b R1 (H3, H4, H5, H6, M7, M8, M9, M10, M11)
+
+## File List
+
+### Novos
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `src/client/hooks/use-is-mobile.ts` | Hook com `useSyncExternalStore` para detectar viewport mobile (<640px) |
+| `src/client/components/ui/numeric-keypad.tsx` | Teclado numérico 3×4 com teclas de 52px + backspace |
+| `src/client/components/ui/numeric-keypad.test.tsx` | 5 testes para NumericKeypad |
+| `src/client/components/ui/installment-strip.tsx` | Strip de parcelas (À vista, 1x–4x) com resultado calculado |
+| `src/client/components/ui/installment-strip.test.tsx` | 9 testes para InstallmentStrip |
+
+### Modificados
+
+| Arquivo | Descrição da mudança |
+|---------|---------------------|
+| `src/client/components/ui/cascade-input.tsx` | Reescrita completa — dual rendering mobile (wizard 5 steps) / desktop (single pane) |
+| `src/client/components/ui/cascade-input.test.tsx` | Reescrita completa — 39 testes (mobile + desktop) |
+| `src/client/components/transactions/NewExpenseSheet.tsx` | Bottom sheet mobile + passa `installments` para action |
+| `src/client/components/ui/sheet.tsx` | Adicionada prop `overlayClassName` ao SheetContent |
+| `src/server/infrastructure/database/schema/transactions.ts` | Adicionada coluna `installments` (integer, nullable) |
+| `src/server/infrastructure/database/migrations/0016_neat_screwball.sql` | Migration para coluna `installments` |
+| `src/server/domain/transactions/repositories/transaction.repository.ts` | Adicionado campo `installments` no tipo e interface |
+| `src/server/infrastructure/database/repositories/transaction.repository.impl.ts` | Adicionado `installments` no create |
+| `src/server/domain/transactions/use-cases/create-transaction.ts` | Adicionado `installments` nos params e passagem ao repo |
+| `src/server/domain/transactions/use-cases/create-transaction.test.ts` | +2 testes para installments |
+| `src/shared/schemas/transaction.schema.ts` | Adicionado campo `installments` no schema Zod |
+| `_bmad-output/implementation-artifacts/sprint-status.yaml` | Status atualizado para review |
+
+## Change Log
+
+| Data | Mudança |
+|------|---------|
+| 2026-04-04 | Implementação completa das 7 fases (0-6) — bottom sheet, numeric keypad, selection-driven flow, establishment chips, installment strip, summary bar, tela confirmação |
+| 2026-04-05 | Code review R1: 1 HIGH (stale state desktop impact), 2 MEDIUM (emoji pill, installments não enviados), 5 LOW (backlog). 3 action items criados. Status → in-progress. |
+| 2026-04-05 | Fixes R1: 3 action items resolvidos — (1) desktop impact usa paymentMethodId da subcategoria diretamente, (2) summary bar pill com emoji da classificação, (3) installments end-to-end (DB→schema→use case→action→frontend). +4 testes, 895 total. Status → review. |
+| 2026-04-09 | Code review R2: 3 fixes de R1 validados (desktop impact stale state, summary pill emoji, installments end-to-end). 66 testes passando nos arquivos impactados, TypeScript limpo, ESLint limpo. Aprovada. Status → done. |
+
+## Dev Agent Record
+
+### Decisões de implementação
+
+1. **Dual rendering via prop `isMobile`**: CascadeInput recebe `isMobile` como prop (injetada pelo NewExpenseSheet via `useIsMobile()`). Mobile renderiza wizard multi-step, desktop renderiza single pane.
+
+2. **`useSyncExternalStore` para detecção mobile**: Hook `useIsMobile` usa `useSyncExternalStore` ao invés de useState+useEffect — é o padrão React-idiomatic para subscrição a APIs externas (media queries). SSR-safe com fallback `false`.
+
+3. **Summary bar como botão de voltar**: Ao invés de botão "Voltar" explícito, o summary bar é clicável e volta ao step anterior. Implementado como `<button>` com `onClick={() => setCurrentStep(prev - 1)}`.
+
+4. **Auto-advance selection-driven**: `handleSelectCategory` e `handleSelectSubcategory` chamam `setCurrentStep()` quando `isMobile=true`. No desktop, seleção apenas atualiza o estado.
+
+5. **Step indicator com barras**: Step ativo = barra larga (h-2 w-5 bg-indigo-600), step concluído = círculo menor (opacity-40), step pendente = círculo cinza.
+
+6. **React Compiler**: Removido `useCallback` de `handleSelectPayment` — React Compiler gerencia memoização automaticamente. ESLint `react-compiler/react-compiler` flaggeou incompatibilidade de deps.
+
+7. **Tasks 4.3 e 4.4 já implementadas**: A auto-criação de estabelecimento (`autoCreateEstablishment`) já estava implementada em `transaction.actions.ts` (Story 3.1b). O CascadeInput apenas passa o nome do estabelecimento via `onConfirm`.
+
+8. **Sheet `overlayClassName`**: Adicionada prop ao `SheetContent` para permitir customização do overlay (mobile usa `bg-black/45`). Mudança mínima e retrocompatível.
+
+### Fixes R1 (2026-04-05)
+
+- ✅ Resolved review finding [HIGH]: Desktop impact preview usava `requestImpactForCurrent()` que capturava `paymentMethodId` stale via closure. Fix: desktop subcategory onClick agora chama `onRequestImpact` diretamente com `sub.defaultPaymentMethodId ?? paymentMethodId`. Teste adicionado.
+- ✅ Resolved review finding [MEDIUM]: Summary bar pill sem emoji. Fix: adicionado `selectedClassification` derivado e renderizado `{selectedClassification?.emoji}` no pill da summary bar. Teste adicionado.
+- ✅ Resolved review finding [MEDIUM]: Installments não enviados ao servidor. Fix: adicionado campo `installments` end-to-end — coluna DB (nullable integer), migration drizzle, tipo Transaction, repository interface/impl, use case params, Zod schema, NewExpenseSheet passa `data.installments` para action. 2 testes adicionados no use case.
+
+### Validações
+
+- 895 testes passando (121 arquivos)
+- TypeScript compila sem erros
+- ESLint passa sem warnings
