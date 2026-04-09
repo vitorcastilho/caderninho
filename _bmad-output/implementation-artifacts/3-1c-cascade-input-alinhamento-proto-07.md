@@ -1,6 +1,6 @@
 # Story 3.1c: CascadeInput Mobile — Alinhamento com Proto-07
 
-Status: review
+Status: done
 
 ## Origem
 
@@ -153,6 +153,7 @@ so that I can register expenses in ~5 seconds with a mobile-optimized experience
 | 2026-04-04 | Implementação completa das 7 fases (0-6) — bottom sheet, numeric keypad, selection-driven flow, establishment chips, installment strip, summary bar, tela confirmação |
 | 2026-04-05 | Code review R1: 1 HIGH (stale state desktop impact), 2 MEDIUM (emoji pill, installments não enviados), 5 LOW (backlog). 3 action items criados. Status → in-progress. |
 | 2026-04-05 | Fixes R1: 3 action items resolvidos — (1) desktop impact usa paymentMethodId da subcategoria diretamente, (2) summary bar pill com emoji da classificação, (3) installments end-to-end (DB→schema→use case→action→frontend). +4 testes, 895 total. Status → review. |
+| 2026-04-09 | Code review R2: 3 fixes de R1 validados (desktop impact stale state, summary pill emoji, installments end-to-end). 66 testes passando nos arquivos impactados, TypeScript limpo, ESLint limpo. Aprovada. Status → done. |
 
 ## Dev Agent Record
 
