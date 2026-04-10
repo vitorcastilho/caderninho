@@ -6,6 +6,7 @@ import { ChevronDown, Plus, Pencil } from 'lucide-react';
 import { cn } from '@/client/utils/utils';
 
 import { BankLogo } from '@/client/components/ui/bank-logo';
+import { BudgetProgressBar } from '@/client/components/ui/budget-progress-bar';
 import { Button } from '@/client/components/ui/button';
 import { CreditCardBrandBadge } from '@/client/components/ui/credit-card-brand-badge';
 import { formatCurrency } from '@/client/utils/format-currency';
@@ -72,6 +73,9 @@ interface CategoryCardProps {
   category: Category;
   subcategories: Subcategory[];
   establishments: Establishment[];
+  spendingByCategory?: Map<string, number>;
+  spendingBySubcategory?: Map<string, number>;
+  spendingByEstablishment?: Map<string, number>;
   bankAccounts: BankAccount[];
   creditCards: CreditCard[];
   onEdit: () => void;
@@ -119,6 +123,9 @@ export function CategoryCard({
   category,
   subcategories,
   establishments,
+  spendingByCategory,
+  spendingBySubcategory,
+  spendingByEstablishment,
   bankAccounts,
   creditCards,
   onEdit,
@@ -147,6 +154,8 @@ export function CategoryCard({
   const totalSubs = activeSubcategories.length + archivedSubcategories.length;
 
   const budgetDisplay = formatBudget(category.budgetMinCents, category.budgetMaxCents);
+  const categorySpent = spendingByCategory?.get(category.id) ?? 0;
+  const categoryBudgetMax = category.budgetMaxCents ?? category.budgetMinCents ?? 0;
   const paymentMethodDisplay = resolvePaymentMethodDisplay(
     category.defaultPaymentMethodType,
     category.defaultPaymentMethodId,
@@ -196,10 +205,48 @@ export function CategoryCard({
           )}
         />
         <span className="shrink-0 text-sm">{category.emoji}</span>
-        <span className="flex-1 text-sm font-medium">{category.name}</span>
+        <div className="flex min-w-0 flex-shrink-0 flex-col">
+          <span className="text-sm font-medium">{category.name}</span>
+          <span className="text-[11px] text-muted-foreground">
+            {totalSubs} {totalSubs === 1 ? 'item' : 'itens'}
+          </span>
+        </div>
 
-        {budgetDisplay && (
-          <span className="text-xs text-muted-foreground tabular-nums">
+        {categoryBudgetMax > 0 && (
+          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+            <span className="text-xs tabular-nums text-muted-foreground">
+              <strong className="font-semibold text-foreground">{formatCurrency(categorySpent)}</strong>
+              {' '}/ {budgetDisplay}
+            </span>
+            <BudgetProgressBar
+              spent={categorySpent}
+              budget={categoryBudgetMax}
+              variant="mini"
+            />
+            <span className={cn(
+              'text-[11px] tabular-nums',
+              categorySpent / categoryBudgetMax <= 0.6 && 'text-positive-text',
+              categorySpent / categoryBudgetMax > 0.6 && categorySpent / categoryBudgetMax <= 0.8 && 'text-attention-text',
+              categorySpent / categoryBudgetMax > 0.8 && categorySpent / categoryBudgetMax <= 1 && 'text-alert-text',
+              categorySpent / categoryBudgetMax > 1 && 'text-critical-text',
+            )}>
+              {categorySpent <= categoryBudgetMax
+                ? `${Math.round((categorySpent / categoryBudgetMax) * 100)}% do máx — resta ${formatCurrency(categoryBudgetMax - categorySpent)}`
+                : `${Math.round((categorySpent / categoryBudgetMax) * 100)}% — excedeu ${formatCurrency(categorySpent - categoryBudgetMax)}`
+              }
+            </span>
+          </div>
+        )}
+
+        {categoryBudgetMax === 0 && categorySpent > 0 && (
+          <span className="flex-1 text-xs tabular-nums text-muted-foreground">
+            <strong className="font-semibold text-foreground">{formatCurrency(categorySpent)}</strong>
+            {' '}<span className="text-muted-foreground">(sem orç.)</span>
+          </span>
+        )}
+
+        {categoryBudgetMax === 0 && categorySpent === 0 && budgetDisplay && (
+          <span className="flex-1 text-xs text-muted-foreground tabular-nums">
             {budgetDisplay}
           </span>
         )}
@@ -207,12 +254,6 @@ export function CategoryCard({
         {paymentMethodDisplay && (
           <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
             {paymentMethodDisplay}
-          </span>
-        )}
-
-        {totalSubs > 0 && (
-          <span className="text-xs text-muted-foreground">
-            {totalSubs} {totalSubs === 1 ? 'item' : 'itens'}
           </span>
         )}
 
@@ -267,6 +308,11 @@ export function CategoryCard({
               (e) => e.subcategoryId === sub.id && e.status === 'active',
             );
             const isSubExpanded = expandedSubs.has(sub.id);
+            const subSpent = spendingBySubcategory?.get(sub.id) ?? 0;
+            // Subcategories mostram % relativo à categoria pai
+            const subPercentOfParent = categorySpent > 0
+              ? `${Math.round((subSpent / categorySpent) * 100)}% de ${category.name}`
+              : '';
             return (
             <div key={sub.id}>
               <div
@@ -284,18 +330,52 @@ export function CategoryCard({
                   )}
                 />
                 <span className="shrink-0 text-sm">{sub.emoji}</span>
-                <span className="flex-1 text-sm">{sub.name}</span>
-                {subPaymentDisplay && (
-                  <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                    {subPaymentDisplay}
-                  </span>
+                <div className="flex min-w-0 flex-shrink-0 flex-col">
+                  <span className="text-sm">{sub.name}</span>
+                  {subPaymentDisplay && (
+                    <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground w-fit mt-0.5">
+                      {subPaymentDisplay}
+                    </span>
+                  )}
+                </div>
+
+                {subSpent > 0 && (
+                  <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <span className="text-[11px] tabular-nums text-muted-foreground">
+                      <strong className="font-semibold text-foreground">{formatCurrency(subSpent)}</strong>
+                      {categoryBudgetMax > 0 && ` / ${budgetDisplay}`}
+                      {categoryBudgetMax === 0 && ' (sem orç.)'}
+                    </span>
+                    {categoryBudgetMax > 0 ? (
+                      <BudgetProgressBar
+                        spent={subSpent}
+                        budget={categoryBudgetMax}
+                        variant="mini"
+                        className="h-1"
+                      />
+                    ) : (
+                      <div className="h-1 w-full rounded-full bg-stone-200">
+                        <div
+                          className="h-full rounded-full bg-stone-400 transition-all duration-300"
+                          style={{ width: `${categorySpent > 0 ? Math.min(Math.round((subSpent / categorySpent) * 100), 100) : 0}%` }}
+                        />
+                      </div>
+                    )}
+                    {subPercentOfParent && (
+                      <span className="text-[11px] tabular-nums text-muted-foreground">
+                        {subPercentOfParent}
+                      </span>
+                    )}
+                  </div>
                 )}
-                {subEstablishments.length > 0 && (
-                  <span className="text-xs text-muted-foreground">
+
+                {subSpent === 0 && subEstablishments.length > 0 && (
+                  <span className="flex-1 text-xs text-muted-foreground">
                     {subEstablishments.length}{' '}
                     {subEstablishments.length === 1 ? 'estabelecimento' : 'estabelecimentos'}
                   </span>
                 )}
+
                 <div
                   className="flex gap-1"
                   onClick={(e) => e.stopPropagation()}
@@ -322,6 +402,9 @@ export function CategoryCard({
                 <EstablishmentRow
                   key={est.id}
                   establishment={est}
+                  subcategoryName={sub.name}
+                  spendingByEstablishment={spendingByEstablishment}
+                  subcategorySpent={subSpent}
                   onEdit={onEditEstablishment}
                   onStatusChange={onStatusChange}
                 />

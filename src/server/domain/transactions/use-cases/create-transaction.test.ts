@@ -11,6 +11,7 @@ const mockRepository: TransactionRepository = {
   findByOrganization: vi.fn(),
   findTopEstablishments: vi.fn(),
   sumMonthlySpentByCategory: vi.fn(),
+  getMonthlySpendingSummary: vi.fn(),
 };
 
 const mockBankAccountRepository: BankAccountRepository = {

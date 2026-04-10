@@ -52,4 +52,14 @@ export interface TransactionRepository {
     year: number,
     month: number,
   ): Promise<number>;
+
+  getMonthlySpendingSummary(
+    organizationId: string,
+    year: number,
+    month: number,
+  ): Promise<{
+    byCategory: { categoryId: string; totalCents: number }[];
+    bySubcategory: { subcategoryId: string; totalCents: number }[];
+    byEstablishment: { establishment: string; subcategoryId: string; totalCents: number }[];
+  }>;
 }

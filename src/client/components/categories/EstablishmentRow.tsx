@@ -2,6 +2,8 @@
 
 import { Pencil } from 'lucide-react';
 import { Button } from '@/client/components/ui/button';
+import { formatCurrency } from '@/client/utils/format-currency';
+import { getEstablishmentSpendingKey } from '@/shared/utils/spending-key';
 
 interface Establishment {
   id: string;
@@ -20,6 +22,9 @@ interface Establishment {
 
 interface EstablishmentRowProps {
   establishment: Establishment;
+  subcategoryName?: string;
+  spendingByEstablishment?: Map<string, number>;
+  subcategorySpent?: number;
   onEdit: (establishment: Establishment) => void;
   onStatusChange: () => void;
 }
@@ -32,10 +37,22 @@ function formatLastVisit(dateStr: string | null): string {
   return `${day}/${month}`;
 }
 
-export function EstablishmentRow({ establishment, onEdit }: EstablishmentRowProps) {
+export function EstablishmentRow({
+  establishment,
+  subcategoryName,
+  spendingByEstablishment,
+  subcategorySpent,
+  onEdit,
+}: EstablishmentRowProps) {
   const visitInfo = establishment.visitCount > 0
     ? `${establishment.visitCount} visita${establishment.visitCount > 1 ? 's' : ''}${establishment.lastVisitAt ? ` · ultimo ${formatLastVisit(establishment.lastVisitAt)}` : ''}`
     : establishment.source === 'manual' ? 'adicionado manualmente' : '';
+
+  const estKey = getEstablishmentSpendingKey(establishment.name, establishment.subcategoryId);
+  const estSpent = spendingByEstablishment?.get(estKey) ?? 0;
+  const estPercentOfSub = subcategorySpent && subcategorySpent > 0
+    ? Math.round((estSpent / subcategorySpent) * 100)
+    : 0;
 
   return (
     <div className="group/est flex items-center gap-2.5 border-t border-border border-l-4 border-l-transparent bg-muted py-2.5 pr-4 pl-[88px] text-xs transition-colors hover:bg-muted/80">
@@ -57,6 +74,26 @@ export function EstablishmentRow({ establishment, onEdit }: EstablishmentRowProp
           <span className="text-muted-foreground">{visitInfo}</span>
         )}
       </div>
+
+      {estSpent > 0 && (
+        <div className="flex min-w-0 flex-col items-end gap-0.5">
+          <span className="text-sm font-semibold tabular-nums">{formatCurrency(estSpent)}</span>
+          <div className="flex items-center gap-1.5 w-20">
+            <div className="h-[3px] w-full rounded-full bg-stone-200">
+              <div
+                className="h-full rounded-full bg-stone-400 transition-all duration-300"
+                style={{ width: `${Math.min(estPercentOfSub, 100)}%` }}
+              />
+            </div>
+          </div>
+          {subcategoryName && (
+            <span className="text-[11px] tabular-nums text-muted-foreground">
+              {estPercentOfSub}% de {subcategoryName}
+            </span>
+          )}
+        </div>
+      )}
+
       <div className="flex gap-1">
         <Button
           variant="outline"

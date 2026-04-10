@@ -9,22 +9,47 @@ interface BudgetProgressBarProps {
   label?: string;
   showValues?: boolean;
   showPercentage?: boolean;
+  showRemainder?: boolean;
   variant?: 'inline' | 'expanded' | 'mini';
   className?: string;
 }
 
 function getColorClass(percentage: number): string {
-  if (percentage < 70) return 'bg-green-500';
-  if (percentage < 85) return 'bg-yellow-500';
-  if (percentage < 100) return 'bg-orange-500';
-  return 'bg-red-500';
+  if (percentage <= 60) return 'bg-positive';
+  if (percentage <= 80) return 'bg-attention';
+  if (percentage <= 100) return 'bg-alert';
+  return 'bg-critical';
+}
+
+function getBadgeClasses(percentage: number): string {
+  if (percentage <= 60) return 'bg-positive-bg text-positive-text';
+  if (percentage <= 80) return 'bg-attention-bg text-attention-text';
+  if (percentage <= 100) return 'bg-alert-bg text-alert-text';
+  return 'bg-critical-bg text-critical-text';
 }
 
 function getStatusLabel(percentage: number): string {
-  if (percentage < 70) return 'Dentro do orçamento';
-  if (percentage < 85) return 'Atenção';
-  if (percentage < 100) return 'Próximo do limite';
+  if (percentage <= 60) return 'Dentro do orçamento';
+  if (percentage <= 80) return 'Atenção';
+  if (percentage <= 100) return 'Próximo do limite';
   return 'Acima do orçamento';
+}
+
+function getRemainderLabel(spent: number, budget: number, percentage: number): string {
+  if (budget <= 0) return '';
+  if (percentage <= 100) {
+    const remaining = budget - spent;
+    return `${percentage}% — resta ${formatCurrency(remaining)}`;
+  }
+  const exceeded = spent - budget;
+  return `${percentage}% — excedeu ${formatCurrency(exceeded)}`;
+}
+
+function getLabelColorClass(percentage: number): string {
+  if (percentage <= 60) return 'text-positive-text';
+  if (percentage <= 80) return 'text-attention-text';
+  if (percentage <= 100) return 'text-alert-text';
+  return 'text-critical-text';
 }
 
 export function BudgetProgressBar({
@@ -33,6 +58,7 @@ export function BudgetProgressBar({
   label,
   showValues = false,
   showPercentage = false,
+  showRemainder = false,
   variant = 'inline',
   className,
 }: BudgetProgressBarProps) {
@@ -77,10 +103,7 @@ export function BudgetProgressBar({
               <span
                 className={cn(
                   'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
-                  percentage < 70 && 'bg-green-100 text-green-800',
-                  percentage >= 70 && percentage < 85 && 'bg-yellow-100 text-yellow-800',
-                  percentage >= 85 && percentage < 100 && 'bg-orange-100 text-orange-800',
-                  percentage >= 100 && 'bg-red-100 text-red-800',
+                  getBadgeClasses(percentage),
                 )}
               >
                 {getStatusLabel(percentage)}
@@ -104,6 +127,11 @@ export function BudgetProgressBar({
         {showValues && (
           <p className="text-xs tabular-nums text-muted-foreground">
             {formatCurrency(spent)} / {formatCurrency(budget)}
+          </p>
+        )}
+        {showRemainder && budget > 0 && (
+          <p className={cn('text-[11px] tabular-nums', getLabelColorClass(percentage))}>
+            {getRemainderLabel(spent, budget, percentage)}
           </p>
         )}
       </div>

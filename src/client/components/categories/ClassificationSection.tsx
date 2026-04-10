@@ -6,6 +6,7 @@ import { ChevronDown, Plus, Pencil } from 'lucide-react';
 import { cn } from '@/client/utils/utils';
 
 import { Button } from '@/client/components/ui/button';
+import { BudgetProgressBar } from '@/client/components/ui/budget-progress-bar';
 import { CategoryCard } from './CategoryCard';
 import { formatCurrency } from '@/client/utils/format-currency';
 import {
@@ -76,6 +77,9 @@ interface ClassificationSectionProps {
   categories: Category[];
   subcategoriesByCategory: Map<string, Subcategory[]>;
   establishments: Establishment[];
+  spendingByCategory?: Map<string, number>;
+  spendingBySubcategory?: Map<string, number>;
+  spendingByEstablishment?: Map<string, number>;
   bankAccounts: BankAccount[];
   creditCards: CreditCard[];
   onEditClassification: (classification: Classification) => void;
@@ -121,6 +125,9 @@ export function ClassificationSection({
   categories,
   subcategoriesByCategory,
   establishments,
+  spendingByCategory,
+  spendingBySubcategory,
+  spendingByEstablishment,
   bankAccounts,
   creditCards,
   onEditClassification,
@@ -141,6 +148,28 @@ export function ClassificationSection({
 
   const budgetTotal = useMemo(() => computeBudgetTotal(categories), [categories]);
   const hint = CLASSIFICATION_HINTS[classification.name];
+
+  // Calcular gasto total da classificação (soma dos gastos das categorias ativas)
+  const classificationSpent = useMemo(() => {
+    if (!spendingByCategory) return 0;
+    return activeCategories.reduce((sum, cat) => sum + (spendingByCategory.get(cat.id) ?? 0), 0);
+  }, [activeCategories, spendingByCategory]);
+
+  // Calcular budget max da classificação para a budget bar
+  const classificationBudgetMax = useMemo(() => {
+    let total = 0;
+    let hasBudget = false;
+    for (const cat of activeCategories) {
+      if (cat.budgetMaxCents != null) {
+        hasBudget = true;
+        total += cat.budgetMaxCents;
+      } else if (cat.budgetMinCents != null) {
+        hasBudget = true;
+        total += cat.budgetMinCents;
+      }
+    }
+    return hasBudget ? total : 0;
+  }, [activeCategories]);
 
   function handleReactivate() {
     startTransition(async () => {
@@ -174,20 +203,56 @@ export function ClassificationSection({
         />
 
         <span className="shrink-0 text-sm">📊</span>
-        <span className="flex-1 text-sm font-semibold">
-          {classification.name}
-        </span>
+        <div className="flex min-w-0 flex-shrink-0 flex-col">
+          <span className="text-sm font-semibold">
+            {classification.name}
+          </span>
+          <span className="text-xs text-muted-foreground">
+            {classification.activeCategoryCount}{' '}
+            {classification.activeCategoryCount === 1 ? 'categoria' : 'categorias'}
+          </span>
+        </div>
 
-        {budgetTotal && (
+        {classificationBudgetMax > 0 && (
+          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+            <span className="text-xs tabular-nums text-muted-foreground">
+              <strong className="font-semibold text-foreground">{formatCurrency(classificationSpent)}</strong>
+              {' '}/ {budgetTotal}
+            </span>
+            <BudgetProgressBar
+              spent={classificationSpent}
+              budget={classificationBudgetMax}
+              variant="mini"
+            />
+            <span className={cn(
+              'text-[11px] tabular-nums',
+              classificationSpent / classificationBudgetMax <= 0.6 && 'text-positive-text',
+              classificationSpent / classificationBudgetMax > 0.6 && classificationSpent / classificationBudgetMax <= 0.8 && 'text-attention-text',
+              classificationSpent / classificationBudgetMax > 0.8 && classificationSpent / classificationBudgetMax <= 1 && 'text-alert-text',
+              classificationSpent / classificationBudgetMax > 1 && 'text-critical-text',
+            )}>
+              {classificationBudgetMax > 0 && classificationSpent <= classificationBudgetMax
+                ? `${Math.round((classificationSpent / classificationBudgetMax) * 100)}% do máx — resta ${formatCurrency(classificationBudgetMax - classificationSpent)}`
+                : classificationBudgetMax > 0
+                  ? `${Math.round((classificationSpent / classificationBudgetMax) * 100)}% — excedeu ${formatCurrency(classificationSpent - classificationBudgetMax)}`
+                  : ''
+              }
+            </span>
+          </div>
+        )}
+
+        {classificationBudgetMax === 0 && classificationSpent > 0 && (
+          <span className="text-xs tabular-nums font-medium text-muted-foreground">
+            <strong className="font-semibold text-foreground">{formatCurrency(classificationSpent)}</strong>
+            {' '}<span className="text-muted-foreground">(sem orçamento)</span>
+          </span>
+        )}
+
+        {classificationBudgetMax === 0 && classificationSpent === 0 && budgetTotal && (
           <span className="text-xs text-muted-foreground tabular-nums font-medium">
             {budgetTotal}
           </span>
         )}
-
-        <span className="text-xs font-medium text-muted-foreground">
-          {classification.activeCategoryCount}{' '}
-          {classification.activeCategoryCount === 1 ? 'categoria' : 'categorias'}
-        </span>
 
         <div
           className="flex gap-1"
@@ -253,6 +318,9 @@ export function ClassificationSection({
                   category={category}
                   subcategories={subcategoriesByCategory.get(category.id) ?? []}
                   establishments={establishments}
+                  spendingByCategory={spendingByCategory}
+                  spendingBySubcategory={spendingBySubcategory}
+                  spendingByEstablishment={spendingByEstablishment}
                   bankAccounts={bankAccounts}
                   creditCards={creditCards}
                   onEdit={() => onEditCategory(category)}
@@ -284,6 +352,9 @@ export function ClassificationSection({
                           category={category}
                           subcategories={subcategoriesByCategory.get(category.id) ?? []}
                           establishments={establishments}
+                          spendingByCategory={spendingByCategory}
+                          spendingBySubcategory={spendingBySubcategory}
+                          spendingByEstablishment={spendingByEstablishment}
                           bankAccounts={bankAccounts}
                           creditCards={creditCards}
                           onEdit={() => onEditCategory(category)}

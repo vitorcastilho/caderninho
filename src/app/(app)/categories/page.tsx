@@ -6,16 +6,22 @@ import { listSubcategoriesAction } from '@/server/actions/subcategory.actions';
 import { listBankAccountsAction } from '@/server/actions/bank-account.actions';
 import { listCreditCardsAction } from '@/server/actions/credit-card.actions';
 import { listEstablishmentsBySubcategoryAction } from '@/server/actions/establishment.actions';
+import { getMonthlySpendingSummaryAction } from '@/server/actions/transaction.actions';
 
 export default async function CategoriesPage() {
   await seedDefaultClassificationsAction(undefined);
 
-  const [classificationsResult, categoriesResult, subcategoriesResult, bankAccountsResult, creditCardsResult] = await Promise.all([
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+
+  const [classificationsResult, categoriesResult, subcategoriesResult, bankAccountsResult, creditCardsResult, spendingResult] = await Promise.all([
     listClassificationsAction(undefined),
     listCategoriesAction(undefined),
     listSubcategoriesAction(undefined),
     listBankAccountsAction(undefined),
     listCreditCardsAction(undefined),
+    getMonthlySpendingSummaryAction({ year: currentYear, month: currentMonth }),
   ]);
 
   const classifications = classificationsResult.success ? classificationsResult.data : [];
@@ -23,6 +29,10 @@ export default async function CategoriesPage() {
   const subcategories = subcategoriesResult.success ? subcategoriesResult.data : [];
   const bankAccounts = bankAccountsResult.success ? bankAccountsResult.data : [];
   const creditCards = creditCardsResult.success ? creditCardsResult.data : [];
+
+  const spending = spendingResult.success
+    ? spendingResult.data
+    : { byCategory: [], bySubcategory: [], byEstablishment: [] };
 
   // Buscar establishments de todas as subcategorias ativas
   const activeSubs = subcategories.filter((s: { status: string }) => s.status === 'active');
@@ -55,6 +65,7 @@ export default async function CategoriesPage() {
       initialEstablishments={establishments}
       bankAccounts={bankAccounts}
       creditCards={creditCards}
+      initialSpending={spending}
     />
   );
 }
