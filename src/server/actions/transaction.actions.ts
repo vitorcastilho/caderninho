@@ -8,6 +8,7 @@ import { err } from '@/shared/types/result';
 import {
   createTransactionSchema,
   getImpactPreviewSchema,
+  getMonthlySpendingSummarySchema,
 } from '@/shared/schemas/transaction.schema';
 import { idSchema } from '@/shared/schemas/common.schema';
 import { transactionDeps } from '@/server/factories/transaction';
@@ -101,7 +102,10 @@ export const getImpactPreviewAction = withAuth(
 );
 
 export const getMonthlySpendingSummaryAction = withAuth(
-  async (session, input: { year: number; month: number }) => {
+  async (session, input: unknown) => {
+    const validation = validateInput(getMonthlySpendingSummarySchema, input);
+    if (!validation.success) return validation;
+
     const organizationId = getOrganizationId(session);
     if (!organizationId) {
       return err('NO_ACTIVE_ORGANIZATION', 'Nenhuma organização ativa. Selecione uma organização.');
@@ -110,8 +114,8 @@ export const getMonthlySpendingSummaryAction = withAuth(
     const getSpendingSummary = createGetMonthlySpendingSummary(transactionDeps.repository);
     const result = await getSpendingSummary({
       organizationId,
-      year: input.year,
-      month: input.month,
+      year: validation.data.year,
+      month: validation.data.month,
     });
 
     if (!result.success) return result;

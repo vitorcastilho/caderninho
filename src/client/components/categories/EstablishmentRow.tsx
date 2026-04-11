@@ -2,6 +2,7 @@
 
 import { Pencil } from 'lucide-react';
 import { Button } from '@/client/components/ui/button';
+import { BudgetProgressBar } from '@/client/components/ui/budget-progress-bar';
 import { formatCurrency } from '@/client/utils/format-currency';
 import { getEstablishmentSpendingKey } from '@/shared/utils/spending-key';
 
@@ -78,13 +79,13 @@ export function EstablishmentRow({
       {estSpent > 0 && (
         <div className="flex min-w-0 flex-col items-end gap-0.5">
           <span className="text-sm font-semibold tabular-nums">{formatCurrency(estSpent)}</span>
-          <div className="flex items-center gap-1.5 w-20">
-            <div className="h-[3px] w-full rounded-full bg-stone-200">
-              <div
-                className="h-full rounded-full bg-stone-400 transition-all duration-300"
-                style={{ width: `${Math.min(estPercentOfSub, 100)}%` }}
-              />
-            </div>
+          <div className="w-20">
+            <BudgetProgressBar
+              spent={estSpent}
+              budget={subcategorySpent ?? 0}
+              variant="mini"
+              className="h-[3px]"
+            />
           </div>
           {subcategoryName && (
             <span className="text-[11px] tabular-nums text-muted-foreground">

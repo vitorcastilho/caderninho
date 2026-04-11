@@ -6,7 +6,7 @@ import { ChevronDown, Plus, Pencil } from 'lucide-react';
 import { cn } from '@/client/utils/utils';
 
 import { BankLogo } from '@/client/components/ui/bank-logo';
-import { BudgetProgressBar } from '@/client/components/ui/budget-progress-bar';
+import { BudgetProgressBar, getLabelColorClass, getRemainderLabel } from '@/client/components/ui/budget-progress-bar';
 import { Button } from '@/client/components/ui/button';
 import { CreditCardBrandBadge } from '@/client/components/ui/credit-card-brand-badge';
 import { formatCurrency } from '@/client/utils/format-currency';
@@ -223,18 +223,14 @@ export function CategoryCard({
               budget={categoryBudgetMax}
               variant="mini"
             />
-            <span className={cn(
-              'text-[11px] tabular-nums',
-              categorySpent / categoryBudgetMax <= 0.6 && 'text-positive-text',
-              categorySpent / categoryBudgetMax > 0.6 && categorySpent / categoryBudgetMax <= 0.8 && 'text-attention-text',
-              categorySpent / categoryBudgetMax > 0.8 && categorySpent / categoryBudgetMax <= 1 && 'text-alert-text',
-              categorySpent / categoryBudgetMax > 1 && 'text-critical-text',
-            )}>
-              {categorySpent <= categoryBudgetMax
-                ? `${Math.round((categorySpent / categoryBudgetMax) * 100)}% do máx — resta ${formatCurrency(categoryBudgetMax - categorySpent)}`
-                : `${Math.round((categorySpent / categoryBudgetMax) * 100)}% — excedeu ${formatCurrency(categorySpent - categoryBudgetMax)}`
-              }
-            </span>
+            {(() => {
+              const pct = Math.round((categorySpent / categoryBudgetMax) * 100);
+              return (
+                <span className={cn('text-[11px] tabular-nums', getLabelColorClass(pct))}>
+                  {getRemainderLabel(categorySpent, categoryBudgetMax, pct)}
+                </span>
+              );
+            })()}
           </div>
         )}
 
@@ -309,9 +305,10 @@ export function CategoryCard({
             );
             const isSubExpanded = expandedSubs.has(sub.id);
             const subSpent = spendingBySubcategory?.get(sub.id) ?? 0;
-            // Subcategories mostram % relativo à categoria pai
-            const subPercentOfParent = categorySpent > 0
-              ? `${Math.round((subSpent / categorySpent) * 100)}% de ${category.name}`
+            // Subcategories mostram % relativo ao budget da categoria pai (quando existe), senão ao gasto total
+            const subDenominator = categoryBudgetMax > 0 ? categoryBudgetMax : categorySpent;
+            const subPercentOfParent = subDenominator > 0
+              ? `${Math.round((subSpent / subDenominator) * 100)}% de ${category.name}`
               : '';
             return (
             <div key={sub.id}>
@@ -346,21 +343,12 @@ export function CategoryCard({
                       {categoryBudgetMax > 0 && ` / ${budgetDisplay}`}
                       {categoryBudgetMax === 0 && ' (sem orç.)'}
                     </span>
-                    {categoryBudgetMax > 0 ? (
-                      <BudgetProgressBar
-                        spent={subSpent}
-                        budget={categoryBudgetMax}
-                        variant="mini"
-                        className="h-1"
-                      />
-                    ) : (
-                      <div className="h-1 w-full rounded-full bg-stone-200">
-                        <div
-                          className="h-full rounded-full bg-stone-400 transition-all duration-300"
-                          style={{ width: `${categorySpent > 0 ? Math.min(Math.round((subSpent / categorySpent) * 100), 100) : 0}%` }}
-                        />
-                      </div>
-                    )}
+                    <BudgetProgressBar
+                      spent={subSpent}
+                      budget={categoryBudgetMax > 0 ? categoryBudgetMax : categorySpent}
+                      variant="mini"
+                      className="h-1"
+                    />
                     {subPercentOfParent && (
                       <span className="text-[11px] tabular-nums text-muted-foreground">
                         {subPercentOfParent}

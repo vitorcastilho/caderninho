@@ -52,6 +52,14 @@ so that I can visually track spending against budgets directly in the categories
   - [x] 3.3: CategoryCard (subcategoria) — valores monetários + budget bar
   - [x] 3.4: EstablishmentRow — valor gasto + percentual relativo + budget bar
 
+### Review Follow-ups (AI) — R1
+
+- [x] [AI-Review][HIGH] Adicionar validação Zod no `getMonthlySpendingSummaryAction` — criar schema para year/month e usar `validateInput()` como as demais actions [`src/server/actions/transaction.actions.ts:104`]
+- [x] [AI-Review][HIGH] Corrigir denominador do percentual da subcategoria — usar `categoryBudgetMax` em vez de `categorySpent` (quando budget existe), conforme proto-14 [`src/client/components/categories/CategoryCard.tsx:313`]
+- [x] [AI-Review][MEDIUM] Adicionar check de `spendingResult` no `refreshData` — mostrar toast se falhar [`src/client/components/categories/CategoryTree.tsx:205`]
+- [x] [AI-Review][MEDIUM] Substituir barras raw (div bg-stone) por BudgetProgressBar do DS em EstablishmentRow e subcategoria sem budget [`EstablishmentRow.tsx:81-86`, `CategoryCard.tsx:357-361`]
+- [x] [AI-Review][MEDIUM] Exportar `getLabelColorClass` e `getRemainderLabel` do BudgetProgressBar e reutilizar em ClassificationSection e CategoryCard, eliminando duplicação [`ClassificationSection.tsx:227-239`, `CategoryCard.tsx:226-236`]
+
 ## Dev Notes
 
 ### Design System & Protótipos
@@ -109,6 +117,11 @@ so that I can visually track spending against budgets directly in the categories
 - **Decisão**: establishment em transactions é campo texto (não FK). Matching feito por nome + subcategoryId via chave composta
 - **Decisão**: Reutilizou BudgetProgressBar existente do DS (variante mini) em vez de criar componente novo — conforme workflow de enforcement
 - 905 testes passando, 0 erros TS, lint limpo
+- ✅ Resolved review finding [HIGH]: Validação Zod no `getMonthlySpendingSummaryAction` — schema `getMonthlySpendingSummarySchema` criado e `validateInput()` aplicado
+- ✅ Resolved review finding [HIGH]: Denominador do percentual da subcategoria corrigido — usa `categoryBudgetMax` quando budget existe, `categorySpent` como fallback
+- ✅ Resolved review finding [MEDIUM]: Check de `spendingResult` adicionado no `refreshData` — toast de erro inclui falha de spending
+- ✅ Resolved review finding [MEDIUM]: Barras raw `bg-stone` substituídas por `BudgetProgressBar` do DS em `EstablishmentRow` e subcategoria sem budget
+- ✅ Resolved review finding [MEDIUM]: Helpers `getLabelColorClass` e `getRemainderLabel` exportados do `BudgetProgressBar` e reutilizados em `ClassificationSection` e `CategoryCard`
 
 ### Debug Log
 
@@ -133,8 +146,11 @@ Nenhum bloqueio encontrado.
 - `src/server/domain/transactions/use-cases/create-transaction.test.ts` — modificado (mock atualizado)
 - `src/server/domain/transactions/use-cases/get-impact-preview.test.ts` — modificado (mock atualizado)
 - `src/server/domain/transactions/use-cases/get-suggested-establishments.test.ts` — modificado (mock atualizado)
+- `src/shared/schemas/transaction.schema.ts` — modificado (novo schema `getMonthlySpendingSummarySchema`)
 - `_bmad-output/implementation-artifacts/sprint-status.yaml` — modificado (status: in-progress → review)
 
 ## Change Log
 
 - 2026-04-10: Implementação completa — budget bars e valores monetários em 4 níveis da árvore de categorias. BudgetProgressBar alinhado com proto-14 (thresholds 60/80/100, tokens semânticos). Backend com agregação de gastos mensais por categoria/subcategoria/estabelecimento. 905 testes passando.
+- 2026-04-10: Code review R1 — 2 HIGH, 3 MEDIUM, 1 LOW. Action items criados. Status → in-progress.
+- 2026-04-10: Addressed code review findings — 5 items resolved (2 HIGH, 3 MEDIUM). Validação Zod, denominador corrigido, check spendingResult, barras DS, helpers exportados.

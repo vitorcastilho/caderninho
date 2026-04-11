@@ -6,7 +6,7 @@ import { ChevronDown, Plus, Pencil } from 'lucide-react';
 import { cn } from '@/client/utils/utils';
 
 import { Button } from '@/client/components/ui/button';
-import { BudgetProgressBar } from '@/client/components/ui/budget-progress-bar';
+import { BudgetProgressBar, getLabelColorClass, getRemainderLabel } from '@/client/components/ui/budget-progress-bar';
 import { CategoryCard } from './CategoryCard';
 import { formatCurrency } from '@/client/utils/format-currency';
 import {
@@ -224,20 +224,14 @@ export function ClassificationSection({
               budget={classificationBudgetMax}
               variant="mini"
             />
-            <span className={cn(
-              'text-[11px] tabular-nums',
-              classificationSpent / classificationBudgetMax <= 0.6 && 'text-positive-text',
-              classificationSpent / classificationBudgetMax > 0.6 && classificationSpent / classificationBudgetMax <= 0.8 && 'text-attention-text',
-              classificationSpent / classificationBudgetMax > 0.8 && classificationSpent / classificationBudgetMax <= 1 && 'text-alert-text',
-              classificationSpent / classificationBudgetMax > 1 && 'text-critical-text',
-            )}>
-              {classificationBudgetMax > 0 && classificationSpent <= classificationBudgetMax
-                ? `${Math.round((classificationSpent / classificationBudgetMax) * 100)}% do máx — resta ${formatCurrency(classificationBudgetMax - classificationSpent)}`
-                : classificationBudgetMax > 0
-                  ? `${Math.round((classificationSpent / classificationBudgetMax) * 100)}% — excedeu ${formatCurrency(classificationSpent - classificationBudgetMax)}`
-                  : ''
-              }
-            </span>
+            {(() => {
+              const pct = Math.round((classificationSpent / classificationBudgetMax) * 100);
+              return (
+                <span className={cn('text-[11px] tabular-nums', getLabelColorClass(pct))}>
+                  {getRemainderLabel(classificationSpent, classificationBudgetMax, pct)}
+                </span>
+              );
+            })()}
           </div>
         )}
 

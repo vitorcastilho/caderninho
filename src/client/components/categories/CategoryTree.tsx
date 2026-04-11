@@ -202,7 +202,7 @@ export function CategoryTree({
           }));
         setEstablishments(allEstablishments);
       }
-      if (!classResult.success || !catResult.success || !subResult.success) {
+      if (!classResult.success || !catResult.success || !subResult.success || !spendingResult.success) {
         toast.error('Erro ao atualizar dados.');
       }
     });

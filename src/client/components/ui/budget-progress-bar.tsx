@@ -35,7 +35,7 @@ function getStatusLabel(percentage: number): string {
   return 'Acima do orçamento';
 }
 
-function getRemainderLabel(spent: number, budget: number, percentage: number): string {
+export function getRemainderLabel(spent: number, budget: number, percentage: number): string {
   if (budget <= 0) return '';
   if (percentage <= 100) {
     const remaining = budget - spent;
@@ -45,7 +45,7 @@ function getRemainderLabel(spent: number, budget: number, percentage: number): s
   return `${percentage}% — excedeu ${formatCurrency(exceeded)}`;
 }
 
-function getLabelColorClass(percentage: number): string {
+export function getLabelColorClass(percentage: number): string {
   if (percentage <= 60) return 'text-positive-text';
   if (percentage <= 80) return 'text-attention-text';
   if (percentage <= 100) return 'text-alert-text';
