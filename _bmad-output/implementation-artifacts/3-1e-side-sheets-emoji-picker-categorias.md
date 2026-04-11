@@ -77,6 +77,8 @@ so that the editing experience matches the prototype and I can select emojis vis
 - Testes unitários criados para EmojiPicker (6 testes): renderização, tamanho 48x48, abertura/fechamento, seleção de emoji, navegação entre categorias
 - 123 test files, 911 testes passando, zero regressões
 - TypeScript e ESLint sem erros
+- ✅ Resolved review finding [MEDIUM]: Conflito de especificidade CSS no SheetContent — className agora usa `data-[side=right]:sm:max-w-[420px]` para mesma especificidade que o base
+- LOWs (cores hardcoded e acessibilidade do emoji picker) são pré-existentes — aceitos como backlog
 
 ## File List
 
@@ -86,7 +88,19 @@ so that the editing experience matches the prototype and I can select emojis vis
 - `src/client/components/categories/SubcategoryForm.tsx` — modificado (Input → EmojiPicker)
 - `src/client/components/ui/emoji-picker.tsx` — modificado (botão trigger h-10 w-10 → h-12 w-12)
 - `src/client/components/ui/emoji-picker.test.tsx` — novo (6 testes unitários)
+- `_bmad-output/implementation-artifacts/sprint-status.yaml` — modificado (status da story)
+
+## Review Follow-ups (AI)
+
+### R1 — 2026-04-10
+
+- [x] [AI-Review][MEDIUM] Conflito de especificidade CSS no SheetContent — `data-[side=right]:sm:max-w-sm` (384px) do Sheet base vence `sm:max-w-[420px]` passado via className. Sheets podem estar 384px em vez de 420px. Fix: usar `data-[side=right]:w-[420px] data-[side=right]:sm:max-w-[420px]` ou alterar o componente Sheet. [CategoryTree.tsx:320]
+- [x] [AI-Review][LOW] Emoji picker usa cores hardcoded (`border-stone-200`, `bg-white`, `bg-indigo-100`) em vez de tokens DS. Pré-existente — backlog. [emoji-picker.tsx]
+- [x] [AI-Review][LOW] Emoji picker sem atributos de acessibilidade (`aria-expanded`, `aria-haspopup`, `role`). Pré-existente — backlog. [emoji-picker.tsx]
+- [x] [AI-Review][LOW] sprint-status.yaml alterado mas não listado no File List da story.
 
 ## Change Log
 
 - 2026-04-10: Implementação completa — Dialog → Sheet (9 forms), EmojiPicker integrado (3 forms), botão trigger 48x48, testes unitários adicionados
+- 2026-04-10: R1 code review — 1 MEDIUM, 3 LOW. Action items criados.
+- 2026-04-10: R1 fixes — MEDIUM (especificidade CSS SheetContent) corrigido: `sm:max-w-[420px]` → `data-[side=right]:sm:max-w-[420px]` para vencer `data-[side=right]:sm:max-w-sm` do base. LOWs aceitos como backlog (pré-existentes). File List atualizado.

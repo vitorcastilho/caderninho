@@ -317,7 +317,7 @@ export function CategoryTree({
 
       {/* Create Classification Sheet */}
       <Sheet open={showCreateClassification} onOpenChange={setShowCreateClassification}>
-        <SheetContent side="right" className="w-[420px] sm:max-w-[420px]">
+        <SheetContent side="right" className="w-[420px] data-[side=right]:sm:max-w-[420px]">
           <SheetHeader>
             <SheetTitle>Nova Classificação</SheetTitle>
           </SheetHeader>
@@ -337,7 +337,7 @@ export function CategoryTree({
 
       {/* Edit Classification Sheet */}
       <Sheet open={!!editingClassification} onOpenChange={(open) => !open && setEditingClassification(null)}>
-        <SheetContent side="right" className="w-[420px] sm:max-w-[420px]">
+        <SheetContent side="right" className="w-[420px] data-[side=right]:sm:max-w-[420px]">
           <SheetHeader>
             <SheetTitle>Editar Classificação</SheetTitle>
           </SheetHeader>
@@ -369,7 +369,7 @@ export function CategoryTree({
 
       {/* Merge Classification Sheet */}
       <Sheet open={!!mergingClassification} onOpenChange={(open) => !open && setMergingClassification(null)}>
-        <SheetContent side="right" className="w-[420px] sm:max-w-[420px]">
+        <SheetContent side="right" className="w-[420px] data-[side=right]:sm:max-w-[420px]">
           <SheetHeader>
             <SheetTitle>Mesclar Classificação</SheetTitle>
           </SheetHeader>
@@ -493,7 +493,7 @@ export function CategoryTree({
 
       {/* Create Category Sheet */}
       <Sheet open={!!creatingCategoryForClassification} onOpenChange={(open) => !open && setCreatingCategoryForClassification(null)}>
-        <SheetContent side="right" className="w-[420px] sm:max-w-[420px]">
+        <SheetContent side="right" className="w-[420px] data-[side=right]:sm:max-w-[420px]">
           <SheetHeader>
             <SheetTitle>Nova Categoria</SheetTitle>
           </SheetHeader>
@@ -518,7 +518,7 @@ export function CategoryTree({
 
       {/* Edit Category Sheet */}
       <Sheet open={!!editingCategory} onOpenChange={(open) => !open && setEditingCategory(null)}>
-        <SheetContent side="right" className="w-[420px] sm:max-w-[420px]">
+        <SheetContent side="right" className="w-[420px] data-[side=right]:sm:max-w-[420px]">
           <SheetHeader>
             <SheetTitle>Editar Categoria</SheetTitle>
           </SheetHeader>
@@ -548,7 +548,7 @@ export function CategoryTree({
 
       {/* Create Subcategory Sheet */}
       <Sheet open={!!creatingSubcategoryForCategory} onOpenChange={(open) => !open && setCreatingSubcategoryForCategory(null)}>
-        <SheetContent side="right" className="w-[420px] sm:max-w-[420px]">
+        <SheetContent side="right" className="w-[420px] data-[side=right]:sm:max-w-[420px]">
           <SheetHeader>
             <SheetTitle>
               Criar subcategoria para {categories.find((c) => c.id === creatingSubcategoryForCategory)?.name}
@@ -574,7 +574,7 @@ export function CategoryTree({
 
       {/* Edit Subcategory Sheet */}
       <Sheet open={!!editingSubcategory} onOpenChange={(open) => !open && setEditingSubcategory(null)}>
-        <SheetContent side="right" className="w-[420px] sm:max-w-[420px]">
+        <SheetContent side="right" className="w-[420px] data-[side=right]:sm:max-w-[420px]">
           <SheetHeader>
             <SheetTitle>
               Editar subcategoria de {categories.find((c) => c.id === editingSubcategory?.categoryId)?.name}
@@ -605,7 +605,7 @@ export function CategoryTree({
 
       {/* Create Establishment Sheet */}
       <Sheet open={!!creatingEstablishmentForSubcategory} onOpenChange={(open) => !open && setCreatingEstablishmentForSubcategory(null)}>
-        <SheetContent side="right" className="w-[420px] sm:max-w-[420px]">
+        <SheetContent side="right" className="w-[420px] data-[side=right]:sm:max-w-[420px]">
           <SheetHeader>
             <SheetTitle>Novo Estabelecimento</SheetTitle>
           </SheetHeader>
@@ -630,7 +630,7 @@ export function CategoryTree({
 
       {/* Edit Establishment Sheet */}
       <Sheet open={!!editingEstablishment} onOpenChange={(open) => !open && setEditingEstablishment(null)}>
-        <SheetContent side="right" className="w-[420px] sm:max-w-[420px]">
+        <SheetContent side="right" className="w-[420px] data-[side=right]:sm:max-w-[420px]">
           <SheetHeader>
             <SheetTitle>Editar Estabelecimento</SheetTitle>
           </SheetHeader>
