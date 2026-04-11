@@ -37,29 +37,47 @@ describe('BudgetProgressBar', () => {
     });
   });
 
-  describe('faixas de cor', () => {
-    it('verde quando percentage < 70%', () => {
-      const { container } = render(<BudgetProgressBar spent={3000} budget={10000} />);
+  describe('faixas de cor (≤60% positive, 60-80% attention, 80-100% alert, >100% critical)', () => {
+    it('positive quando percentage <= 60%', () => {
+      const { container } = render(<BudgetProgressBar spent={6000} budget={10000} />);
       const fill = container.querySelector('[role="progressbar"] > div');
-      expect(fill?.className).toContain('bg-green-500');
+      expect(fill?.className).toContain('bg-positive');
     });
 
-    it('amarelo quando percentage >= 70% e < 85%', () => {
+    it('attention quando percentage > 60% e <= 80%', () => {
       const { container } = render(<BudgetProgressBar spent={7500} budget={10000} />);
       const fill = container.querySelector('[role="progressbar"] > div');
-      expect(fill?.className).toContain('bg-yellow-500');
+      expect(fill?.className).toContain('bg-attention');
     });
 
-    it('laranja quando percentage >= 85% e < 100%', () => {
+    it('alert quando percentage > 80% e <= 100%', () => {
       const { container } = render(<BudgetProgressBar spent={9200} budget={10000} />);
       const fill = container.querySelector('[role="progressbar"] > div');
-      expect(fill?.className).toContain('bg-orange-500');
+      expect(fill?.className).toContain('bg-alert');
     });
 
-    it('vermelho quando percentage >= 100%', () => {
+    it('critical quando percentage > 100%', () => {
       const { container } = render(<BudgetProgressBar spent={11500} budget={10000} />);
       const fill = container.querySelector('[role="progressbar"] > div');
-      expect(fill?.className).toContain('bg-red-500');
+      expect(fill?.className).toContain('bg-critical');
+    });
+
+    it('positive no limite exato de 60%', () => {
+      const { container } = render(<BudgetProgressBar spent={6000} budget={10000} />);
+      const fill = container.querySelector('[role="progressbar"] > div');
+      expect(fill?.className).toContain('bg-positive');
+    });
+
+    it('attention no limite exato de 80%', () => {
+      const { container } = render(<BudgetProgressBar spent={8000} budget={10000} />);
+      const fill = container.querySelector('[role="progressbar"] > div');
+      expect(fill?.className).toContain('bg-attention');
+    });
+
+    it('alert no limite exato de 100%', () => {
+      const { container } = render(<BudgetProgressBar spent={10000} budget={10000} />);
+      const fill = container.querySelector('[role="progressbar"] > div');
+      expect(fill?.className).toContain('bg-alert');
     });
   });
 
@@ -108,6 +126,30 @@ describe('BudgetProgressBar', () => {
       expect(screen.getByText('Próximo do limite')).toBeInTheDocument();
     });
 
+    it('expanded: renderiza label "resta" com showRemainder', () => {
+      render(
+        <BudgetProgressBar
+          spent={7000}
+          budget={10000}
+          showRemainder
+          variant="expanded"
+        />
+      );
+      expect(screen.getByText(/70% — resta R\$ 30,00/)).toBeInTheDocument();
+    });
+
+    it('expanded: renderiza label "excedeu" quando acima de 100%', () => {
+      render(
+        <BudgetProgressBar
+          spent={12000}
+          budget={10000}
+          showRemainder
+          variant="expanded"
+        />
+      );
+      expect(screen.getByText(/120% — excedeu R\$ 20,00/)).toBeInTheDocument();
+    });
+
     it('mini: renderiza barra sem texto', () => {
       const { container } = render(
         <BudgetProgressBar
@@ -119,10 +161,8 @@ describe('BudgetProgressBar', () => {
           variant="mini"
         />
       );
-      // Mini não deve mostrar label nem porcentagem nem valores
       expect(screen.queryByText('Alimentação')).not.toBeInTheDocument();
       expect(screen.queryByText('50%')).not.toBeInTheDocument();
-      // Mas deve ter o progressbar
       expect(container.querySelector('[role="progressbar"]')).toBeInTheDocument();
     });
   });
@@ -151,6 +191,18 @@ describe('BudgetProgressBar', () => {
       const { container } = render(<BudgetProgressBar spent={15000} budget={10000} />);
       const fill = container.querySelector('[role="progressbar"] > div') as HTMLElement;
       expect(fill.style.width).toBe('100%');
+    });
+
+    it('showRemainder não renderiza quando budget = 0', () => {
+      const { container } = render(
+        <BudgetProgressBar
+          spent={5000}
+          budget={0}
+          showRemainder
+          variant="expanded"
+        />
+      );
+      expect(container.querySelector('.tabular-nums')).not.toBeInTheDocument();
     });
   });
 });

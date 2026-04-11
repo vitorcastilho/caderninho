@@ -8,6 +8,7 @@ import { err } from '@/shared/types/result';
 import {
   createTransactionSchema,
   getImpactPreviewSchema,
+  getMonthlySpendingSummarySchema,
 } from '@/shared/schemas/transaction.schema';
 import { idSchema } from '@/shared/schemas/common.schema';
 import { transactionDeps } from '@/server/factories/transaction';
@@ -15,6 +16,7 @@ import { autoCreateEstablishmentDeps } from '@/server/factories/establishment';
 import { createTransaction } from '@/server/domain/transactions/use-cases/create-transaction';
 import { getSuggestedEstablishments } from '@/server/domain/transactions/use-cases/get-suggested-establishments';
 import { getImpactPreview } from '@/server/domain/transactions/use-cases/get-impact-preview';
+import { createGetMonthlySpendingSummary } from '@/server/domain/transactions/use-cases/get-monthly-spending-summary';
 import { autoCreateEstablishment } from '@/server/domain/establishments/use-cases/auto-create-establishment';
 
 function getOrganizationId(session: { session: { activeOrganizationId?: string | null } }) {
@@ -96,5 +98,45 @@ export const getImpactPreviewAction = withAuth(
         organizationId,
       },
     );
+  },
+);
+
+export const getMonthlySpendingSummaryAction = withAuth(
+  async (session, input: unknown) => {
+    const validation = validateInput(getMonthlySpendingSummarySchema, input);
+    if (!validation.success) return validation;
+
+    const organizationId = getOrganizationId(session);
+    if (!organizationId) {
+      return err('NO_ACTIVE_ORGANIZATION', 'Nenhuma organização ativa. Selecione uma organização.');
+    }
+
+    const getSpendingSummary = createGetMonthlySpendingSummary(transactionDeps.repository);
+    const result = await getSpendingSummary({
+      organizationId,
+      year: validation.data.year,
+      month: validation.data.month,
+    });
+
+    if (!result.success) return result;
+
+    // Serializar Maps para arrays (Maps não são serializáveis via Server Actions)
+    return {
+      success: true as const,
+      data: {
+        byCategory: Array.from(result.data.byCategory.entries()).map(([id, total]) => ({
+          id,
+          totalCents: total,
+        })),
+        bySubcategory: Array.from(result.data.bySubcategory.entries()).map(([id, total]) => ({
+          id,
+          totalCents: total,
+        })),
+        byEstablishment: Array.from(result.data.byEstablishment.entries()).map(([key, total]) => ({
+          key,
+          totalCents: total,
+        })),
+      },
+    };
   },
 );

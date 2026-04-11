@@ -26,5 +26,11 @@ export const getImpactPreviewSchema = z.object({
   paymentMethodLabel: z.string().min(1).max(200),
 });
 
+export const getMonthlySpendingSummarySchema = z.object({
+  year: z.number().int().min(2000).max(2100),
+  month: z.number().int().min(1).max(12),
+});
+
 export type CreateTransactionInput = z.infer<typeof createTransactionSchema>;
 export type GetImpactPreviewInput = z.infer<typeof getImpactPreviewSchema>;
+export type GetMonthlySpendingSummaryInput = z.infer<typeof getMonthlySpendingSummarySchema>;

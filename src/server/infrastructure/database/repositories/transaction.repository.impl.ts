@@ -106,4 +106,84 @@ export class DrizzleTransactionRepository implements TransactionRepository {
 
     return Number(result[0]?.total ?? 0);
   }
+
+  async getMonthlySpendingSummary(
+    organizationId: string,
+    year: number,
+    month: number,
+  ): Promise<{
+    byCategory: { categoryId: string; totalCents: number }[];
+    bySubcategory: { subcategoryId: string; totalCents: number }[];
+    byEstablishment: { establishment: string; subcategoryId: string; totalCents: number }[];
+  }> {
+    const startOfMonth = new Date(year, month - 1, 1);
+    const startOfNextMonth = new Date(year, month, 1);
+
+    const baseWhere = and(
+      eq(transactions.organizationId, organizationId),
+      eq(transactions.type, 'expense'),
+      gte(transactions.transactionDate, startOfMonth),
+      lt(transactions.transactionDate, startOfNextMonth),
+    );
+
+    const [byCategory, bySubcategory, byEstablishment] = await Promise.all([
+      db
+        .select({
+          categoryId: transactions.categoryId,
+          totalCents: sql<number>`COALESCE(SUM(${transactions.amountCents}), 0)`.as('total_cents'),
+        })
+        .from(transactions)
+        .where(baseWhere)
+        .groupBy(transactions.categoryId),
+
+      db
+        .select({
+          subcategoryId: transactions.subcategoryId,
+          totalCents: sql<number>`COALESCE(SUM(${transactions.amountCents}), 0)`.as('total_cents'),
+        })
+        .from(transactions)
+        .where(and(baseWhere, sql`${transactions.subcategoryId} IS NOT NULL`))
+        .groupBy(transactions.subcategoryId),
+
+      db
+        .select({
+          establishment: transactions.establishment,
+          subcategoryId: transactions.subcategoryId,
+          totalCents: sql<number>`COALESCE(SUM(${transactions.amountCents}), 0)`.as('total_cents'),
+        })
+        .from(transactions)
+        .where(
+          and(
+            baseWhere,
+            sql`${transactions.establishment} IS NOT NULL`,
+            sql`${transactions.establishment} != ''`,
+            sql`${transactions.subcategoryId} IS NOT NULL`,
+          ),
+        )
+        .groupBy(transactions.establishment, transactions.subcategoryId),
+    ]);
+
+    return {
+      byCategory: byCategory.map((r) => ({
+        categoryId: r.categoryId,
+        totalCents: Number(r.totalCents),
+      })),
+      bySubcategory: bySubcategory
+        .filter((r): r is typeof r & { subcategoryId: string } => r.subcategoryId !== null)
+        .map((r) => ({
+          subcategoryId: r.subcategoryId,
+          totalCents: Number(r.totalCents),
+        })),
+      byEstablishment: byEstablishment
+        .filter(
+          (r): r is typeof r & { establishment: string; subcategoryId: string } =>
+            r.establishment !== null && r.subcategoryId !== null,
+        )
+        .map((r) => ({
+          establishment: r.establishment,
+          subcategoryId: r.subcategoryId,
+          totalCents: Number(r.totalCents),
+        })),
+    };
+  }
 }

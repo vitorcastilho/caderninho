@@ -1359,7 +1359,7 @@ function BarrasProgressoSection() {
         </div>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
-        Container: <code className="rounded bg-muted px-1 py-0.5 text-[11px]">h-1.5 w-full rounded-full bg-muted</code>. Label: <code className="rounded bg-muted px-1 py-0.5 text-[11px]">text-sm font-semibold tabular-nums</code> + cor semântica. Faixas: positivo (verde &lt;70%), atenção (amarelo 70-85%), alerta (laranja 85-100%), crítico (vermelho &gt;100%), fixo (indigo 100% fixo).
+        Container: <code className="rounded bg-muted px-1 py-0.5 text-[11px]">h-1.5 w-full rounded-full bg-muted</code>. Label: <code className="rounded bg-muted px-1 py-0.5 text-[11px]">text-sm font-semibold tabular-nums</code> + cor semântica. Faixas: positivo (verde &le;60%), atenção (amarelo 60-80%), alerta (laranja 80-100%), crítico (vermelho &gt;100%).
       </p>
     </Section>
   )
@@ -5029,17 +5029,18 @@ function BudgetProgressBarSection() {
           <p className="text-xs font-medium text-muted-foreground">Faixas de cor (inline)</p>
           <div className="space-y-3 rounded-[var(--radius-card)] border p-4">
             <BudgetProgressBar spent={30000} budget={100000} label="Verde (30%)" showPercentage variant="inline" />
-            <BudgetProgressBar spent={75000} budget={100000} label="Amarelo (75%)" showPercentage variant="inline" />
+            <BudgetProgressBar spent={70000} budget={100000} label="Amarelo (70%)" showPercentage variant="inline" />
             <BudgetProgressBar spent={92000} budget={100000} label="Laranja (92%)" showPercentage variant="inline" />
             <BudgetProgressBar spent={115000} budget={100000} label="Vermelho (115%)" showPercentage variant="inline" />
           </div>
         </div>
 
-        {/* Expanded */}
+        {/* Expanded com showRemainder */}
         <div className="space-y-2">
-          <p className="text-xs font-medium text-muted-foreground">Variante expanded</p>
-          <div className="rounded-[var(--radius-card)] border p-4">
-            <BudgetProgressBar spent={75000} budget={100000} label="Alimentação" showValues showPercentage variant="expanded" />
+          <p className="text-xs font-medium text-muted-foreground">Variante expanded com resta/excedeu</p>
+          <div className="space-y-4 rounded-[var(--radius-card)] border p-4">
+            <BudgetProgressBar spent={75000} budget={100000} label="Alimentação" showValues showPercentage showRemainder variant="expanded" />
+            <BudgetProgressBar spent={115000} budget={100000} label="Excedeu" showValues showPercentage showRemainder variant="expanded" />
           </div>
         </div>
 
@@ -5055,11 +5056,11 @@ function BudgetProgressBarSection() {
         <div className="grid grid-cols-2 gap-4 text-[13px]">
           <div className="space-y-1">
             <p className="font-medium">Props</p>
-            <p className="text-muted-foreground">spent, budget (centavos), label?, showValues?, showPercentage?, variant? (inline|expanded|mini)</p>
+            <p className="text-muted-foreground">spent, budget (centavos), label?, showValues?, showPercentage?, showRemainder?, variant? (inline|expanded|mini)</p>
           </div>
           <div className="space-y-1">
-            <p className="font-medium">Cores</p>
-            <p className="text-muted-foreground">&lt;70% verde, 70-85% amarelo, 85-100% laranja, &gt;100% vermelho</p>
+            <p className="font-medium">Cores (proto-14)</p>
+            <p className="text-muted-foreground">&le;60% positive, 60-80% attention, 80-100% alert, &gt;100% critical</p>
           </div>
         </div>
       </div>

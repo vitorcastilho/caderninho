@@ -27,6 +27,7 @@ import { listClassificationsAction, archiveClassificationAction } from '@/server
 import { listCategoriesAction, archiveCategoryAction } from '@/server/actions/category.actions';
 import { listSubcategoriesAction, archiveSubcategoryAction } from '@/server/actions/subcategory.actions';
 import { listEstablishmentsBySubcategoryAction } from '@/server/actions/establishment.actions';
+import { getMonthlySpendingSummaryAction } from '@/server/actions/transaction.actions';
 
 interface Classification {
   id: string;
@@ -87,6 +88,12 @@ interface Establishment {
   status: 'active' | 'archived';
 }
 
+export interface SpendingData {
+  byCategory: { id: string; totalCents: number }[];
+  bySubcategory: { id: string; totalCents: number }[];
+  byEstablishment: { key: string; totalCents: number }[];
+}
+
 interface CategoryTreeProps {
   initialClassifications: Classification[];
   initialCategories: Category[];
@@ -94,7 +101,10 @@ interface CategoryTreeProps {
   initialEstablishments: Establishment[];
   bankAccounts: BankAccount[];
   creditCards: CreditCard[];
+  initialSpending?: SpendingData;
 }
+
+const EMPTY_SPENDING: SpendingData = { byCategory: [], bySubcategory: [], byEstablishment: [] };
 
 export function CategoryTree({
   initialClassifications,
@@ -103,11 +113,13 @@ export function CategoryTree({
   initialEstablishments,
   bankAccounts,
   creditCards,
+  initialSpending,
 }: CategoryTreeProps) {
   const [classifications, setClassifications] = useState<Classification[]>(initialClassifications);
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [subcategories, setSubcategories] = useState<Subcategory[]>(initialSubcategories);
   const [establishments, setEstablishments] = useState<Establishment[]>(initialEstablishments);
+  const [spending, setSpending] = useState<SpendingData>(initialSpending ?? EMPTY_SPENDING);
   const [showArchived, setShowArchived] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -154,13 +166,16 @@ export function CategoryTree({
 
   const refreshData = useCallback(() => {
     startTransition(async () => {
-      const [classResult, catResult, subResult] = await Promise.all([
+      const now = new Date();
+      const [classResult, catResult, subResult, spendingResult] = await Promise.all([
         listClassificationsAction(undefined),
         listCategoriesAction(undefined),
         listSubcategoriesAction(undefined),
+        getMonthlySpendingSummaryAction({ year: now.getFullYear(), month: now.getMonth() + 1 }),
       ]);
       if (classResult.success) setClassifications(classResult.data);
       if (catResult.success) setCategories(catResult.data);
+      if (spendingResult.success) setSpending(spendingResult.data);
       if (subResult.success) {
         setSubcategories(subResult.data);
         // Buscar establishments de todas as subcategorias ativas
@@ -187,7 +202,7 @@ export function CategoryTree({
           }));
         setEstablishments(allEstablishments);
       }
-      if (!classResult.success || !catResult.success || !subResult.success) {
+      if (!classResult.success || !catResult.success || !subResult.success || !spendingResult.success) {
         toast.error('Erro ao atualizar dados.');
       }
     });
@@ -213,6 +228,30 @@ export function CategoryTree({
     }
     return map;
   }, [subcategories]);
+
+  const spendingByCategory = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const item of spending.byCategory) {
+      map.set(item.id, item.totalCents);
+    }
+    return map;
+  }, [spending.byCategory]);
+
+  const spendingBySubcategory = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const item of spending.bySubcategory) {
+      map.set(item.id, item.totalCents);
+    }
+    return map;
+  }, [spending.bySubcategory]);
+
+  const spendingByEstablishment = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const item of spending.byEstablishment) {
+      map.set(item.key, item.totalCents);
+    }
+    return map;
+  }, [spending.byEstablishment]);
 
   const activeClassifications = classifications.filter((c) => c.status === 'active');
   const archivedClassifications = classifications.filter((c) => c.status === 'archived');
@@ -612,6 +651,9 @@ export function CategoryTree({
                   categories={categoriesByClassification.get(classification.id) ?? []}
                   subcategoriesByCategory={subcategoriesByCategory}
                   establishments={establishments}
+                  spendingByCategory={spendingByCategory}
+                  spendingBySubcategory={spendingBySubcategory}
+                  spendingByEstablishment={spendingByEstablishment}
                   onEditClassification={(c) => setEditingClassification({ id: c.id, name: c.name })}
 
                   onAddCategory={(classificationId) => setCreatingCategoryForClassification(classificationId)}
@@ -677,10 +719,13 @@ export function CategoryTree({
                       categories={categoriesByClassification.get(classification.id) ?? []}
                       subcategoriesByCategory={subcategoriesByCategory}
                       establishments={establishments}
+                      spendingByCategory={spendingByCategory}
+                      spendingBySubcategory={spendingBySubcategory}
+                      spendingByEstablishment={spendingByEstablishment}
                       bankAccounts={bankAccounts}
                       creditCards={creditCards}
                       onEditClassification={(c) => setEditingClassification({ id: c.id, name: c.name })}
-    
+
                       onAddCategory={(classificationId) => setCreatingCategoryForClassification(classificationId)}
                       onEditCategory={(cat) =>
                         setEditingCategory({
