@@ -17,6 +17,12 @@ import {
   DialogFooter,
   DialogClose,
 } from '@/client/components/ui/dialog';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/client/components/ui/sheet';
 import { ClassificationSection } from './ClassificationSection';
 import { ClassificationForm } from './ClassificationForm';
 import { ClassificationMergeDialog } from './ClassificationMergeDialog';
@@ -309,73 +315,79 @@ export function CategoryTree({
         </div>
       )}
 
-      {/* Create Classification Dialog */}
-      <Dialog open={showCreateClassification} onOpenChange={setShowCreateClassification}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Nova Classificação</DialogTitle>
-          </DialogHeader>
-          <ClassificationForm
-            mode="create"
-            nextDisplayOrder={classifications.length + 1}
-            onSuccess={() => {
-              setShowCreateClassification(false);
-              refreshData();
-            }}
-            onCancel={() => setShowCreateClassification(false)}
-          />
-        </DialogContent>
-      </Dialog>
-
-      {/* Edit Classification Dialog */}
-      <Dialog open={!!editingClassification} onOpenChange={(open) => !open && setEditingClassification(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Editar Classificação</DialogTitle>
-          </DialogHeader>
-          {editingClassification && (
+      {/* Create Classification Sheet */}
+      <Sheet open={showCreateClassification} onOpenChange={setShowCreateClassification}>
+        <SheetContent side="right" className="w-[420px] sm:max-w-[420px]">
+          <SheetHeader>
+            <SheetTitle>Nova Classificação</SheetTitle>
+          </SheetHeader>
+          <div className="flex-1 overflow-y-auto px-4 pb-4">
             <ClassificationForm
-              mode="edit"
-              defaultValues={editingClassification}
+              mode="create"
+              nextDisplayOrder={classifications.length + 1}
               onSuccess={() => {
-                setEditingClassification(null);
+                setShowCreateClassification(false);
                 refreshData();
               }}
-              onCancel={() => setEditingClassification(null)}
-              onArchive={() => {
-                const cls = editingClassification;
-                setEditingClassification(null);
-                setArchivingClassification(cls);
-              }}
-              onMerge={() => {
-                const cls = editingClassification;
-                setEditingClassification(null);
-                setMergingClassification(cls);
-              }}
+              onCancel={() => setShowCreateClassification(false)}
             />
-          )}
-        </DialogContent>
-      </Dialog>
+          </div>
+        </SheetContent>
+      </Sheet>
 
-      {/* Merge Classification Dialog */}
-      <Dialog open={!!mergingClassification} onOpenChange={(open) => !open && setMergingClassification(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Mesclar Classificação</DialogTitle>
-          </DialogHeader>
-          {mergingClassification && (
-            <ClassificationMergeDialog
-              source={mergingClassification}
-              classifications={activeClassifications}
-              onSuccess={() => {
-                setMergingClassification(null);
-                refreshData();
-              }}
-              onCancel={() => setMergingClassification(null)}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* Edit Classification Sheet */}
+      <Sheet open={!!editingClassification} onOpenChange={(open) => !open && setEditingClassification(null)}>
+        <SheetContent side="right" className="w-[420px] sm:max-w-[420px]">
+          <SheetHeader>
+            <SheetTitle>Editar Classificação</SheetTitle>
+          </SheetHeader>
+          <div className="flex-1 overflow-y-auto px-4 pb-4">
+            {editingClassification && (
+              <ClassificationForm
+                mode="edit"
+                defaultValues={editingClassification}
+                onSuccess={() => {
+                  setEditingClassification(null);
+                  refreshData();
+                }}
+                onCancel={() => setEditingClassification(null)}
+                onArchive={() => {
+                  const cls = editingClassification;
+                  setEditingClassification(null);
+                  setArchivingClassification(cls);
+                }}
+                onMerge={() => {
+                  const cls = editingClassification;
+                  setEditingClassification(null);
+                  setMergingClassification(cls);
+                }}
+              />
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Merge Classification Sheet */}
+      <Sheet open={!!mergingClassification} onOpenChange={(open) => !open && setMergingClassification(null)}>
+        <SheetContent side="right" className="w-[420px] sm:max-w-[420px]">
+          <SheetHeader>
+            <SheetTitle>Mesclar Classificação</SheetTitle>
+          </SheetHeader>
+          <div className="flex-1 overflow-y-auto px-4 pb-4">
+            {mergingClassification && (
+              <ClassificationMergeDialog
+                source={mergingClassification}
+                classifications={activeClassifications}
+                onSuccess={() => {
+                  setMergingClassification(null);
+                  refreshData();
+                }}
+                onCancel={() => setMergingClassification(null)}
+              />
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* Archive Classification Confirm */}
       <Dialog open={!!archivingClassification} onOpenChange={(open) => !open && setArchivingClassification(null)}>
@@ -479,155 +491,167 @@ export function CategoryTree({
         </DialogContent>
       </Dialog>
 
-      {/* Create Category Dialog */}
-      <Dialog open={!!creatingCategoryForClassification} onOpenChange={(open) => !open && setCreatingCategoryForClassification(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Nova Categoria</DialogTitle>
-          </DialogHeader>
-          {creatingCategoryForClassification && (
-            <CategoryForm
-              mode="create"
-              classificationId={creatingCategoryForClassification}
-              classifications={activeClassifications}
-              bankAccounts={bankAccounts}
-              creditCards={creditCards}
-              onSuccess={() => {
-                setCreatingCategoryForClassification(null);
-                refreshData();
-              }}
-              onCancel={() => setCreatingCategoryForClassification(null)}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* Create Category Sheet */}
+      <Sheet open={!!creatingCategoryForClassification} onOpenChange={(open) => !open && setCreatingCategoryForClassification(null)}>
+        <SheetContent side="right" className="w-[420px] sm:max-w-[420px]">
+          <SheetHeader>
+            <SheetTitle>Nova Categoria</SheetTitle>
+          </SheetHeader>
+          <div className="flex-1 overflow-y-auto px-4 pb-4">
+            {creatingCategoryForClassification && (
+              <CategoryForm
+                mode="create"
+                classificationId={creatingCategoryForClassification}
+                classifications={activeClassifications}
+                bankAccounts={bankAccounts}
+                creditCards={creditCards}
+                onSuccess={() => {
+                  setCreatingCategoryForClassification(null);
+                  refreshData();
+                }}
+                onCancel={() => setCreatingCategoryForClassification(null)}
+              />
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
 
-      {/* Edit Category Dialog */}
-      <Dialog open={!!editingCategory} onOpenChange={(open) => !open && setEditingCategory(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Editar Categoria</DialogTitle>
-          </DialogHeader>
-          {editingCategory && (
-            <CategoryForm
-              mode="edit"
-              defaultValues={editingCategory}
-              classifications={activeClassifications}
-              bankAccounts={bankAccounts}
-              creditCards={creditCards}
-              onSuccess={() => {
-                setEditingCategory(null);
-                refreshData();
-              }}
-              onCancel={() => setEditingCategory(null)}
-              onArchive={() => {
-                const cat = editingCategory;
-                setEditingCategory(null);
-                setArchivingCategory({ id: cat.id, name: cat.name });
-              }}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* Edit Category Sheet */}
+      <Sheet open={!!editingCategory} onOpenChange={(open) => !open && setEditingCategory(null)}>
+        <SheetContent side="right" className="w-[420px] sm:max-w-[420px]">
+          <SheetHeader>
+            <SheetTitle>Editar Categoria</SheetTitle>
+          </SheetHeader>
+          <div className="flex-1 overflow-y-auto px-4 pb-4">
+            {editingCategory && (
+              <CategoryForm
+                mode="edit"
+                defaultValues={editingCategory}
+                classifications={activeClassifications}
+                bankAccounts={bankAccounts}
+                creditCards={creditCards}
+                onSuccess={() => {
+                  setEditingCategory(null);
+                  refreshData();
+                }}
+                onCancel={() => setEditingCategory(null)}
+                onArchive={() => {
+                  const cat = editingCategory;
+                  setEditingCategory(null);
+                  setArchivingCategory({ id: cat.id, name: cat.name });
+                }}
+              />
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
 
-      {/* Create Subcategory Dialog */}
-      <Dialog open={!!creatingSubcategoryForCategory} onOpenChange={(open) => !open && setCreatingSubcategoryForCategory(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
+      {/* Create Subcategory Sheet */}
+      <Sheet open={!!creatingSubcategoryForCategory} onOpenChange={(open) => !open && setCreatingSubcategoryForCategory(null)}>
+        <SheetContent side="right" className="w-[420px] sm:max-w-[420px]">
+          <SheetHeader>
+            <SheetTitle>
               Criar subcategoria para {categories.find((c) => c.id === creatingSubcategoryForCategory)?.name}
-            </DialogTitle>
-          </DialogHeader>
-          {creatingSubcategoryForCategory && (
-            <SubcategoryForm
-              mode="create"
-              categoryId={creatingSubcategoryForCategory}
-              bankAccounts={bankAccounts}
-              creditCards={creditCards}
-              onSuccess={() => {
-                setCreatingSubcategoryForCategory(null);
-                refreshData();
-              }}
-              onCancel={() => setCreatingSubcategoryForCategory(null)}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+            </SheetTitle>
+          </SheetHeader>
+          <div className="flex-1 overflow-y-auto px-4 pb-4">
+            {creatingSubcategoryForCategory && (
+              <SubcategoryForm
+                mode="create"
+                categoryId={creatingSubcategoryForCategory}
+                bankAccounts={bankAccounts}
+                creditCards={creditCards}
+                onSuccess={() => {
+                  setCreatingSubcategoryForCategory(null);
+                  refreshData();
+                }}
+                onCancel={() => setCreatingSubcategoryForCategory(null)}
+              />
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
 
-      {/* Edit Subcategory Dialog */}
-      <Dialog open={!!editingSubcategory} onOpenChange={(open) => !open && setEditingSubcategory(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
+      {/* Edit Subcategory Sheet */}
+      <Sheet open={!!editingSubcategory} onOpenChange={(open) => !open && setEditingSubcategory(null)}>
+        <SheetContent side="right" className="w-[420px] sm:max-w-[420px]">
+          <SheetHeader>
+            <SheetTitle>
               Editar subcategoria de {categories.find((c) => c.id === editingSubcategory?.categoryId)?.name}
-            </DialogTitle>
-          </DialogHeader>
-          {editingSubcategory && (
-            <SubcategoryForm
-              mode="edit"
-              defaultValues={editingSubcategory}
-              bankAccounts={bankAccounts}
-              creditCards={creditCards}
-              onSuccess={() => {
-                setEditingSubcategory(null);
-                refreshData();
-              }}
-              onCancel={() => setEditingSubcategory(null)}
-              onArchive={() => {
-                const sub = editingSubcategory;
-                setEditingSubcategory(null);
-                setArchivingSubcategory({ id: sub.id, name: sub.name });
-              }}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+            </SheetTitle>
+          </SheetHeader>
+          <div className="flex-1 overflow-y-auto px-4 pb-4">
+            {editingSubcategory && (
+              <SubcategoryForm
+                mode="edit"
+                defaultValues={editingSubcategory}
+                bankAccounts={bankAccounts}
+                creditCards={creditCards}
+                onSuccess={() => {
+                  setEditingSubcategory(null);
+                  refreshData();
+                }}
+                onCancel={() => setEditingSubcategory(null)}
+                onArchive={() => {
+                  const sub = editingSubcategory;
+                  setEditingSubcategory(null);
+                  setArchivingSubcategory({ id: sub.id, name: sub.name });
+                }}
+              />
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
 
-      {/* Create Establishment Dialog */}
-      <Dialog open={!!creatingEstablishmentForSubcategory} onOpenChange={(open) => !open && setCreatingEstablishmentForSubcategory(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Novo Estabelecimento</DialogTitle>
-          </DialogHeader>
-          {creatingEstablishmentForSubcategory && (
-            <EstablishmentForm
-              mode="create"
-              subcategoryId={creatingEstablishmentForSubcategory}
-              subcategories={subcategories.filter((s) => s.status === 'active').map((s) => ({ id: s.id, name: s.name }))}
-              bankAccounts={bankAccounts}
-              creditCards={creditCards}
-              onSuccess={() => {
-                setCreatingEstablishmentForSubcategory(null);
-                refreshData();
-              }}
-              onCancel={() => setCreatingEstablishmentForSubcategory(null)}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* Create Establishment Sheet */}
+      <Sheet open={!!creatingEstablishmentForSubcategory} onOpenChange={(open) => !open && setCreatingEstablishmentForSubcategory(null)}>
+        <SheetContent side="right" className="w-[420px] sm:max-w-[420px]">
+          <SheetHeader>
+            <SheetTitle>Novo Estabelecimento</SheetTitle>
+          </SheetHeader>
+          <div className="flex-1 overflow-y-auto px-4 pb-4">
+            {creatingEstablishmentForSubcategory && (
+              <EstablishmentForm
+                mode="create"
+                subcategoryId={creatingEstablishmentForSubcategory}
+                subcategories={subcategories.filter((s) => s.status === 'active').map((s) => ({ id: s.id, name: s.name }))}
+                bankAccounts={bankAccounts}
+                creditCards={creditCards}
+                onSuccess={() => {
+                  setCreatingEstablishmentForSubcategory(null);
+                  refreshData();
+                }}
+                onCancel={() => setCreatingEstablishmentForSubcategory(null)}
+              />
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
 
-      {/* Edit Establishment Dialog */}
-      <Dialog open={!!editingEstablishment} onOpenChange={(open) => !open && setEditingEstablishment(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Editar Estabelecimento</DialogTitle>
-          </DialogHeader>
-          {editingEstablishment && (
-            <EstablishmentForm
-              mode="edit"
-              defaultValues={editingEstablishment}
-              subcategories={subcategories.filter((s) => s.status === 'active').map((s) => ({ id: s.id, name: s.name }))}
-              bankAccounts={bankAccounts}
-              creditCards={creditCards}
-              onSuccess={() => {
-                setEditingEstablishment(null);
-                refreshData();
-              }}
-              onCancel={() => setEditingEstablishment(null)}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* Edit Establishment Sheet */}
+      <Sheet open={!!editingEstablishment} onOpenChange={(open) => !open && setEditingEstablishment(null)}>
+        <SheetContent side="right" className="w-[420px] sm:max-w-[420px]">
+          <SheetHeader>
+            <SheetTitle>Editar Estabelecimento</SheetTitle>
+          </SheetHeader>
+          <div className="flex-1 overflow-y-auto px-4 pb-4">
+            {editingEstablishment && (
+              <EstablishmentForm
+                mode="edit"
+                defaultValues={editingEstablishment}
+                subcategories={subcategories.filter((s) => s.status === 'active').map((s) => ({ id: s.id, name: s.name }))}
+                bankAccounts={bankAccounts}
+                creditCards={creditCards}
+                onSuccess={() => {
+                  setEditingEstablishment(null);
+                  refreshData();
+                }}
+                onCancel={() => setEditingEstablishment(null)}
+              />
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* Classification sections */}
       {activeClassifications.length === 0 && archivedClassifications.length === 0 ? (

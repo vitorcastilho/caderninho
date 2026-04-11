@@ -7,6 +7,7 @@ import { Trash2 } from 'lucide-react';
 import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';
+import { EmojiPicker } from '@/client/components/ui/emoji-picker';
 import { CurrencyInput } from '@/client/components/ui/currency-input';
 import {
   Select,
@@ -185,15 +186,8 @@ export function EstablishmentForm({
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {/* Emoji */}
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="establishment-emoji">Emoji</Label>
-        <Input
-          id="establishment-emoji"
-          value={emoji}
-          onChange={(e) => setEmoji(e.target.value)}
-          placeholder="📍"
-          className="w-20"
-          maxLength={10}
-        />
+        <Label>Emoji</Label>
+        <EmojiPicker value={emoji} onChange={setEmoji} />
       </div>
 
       {/* Nome */}
