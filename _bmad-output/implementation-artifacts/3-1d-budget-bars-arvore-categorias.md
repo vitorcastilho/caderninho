@@ -1,6 +1,6 @@
 # Story 3.1d: Budget Bars e Valores Monetários na Árvore de Categorias
 
-Status: review
+Status: done
 
 ## Origem
 
@@ -154,3 +154,4 @@ Nenhum bloqueio encontrado.
 - 2026-04-10: Implementação completa — budget bars e valores monetários em 4 níveis da árvore de categorias. BudgetProgressBar alinhado com proto-14 (thresholds 60/80/100, tokens semânticos). Backend com agregação de gastos mensais por categoria/subcategoria/estabelecimento. 905 testes passando.
 - 2026-04-10: Code review R1 — 2 HIGH, 3 MEDIUM, 1 LOW. Action items criados. Status → in-progress.
 - 2026-04-10: Addressed code review findings — 5 items resolved (2 HIGH, 3 MEDIUM). Validação Zod, denominador corrigido, check spendingResult, barras DS, helpers exportados.
+- 2026-04-10: Code review R2 — todos os 5 fixes validados, ACs confirmadas, 905 testes passando. Status → done.
