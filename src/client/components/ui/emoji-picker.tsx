@@ -79,7 +79,7 @@ export function EmojiPicker({ value, onChange }: EmojiPickerProps) {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex h-10 w-10 items-center justify-center rounded-md border border-stone-200 bg-white text-xl transition-colors hover:border-indigo-400 hover:bg-indigo-50"
+        className="flex h-12 w-12 items-center justify-center rounded-md border border-stone-200 bg-white text-2xl transition-colors hover:border-indigo-400 hover:bg-indigo-50"
       >
         {value}
       </button>
