@@ -1,6 +1,6 @@
 # Story 3.1e: Side Sheets e Emoji Picker na Tela de Categorias
 
-Status: review
+Status: done
 
 ## Origem
 
@@ -104,3 +104,4 @@ so that the editing experience matches the prototype and I can select emojis vis
 - 2026-04-10: Implementação completa — Dialog → Sheet (9 forms), EmojiPicker integrado (3 forms), botão trigger 48x48, testes unitários adicionados
 - 2026-04-10: R1 code review — 1 MEDIUM, 3 LOW. Action items criados.
 - 2026-04-10: R1 fixes — MEDIUM (especificidade CSS SheetContent) corrigido: `sm:max-w-[420px]` → `data-[side=right]:sm:max-w-[420px]` para vencer `data-[side=right]:sm:max-w-sm` do base. LOWs aceitos como backlog (pré-existentes). File List atualizado.
+- 2026-04-10: R2 code review — APROVADO. Todos os fixes da R1 validados, ACs implementados, tasks completos. Story → done.
