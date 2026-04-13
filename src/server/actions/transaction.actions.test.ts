@@ -90,8 +90,25 @@ vi.mock('@/server/infrastructure/database/client', () => ({
   },
 }));
 
+vi.mock('@/server/domain/transactions/use-cases/create-income', () => ({
+  createIncome: vi.fn(),
+}));
+
+vi.mock('@/server/domain/transactions/use-cases/transfer-between-accounts', () => ({
+  transferBetweenAccounts: vi.fn(),
+}));
+
+const { createIncome: mockedCreateIncome } = await import(
+  '@/server/domain/transactions/use-cases/create-income'
+);
+const { transferBetweenAccounts: mockedTransfer } = await import(
+  '@/server/domain/transactions/use-cases/transfer-between-accounts'
+);
+
 const {
   createTransactionAction,
+  createIncomeAction,
+  createTransferAction,
   getSuggestedEstablishmentsAction,
 } = await import('./transaction.actions');
 
@@ -165,6 +182,148 @@ describe('Transaction Actions', () => {
       });
 
       expect(result.success).toBe(true);
+    });
+  });
+
+  describe('createIncomeAction', () => {
+    const validInput = {
+      amountCents: 500000,
+      incomeSourceId: '550e8400-e29b-41d4-a716-446655440010',
+      destinationAccountId: '550e8400-e29b-41d4-a716-446655440020',
+    };
+
+    it('deve exigir autenticacao', async () => {
+      mockGetSession.mockResolvedValue(null);
+
+      const result = await createIncomeAction(validInput);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('UNAUTHORIZED');
+      }
+    });
+
+    it('deve rejeitar input invalido (valor zero)', async () => {
+      mockGetSession.mockResolvedValue(fakeSession);
+
+      const result = await createIncomeAction({ ...validInput, amountCents: 0 });
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('VALIDATION_ERROR');
+      }
+    });
+
+    it('deve retornar erro sem organizacao ativa', async () => {
+      mockGetSession.mockResolvedValue({
+        ...fakeSession,
+        session: { ...fakeSession.session, activeOrganizationId: null },
+      });
+
+      const result = await createIncomeAction(validInput);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('NO_ACTIVE_ORGANIZATION');
+      }
+    });
+
+    it('deve chamar use case createIncome com dados validos', async () => {
+      mockGetSession.mockResolvedValue(fakeSession);
+      vi.mocked(mockedCreateIncome).mockResolvedValue({
+        success: true,
+        data: { id: 'tx-1' } as never,
+      });
+
+      const result = await createIncomeAction(validInput);
+
+      expect(result.success).toBe(true);
+      expect(mockedCreateIncome).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          amountCents: 500000,
+          organizationId: 'org-123',
+          userId: 'user-1',
+        }),
+      );
+    });
+  });
+
+  describe('createTransferAction', () => {
+    const validInput = {
+      amountCents: 30000,
+      sourceAccountId: '550e8400-e29b-41d4-a716-446655440030',
+      destinationAccountId: '550e8400-e29b-41d4-a716-446655440040',
+    };
+
+    it('deve exigir autenticacao', async () => {
+      mockGetSession.mockResolvedValue(null);
+
+      const result = await createTransferAction(validInput);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('UNAUTHORIZED');
+      }
+    });
+
+    it('deve rejeitar mesma conta origem e destino', async () => {
+      mockGetSession.mockResolvedValue(fakeSession);
+
+      const result = await createTransferAction({
+        ...validInput,
+        destinationAccountId: validInput.sourceAccountId,
+      });
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('VALIDATION_ERROR');
+      }
+    });
+
+    it('deve rejeitar input invalido (valor zero)', async () => {
+      mockGetSession.mockResolvedValue(fakeSession);
+
+      const result = await createTransferAction({ ...validInput, amountCents: 0 });
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('VALIDATION_ERROR');
+      }
+    });
+
+    it('deve retornar erro sem organizacao ativa', async () => {
+      mockGetSession.mockResolvedValue({
+        ...fakeSession,
+        session: { ...fakeSession.session, activeOrganizationId: null },
+      });
+
+      const result = await createTransferAction(validInput);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('NO_ACTIVE_ORGANIZATION');
+      }
+    });
+
+    it('deve chamar use case transferBetweenAccounts com dados validos', async () => {
+      mockGetSession.mockResolvedValue(fakeSession);
+      vi.mocked(mockedTransfer).mockResolvedValue({
+        success: true,
+        data: { id: 'tx-1' } as never,
+      });
+
+      const result = await createTransferAction(validInput);
+
+      expect(result.success).toBe(true);
+      expect(mockedTransfer).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          amountCents: 30000,
+          organizationId: 'org-123',
+          userId: 'user-1',
+        }),
+      );
     });
   });
 

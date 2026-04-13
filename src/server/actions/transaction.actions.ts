@@ -7,6 +7,8 @@ import { validateInput } from '@/server/infrastructure/validation/validate';
 import { err } from '@/shared/types/result';
 import {
   createTransactionSchema,
+  createIncomeSchema,
+  createTransferSchema,
   getImpactPreviewSchema,
   getMonthlySpendingSummarySchema,
 } from '@/shared/schemas/transaction.schema';
@@ -14,6 +16,8 @@ import { idSchema } from '@/shared/schemas/common.schema';
 import { transactionDeps } from '@/server/factories/transaction';
 import { autoCreateEstablishmentDeps } from '@/server/factories/establishment';
 import { createTransaction } from '@/server/domain/transactions/use-cases/create-transaction';
+import { createIncome } from '@/server/domain/transactions/use-cases/create-income';
+import { transferBetweenAccounts } from '@/server/domain/transactions/use-cases/transfer-between-accounts';
 import { getSuggestedEstablishments } from '@/server/domain/transactions/use-cases/get-suggested-establishments';
 import { getImpactPreview } from '@/server/domain/transactions/use-cases/get-impact-preview';
 import { createGetMonthlySpendingSummary } from '@/server/domain/transactions/use-cases/get-monthly-spending-summary';
@@ -56,6 +60,56 @@ export const createTransactionAction = withAuth(async (session, input: unknown) 
 
     revalidatePath('/');
     revalidatePath('/transactions');
+  }
+
+  return result;
+});
+
+export const createIncomeAction = withAuth(async (session, input: unknown) => {
+  const validation = validateInput(createIncomeSchema, input);
+  if (!validation.success) return validation;
+
+  const organizationId = getOrganizationId(session);
+  if (!organizationId) {
+    return err('NO_ACTIVE_ORGANIZATION', 'Nenhuma organização ativa. Selecione uma organização.');
+  }
+
+  const result = await createIncome(transactionDeps, {
+    ...validation.data,
+    organizationId,
+    userId: session.user.id,
+  });
+
+  if (result.success) {
+    revalidatePath('/');
+    revalidatePath('/transactions');
+    revalidatePath('/dashboard');
+    revalidatePath('/accounts');
+  }
+
+  return result;
+});
+
+export const createTransferAction = withAuth(async (session, input: unknown) => {
+  const validation = validateInput(createTransferSchema, input);
+  if (!validation.success) return validation;
+
+  const organizationId = getOrganizationId(session);
+  if (!organizationId) {
+    return err('NO_ACTIVE_ORGANIZATION', 'Nenhuma organização ativa. Selecione uma organização.');
+  }
+
+  const result = await transferBetweenAccounts(transactionDeps, {
+    ...validation.data,
+    organizationId,
+    userId: session.user.id,
+  });
+
+  if (result.success) {
+    revalidatePath('/');
+    revalidatePath('/transactions');
+    revalidatePath('/dashboard');
+    revalidatePath('/accounts');
   }
 
   return result;

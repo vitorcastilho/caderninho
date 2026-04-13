@@ -12,13 +12,16 @@ export class DrizzleTransactionRepository implements TransactionRepository {
     id: string;
     type: string;
     amountCents: number;
-    categoryId: string;
+    categoryId?: string | null;
     subcategoryId?: string | null;
     establishment?: string | null;
-    paymentMethodType: string;
+    paymentMethodType?: string | null;
     paymentMethodId?: string | null;
     installments?: number | null;
     description?: string | null;
+    incomeSourceId?: string | null;
+    sourceAccountId?: string | null;
+    destinationAccountId?: string | null;
     transactionDate: Date;
     referenceMonth?: string | null;
     organizationId: string;
@@ -164,10 +167,12 @@ export class DrizzleTransactionRepository implements TransactionRepository {
     ]);
 
     return {
-      byCategory: byCategory.map((r) => ({
-        categoryId: r.categoryId,
-        totalCents: Number(r.totalCents),
-      })),
+      byCategory: byCategory
+        .filter((r): r is typeof r & { categoryId: string } => r.categoryId !== null)
+        .map((r) => ({
+          categoryId: r.categoryId,
+          totalCents: Number(r.totalCents),
+        })),
       bySubcategory: bySubcategory
         .filter((r): r is typeof r & { subcategoryId: string } => r.subcategoryId !== null)
         .map((r) => ({
