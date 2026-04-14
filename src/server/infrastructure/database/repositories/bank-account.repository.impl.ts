@@ -1,6 +1,6 @@
 import { eq, and, asc } from 'drizzle-orm';
 
-import { db } from '@/server/infrastructure/database/client';
+import { db, type DbExecutor } from '@/server/infrastructure/database/client';
 import { bankAccounts } from '@/server/infrastructure/database/schema';
 import type {
   BankAccount,
@@ -8,6 +8,8 @@ import type {
 } from '@/server/domain/bank-accounts/repositories/bank-account.repository';
 
 export class DrizzleBankAccountRepository implements BankAccountRepository {
+  constructor(private readonly executor: DbExecutor = db) {}
+
   async create(data: {
     id: string;
     name: string;
@@ -15,7 +17,7 @@ export class DrizzleBankAccountRepository implements BankAccountRepository {
     balanceCents: number;
     organizationId: string;
   }): Promise<BankAccount> {
-    const [account] = await db
+    const [account] = await this.executor
       .insert(bankAccounts)
       .values(data)
       .returning();
@@ -23,7 +25,7 @@ export class DrizzleBankAccountRepository implements BankAccountRepository {
   }
 
   async findById(id: string, organizationId: string): Promise<BankAccount | null> {
-    const results = await db
+    const results = await this.executor
       .select()
       .from(bankAccounts)
       .where(and(eq(bankAccounts.id, id), eq(bankAccounts.organizationId, organizationId)));
@@ -38,7 +40,11 @@ export class DrizzleBankAccountRepository implements BankAccountRepository {
       ? eq(bankAccounts.organizationId, organizationId)
       : and(eq(bankAccounts.organizationId, organizationId), eq(bankAccounts.status, 'active'));
 
-    const results = await db.select().from(bankAccounts).where(conditions).orderBy(asc(bankAccounts.createdAt));
+    const results = await this.executor
+      .select()
+      .from(bankAccounts)
+      .where(conditions)
+      .orderBy(asc(bankAccounts.createdAt));
     return results as BankAccount[];
   }
 
@@ -47,7 +53,7 @@ export class DrizzleBankAccountRepository implements BankAccountRepository {
     organizationId: string,
     data: Partial<{ name: string; bank: string; balanceCents: number }>,
   ): Promise<BankAccount> {
-    const [account] = await db
+    const [account] = await this.executor
       .update(bankAccounts)
       .set({ ...data, updatedAt: new Date() })
       .where(and(eq(bankAccounts.id, id), eq(bankAccounts.organizationId, organizationId)))
@@ -60,7 +66,7 @@ export class DrizzleBankAccountRepository implements BankAccountRepository {
     organizationId: string,
     status: 'active' | 'archived',
   ): Promise<BankAccount> {
-    const [account] = await db
+    const [account] = await this.executor
       .update(bankAccounts)
       .set({ status, updatedAt: new Date() })
       .where(and(eq(bankAccounts.id, id), eq(bankAccounts.organizationId, organizationId)))

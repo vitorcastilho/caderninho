@@ -113,6 +113,16 @@ describe('deleteTransaction', () => {
     repository: mockRepository,
     auditLogger: mockAuditLogger,
     bankAccountRepository: mockBankAccountRepository,
+    withTransaction: async <T>(
+      fn: (scoped: {
+        repository: TransactionRepository;
+        bankAccountRepository: BankAccountRepository;
+      }) => Promise<T>,
+    ): Promise<T> =>
+      fn({
+        repository: mockRepository,
+        bankAccountRepository: mockBankAccountRepository,
+      }),
   };
 
   beforeEach(() => {

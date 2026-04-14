@@ -11,6 +11,7 @@ import {
   createTransferSchema,
   updateExpenseSchema,
   deleteTransactionSchema,
+  recreateTransactionSnapshotSchema,
   getImpactPreviewSchema,
   getMonthlySpendingSummarySchema,
 } from '@/shared/schemas/transaction.schema';
@@ -26,7 +27,6 @@ import { getSuggestedEstablishments } from '@/server/domain/transactions/use-cas
 import { getImpactPreview } from '@/server/domain/transactions/use-cases/get-impact-preview';
 import { createGetMonthlySpendingSummary } from '@/server/domain/transactions/use-cases/get-monthly-spending-summary';
 import { autoCreateEstablishment } from '@/server/domain/establishments/use-cases/auto-create-establishment';
-import type { Transaction } from '@/server/domain/transactions/repositories/transaction.repository';
 
 function getOrganizationId(session: { session: { activeOrganizationId?: string | null } }) {
   const organizationId = session.session.activeOrganizationId;
@@ -157,9 +157,17 @@ export const listTransactionsAction = withAuth(async (session, _input: unknown) 
 });
 
 /**
- * Recria uma transação a partir de um snapshot (usado pelo "Desfazer" da exclusão).
- * Bypass de validações de negócio pois o snapshot já representa uma transação
- * que foi válida no momento da criação.
+ * Recria uma transação a partir de um snapshot capturado durante o delete
+ * (usado pelo "Desfazer" do toast de exclusão).
+ *
+ * Endurecimentos aplicados:
+ * - Validação forte via zod (campos obrigatórios + tipos)
+ * - Ownership checks: todas as FKs (category/subcategory/incomeSource + contas
+ *   bancárias / cartões) precisam pertencer à organização ativa
+ * - Idempotência: se a transação já existe (clique duplo em <5s), retorna
+ *   sucesso sem reaplicar saldo
+ * - createdBy é forçado a partir da session, nunca confia no cliente
+ * - Tudo dentro de db.transaction() para atomicidade saldo ↔ transação
  */
 export const recreateTransactionFromSnapshotAction = withAuth(async (session, input: unknown) => {
   const organizationId = getOrganizationId(session);
@@ -167,91 +175,151 @@ export const recreateTransactionFromSnapshotAction = withAuth(async (session, in
     return err('NO_ACTIVE_ORGANIZATION', 'Nenhuma organização ativa. Selecione uma organização.');
   }
 
-  const snapshot = input as Transaction | null;
-  if (!snapshot || typeof snapshot !== 'object' || !snapshot.id || !snapshot.type) {
-    return err('INVALID_SNAPSHOT', 'Snapshot inválido');
-  }
-  if (snapshot.organizationId !== organizationId) {
-    return err('INVALID_SNAPSHOT', 'Snapshot pertence a outra organização');
+  const validation = validateInput(recreateTransactionSnapshotSchema, input);
+  if (!validation.success) return validation;
+
+  const snapshot = validation.data;
+
+  // HIGH 3 — idempotência: se já existe, devolve o existente sem reaplicar saldo.
+  // findById filtra por organizationId, logo também cobre tentativa de uso
+  // cross-org de um id arbitrário.
+  const existing = await transactionDeps.repository.findById(snapshot.id, organizationId);
+  if (existing) {
+    return { success: true as const, data: existing };
   }
 
-  const transactionDate =
-    snapshot.transactionDate instanceof Date
-      ? snapshot.transactionDate
-      : new Date(snapshot.transactionDate);
+  // Ownership checks: toda FK referenciada precisa pertencer à org ativa.
+  if (snapshot.categoryId) {
+    const category = await transactionDeps.categoryRepository.findById(
+      snapshot.categoryId,
+      organizationId,
+    );
+    if (!category) return err('INVALID_SNAPSHOT', 'Categoria não pertence à organização');
+  }
+  if (snapshot.subcategoryId) {
+    const subcategory = await transactionDeps.subcategoryRepository.findById(
+      snapshot.subcategoryId,
+      organizationId,
+    );
+    if (!subcategory) return err('INVALID_SNAPSHOT', 'Subcategoria não pertence à organização');
+  }
+  if (snapshot.incomeSourceId) {
+    const src = await transactionDeps.incomeSourceRepository.findById(
+      snapshot.incomeSourceId,
+      organizationId,
+    );
+    if (!src) return err('INVALID_SNAPSHOT', 'Fonte de receita não pertence à organização');
+  }
+  if (
+    snapshot.paymentMethodId &&
+    (snapshot.paymentMethodType === 'debit' || snapshot.paymentMethodType === 'pix')
+  ) {
+    const acc = await transactionDeps.bankAccountRepository.findById(
+      snapshot.paymentMethodId,
+      organizationId,
+    );
+    if (!acc) return err('INVALID_SNAPSHOT', 'Conta de pagamento não pertence à organização');
+  }
+  if (snapshot.paymentMethodId && snapshot.paymentMethodType === 'credit') {
+    const card = await transactionDeps.creditCardRepository.findById(
+      snapshot.paymentMethodId,
+      organizationId,
+    );
+    if (!card) return err('INVALID_SNAPSHOT', 'Cartão de crédito não pertence à organização');
+  }
+  if (snapshot.sourceAccountId) {
+    const acc = await transactionDeps.bankAccountRepository.findById(
+      snapshot.sourceAccountId,
+      organizationId,
+    );
+    if (!acc) return err('INVALID_SNAPSHOT', 'Conta de origem não pertence à organização');
+  }
+  if (snapshot.destinationAccountId) {
+    const acc = await transactionDeps.bankAccountRepository.findById(
+      snapshot.destinationAccountId,
+      organizationId,
+    );
+    if (!acc) return err('INVALID_SNAPSHOT', 'Conta de destino não pertence à organização');
+  }
 
-  const recreated = await transactionDeps.repository.create({
-    id: snapshot.id,
-    type: snapshot.type,
-    amountCents: snapshot.amountCents,
-    categoryId: snapshot.categoryId,
-    subcategoryId: snapshot.subcategoryId,
-    establishment: snapshot.establishment,
-    paymentMethodType: snapshot.paymentMethodType,
-    paymentMethodId: snapshot.paymentMethodId,
-    installments: snapshot.installments,
-    description: snapshot.description,
-    incomeSourceId: snapshot.incomeSourceId,
-    sourceAccountId: snapshot.sourceAccountId,
-    destinationAccountId: snapshot.destinationAccountId,
-    transactionDate,
-    referenceMonth: snapshot.referenceMonth,
-    organizationId,
-    createdBy: snapshot.createdBy,
+  // Tudo atomicamente dentro de db.transaction()
+  const recreated = await transactionDeps.withTransaction(async (tx) => {
+    const created = await tx.repository.create({
+      id: snapshot.id,
+      type: snapshot.type,
+      amountCents: snapshot.amountCents,
+      categoryId: snapshot.categoryId,
+      subcategoryId: snapshot.subcategoryId,
+      establishment: snapshot.establishment,
+      paymentMethodType: snapshot.paymentMethodType,
+      paymentMethodId: snapshot.paymentMethodId,
+      installments: snapshot.installments,
+      description: snapshot.description,
+      incomeSourceId: snapshot.incomeSourceId,
+      sourceAccountId: snapshot.sourceAccountId,
+      destinationAccountId: snapshot.destinationAccountId,
+      transactionDate: snapshot.transactionDate,
+      referenceMonth: snapshot.referenceMonth,
+      organizationId,
+      // MED 4: createdBy vem da session, nunca do cliente
+      createdBy: session.user.id,
+    });
+
+    // Reaplicar o impacto no saldo (inverso do estorno feito no delete).
+    if (created.type === 'expense') {
+      if (
+        (created.paymentMethodType === 'debit' || created.paymentMethodType === 'pix') &&
+        created.paymentMethodId
+      ) {
+        const account = await tx.bankAccountRepository.findById(
+          created.paymentMethodId,
+          organizationId,
+        );
+        if (account) {
+          await tx.bankAccountRepository.update(account.id, organizationId, {
+            balanceCents: account.balanceCents - created.amountCents,
+          });
+        }
+      }
+    } else if (created.type === 'income') {
+      if (created.destinationAccountId) {
+        const account = await tx.bankAccountRepository.findById(
+          created.destinationAccountId,
+          organizationId,
+        );
+        if (account) {
+          await tx.bankAccountRepository.update(account.id, organizationId, {
+            balanceCents: account.balanceCents + created.amountCents,
+          });
+        }
+      }
+    } else if (created.type === 'transfer') {
+      if (created.sourceAccountId) {
+        const source = await tx.bankAccountRepository.findById(
+          created.sourceAccountId,
+          organizationId,
+        );
+        if (source) {
+          await tx.bankAccountRepository.update(source.id, organizationId, {
+            balanceCents: source.balanceCents - created.amountCents,
+          });
+        }
+      }
+      if (created.destinationAccountId) {
+        const destination = await tx.bankAccountRepository.findById(
+          created.destinationAccountId,
+          organizationId,
+        );
+        if (destination) {
+          await tx.bankAccountRepository.update(destination.id, organizationId, {
+            balanceCents: destination.balanceCents + created.amountCents,
+          });
+        }
+      }
+    }
+
+    return created;
   });
-
-  // Reaplicar impacto no saldo (inverso da reversão feita no delete)
-  if (recreated.type === 'expense') {
-    if (
-      (recreated.paymentMethodType === 'debit' || recreated.paymentMethodType === 'pix') &&
-      recreated.paymentMethodId
-    ) {
-      const account = await transactionDeps.bankAccountRepository.findById(
-        recreated.paymentMethodId,
-        organizationId,
-      );
-      if (account) {
-        await transactionDeps.bankAccountRepository.update(account.id, organizationId, {
-          balanceCents: account.balanceCents - recreated.amountCents,
-        });
-      }
-    }
-  } else if (recreated.type === 'income') {
-    if (recreated.destinationAccountId) {
-      const account = await transactionDeps.bankAccountRepository.findById(
-        recreated.destinationAccountId,
-        organizationId,
-      );
-      if (account) {
-        await transactionDeps.bankAccountRepository.update(account.id, organizationId, {
-          balanceCents: account.balanceCents + recreated.amountCents,
-        });
-      }
-    }
-  } else if (recreated.type === 'transfer') {
-    if (recreated.sourceAccountId) {
-      const source = await transactionDeps.bankAccountRepository.findById(
-        recreated.sourceAccountId,
-        organizationId,
-      );
-      if (source) {
-        await transactionDeps.bankAccountRepository.update(source.id, organizationId, {
-          balanceCents: source.balanceCents - recreated.amountCents,
-        });
-      }
-    }
-    if (recreated.destinationAccountId) {
-      const destination = await transactionDeps.bankAccountRepository.findById(
-        recreated.destinationAccountId,
-        organizationId,
-      );
-      if (destination) {
-        await transactionDeps.bankAccountRepository.update(destination.id, organizationId, {
-          balanceCents: destination.balanceCents + recreated.amountCents,
-        });
-      }
-    }
-  }
 
   revalidatePath('/');
   revalidatePath('/transactions');

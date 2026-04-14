@@ -56,6 +56,7 @@ export interface BankAccountOption {
   name: string;
   bank: string;
   status: string;
+  balanceCents: number;
 }
 
 export interface CreditCardOption {

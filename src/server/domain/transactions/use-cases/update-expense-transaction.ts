@@ -22,10 +22,16 @@ interface UpdateExpenseTransactionParams {
   userId: string;
 }
 
-interface UpdateExpenseTransactionDeps {
+export interface UpdateExpenseTransactionDeps {
   repository: TransactionRepository;
   auditLogger: AuditLogger;
   bankAccountRepository: BankAccountRepository;
+  withTransaction: <T>(
+    fn: (scoped: {
+      repository: TransactionRepository;
+      bankAccountRepository: BankAccountRepository;
+    }) => Promise<T>,
+  ) => Promise<T>;
 }
 
 const VALID_PAYMENT_METHOD_TYPES = ['debit', 'credit', 'pix'];
@@ -73,49 +79,14 @@ export async function updateExpenseTransaction(
     existing.paymentMethodType !== newMethodType ||
     existing.paymentMethodId !== newMethodId;
 
-  if (balanceChanged) {
-    const balances = new Map<string, { balanceCents: number }>();
-
-    if (newAffectsBalance && newMethodId) {
-      const newAcc = await deps.bankAccountRepository.findById(
-        newMethodId,
-        params.organizationId,
-      );
-      if (!newAcc) {
-        return err('DESTINATION_ACCOUNT_NOT_FOUND', 'Conta de destino não encontrada');
-      }
-      if (newAcc.status !== 'active') {
-        return err('DESTINATION_ACCOUNT_INACTIVE', 'Conta de destino está arquivada');
-      }
-      balances.set(newAcc.id, { balanceCents: newAcc.balanceCents });
+  // Pré-validação da nova conta (fora da transação — só leitura)
+  if (balanceChanged && newAffectsBalance && newMethodId) {
+    const newAcc = await deps.bankAccountRepository.findById(newMethodId, params.organizationId);
+    if (!newAcc) {
+      return err('DESTINATION_ACCOUNT_NOT_FOUND', 'Conta de destino não encontrada');
     }
-
-    if (oldAffectsBalance && existing.paymentMethodId) {
-      let oldLocal = balances.get(existing.paymentMethodId);
-      if (!oldLocal) {
-        const oldAcc = await deps.bankAccountRepository.findById(
-          existing.paymentMethodId,
-          params.organizationId,
-        );
-        if (oldAcc) {
-          oldLocal = { balanceCents: oldAcc.balanceCents };
-          balances.set(oldAcc.id, oldLocal);
-        }
-      }
-      if (oldLocal) {
-        oldLocal.balanceCents += existing.amountCents;
-        await deps.bankAccountRepository.update(existing.paymentMethodId, params.organizationId, {
-          balanceCents: oldLocal.balanceCents,
-        });
-      }
-    }
-
-    if (newAffectsBalance && newMethodId) {
-      const newLocal = balances.get(newMethodId)!;
-      newLocal.balanceCents -= newAmount;
-      await deps.bankAccountRepository.update(newMethodId, params.organizationId, {
-        balanceCents: newLocal.balanceCents,
-      });
+    if (newAcc.status !== 'active') {
+      return err('DESTINATION_ACCOUNT_INACTIVE', 'Conta de destino está arquivada');
     }
   }
 
@@ -130,7 +101,60 @@ export async function updateExpenseTransaction(
   if (params.description !== undefined) updates.description = params.description;
   if (params.transactionDate !== undefined) updates.transactionDate = params.transactionDate;
 
-  const updated = await deps.repository.update(params.id, params.organizationId, updates);
+  const updated = await deps.withTransaction(async (tx) => {
+    if (balanceChanged) {
+      // Map<accountId, finalBalance> — computa saldos finais na memória e escreve
+      // uma única vez por conta (evita gravação intermediária quando old === new).
+      const balances = new Map<string, number>();
+
+      // Carrega nova conta (já validada fora da tx, mas lemos dentro da tx pra
+      // usar o estado atual mesmo se houve escrita concorrente).
+      if (newAffectsBalance && newMethodId) {
+        const newAcc = await tx.bankAccountRepository.findById(newMethodId, params.organizationId);
+        if (newAcc) {
+          balances.set(newAcc.id, newAcc.balanceCents);
+        }
+      }
+
+      // Carrega conta antiga se for diferente
+      if (oldAffectsBalance && existing.paymentMethodId) {
+        if (!balances.has(existing.paymentMethodId)) {
+          const oldAcc = await tx.bankAccountRepository.findById(
+            existing.paymentMethodId,
+            params.organizationId,
+          );
+          if (oldAcc) {
+            balances.set(oldAcc.id, oldAcc.balanceCents);
+          }
+        }
+      }
+
+      // Aplica reversão do saldo antigo
+      if (oldAffectsBalance && existing.paymentMethodId) {
+        const current = balances.get(existing.paymentMethodId);
+        if (current !== undefined) {
+          balances.set(existing.paymentMethodId, current + existing.amountCents);
+        }
+      }
+
+      // Aplica débito do saldo novo
+      if (newAffectsBalance && newMethodId) {
+        const current = balances.get(newMethodId);
+        if (current !== undefined) {
+          balances.set(newMethodId, current - newAmount);
+        }
+      }
+
+      // Única gravação por conta (MED 2)
+      for (const [accountId, finalBalance] of balances) {
+        await tx.bankAccountRepository.update(accountId, params.organizationId, {
+          balanceCents: finalBalance,
+        });
+      }
+    }
+
+    return tx.repository.update(params.id, params.organizationId, updates);
+  });
 
   await deps.auditLogger({
     userId: params.userId,

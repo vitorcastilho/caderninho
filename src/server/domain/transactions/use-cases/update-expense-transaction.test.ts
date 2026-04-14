@@ -78,6 +78,16 @@ describe('updateExpenseTransaction', () => {
     repository: mockRepository,
     auditLogger: mockAuditLogger,
     bankAccountRepository: mockBankAccountRepository,
+    withTransaction: async <T>(
+      fn: (scoped: {
+        repository: TransactionRepository;
+        bankAccountRepository: BankAccountRepository;
+      }) => Promise<T>,
+    ): Promise<T> =>
+      fn({
+        repository: mockRepository,
+        bankAccountRepository: mockBankAccountRepository,
+      }),
   };
 
   beforeEach(() => {
@@ -111,7 +121,7 @@ describe('updateExpenseTransaction', () => {
     expect(mockBankAccountRepository.update).not.toHaveBeenCalled();
   });
 
-  it('deve estornar saldo antigo e aplicar novo ao mudar valor em débito', async () => {
+  it('deve gravar saldo final único ao mudar valor em débito na mesma conta', async () => {
     const result = await updateExpenseTransaction(deps, {
       id: 'tx-1',
       amountCents: 15000,
@@ -120,11 +130,9 @@ describe('updateExpenseTransaction', () => {
     });
 
     expect(result.success).toBe(true);
-    // Estorno: bankA.balance (50000) + amount antigo (10000) = 60000
-    // Novo débito: 60000 - 15000 = 45000
-    expect(mockBankAccountRepository.update).toHaveBeenCalledWith('bank-a', 'org-1', {
-      balanceCents: 60000,
-    });
+    // Saldo final computado em memória: 50000 + 10000 (estorno) - 15000 (novo débito) = 45000
+    // Single write: nada de gravação intermediária (MED 2)
+    expect(mockBankAccountRepository.update).toHaveBeenCalledTimes(1);
     expect(mockBankAccountRepository.update).toHaveBeenCalledWith('bank-a', 'org-1', {
       balanceCents: 45000,
     });

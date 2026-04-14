@@ -227,8 +227,13 @@ describe('createTransferSchema', () => {
 describe('updateExpenseSchema', () => {
   const validId = '550e8400-e29b-41d4-a716-446655440000';
 
-  it('deve aceitar apenas id (todos os campos opcionais)', () => {
+  it('deve rejeitar payload sem nenhum campo para atualizar além do id', () => {
     const result = updateExpenseSchema.safeParse({ id: validId });
+    expect(result.success).toBe(false);
+  });
+
+  it('deve aceitar atualização com um único campo opcional', () => {
+    const result = updateExpenseSchema.safeParse({ id: validId, amountCents: 5000 });
     expect(result.success).toBe(true);
   });
 

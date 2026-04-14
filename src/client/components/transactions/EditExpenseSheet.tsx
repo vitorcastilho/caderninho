@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from '@/client/components/ui/select';
 import { useIsMobile } from '@/client/hooks/use-is-mobile';
+import { formatCurrency } from '@/client/utils/format-currency';
 import { updateExpenseTransactionAction } from '@/server/actions/transaction.actions';
 import type {
   TransactionDTO,
@@ -286,7 +287,45 @@ export function EditExpenseSheet({
         />
       </div>
 
-      {/* TODO: preview de delta — Epic 6. ImpactPreview existente é para criação (mostra saldo/budget pós-criar); para edição precisaríamos calcular o delta (reverter antigo, aplicar novo). Adiado para escopo desta story. */}
+      {(() => {
+        // Preview simplificado (versão b da Task 7.4): mostra saldo atual
+        // da conta selecionada + orçamento mensal da categoria. Sem delta
+        // pós-confirmação porque o ImpactPreview existente foi desenhado
+        // para criação, não para edição.
+        // TODO: preview de delta — Epic 6.
+        const selectedAccount =
+          paymentMethodType !== 'credit'
+            ? activeBankAccounts.find((a) => a.id === paymentMethodId)
+            : undefined;
+        const selectedCategory = activeCategories.find((c) => c.id === categoryId);
+        const hasBudget =
+          !!selectedCategory && typeof selectedCategory.budgetMaxCents === 'number';
+        if (!selectedAccount && !hasBudget) return null;
+        return (
+          <div
+            role="status"
+            aria-label="Contexto financeiro atual"
+            className="rounded-r-lg border-l-4 border-indigo-500 bg-stone-50 p-3 text-sm"
+          >
+            {selectedAccount && (
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Saldo atual da conta</span>
+                <span className="font-medium tabular-nums">
+                  {formatCurrency(selectedAccount.balanceCents)}
+                </span>
+              </div>
+            )}
+            {selectedCategory && typeof selectedCategory.budgetMaxCents === 'number' && (
+              <div className="mt-1 flex items-center justify-between">
+                <span className="text-muted-foreground">Orçamento mensal</span>
+                <span className="font-medium tabular-nums">
+                  {formatCurrency(selectedCategory.budgetMaxCents)}
+                </span>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       <div className="mt-auto flex gap-2 pt-2">
         <Button

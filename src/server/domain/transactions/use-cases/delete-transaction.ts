@@ -13,10 +13,16 @@ interface DeleteTransactionParams {
   userId: string;
 }
 
-interface DeleteTransactionDeps {
+export interface DeleteTransactionDeps {
   repository: TransactionRepository;
   auditLogger: AuditLogger;
   bankAccountRepository: BankAccountRepository;
+  withTransaction: <T>(
+    fn: (scoped: {
+      repository: TransactionRepository;
+      bankAccountRepository: BankAccountRepository;
+    }) => Promise<T>,
+  ) => Promise<T>;
 }
 
 export interface DeleteTransactionResult {
@@ -33,60 +39,62 @@ export async function deleteTransaction(
     return err('TRANSACTION_NOT_FOUND', 'Transação não encontrada');
   }
 
-  if (existing.type === 'expense') {
-    if (
-      (existing.paymentMethodType === 'debit' || existing.paymentMethodType === 'pix') &&
-      existing.paymentMethodId
-    ) {
-      const account = await deps.bankAccountRepository.findById(
-        existing.paymentMethodId,
-        params.organizationId,
-      );
-      if (account) {
-        await deps.bankAccountRepository.update(account.id, params.organizationId, {
-          balanceCents: account.balanceCents + existing.amountCents,
-        });
+  await deps.withTransaction(async (tx) => {
+    if (existing.type === 'expense') {
+      if (
+        (existing.paymentMethodType === 'debit' || existing.paymentMethodType === 'pix') &&
+        existing.paymentMethodId
+      ) {
+        const account = await tx.bankAccountRepository.findById(
+          existing.paymentMethodId,
+          params.organizationId,
+        );
+        if (account) {
+          await tx.bankAccountRepository.update(account.id, params.organizationId, {
+            balanceCents: account.balanceCents + existing.amountCents,
+          });
+        }
+      }
+      // crédito: não afeta saldo no MVP
+    } else if (existing.type === 'income') {
+      if (existing.destinationAccountId) {
+        const account = await tx.bankAccountRepository.findById(
+          existing.destinationAccountId,
+          params.organizationId,
+        );
+        if (account) {
+          await tx.bankAccountRepository.update(account.id, params.organizationId, {
+            balanceCents: account.balanceCents - existing.amountCents,
+          });
+        }
+      }
+    } else if (existing.type === 'transfer') {
+      if (existing.sourceAccountId) {
+        const source = await tx.bankAccountRepository.findById(
+          existing.sourceAccountId,
+          params.organizationId,
+        );
+        if (source) {
+          await tx.bankAccountRepository.update(source.id, params.organizationId, {
+            balanceCents: source.balanceCents + existing.amountCents,
+          });
+        }
+      }
+      if (existing.destinationAccountId) {
+        const destination = await tx.bankAccountRepository.findById(
+          existing.destinationAccountId,
+          params.organizationId,
+        );
+        if (destination) {
+          await tx.bankAccountRepository.update(destination.id, params.organizationId, {
+            balanceCents: destination.balanceCents - existing.amountCents,
+          });
+        }
       }
     }
-    // crédito: não afeta saldo no MVP
-  } else if (existing.type === 'income') {
-    if (existing.destinationAccountId) {
-      const account = await deps.bankAccountRepository.findById(
-        existing.destinationAccountId,
-        params.organizationId,
-      );
-      if (account) {
-        await deps.bankAccountRepository.update(account.id, params.organizationId, {
-          balanceCents: account.balanceCents - existing.amountCents,
-        });
-      }
-    }
-  } else if (existing.type === 'transfer') {
-    if (existing.sourceAccountId) {
-      const source = await deps.bankAccountRepository.findById(
-        existing.sourceAccountId,
-        params.organizationId,
-      );
-      if (source) {
-        await deps.bankAccountRepository.update(source.id, params.organizationId, {
-          balanceCents: source.balanceCents + existing.amountCents,
-        });
-      }
-    }
-    if (existing.destinationAccountId) {
-      const destination = await deps.bankAccountRepository.findById(
-        existing.destinationAccountId,
-        params.organizationId,
-      );
-      if (destination) {
-        await deps.bankAccountRepository.update(destination.id, params.organizationId, {
-          balanceCents: destination.balanceCents - existing.amountCents,
-        });
-      }
-    }
-  }
 
-  await deps.repository.delete(params.id, params.organizationId);
+    await tx.repository.delete(params.id, params.organizationId);
+  });
 
   await deps.auditLogger({
     userId: params.userId,

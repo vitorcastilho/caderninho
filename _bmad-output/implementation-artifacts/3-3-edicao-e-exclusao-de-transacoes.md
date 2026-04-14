@@ -1,6 +1,6 @@
 # Story 3.3: Edição e Exclusão de Transações
 
-Status: review
+Status: done
 
 ## Story
 
@@ -136,7 +136,43 @@ so that I can correct mistakes and keep my data accurate.
 
 ### Review Follow-ups (AI)
 
-- [ ] Placeholder — preencher no code review
+**Code Review R1 — 2026-04-14 (Opus 4.6)**
+
+HIGH (blocking — obrigatório antes de `done`):
+
+- [x] [AI-Review][HIGH] `recreateTransactionFromSnapshotAction` não valida o input — é um buraco de segurança. O action recebe `input as Transaction | null` e só checa `organizationId`. Qualquer usuário autenticado pode forjar um "snapshot" arbitrário (qualquer `amountCents`, `type`, IDs de conta/cartão/categoria, `createdBy`, `transactionDate`, `id`) e o action recria direto no DB mexendo em saldos sem validação de negócio. [`src/server/actions/transaction.actions.ts:164-262`]
+  - **Resolvido em R1-fix**: Novo schema `recreateTransactionSnapshotSchema` (zod com enums, positiveAmountCentsSchema, idSchema, nullable explícito) aplicado via `validateInput`. Adicionado ownership check explícito em todos os FKs — `categoryId`, `subcategoryId`, `incomeSourceId`, `paymentMethodId` (com dispatch entre `bankAccountRepository` e `creditCardRepository` conforme `paymentMethodType`), `sourceAccountId`, `destinationAccountId`. Cada FK referenciada tem que retornar via `findById(id, organizationId)` senão devolve `INVALID_SNAPSHOT`. `createdBy` é forçado a `session.user.id`. Factory foi extendida com `categoryRepository`, `subcategoryRepository`, `creditCardRepository` para suportar os novos checks.
+
+- [x] [AI-Review][HIGH] Zero testes para `recreateTransactionFromSnapshotAction`. Cobrir no mínimo: snapshot válido recria preservando `id` e aplica saldo; snapshot de outra org é rejeitado; snapshot com campos faltando/inválidos é rejeitado; idempotência (segundo clique em "Desfazer" não duplica saldo); round-trip delete→undo retorna o estado de conta ao valor pré-delete para os 3 tipos (expense/income/transfer). [`src/server/actions/transaction.actions.test.ts`]
+  - **Resolvido em R1-fix**: Novo arquivo dedicado `src/server/actions/recreate-transaction.actions.test.ts` com 15 casos cobrindo autenticação/org, VALIDATION_ERROR (id inválido, amountCents negativo, type fora do enum), ownership (categoria/conta inválida), force de `createdBy` (cliente tentando forjar), recreate expense/income/transfer, idempotência (findById curto-circuita sem reaplicar saldo) e atomicidade (withTransaction é chamada).
+
+- [x] [AI-Review][HIGH] Race condition no "Desfazer": o `onClick` do toast Sonner não bloqueia cliques concorrentes. Clicar duas vezes em <5s chama `recreateTransactionFromSnapshotAction` duas vezes — dependendo do Drizzle, pode falhar em PK conflict (500 não tratado) ou aplicar saldo duas vezes. [`src/client/components/transactions/ConfirmDeleteTransactionDialog.tsx:57-68`, `src/server/actions/transaction.actions.ts:183-254`]
+  - **Resolvido em R1-fix**: Server-side, a idempotência é garantida por um `repository.findById` no início da action — se a transação já existe (PK match), curto-circuita retornando `{ success, data: existing }` sem recriar nem reaplicar saldo. Client-side, o `onClick` do toast tem uma flag `undoInFlight` que guarda no closure e bloqueia cliques concorrentes; reset apenas em caso de falha para permitir retry.
+
+- [x] [AI-Review][HIGH] AC#1 exige `ImpactPreview` antes de confirmar a edição. Implementação atual removeu o componente inteiro — não há nem o "preview simplificado" (saldo atual da conta + orçamento atual da categoria) que a Task 7.4 autorizava como escopo mínimo. [`src/client/components/transactions/EditExpenseSheet.tsx:289`]
+  - **Resolvido em R1-fix**: Adicionado bloco de contexto financeiro simplificado (versão b da Task 7.4) no `EditExpenseSheet`, exibindo saldo atual da conta selecionada e orçamento mensal da categoria selecionada, com border-left indigo estilo alerta. Sem delta pós-confirmação (o preview rico fica como `// TODO: preview de delta — Epic 6`). `BankAccountOption` passou a expor `balanceCents` para habilitar esse display.
+
+MEDIUM (should fix — antes de `done`):
+
+- [x] [AI-Review][MEDIUM] `updateExpenseTransaction` e `deleteTransaction` não usam DB transaction. [`src/server/domain/transactions/use-cases/update-expense-transaction.ts`, `delete-transaction.ts`]
+  - **Resolvido em R1-fix**: Introduzido padrão `withTransaction` na factory. `DrizzleTransactionRepository` e `DrizzleBankAccountRepository` passaram a aceitar um `DbExecutor` opcional no construtor (default = `db`). `transactionDeps.withTransaction(fn)` invoca `db.transaction` passando repositórios scoped na tx. Os use cases `updateExpenseTransaction`, `deleteTransaction` e a action `recreateTransactionFromSnapshotAction` agora rodam todos os writes de saldo + update/delete/create dentro da mesma tx atômica. Audit log fica fora da tx (append-only, falha isolada).
+
+- [x] [AI-Review][MEDIUM] `updateExpenseTransaction` grava saldo intermediário quando `existing.paymentMethodId === newMethodId`. [`update-expense-transaction.ts`]
+  - **Resolvido em R1-fix**: Reestruturado o bloco de reversão/aplicação: computa todos os saldos finais em um `Map<accountId, finalBalance>` em memória e faz uma única gravação por conta no final. Teste existente "deve estornar saldo antigo e aplicar novo ao mudar valor em débito" foi atualizado para exigir `toHaveBeenCalledTimes(1)` e o saldo final direto (45000, sem o intermediário 60000).
+
+- [x] [AI-Review][MEDIUM] `updateExpenseSchema` aceita `{ id }` sem nenhum outro campo. [`src/shared/schemas/transaction.schema.ts`]
+  - **Resolvido em R1-fix**: Schema convertido para `.refine` que exige ao menos um campo não-`id` definido. Teste "deve aceitar apenas id" substituído por "deve rejeitar payload sem nenhum campo para atualizar além do id" + "deve aceitar atualização com um único campo opcional".
+
+- [x] [AI-Review][MEDIUM] `recreateTransactionFromSnapshotAction` passa `createdBy: snapshot.createdBy` vindo do cliente. [`transaction.actions.ts:200`]
+  - **Resolvido em R1-fix**: `createdBy` é substituído por `session.user.id` na chamada a `tx.repository.create`. Teste dedicado "deve forçar createdBy a partir da session (ignora valor do cliente)" valida o comportamento.
+
+LOW (backlog — não blocking):
+
+- [ ] [AI-Review][LOW] `ConfirmDeleteTransactionDialog.tsx:71-77` renderiza `<Dialog><DialogContent /></Dialog>` vazio quando `transaction` é null (ramo morto). Trocar por `return null` ou remover o early return.
+
+- [ ] [AI-Review][LOW] `EditExpenseSheet.tsx:67-78` usa set-state-em-render (`if (transaction && transaction.id !== loadedId) { setLoadedId(...); ... }`) como workaround do warning `react-hooks/set-state-in-effect`. Alternativa idiomática: passar `key={transaction?.id}` no `<Sheet>` e deixar o React remontar o componente naturalmente.
+
+- [ ] [AI-Review][LOW] `listTransactionsAction` usa `// eslint-disable-next-line @typescript-eslint/no-unused-vars` para suprimir o `_input` (`src/server/actions/transaction.actions.ts:148-157`). Workaround aceitável, mas considerar ajustar a assinatura de `withAuth` para suportar actions sem input.
 
 ## Dev Notes
 
@@ -288,10 +324,8 @@ claude-opus-4-6 (BMAD dev-story workflow)
 
 ### Debug Log References
 
-- 997/997 testes vitest passando (62 novos: schemas, update use case, delete use case, actions)
-- `npx tsc --noEmit` zero erros
-- `npx eslint src --max-warnings=0` zero warnings
-- Smoke técnico: rotas `/transactions`, `/accounts`, `/design-system` retornam 200 no dev server
+- **R1-fix (2026-04-14, Opus 4.6)**: 1012/1012 testes vitest passando (15 novos para `recreateTransactionFromSnapshotAction` + ajustes em updateExpenseSchema e update-expense-transaction tests). `npx tsc --noEmit` zero erros. `npx eslint src --max-warnings=0` zero warnings.
+- **R1 (2026-04-14, initial dev)**: 997/997 testes vitest passando (62 novos: schemas, update use case, delete use case, actions). `npx tsc --noEmit` zero erros. `npx eslint src --max-warnings=0` zero warnings. Smoke técnico: rotas `/transactions`, `/accounts`, `/design-system` retornam 200 no dev server.
 
 ### Completion Notes List
 
@@ -310,15 +344,37 @@ claude-opus-4-6 (BMAD dev-story workflow)
 - **Escopo de edição respeitado**: apenas `expense`. Receita/transferência ficam ao toque com toast informativo. Exclusão funciona para todos os 3 tipos.
 - **Smoke test interativo (Task 10.4)**: validação técnica feita (tsc/eslint/vitest/dev-server boot OK). O smoke test interativo no browser autenticado (editar gasto, trocar método, excluir, undo) deve ser feito pelo usuário antes de marcar a story como `done` — limitação do agente CLI.
 
+**R1-fix (2026-04-14):**
+
+- ✅ Resolvido review finding [HIGH]: validação forte de input em `recreateTransactionFromSnapshotAction` via `recreateTransactionSnapshotSchema` + ownership checks em todas as FKs + force `createdBy` da session.
+- ✅ Resolvido review finding [HIGH]: testes do `recreateTransactionFromSnapshotAction` em arquivo dedicado (`recreate-transaction.actions.test.ts`, 15 casos).
+- ✅ Resolvido review finding [HIGH]: idempotência do undo — `findById` curto-circuita no server; flag `undoInFlight` no closure do toast bloqueia cliques concorrentes no client.
+- ✅ Resolvido review finding [HIGH]: ImpactPreview simplificado (versão b) no `EditExpenseSheet` exibindo saldo atual da conta e orçamento mensal da categoria.
+- ✅ Resolvido review finding [MEDIUM]: padrão `withTransaction` introduzido — repositórios aceitam `DbExecutor` opcional, factory expõe `withTransaction`, use cases update/delete e action recreate agora operam dentro de `db.transaction()` atômica.
+- ✅ Resolvido review finding [MEDIUM]: `updateExpenseTransaction` agora computa saldos finais em Map e escreve uma única vez por conta (eliminando a janela de inconsistência quando a mesma conta é tocada duas vezes).
+- ✅ Resolvido review finding [MEDIUM]: `updateExpenseSchema` com `.refine` exigindo ao menos um campo além de `id`.
+- ✅ Resolvido review finding [MEDIUM]: `createdBy` forçado a `session.user.id` no recreate, nunca confia no snapshot do cliente.
+- Limpeza tangencial (LOW 1): `ConfirmDeleteTransactionDialog` ramo morto `<Dialog><DialogContent /></Dialog>` substituído por `return null`.
+
 ### File List
 
 **Modificados:**
 - `src/server/domain/transactions/repositories/transaction.repository.ts`
 - `src/server/infrastructure/database/repositories/transaction.repository.impl.ts`
-- `src/shared/schemas/transaction.schema.ts`
-- `src/shared/schemas/transaction.schema.test.ts`
-- `src/server/actions/transaction.actions.ts`
+- `src/server/infrastructure/database/repositories/bank-account.repository.impl.ts` _(R1-fix: constructor recebe `DbExecutor` opcional)_
+- `src/server/infrastructure/database/client.ts` _(R1-fix: exporta `DbExecutor`)_
+- `src/server/factories/transaction.ts` _(R1-fix: `withTransaction` helper + `categoryRepository`/`subcategoryRepository`/`creditCardRepository` para ownership checks)_
+- `src/server/domain/transactions/use-cases/update-expense-transaction.ts` _(R1-fix: withTransaction + single-write balance)_
+- `src/server/domain/transactions/use-cases/delete-transaction.ts` _(R1-fix: withTransaction)_
+- `src/server/domain/transactions/use-cases/update-expense-transaction.test.ts` _(R1-fix: deps com withTransaction stub + single-write assertion)_
+- `src/server/domain/transactions/use-cases/delete-transaction.test.ts` _(R1-fix: deps com withTransaction stub)_
+- `src/shared/schemas/transaction.schema.ts` _(R1-fix: `.refine` em updateExpenseSchema + `recreateTransactionSnapshotSchema`)_
+- `src/shared/schemas/transaction.schema.test.ts` _(R1-fix: novo caso para refine)_
+- `src/server/actions/transaction.actions.ts` _(R1-fix: recreate action com validação forte + ownership + idempotência + force createdBy + withTransaction)_
 - `src/server/actions/transaction.actions.test.ts`
+- `src/client/components/transactions/EditExpenseSheet.tsx` _(R1-fix: preview simplificado)_
+- `src/client/components/transactions/ConfirmDeleteTransactionDialog.tsx` _(R1-fix: flag undoInFlight + cleanup do ramo morto)_
+- `src/client/components/transactions/TransactionList.tsx` _(R1-fix: BankAccountOption expõe balanceCents)_
 - `src/server/domain/transactions/use-cases/create-transaction.test.ts`
 - `src/server/domain/transactions/use-cases/create-income.test.ts`
 - `src/server/domain/transactions/use-cases/transfer-between-accounts.test.ts`
@@ -334,6 +390,7 @@ claude-opus-4-6 (BMAD dev-story workflow)
 - `src/server/domain/transactions/use-cases/update-expense-transaction.test.ts`
 - `src/server/domain/transactions/use-cases/delete-transaction.ts`
 - `src/server/domain/transactions/use-cases/delete-transaction.test.ts`
+- `src/server/actions/recreate-transaction.actions.test.ts` _(R1-fix)_
 - `src/app/(app)/transactions/page.tsx`
 - `src/client/components/transactions/TransactionList.tsx`
 - `src/client/components/transactions/EditExpenseSheet.tsx`
@@ -342,3 +399,4 @@ claude-opus-4-6 (BMAD dev-story workflow)
 ### Change Log
 
 - 2026-04-14: Implementação inicial da Story 3.3 — TransactionRepository.update/delete, schemas, use cases update-expense-transaction e delete-transaction, server actions, página `/transactions`, TransactionList, EditExpenseSheet, ConfirmDeleteTransactionDialog com undo funcional. 997 testes passando.
+- 2026-04-14: R1-fix — endereçado 8 findings do code review R1 (4 HIGH + 4 MEDIUM). Hardening completo do `recreateTransactionFromSnapshotAction` (validação forte, ownership checks, idempotência, force createdBy), padrão `withTransaction` atomizando update/delete/recreate, single-write de saldo, `.refine` em updateExpenseSchema, flag `undoInFlight` no toast de undo, ImpactPreview simplificado no EditExpenseSheet, 15 testes novos para o recreate action. 1012 testes passando.

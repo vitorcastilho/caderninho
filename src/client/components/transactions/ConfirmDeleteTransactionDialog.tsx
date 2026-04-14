@@ -51,30 +51,32 @@ export function ConfirmDeleteTransactionDialog({
     onOpenChange(false);
     onDeleted?.();
 
+    // HIGH 3: flag de undo em progresso para bloquear cliques concorrentes
+    // no botão "Desfazer" do toast. Sonner re-renderiza o action button a cada
+    // toque mas preserva o closure — usamos ref para estado mutável.
+    const undoInFlight = { current: false };
+
     toast.success('Transação excluída.', {
       duration: 5000,
       action: {
         label: 'Desfazer',
         onClick: async () => {
+          if (undoInFlight.current) return;
+          undoInFlight.current = true;
           const undoResult = await recreateTransactionFromSnapshotAction(snapshot);
           if (undoResult.success) {
             toast.success('Exclusão desfeita.');
             onDeleted?.();
           } else {
             toast.error(undoResult.error.message);
+            undoInFlight.current = false;
           }
         },
       },
     });
   }, [transaction, onOpenChange, onDeleted]);
 
-  if (!transaction) {
-    return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent />
-      </Dialog>
-    );
-  }
+  if (!transaction) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
