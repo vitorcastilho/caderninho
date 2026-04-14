@@ -135,7 +135,9 @@ export function NewTransferSheet({ open, onOpenChange }: NewTransferSheetProps) 
           disabled={isSubmitting || bankAccounts.length === 0}
         >
           <SelectTrigger id="transfer-source" className="w-full">
-            <SelectValue placeholder="Selecione a conta de origem" />
+            <SelectValue>
+              {bankAccounts.find((a) => a.id === sourceAccountId)?.label ?? 'Selecione a conta de origem'}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {bankAccounts.map((acc) => (
@@ -155,7 +157,9 @@ export function NewTransferSheet({ open, onOpenChange }: NewTransferSheetProps) 
           disabled={isSubmitting || destinationOptions.length === 0}
         >
           <SelectTrigger id="transfer-destination" className="w-full">
-            <SelectValue placeholder="Selecione a conta de destino" />
+            <SelectValue>
+              {destinationOptions.find((a) => a.id === destinationAccountId)?.label ?? 'Selecione a conta de destino'}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {destinationOptions.map((acc) => (

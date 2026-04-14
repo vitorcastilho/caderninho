@@ -191,6 +191,22 @@ describe('createIncome', () => {
     expect(mockRepository.create).not.toHaveBeenCalled();
   });
 
+  it('deve rejeitar quando conta destino está arquivada', async () => {
+    vi.mocked(mockBankAccountRepository.findById).mockResolvedValue({
+      ...sampleBankAccount,
+      status: 'archived',
+    });
+
+    const result = await createIncome(deps, baseParams);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.code).toBe('DESTINATION_ACCOUNT_INACTIVE');
+    }
+    expect(mockRepository.create).not.toHaveBeenCalled();
+    expect(mockBankAccountRepository.update).not.toHaveBeenCalled();
+  });
+
   it('deve registrar auditoria', async () => {
     await createIncome(deps, baseParams);
 

@@ -51,6 +51,9 @@ export async function createIncome(
   if (!destinationAccount) {
     return err('DESTINATION_ACCOUNT_NOT_FOUND', 'Conta de destino não encontrada');
   }
+  if (destinationAccount.status !== 'active') {
+    return err('DESTINATION_ACCOUNT_INACTIVE', 'Conta de destino está arquivada');
+  }
 
   const transactionDate = params.transactionDate ?? new Date();
   const id = crypto.randomUUID();

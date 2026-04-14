@@ -153,7 +153,9 @@ export function NewIncomeSheet({ open, onOpenChange }: NewIncomeSheetProps) {
           disabled={isSubmitting || incomeSources.length === 0}
         >
           <SelectTrigger id="income-source" className="w-full">
-            <SelectValue placeholder="Selecione a fonte" />
+            <SelectValue>
+              {incomeSources.find((s) => s.id === incomeSourceId)?.name ?? 'Selecione a fonte'}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {incomeSources.map((source) => (
@@ -178,7 +180,9 @@ export function NewIncomeSheet({ open, onOpenChange }: NewIncomeSheetProps) {
           disabled={isSubmitting || bankAccounts.length === 0}
         >
           <SelectTrigger id="income-destination" className="w-full">
-            <SelectValue placeholder="Selecione a conta" />
+            <SelectValue>
+              {bankAccounts.find((a) => a.id === destinationAccountId)?.label ?? 'Selecione a conta'}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {bankAccounts.map((acc) => (

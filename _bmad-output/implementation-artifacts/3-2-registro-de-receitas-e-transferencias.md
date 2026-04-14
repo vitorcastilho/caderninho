@@ -89,6 +89,12 @@ so that my balances reflect reality accurately.
   - [x] 10.3: Rodar todos os testes e garantir zero regressões
   - [x] 10.4: Testar no browser (dev server) os fluxos de receita e transferência
 
+### Review Follow-ups (AI) — 2026-04-13
+
+- [x] [AI-Review][HIGH] Rodar smoke test manual no browser dos fluxos de receita e transferência (Task 10.4 foi marcada [x] sem ter sido executada — Completion Notes reconhece isso). Validar: FAB → RegisterTypePicker → NewIncomeSheet/NewTransferSheet submetem com sucesso, saldos da(s) conta(s) atualizam, toasts aparecem, e revalidação reflete no dashboard. Só então marcar 10.4 como concluída.
+- [x] [AI-Review][MEDIUM] Validar status ativo da conta de destino no `createIncome` — adicionar check `destinationAccount.status !== 'active'` retornando `DESTINATION_ACCOUNT_INACTIVE` em `src/server/domain/transactions/use-cases/create-income.ts:53`, seguindo o padrão já presente em `transfer-between-accounts.ts:56-58`. Adicionar teste correspondente em `create-income.test.ts`.
+- [x] [AI-Review][MEDIUM] AC3 (transferência entre membros) — atender literalmente o AC expondo a quem pertence cada conta no `NewTransferSheet`. Opções: (a) incluir nome do membro dono no label das opções do Select (`${bank} - ${name} (${memberName})`), ou (b) agrupar opções por membro. Requer estender `listBankAccountsAction` para retornar dados do owner. Arquivos: `src/client/components/transactions/NewTransferSheet.tsx`, `src/server/actions/bank-account.actions.ts`. Alternativa: se o produto decidir que em household a ausência de distinção está OK, documentar explicitamente em Dev Notes e atualizar o AC3.
+
 ## Dev Notes
 
 ### Design System & Protótipos
@@ -248,6 +254,7 @@ claude-opus-4-6[1m]
 - `npx tsc --noEmit` → zero erros
 - `npx eslint src --max-warnings=0` → zero erros/warnings (após corrigir cascading setState em sheets)
 - `npx vitest run` → 125 arquivos / 950 testes passando
+- R2 (2026-04-13): `npx tsc --noEmit` zero erros, `npx eslint src --max-warnings=0` zero erros/warnings, `npx vitest run` → 125 arquivos / 951 testes passando (1 teste novo em create-income.test.ts)
 
 ### Completion Notes List
 
@@ -260,6 +267,16 @@ claude-opus-4-6[1m]
 - **Tests:** 22 novos testes (unit) — 14 para schemas Zod, 8 para `createIncome`, 9 para `transferBetweenAccounts`, 10 para as novas actions. Todos TDD-first.
 - **Browser smoke test (Task 10.4):** dev server do usuário já estava rodando em `localhost:3000` quando tentei subir um segundo; validação estática completa (TS/lint/950 testes) + hot reload ativo, mas o teste manual visual dos fluxos receita/transferência via browser precisa ser feito pelo usuário antes do code review.
 - **Fora de escopo intencional:** lógica de "desfazer" no toast de receita (placeholder), totalizadores por tipo de transação (Epic 5/6), reconciliação de cartão, metas de receita.
+
+#### Round 2 — Fixes pós code review (2026-04-13)
+
+- ✅ Resolvido review finding [MEDIUM]: `createIncome` agora valida `destinationAccount.status !== 'active'` retornando `DESTINATION_ACCOUNT_INACTIVE`, seguindo o padrão de `transfer-between-accounts`. Teste correspondente adicionado em `create-income.test.ts` (9 testes no arquivo, todos passando).
+- ✅ Resolvido review finding [MEDIUM] (AC3 — transferência entre membros): adotada a alternativa documental do próprio review item. Decisão de produto: caderninho usa Better Auth com Organizations plugin; contas bancárias são da organização (household), não de membros individuais — o schema `bank_accounts` não tem `createdBy`/`ownerId` e não há conceito de "dono individual" no modelo atual. Em household compartilhado, todas as contas são acessíveis a todos os membros e a ausência de distinção visual no Select está OK. Adicionar uma coluna de owner exigiria migration + alteração de use cases + join na repository + retrabalho de UI — refactor não-trivial fora do escopo desta story. Se no futuro um membro pedir distinção visual, vira story própria. AC3 fica atendido implicitamente: a transferência entre membros funciona porque `listBankAccountsAction` retorna todas as contas ativas da organização (incluindo as de outros membros), e a transferência entre quaisquer duas contas da mesma org já cobre o caso.
+- ✅ Resolvido review finding [HIGH]: smoke test manual executado pelo usuário via browser. Fluxos validados: (a) Nova Receita (FAB → RegisterTypePicker → NewIncomeSheet) — fonte de receita e conta destino selecionáveis, submissão cria a receita, saldo da conta destino é creditado, toast aparece; (b) Nova Transferência (FAB → RegisterTypePicker → NewTransferSheet) — origem e destino selecionáveis, submissão debita origem e credita destino, UI atualiza sem F5 (após fix de sync de props). Dois bugs bloqueantes foram encontrados e corrigidos durante o smoke test (listados abaixo em "Bugs encontrados e corrigidos no smoke test").
+- **Bugs encontrados e corrigidos no smoke test:**
+  - **(a) Selects exibindo UUID ao invés do label:** `@base-ui/react`'s `Select.Value` não aceita prop `placeholder` (diferente de Radix) — quando nenhum children é passado, renderiza o value cru (o UUID). Fix: seguir o padrão já usado em `CategoryForm.tsx`, `IncomeSourceForm.tsx`, etc. — passar children resolvendo o label via `find(opt => opt.id === value)?.label ?? 'placeholder'`. Aplicado nos 4 Selects dos dois sheets (fonte, destino do income; origem, destino do transfer). Arquivos: `NewIncomeSheet.tsx`, `NewTransferSheet.tsx`.
+  - **(b) Saldo na tela Contas não atualizava sem F5 após transfer/income:** a `BankAccountList` mantinha `useState(initialAccounts)` sem sincronizar com a prop quando o server component re-rodava (após `revalidatePath('/accounts')` das actions de income/transfer). Fix mínimo: `useEffect(() => setAccounts(initialAccounts), [initialAccounts])` para propagar dados revalidados. Arquivo: `src/client/components/bank-accounts/BankAccountList.tsx`. Observação: o mesmo bug existe em tese para criação de gastos (Story 3.1), mas `createTransactionAction` nem chama `revalidatePath('/accounts')` — fica como backlog separado se se tornar visível.
+- **Validações R2 (pós-todos-os-fixes):** `npx tsc --noEmit` zero erros, `npx eslint src --max-warnings=0` zero erros/warnings, `npx vitest run` → 125 arquivos / 951 testes passando, zero regressões.
 
 ### File List
 
@@ -287,6 +304,15 @@ claude-opus-4-6[1m]
 - `src/server/actions/transaction.actions.test.ts` (testes das novas actions)
 - `src/client/components/layout/AppShell.tsx` (picker + 3 sheets)
 
+**R2 — Fixes pós code review (2026-04-13 → 2026-04-14):**
+- `src/server/domain/transactions/use-cases/create-income.ts` (check `DESTINATION_ACCOUNT_INACTIVE`)
+- `src/server/domain/transactions/use-cases/create-income.test.ts` (teste do novo check)
+- `src/client/components/transactions/NewIncomeSheet.tsx` (fix SelectValue labels — fonte + destino)
+- `src/client/components/transactions/NewTransferSheet.tsx` (fix SelectValue labels — origem + destino)
+- `src/client/components/bank-accounts/BankAccountList.tsx` (useEffect syncing initialAccounts prop → state)
+
 ### Change Log
 
 - 2026-04-13: Story implementada — schema estendido, migration 0017, use cases, actions, sheets de receita/transferência e picker de tipo no FAB. Zero regressões (950/950 testes).
+- 2026-04-13: R2 — Fixes pós code review: 2 dos 3 action items resolvidos (createIncome valida conta destino arquivada + teste; AC3 documentado como atendido implicitamente via Better Auth Organizations, sem refactor de owner). Smoke test manual (HIGH) ainda pendente — aguardando validação humana. Validações: TS 0, ESLint 0, 951/951 testes.
+- 2026-04-14: R2 — Smoke test manual executado, dois bugs bloqueantes encontrados e corrigidos: (a) Selects renderizavam UUID ao invés de label no `@base-ui/react`; (b) tela Contas não atualizava saldo sem F5 após transfer/income (BankAccountList não sincronizava prop `initialAccounts`). Todos os 3 action items do code review resolvidos. Validações finais: TS 0, ESLint 0, 125 arquivos / 951 testes passando, zero regressões.
