@@ -98,17 +98,34 @@ vi.mock('@/server/domain/transactions/use-cases/transfer-between-accounts', () =
   transferBetweenAccounts: vi.fn(),
 }));
 
+vi.mock('@/server/domain/transactions/use-cases/update-expense-transaction', () => ({
+  updateExpenseTransaction: vi.fn(),
+}));
+
+vi.mock('@/server/domain/transactions/use-cases/delete-transaction', () => ({
+  deleteTransaction: vi.fn(),
+}));
+
 const { createIncome: mockedCreateIncome } = await import(
   '@/server/domain/transactions/use-cases/create-income'
 );
 const { transferBetweenAccounts: mockedTransfer } = await import(
   '@/server/domain/transactions/use-cases/transfer-between-accounts'
 );
+const { updateExpenseTransaction: mockedUpdate } = await import(
+  '@/server/domain/transactions/use-cases/update-expense-transaction'
+);
+const { deleteTransaction: mockedDelete } = await import(
+  '@/server/domain/transactions/use-cases/delete-transaction'
+);
 
 const {
   createTransactionAction,
   createIncomeAction,
   createTransferAction,
+  updateExpenseTransactionAction,
+  deleteTransactionAction,
+  listTransactionsAction,
   getSuggestedEstablishmentsAction,
 } = await import('./transaction.actions');
 
@@ -324,6 +341,186 @@ describe('Transaction Actions', () => {
           userId: 'user-1',
         }),
       );
+    });
+  });
+
+  describe('updateExpenseTransactionAction', () => {
+    const validInput = {
+      id: '550e8400-e29b-41d4-a716-446655440000',
+      amountCents: 10000,
+    };
+
+    it('deve exigir autenticacao', async () => {
+      mockGetSession.mockResolvedValue(null);
+
+      const result = await updateExpenseTransactionAction(validInput);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('UNAUTHORIZED');
+      }
+    });
+
+    it('deve rejeitar id inválido', async () => {
+      mockGetSession.mockResolvedValue(fakeSession);
+
+      const result = await updateExpenseTransactionAction({ id: 'not-a-uuid' });
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('VALIDATION_ERROR');
+      }
+    });
+
+    it('deve rejeitar amountCents zero', async () => {
+      mockGetSession.mockResolvedValue(fakeSession);
+
+      const result = await updateExpenseTransactionAction({
+        ...validInput,
+        amountCents: 0,
+      });
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('VALIDATION_ERROR');
+      }
+    });
+
+    it('deve retornar erro sem organizacao ativa', async () => {
+      mockGetSession.mockResolvedValue({
+        ...fakeSession,
+        session: { ...fakeSession.session, activeOrganizationId: null },
+      });
+
+      const result = await updateExpenseTransactionAction(validInput);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('NO_ACTIVE_ORGANIZATION');
+      }
+    });
+
+    it('deve chamar use case updateExpenseTransaction com dados válidos', async () => {
+      mockGetSession.mockResolvedValue(fakeSession);
+      vi.mocked(mockedUpdate).mockResolvedValue({
+        success: true,
+        data: { id: 'tx-1' } as never,
+      });
+
+      const result = await updateExpenseTransactionAction(validInput);
+
+      expect(result.success).toBe(true);
+      expect(mockedUpdate).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          id: validInput.id,
+          amountCents: 10000,
+          organizationId: 'org-123',
+          userId: 'user-1',
+        }),
+      );
+    });
+
+    it('deve propagar erro do use case', async () => {
+      mockGetSession.mockResolvedValue(fakeSession);
+      vi.mocked(mockedUpdate).mockResolvedValue({
+        success: false,
+        error: { code: 'TRANSACTION_NOT_FOUND', message: 'não encontrada' },
+      });
+
+      const result = await updateExpenseTransactionAction(validInput);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('TRANSACTION_NOT_FOUND');
+      }
+    });
+  });
+
+  describe('deleteTransactionAction', () => {
+    const validInput = { id: '550e8400-e29b-41d4-a716-446655440000' };
+
+    it('deve exigir autenticacao', async () => {
+      mockGetSession.mockResolvedValue(null);
+
+      const result = await deleteTransactionAction(validInput);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('UNAUTHORIZED');
+      }
+    });
+
+    it('deve rejeitar id inválido', async () => {
+      mockGetSession.mockResolvedValue(fakeSession);
+
+      const result = await deleteTransactionAction({ id: 'not-a-uuid' });
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('VALIDATION_ERROR');
+      }
+    });
+
+    it('deve retornar erro sem organizacao ativa', async () => {
+      mockGetSession.mockResolvedValue({
+        ...fakeSession,
+        session: { ...fakeSession.session, activeOrganizationId: null },
+      });
+
+      const result = await deleteTransactionAction(validInput);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('NO_ACTIVE_ORGANIZATION');
+      }
+    });
+
+    it('deve chamar use case deleteTransaction com dados válidos', async () => {
+      mockGetSession.mockResolvedValue(fakeSession);
+      vi.mocked(mockedDelete).mockResolvedValue({
+        success: true,
+        data: { id: validInput.id, snapshot: sampleTransaction as never },
+      });
+
+      const result = await deleteTransactionAction(validInput);
+
+      expect(result.success).toBe(true);
+      expect(mockedDelete).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          id: validInput.id,
+          organizationId: 'org-123',
+          userId: 'user-1',
+        }),
+      );
+    });
+  });
+
+  describe('listTransactionsAction', () => {
+    it('deve exigir autenticacao', async () => {
+      mockGetSession.mockResolvedValue(null);
+
+      const result = await listTransactionsAction(undefined);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('UNAUTHORIZED');
+      }
+    });
+
+    it('deve retornar erro sem organizacao ativa', async () => {
+      mockGetSession.mockResolvedValue({
+        ...fakeSession,
+        session: { ...fakeSession.session, activeOrganizationId: null },
+      });
+
+      const result = await listTransactionsAction(undefined);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('NO_ACTIVE_ORGANIZATION');
+      }
     });
   });
 

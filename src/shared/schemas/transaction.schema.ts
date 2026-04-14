@@ -35,6 +35,23 @@ export const createTransferSchema = z
     path: ['destinationAccountId'],
   });
 
+export const updateExpenseSchema = z.object({
+  id: idSchema,
+  amountCents: positiveAmountCentsSchema.optional(),
+  categoryId: idSchema.optional(),
+  subcategoryId: idSchema.optional(),
+  establishment: z.string().max(200).optional(),
+  paymentMethodType: z.enum(['debit', 'credit', 'pix']).optional(),
+  paymentMethodId: idSchema.optional(),
+  installments: z.number().int().nonnegative().optional(),
+  description: z.string().max(500).optional(),
+  transactionDate: z.coerce.date().optional(),
+});
+
+export const deleteTransactionSchema = z.object({
+  id: idSchema,
+});
+
 export const transactionIdSchema = idSchema;
 
 export const getImpactPreviewSchema = z.object({
@@ -55,5 +72,7 @@ export const getMonthlySpendingSummarySchema = z.object({
 export type CreateTransactionInput = z.infer<typeof createTransactionSchema>;
 export type CreateIncomeInput = z.infer<typeof createIncomeSchema>;
 export type CreateTransferInput = z.infer<typeof createTransferSchema>;
+export type UpdateExpenseInput = z.infer<typeof updateExpenseSchema>;
+export type DeleteTransactionInput = z.infer<typeof deleteTransactionSchema>;
 export type GetImpactPreviewInput = z.infer<typeof getImpactPreviewSchema>;
 export type GetMonthlySpendingSummaryInput = z.infer<typeof getMonthlySpendingSummarySchema>;

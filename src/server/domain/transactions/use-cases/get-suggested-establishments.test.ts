@@ -5,6 +5,8 @@ import type { TransactionRepository } from '../repositories/transaction.reposito
 
 const mockRepository: TransactionRepository = {
   create: vi.fn(),
+  update: vi.fn(),
+  delete: vi.fn(),
   findById: vi.fn(),
   findByOrganization: vi.fn(),
   findTopEstablishments: vi.fn(),

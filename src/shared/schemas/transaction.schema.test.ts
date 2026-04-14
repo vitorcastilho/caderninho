@@ -2,7 +2,9 @@ import {
   createTransactionSchema,
   createIncomeSchema,
   createTransferSchema,
+  deleteTransactionSchema,
   transactionIdSchema,
+  updateExpenseSchema,
 } from './transaction.schema';
 
 describe('createTransactionSchema', () => {
@@ -218,6 +220,85 @@ describe('createTransferSchema', () => {
       amountCents: validData.amountCents,
       sourceAccountId: validData.sourceAccountId,
     });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('updateExpenseSchema', () => {
+  const validId = '550e8400-e29b-41d4-a716-446655440000';
+
+  it('deve aceitar apenas id (todos os campos opcionais)', () => {
+    const result = updateExpenseSchema.safeParse({ id: validId });
+    expect(result.success).toBe(true);
+  });
+
+  it('deve aceitar atualização completa', () => {
+    const result = updateExpenseSchema.safeParse({
+      id: validId,
+      amountCents: 5000,
+      categoryId: '550e8400-e29b-41d4-a716-446655440001',
+      subcategoryId: '550e8400-e29b-41d4-a716-446655440002',
+      establishment: 'Padaria',
+      paymentMethodType: 'debit',
+      paymentMethodId: '550e8400-e29b-41d4-a716-446655440003',
+      installments: 0,
+      description: 'Pão',
+      transactionDate: '2026-04-10T12:00:00Z',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('deve rejeitar id ausente', () => {
+    const result = updateExpenseSchema.safeParse({ amountCents: 5000 });
+    expect(result.success).toBe(false);
+  });
+
+  it('deve rejeitar id inválido', () => {
+    const result = updateExpenseSchema.safeParse({ id: 'not-a-uuid' });
+    expect(result.success).toBe(false);
+  });
+
+  it('deve rejeitar amountCents zero', () => {
+    const result = updateExpenseSchema.safeParse({ id: validId, amountCents: 0 });
+    expect(result.success).toBe(false);
+  });
+
+  it('deve rejeitar amountCents negativo', () => {
+    const result = updateExpenseSchema.safeParse({ id: validId, amountCents: -100 });
+    expect(result.success).toBe(false);
+  });
+
+  it('deve rejeitar paymentMethodType inválido', () => {
+    const result = updateExpenseSchema.safeParse({ id: validId, paymentMethodType: 'cash' });
+    expect(result.success).toBe(false);
+  });
+
+  it('deve rejeitar establishment acima de 200 chars', () => {
+    const result = updateExpenseSchema.safeParse({ id: validId, establishment: 'a'.repeat(201) });
+    expect(result.success).toBe(false);
+  });
+
+  it('deve rejeitar description acima de 500 chars', () => {
+    const result = updateExpenseSchema.safeParse({ id: validId, description: 'a'.repeat(501) });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('deleteTransactionSchema', () => {
+  it('deve aceitar id válido', () => {
+    const result = deleteTransactionSchema.safeParse({
+      id: '550e8400-e29b-41d4-a716-446655440000',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('deve rejeitar id ausente', () => {
+    const result = deleteTransactionSchema.safeParse({});
+    expect(result.success).toBe(false);
+  });
+
+  it('deve rejeitar id inválido', () => {
+    const result = deleteTransactionSchema.safeParse({ id: 'abc' });
     expect(result.success).toBe(false);
   });
 });

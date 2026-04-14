@@ -34,6 +34,25 @@ export class DrizzleTransactionRepository implements TransactionRepository {
     return transaction as Transaction;
   }
 
+  async update(
+    id: string,
+    organizationId: string,
+    data: Partial<Omit<Transaction, 'id' | 'organizationId' | 'createdBy' | 'createdAt'>>,
+  ): Promise<Transaction> {
+    const [updated] = await db
+      .update(transactions)
+      .set({ ...data, updatedAt: new Date() })
+      .where(and(eq(transactions.id, id), eq(transactions.organizationId, organizationId)))
+      .returning();
+    return updated as Transaction;
+  }
+
+  async delete(id: string, organizationId: string): Promise<void> {
+    await db
+      .delete(transactions)
+      .where(and(eq(transactions.id, id), eq(transactions.organizationId, organizationId)));
+  }
+
   async findById(id: string, organizationId: string): Promise<Transaction | null> {
     const results = await db
       .select()
