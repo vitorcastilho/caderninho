@@ -1,6 +1,6 @@
 # Story 3.2: Registro de Receitas e Transferências
 
-Status: review
+Status: done
 
 ## Story
 
@@ -316,3 +316,4 @@ claude-opus-4-6[1m]
 - 2026-04-13: Story implementada — schema estendido, migration 0017, use cases, actions, sheets de receita/transferência e picker de tipo no FAB. Zero regressões (950/950 testes).
 - 2026-04-13: R2 — Fixes pós code review: 2 dos 3 action items resolvidos (createIncome valida conta destino arquivada + teste; AC3 documentado como atendido implicitamente via Better Auth Organizations, sem refactor de owner). Smoke test manual (HIGH) ainda pendente — aguardando validação humana. Validações: TS 0, ESLint 0, 951/951 testes.
 - 2026-04-14: R2 — Smoke test manual executado, dois bugs bloqueantes encontrados e corrigidos: (a) Selects renderizavam UUID ao invés de label no `@base-ui/react`; (b) tela Contas não atualizava saldo sem F5 após transfer/income (BankAccountList não sincronizava prop `initialAccounts`). Todos os 3 action items do code review resolvidos. Validações finais: TS 0, ESLint 0, 125 arquivos / 951 testes passando, zero regressões.
+- 2026-04-14: Code Review R2 aprovado — todos os action items R1 validados, bugs do smoke test fixados corretamente, sem novos findings. Story movida para `done`.
