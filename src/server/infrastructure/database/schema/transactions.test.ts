@@ -18,6 +18,9 @@ describe('transactions schema', () => {
     expect(columns.paymentMethodType).toBeDefined();
     expect(columns.paymentMethodId).toBeDefined();
     expect(columns.description).toBeDefined();
+    expect(columns.incomeSourceId).toBeDefined();
+    expect(columns.sourceAccountId).toBeDefined();
+    expect(columns.destinationAccountId).toBeDefined();
     expect(columns.transactionDate).toBeDefined();
     expect(columns.referenceMonth).toBeDefined();
     expect(columns.organizationId).toBeDefined();
@@ -31,8 +34,6 @@ describe('transactions schema', () => {
     expect(columns.id.primary).toBe(true);
     expect(columns.type.notNull).toBe(true);
     expect(columns.amountCents.notNull).toBe(true);
-    expect(columns.categoryId.notNull).toBe(true);
-    expect(columns.paymentMethodType.notNull).toBe(true);
     expect(columns.organizationId.notNull).toBe(true);
     expect(columns.createdBy.notNull).toBe(true);
     expect(columns.createdAt.notNull).toBe(true);
@@ -41,11 +42,16 @@ describe('transactions schema', () => {
 
   it('should allow nullable columns', () => {
     const columns = getTableColumns(transactions);
+    expect(columns.categoryId.notNull).toBe(false);
     expect(columns.subcategoryId.notNull).toBe(false);
     expect(columns.establishment.notNull).toBe(false);
+    expect(columns.paymentMethodType.notNull).toBe(false);
     expect(columns.paymentMethodId.notNull).toBe(false);
     expect(columns.description.notNull).toBe(false);
     expect(columns.referenceMonth.notNull).toBe(false);
+    expect(columns.incomeSourceId.notNull).toBe(false);
+    expect(columns.sourceAccountId.notNull).toBe(false);
+    expect(columns.destinationAccountId.notNull).toBe(false);
   });
 
   it('should have correct default values', () => {

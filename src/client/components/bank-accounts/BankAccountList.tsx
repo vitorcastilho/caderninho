@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition, useCallback } from 'react';
+import { useState, useTransition, useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
 
 import { Building2 } from 'lucide-react';
@@ -35,6 +35,9 @@ interface BankAccountListProps {
 
 export function BankAccountList({ initialAccounts }: BankAccountListProps) {
   const [accounts, setAccounts] = useState<BankAccount[]>(initialAccounts);
+  useEffect(() => {
+    setAccounts(initialAccounts);
+  }, [initialAccounts]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingAccount, setEditingAccount] = useState<{
     id: string;

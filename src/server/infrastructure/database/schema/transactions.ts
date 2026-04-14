@@ -4,21 +4,28 @@ import { pgTable, pgPolicy, text, integer, timestamp } from 'drizzle-orm/pg-core
 import { organizations } from './organizations';
 import { categories } from './categories';
 import { subcategories } from './subcategories';
+import { bankAccounts } from './bank-accounts';
+import { incomeSources } from './income-sources';
 
 export const transactions = pgTable('transactions', {
   id: text('id').primaryKey(),
   type: text('type').notNull(), // expense, income, transfer
   amountCents: integer('amount_cents').notNull(),
   categoryId: text('category_id')
-    .notNull()
-    .references(() => categories.id),
+    .references(() => categories.id), // nullable: income/transfer nao exigem categoria
   subcategoryId: text('subcategory_id')
     .references(() => subcategories.id),
   establishment: text('establishment'),
-  paymentMethodType: text('payment_method_type').notNull(), // debit, credit, pix
+  paymentMethodType: text('payment_method_type'), // debit, credit, pix; nullable para income/transfer
   paymentMethodId: text('payment_method_id'),
   installments: integer('installments'),
   description: text('description'),
+  incomeSourceId: text('income_source_id')
+    .references(() => incomeSources.id), // type='income'
+  sourceAccountId: text('source_account_id')
+    .references(() => bankAccounts.id), // type='transfer' (conta origem)
+  destinationAccountId: text('destination_account_id')
+    .references(() => bankAccounts.id), // type='income' (conta destino) ou 'transfer'
   transactionDate: timestamp('transaction_date', { withTimezone: true }).notNull().defaultNow(),
   referenceMonth: text('reference_month'), // YYYY-MM (para cartoes de credito, Epic 5)
   organizationId: text('organization_id')

@@ -120,6 +120,13 @@
       "when": 1775358895906,
       "tag": "0016_neat_screwball",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1776099063882,
+      "tag": "0017_receitas_transferencias_transactions",
+      "breakpoints": true
     }
   ]
 }

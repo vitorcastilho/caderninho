@@ -1,18 +1,48 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 import { Sidebar } from '@/client/components/layout/Sidebar';
 import { BottomNavigation } from '@/client/components/layout/BottomNavigation';
 import { NewExpenseSheet } from '@/client/components/transactions/NewExpenseSheet';
+import { NewIncomeSheet } from '@/client/components/transactions/NewIncomeSheet';
+import { NewTransferSheet } from '@/client/components/transactions/NewTransferSheet';
+import {
+  RegisterTypePicker,
+  type RegisterType,
+} from '@/client/components/transactions/RegisterTypePicker';
 
 interface AppShellProps {
   userName: string;
   children: React.ReactNode;
 }
 
+type ActiveSheet = 'picker' | 'expense' | 'income' | 'transfer' | null;
+
 export function AppShell({ userName, children }: AppShellProps) {
-  const [expenseSheetOpen, setExpenseSheetOpen] = useState(false);
+  const [activeSheet, setActiveSheet] = useState<ActiveSheet>(null);
+
+  const openPicker = useCallback(() => setActiveSheet('picker'), []);
+
+  const handlePickerChange = useCallback((open: boolean) => {
+    setActiveSheet((prev) => (open ? 'picker' : prev === 'picker' ? null : prev));
+  }, []);
+
+  const handleExpenseChange = useCallback((open: boolean) => {
+    setActiveSheet((prev) => (open ? 'expense' : prev === 'expense' ? null : prev));
+  }, []);
+
+  const handleIncomeChange = useCallback((open: boolean) => {
+    setActiveSheet((prev) => (open ? 'income' : prev === 'income' ? null : prev));
+  }, []);
+
+  const handleTransferChange = useCallback((open: boolean) => {
+    setActiveSheet((prev) => (open ? 'transfer' : prev === 'transfer' ? null : prev));
+  }, []);
+
+  const handleSelectType = useCallback((type: RegisterType) => {
+    setActiveSheet(type);
+  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
@@ -23,7 +53,7 @@ export function AppShell({ userName, children }: AppShellProps) {
         Pular para conteúdo principal
       </a>
 
-      <Sidebar userName={userName} onRegisterClick={() => setExpenseSheetOpen(true)} />
+      <Sidebar userName={userName} onRegisterClick={openPicker} />
 
       <main id="main-content" className="flex-1 overflow-y-auto pb-14 md:pb-0">
         <div className="p-3 md:p-4 lg:p-6">
@@ -33,9 +63,25 @@ export function AppShell({ userName, children }: AppShellProps) {
         </div>
       </main>
 
-      <BottomNavigation onFabClick={() => setExpenseSheetOpen(true)} />
+      <BottomNavigation onFabClick={openPicker} />
 
-      <NewExpenseSheet open={expenseSheetOpen} onOpenChange={setExpenseSheetOpen} />
+      <RegisterTypePicker
+        open={activeSheet === 'picker'}
+        onOpenChange={handlePickerChange}
+        onSelect={handleSelectType}
+      />
+      <NewExpenseSheet
+        open={activeSheet === 'expense'}
+        onOpenChange={handleExpenseChange}
+      />
+      <NewIncomeSheet
+        open={activeSheet === 'income'}
+        onOpenChange={handleIncomeChange}
+      />
+      <NewTransferSheet
+        open={activeSheet === 'transfer'}
+        onOpenChange={handleTransferChange}
+      />
     </div>
   );
 }

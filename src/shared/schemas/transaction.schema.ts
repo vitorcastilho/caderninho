@@ -14,6 +14,27 @@ export const createTransactionSchema = z.object({
   transactionDate: z.coerce.date().optional(),
 });
 
+export const createIncomeSchema = z.object({
+  amountCents: positiveAmountCentsSchema,
+  incomeSourceId: idSchema,
+  destinationAccountId: idSchema,
+  description: z.string().max(500).optional(),
+  transactionDate: z.coerce.date().optional(),
+});
+
+export const createTransferSchema = z
+  .object({
+    amountCents: positiveAmountCentsSchema,
+    sourceAccountId: idSchema,
+    destinationAccountId: idSchema,
+    description: z.string().max(500).optional(),
+    transactionDate: z.coerce.date().optional(),
+  })
+  .refine((d) => d.sourceAccountId !== d.destinationAccountId, {
+    message: 'Conta de origem e destino devem ser diferentes',
+    path: ['destinationAccountId'],
+  });
+
 export const transactionIdSchema = idSchema;
 
 export const getImpactPreviewSchema = z.object({
@@ -32,5 +53,7 @@ export const getMonthlySpendingSummarySchema = z.object({
 });
 
 export type CreateTransactionInput = z.infer<typeof createTransactionSchema>;
+export type CreateIncomeInput = z.infer<typeof createIncomeSchema>;
+export type CreateTransferInput = z.infer<typeof createTransferSchema>;
 export type GetImpactPreviewInput = z.infer<typeof getImpactPreviewSchema>;
 export type GetMonthlySpendingSummaryInput = z.infer<typeof getMonthlySpendingSummarySchema>;
