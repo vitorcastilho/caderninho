@@ -1,6 +1,6 @@
 # Story 3.4: Listagem e Histórico de Transações
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -248,6 +248,18 @@ so that I can find and review past expenses, incomes and transfers efficiently.
 - Validações: `tsc` 0 erros · `eslint` 0 warnings · `vitest` 131/1055 passando
 - ACs: 7/7 implementados com evidência no código
 - Status da story: `review` → `ready-for-dev` (3 MEDIUMs blocking)
+
+**Code review metadata (R2 — 2026-04-15):**
+- Rodada: R2 (validação dos fixes de R1)
+- Revisor: Code review adversarial (`bmad-bmm-code-review`)
+- Git vs File List: 0 discrepâncias
+- Validações: `tsc` 0 erros · `eslint` 0 warnings · `vitest` 132 arquivos / 1061 testes passando
+- MED-1 (debounce granular): ✅ fixed — deps granulares + `buildEffectiveFilters` estável
+- MED-2 (chips só de contas/cartões ativos): ✅ fixed — `activeBankAccounts`/`activeCreditCards` via `useMemo`, listas completas preservadas para Row/EditExpenseSheet
+- MED-3 (escape LIKE): ✅ fixed — helper `escapeLikePattern` + 6 testes
+- Regressões / novos findings: 0
+- LOWs de R1: permanecem no backlog (não-blocking)
+- Status da story: `review` → `done`
 
 ## Dev Notes
 
