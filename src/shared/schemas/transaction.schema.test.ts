@@ -3,6 +3,7 @@ import {
   createIncomeSchema,
   createTransferSchema,
   deleteTransactionSchema,
+  listTransactionsFilterSchema,
   transactionIdSchema,
   updateExpenseSchema,
 } from './transaction.schema';
@@ -316,6 +317,70 @@ describe('transactionIdSchema', () => {
 
   it('should reject invalid UUID', () => {
     const result = transactionIdSchema.safeParse('not-a-uuid');
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('listTransactionsFilterSchema', () => {
+  const validId = '550e8400-e29b-41d4-a716-446655440000';
+
+  it('aceita objeto vazio', () => {
+    const result = listTransactionsFilterSchema.safeParse({});
+    expect(result.success).toBe(true);
+  });
+
+  it('aceita filtros completos', () => {
+    const result = listTransactionsFilterSchema.safeParse({
+      types: ['expense', 'income'],
+      categoryIds: [validId],
+      paymentMethodIds: [validId],
+      dateFrom: '2026-04-01',
+      dateTo: '2026-04-30',
+      search: 'mercado',
+      limit: 50,
+      offset: 0,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('coage datas ISO string para Date', () => {
+    const result = listTransactionsFilterSchema.safeParse({
+      dateFrom: '2026-04-01T00:00:00Z',
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.dateFrom).toBeInstanceOf(Date);
+    }
+  });
+
+  it('rejeita ids inválidos em categoryIds', () => {
+    const result = listTransactionsFilterSchema.safeParse({
+      categoryIds: ['not-a-uuid'],
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejeita limit > 100', () => {
+    const result = listTransactionsFilterSchema.safeParse({ limit: 101 });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejeita offset negativo', () => {
+    const result = listTransactionsFilterSchema.safeParse({ offset: -1 });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejeita tipo inválido', () => {
+    const result = listTransactionsFilterSchema.safeParse({
+      types: ['unknown'],
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejeita search com mais de 200 chars', () => {
+    const result = listTransactionsFilterSchema.safeParse({
+      search: 'a'.repeat(201),
+    });
     expect(result.success).toBe(false);
   });
 });

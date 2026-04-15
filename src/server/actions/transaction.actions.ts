@@ -14,6 +14,7 @@ import {
   recreateTransactionSnapshotSchema,
   getImpactPreviewSchema,
   getMonthlySpendingSummarySchema,
+  listTransactionsFilterSchema,
 } from '@/shared/schemas/transaction.schema';
 import { idSchema } from '@/shared/schemas/common.schema';
 import { transactionDeps } from '@/server/factories/transaction';
@@ -26,6 +27,7 @@ import { deleteTransaction } from '@/server/domain/transactions/use-cases/delete
 import { getSuggestedEstablishments } from '@/server/domain/transactions/use-cases/get-suggested-establishments';
 import { getImpactPreview } from '@/server/domain/transactions/use-cases/get-impact-preview';
 import { createGetMonthlySpendingSummary } from '@/server/domain/transactions/use-cases/get-monthly-spending-summary';
+import { listTransactions } from '@/server/domain/transactions/use-cases/list-transactions';
 import { autoCreateEstablishment } from '@/server/domain/establishments/use-cases/auto-create-establishment';
 
 function getOrganizationId(session: { session: { activeOrganizationId?: string | null } }) {
@@ -145,15 +147,26 @@ export const deleteTransactionAction = withAuth(async (session, input: unknown) 
   return result;
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const listTransactionsAction = withAuth(async (session, _input: unknown) => {
+export const listTransactionsAction = withAuth(async (session, input: unknown) => {
   const organizationId = getOrganizationId(session);
   if (!organizationId) {
     return err('NO_ACTIVE_ORGANIZATION', 'Nenhuma organização ativa. Selecione uma organização.');
   }
 
-  const transactions = await transactionDeps.repository.findByOrganization(organizationId);
-  return { success: true as const, data: transactions };
+  const normalizedInput = input ?? {};
+  const validation = validateInput(listTransactionsFilterSchema, normalizedInput);
+  if (!validation.success) return validation;
+
+  const { limit, offset, ...filters } = validation.data;
+
+  return listTransactions(
+    { repository: transactionDeps.repository },
+    {
+      organizationId,
+      filters,
+      pagination: { limit, offset },
+    },
+  );
 });
 
 /**
