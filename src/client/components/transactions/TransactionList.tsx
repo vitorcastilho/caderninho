@@ -213,6 +213,19 @@ export function TransactionList({
   creditCards,
   incomeSources,
 }: TransactionListProps) {
+  // Chips de método só oferecem contas/cartões ativos (Task 5.5). Historicamente,
+  // transações podem estar ligadas a contas arquivadas — `bankAccounts`/`creditCards`
+  // completos continuam sendo passados para Row/EditExpenseSheet/LabelResolver para
+  // que a resolução de rótulo e a edição funcionem em registros antigos.
+  const activeBankAccounts = useMemo(
+    () => bankAccounts.filter((a) => a.status === 'active'),
+    [bankAccounts],
+  );
+  const activeCreditCards = useMemo(
+    () => creditCards.filter((c) => c.status === 'active'),
+    [creditCards],
+  );
+
   const [filters, setFilters] = useState<TransactionListFiltersState>(buildInitialFilters);
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
@@ -220,7 +233,6 @@ export function TransactionList({
   const [total, setTotal] = useState<number>(initialTotal);
   const [hasMore, setHasMore] = useState<boolean>(initialHasMore);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [hasFiltersActive, setHasFiltersActive] = useState<boolean>(false);
 
   useEffect(() => {
     setRows(initialTransactions);
@@ -242,20 +254,32 @@ export function TransactionList({
   const requestIdRef = useRef(0);
   const isFirstRenderRef = useRef(true);
 
-  const effectiveFilters = useMemo<TransactionListFiltersState>(
-    () => ({ ...filters, search: debouncedSearch }),
-    [filters, debouncedSearch],
+  // Dependências granulares: `filters.search` é deliberadamente omitido — o reload
+  // escuta apenas `debouncedSearch`, evitando um loadPage(0) a cada keystroke.
+  const {
+    type: filterType,
+    categoryIds: filterCategoryIds,
+    paymentMethodIds: filterPaymentMethodIds,
+    month: filterMonth,
+  } = filters;
+
+  const buildEffectiveFilters = useCallback(
+    (): TransactionListFiltersState => ({
+      search: debouncedSearch,
+      type: filterType,
+      categoryIds: filterCategoryIds,
+      paymentMethodIds: filterPaymentMethodIds,
+      month: filterMonth,
+    }),
+    [debouncedSearch, filterType, filterCategoryIds, filterPaymentMethodIds, filterMonth],
   );
 
-  const hasAnyActiveFilter = useMemo(
-    () =>
-      effectiveFilters.search.length > 0 ||
-      effectiveFilters.type !== 'all' ||
-      effectiveFilters.categoryIds.size > 0 ||
-      effectiveFilters.paymentMethodIds.size > 0 ||
-      effectiveFilters.month !== 'all',
-    [effectiveFilters],
-  );
+  const hasAnyActiveFilter =
+    debouncedSearch.length > 0 ||
+    filterType !== 'all' ||
+    filterCategoryIds.size > 0 ||
+    filterPaymentMethodIds.size > 0 ||
+    filterMonth !== 'all';
 
   const loadPage = useCallback(
     async (offset: number, currentFilters: TransactionListFiltersState) => {
@@ -292,16 +316,15 @@ export function TransactionList({
     [categories, bankAccounts, creditCards],
   );
 
-  // Recarregar quando filtros mudam (após debounce da busca)
+  // Recarregar quando filtros (granulares) mudam — NÃO dispara por `filters.search`
+  // porque a busca já é debounced para `debouncedSearch`.
   useEffect(() => {
     if (isFirstRenderRef.current) {
       isFirstRenderRef.current = false;
-      setHasFiltersActive(hasAnyActiveFilter);
       return;
     }
-    setHasFiltersActive(hasAnyActiveFilter);
-    loadPage(0, effectiveFilters);
-  }, [effectiveFilters, hasAnyActiveFilter, loadPage]);
+    loadPage(0, buildEffectiveFilters());
+  }, [filterType, filterCategoryIds, filterPaymentMethodIds, filterMonth, debouncedSearch, buildEffectiveFilters, loadPage]);
 
   // IntersectionObserver para scroll infinito
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -315,14 +338,14 @@ export function TransactionList({
       (entries) => {
         const entry = entries[0];
         if (entry && entry.isIntersecting && hasMore && !isLoading) {
-          loadPage(rows.length, effectiveFilters);
+          loadPage(rows.length, buildEffectiveFilters());
         }
       },
       { rootMargin: '200px' },
     );
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [hasMore, isLoading, rows.length, effectiveFilters, loadPage]);
+  }, [hasMore, isLoading, rows.length, buildEffectiveFilters, loadPage]);
 
   const handleRowClick = useCallback((tx: TransactionDTO) => {
     if (tx.type === 'expense') {
@@ -333,8 +356,8 @@ export function TransactionList({
   }, []);
 
   const refresh = useCallback(() => {
-    loadPage(0, effectiveFilters);
-  }, [loadPage, effectiveFilters]);
+    loadPage(0, buildEffectiveFilters());
+  }, [loadPage, buildEffectiveFilters]);
 
   const handleClearFilters = useCallback(() => {
     setFilters(buildInitialFilters());
@@ -374,8 +397,8 @@ export function TransactionList({
       <TransactionListFilters
         filters={filters}
         categories={categories}
-        bankAccounts={bankAccounts}
-        creditCards={creditCards}
+        bankAccounts={activeBankAccounts}
+        creditCards={activeCreditCards}
         onSearchChange={(value) => setFilters((prev) => ({ ...prev, search: value }))}
         onTypeChange={(type: TypeFilter) => setFilters((prev) => ({ ...prev, type }))}
         onToggleCategory={(id) =>
@@ -399,7 +422,7 @@ export function TransactionList({
       />
 
       {isListEmpty && !isLoading ? (
-        hasFiltersActive ? (
+        hasAnyActiveFilter ? (
           <EmptyState
             icon={Receipt}
             title="Nenhuma transação encontrada"

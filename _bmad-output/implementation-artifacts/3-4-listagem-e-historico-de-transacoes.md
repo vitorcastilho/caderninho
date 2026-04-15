@@ -226,7 +226,28 @@ so that I can find and review past expenses, incomes and transfers efficiently.
 
 ### Fase 7: Review Follow-ups (AI)
 
-<!-- Esta seção será preenchida pelo code review após implementação -->
+<!-- Preenchido pelo code review adversarial em 2026-04-15. Severidade MEDIUM é blocking — fixar antes de reabrir review. -->
+
+**MEDIUM (blocking — precisa fixar antes de voltar pra `review`):**
+
+- [x] [AI-Review][MED] Debounce da busca não previne requisições extras à action/DB — `effectiveFilters` invalida a cada keystroke porque depende de `filters` inteiro, disparando `loadPage(0)` a cada letra. Fix: substituir o `useMemo` por dependências granulares (`filters.type, filters.categoryIds, filters.paymentMethodIds, filters.month, debouncedSearch`) em vez de spread de `filters`. [src/client/components/transactions/TransactionList.tsx:245-248, 296-304]
+- [x] [AI-Review][MED] Contas/cartões arquivados aparecem como chips de filtro — Task 5.5 exige "contas ativas + cartões ativos", mas `listBankAccountsAction` retorna `includeArchived: true` e o componente renderiza tudo. Fix: filtrar por `status === 'active'` nos arrays `bankAccounts`/`creditCards` (no `page.tsx` SSR ou dentro do componente). [src/client/components/transactions/TransactionListFilters.tsx:210-249]
+- [x] [AI-Review][MED] Wildcards LIKE não escapados na busca textual — `filters.search` é concatenado como `%${search}%` e passado ao `ilike`. Caracteres `%` e `_` do usuário são interpretados como wildcards (ex: buscar "100%" retorna matches errados). Não é SQL injection, mas é bug de matching. Fix: escapar `\`, `%` e `_` antes do wrap. [src/server/infrastructure/database/repositories/transaction.repository.impl.ts:115-128]
+
+**LOW (backlog — não-blocking, pode ficar para stories futuras):**
+
+- [ ] [AI-Review][LOW] Lógica SQL do `findByOrganizationFiltered` não tem cobertura direta — o triplo OR de `paymentMethodIds` e as combinações AND/OR nunca são exercitadas contra DB real, só mockadas via use case. Considerar adicionar teste de integração quando houver padrão para repositórios no projeto. [src/server/infrastructure/database/repositories/transaction.repository.impl.ts:98-105]
+- [ ] [AI-Review][LOW] Label de método é inconsistente entre tipos — débito/pix mostram `"Débito · {bank} - {name}"` / `"PIX · ..."`, mas crédito só `"{brand} {name}"` sem prefixo "Crédito". Padronizar para `"Crédito · {brand} {name}"`. [src/client/components/transactions/TransactionListRow.tsx:62-73]
+- [ ] [AI-Review][LOW] Busca expandida por nome é ignorada quando já há chip ativo no eixo — se o usuário selecionou chip "Alimentação" e digita "Transporte", a expansão por nome some (comportamento documentado nas Dev Notes, mas debatível). Avaliar se o fallback deveria ser OR com seleções existentes em vez de skip. [src/client/components/transactions/TransactionList.tsx:158, 175]
+- [ ] [AI-Review][LOW] Ícone `MoreVertical` dispara exclusão direta em vez de abrir um menu — visualmente enganoso (usuário espera dropdown). Decisão documentada na Task 4.5, mas considerar trocar por ícone de lixeira ou implementar menu real em story futura do DS. [src/client/components/transactions/TransactionListRow.tsx:125-132]
+
+**Code review metadata:**
+- Rodada: R1 (2026-04-15)
+- Revisor: Code review adversarial (`bmad-bmm-code-review`)
+- Git vs File List: 0 discrepâncias
+- Validações: `tsc` 0 erros · `eslint` 0 warnings · `vitest` 131/1055 passando
+- ACs: 7/7 implementados com evidência no código
+- Status da story: `review` → `ready-for-dev` (3 MEDIUMs blocking)
 
 ## Dev Notes
 
@@ -411,6 +432,17 @@ claude-opus-4-6[1m]
 - `npx next build` completa com sucesso — rota `/transactions` presente no output.
 - **Smoke test manual no browser pendente** — o dev server local tem um lock ativo no momento da execução e eu não tenho controle de browser no contexto atual. O usuário precisa validar os AC no navegador autenticado com dados reais antes do code review (Task 10.4).
 
+**R2 — Fix dos 3 MEDIUMs do code review (2026-04-15):**
+
+- ✅ Resolvido review finding [MED]: Debounce da busca disparando loadPage a cada keystroke. Removi o `effectiveFilters` como `useMemo` em cima do spread de `filters` (que invalidava referência a cada letra digitada). Agora o componente desestrutura os campos granulares (`filterType`, `filterCategoryIds`, `filterPaymentMethodIds`, `filterMonth`) e o `useEffect` de reload depende só deles + `debouncedSearch`. Helper `buildEffectiveFilters()` (`useCallback`) constrói o objeto efetivo no call site (loadPage inicial, scroll infinito, refresh). Resultado: keystrokes só atualizam o input; o loadPage(0) só dispara quando o debounce termina. Estado redundante `hasFiltersActive` removido em favor do cálculo inline `hasAnyActiveFilter`. [src/client/components/transactions/TransactionList.tsx]
+- ✅ Resolvido review finding [MED]: Contas/cartões arquivados listados como chips. Adicionei `activeBankAccounts`/`activeCreditCards` (filtrados por `status === 'active'` via `useMemo`) passados só para `TransactionListFilters`. `TransactionListRow`, `EditExpenseSheet` e o `labelResolver` continuam recebendo as listas completas — fundamental para que transações históricas ligadas a contas arquivadas ainda consigam resolver o rótulo e abrir o sheet de edição. A filtragem deliberadamente fica no container (e não no `page.tsx`) para preservar esse comportamento. [src/client/components/transactions/TransactionList.tsx]
+- ✅ Resolvido review finding [MED]: Wildcards LIKE não escapados. Extraí helper `escapeLikePattern(input)` no próprio arquivo do repo (exportado) que escapa `\`, `%` e `_` com `\` — compatível com o escape padrão do LIKE no PostgreSQL. Usei o helper no `findByOrganizationFiltered` antes do wrap `%...%`. Testes unitários cobrem strings sem wildcards, `%` único, `_`, `\` e múltiplos simultâneos (novo arquivo `transaction.repository.impl.test.ts` com mock do `db` para não acoplar ao DATABASE_URL). [src/server/infrastructure/database/repositories/transaction.repository.impl.ts]
+
+**Validações pós-fix:**
+- `npx tsc --noEmit` — 0 erros
+- `npx eslint src --max-warnings=0` — 0 warnings
+- `npx vitest run` — 132 arquivos, 1061 testes passando (6 novos em `transaction.repository.impl.test.ts`)
+
 ### File List
 
 **Modificados:**
@@ -441,7 +473,10 @@ claude-opus-4-6[1m]
 - `src/client/components/transactions/TransactionListFilters.test.tsx`
 - `src/client/components/transactions/TransactionListRow.tsx`
 - `src/client/components/transactions/TransactionList.test.tsx`
+- `src/server/infrastructure/database/repositories/transaction.repository.impl.test.ts` (R2 — testes do `escapeLikePattern`)
 
 ### Change Log
+
+- 2026-04-15 (R2): Addressed code review findings — 3 MEDIUMs resolved. Debounce agora depende de fields granulares (previne loadPage extra por keystroke); chips de filtro de método só listam contas/cartões ativos (mantendo lista completa para Row/EditExpenseSheet); busca textual escapa wildcards LIKE (`\`, `%`, `_`) no `findByOrganizationFiltered`. Novo helper `escapeLikePattern` exportado + testes.
 
 - 2026-04-15: Implementação completa da Story 3.4 — repositório com filtros, use case, schema, server action, refactor do componente em subcomponentes, scroll infinito, grouping por dia, filtros contextuais.

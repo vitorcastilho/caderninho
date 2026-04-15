@@ -7,6 +7,13 @@ import type {
   TransactionRepository,
 } from '@/server/domain/transactions/repositories/transaction.repository';
 
+// Escapa wildcards LIKE/ILIKE (`\`, `%`, `_`) para que caracteres digitados pelo
+// usuário não sejam interpretados como coringas. PostgreSQL usa `\` como escape
+// padrão do LIKE, então este prefixo neutraliza a interpretação.
+export function escapeLikePattern(input: string): string {
+  return input.replace(/[\\%_]/g, (char) => `\\${char}`);
+}
+
 export class DrizzleTransactionRepository implements TransactionRepository {
   constructor(private readonly executor: DbExecutor = db) {}
 
@@ -113,7 +120,8 @@ export class DrizzleTransactionRepository implements TransactionRepository {
     }
 
     if (filters.search && filters.search.length > 0) {
-      const pattern = `%${filters.search}%`;
+      // Escapar wildcards LIKE — ver `escapeLikePattern` acima.
+      const pattern = `%${escapeLikePattern(filters.search)}%`;
       const searchClauses = [
         ilike(transactions.establishment, pattern),
         ilike(transactions.description, pattern),
