@@ -1,6 +1,6 @@
 import { eq, and, desc, sql, gte, lt } from 'drizzle-orm';
 
-import { db } from '@/server/infrastructure/database/client';
+import { db, type DbExecutor } from '@/server/infrastructure/database/client';
 import { transactions } from '@/server/infrastructure/database/schema';
 import type {
   Transaction,
@@ -8,6 +8,8 @@ import type {
 } from '@/server/domain/transactions/repositories/transaction.repository';
 
 export class DrizzleTransactionRepository implements TransactionRepository {
+  constructor(private readonly executor: DbExecutor = db) {}
+
   async create(data: {
     id: string;
     type: string;
@@ -27,15 +29,34 @@ export class DrizzleTransactionRepository implements TransactionRepository {
     organizationId: string;
     createdBy: string;
   }): Promise<Transaction> {
-    const [transaction] = await db
+    const [transaction] = await this.executor
       .insert(transactions)
       .values(data)
       .returning();
     return transaction as Transaction;
   }
 
+  async update(
+    id: string,
+    organizationId: string,
+    data: Partial<Omit<Transaction, 'id' | 'organizationId' | 'createdBy' | 'createdAt'>>,
+  ): Promise<Transaction> {
+    const [updated] = await this.executor
+      .update(transactions)
+      .set({ ...data, updatedAt: new Date() })
+      .where(and(eq(transactions.id, id), eq(transactions.organizationId, organizationId)))
+      .returning();
+    return updated as Transaction;
+  }
+
+  async delete(id: string, organizationId: string): Promise<void> {
+    await this.executor
+      .delete(transactions)
+      .where(and(eq(transactions.id, id), eq(transactions.organizationId, organizationId)));
+  }
+
   async findById(id: string, organizationId: string): Promise<Transaction | null> {
-    const results = await db
+    const results = await this.executor
       .select()
       .from(transactions)
       .where(and(eq(transactions.id, id), eq(transactions.organizationId, organizationId)));
@@ -43,7 +64,7 @@ export class DrizzleTransactionRepository implements TransactionRepository {
   }
 
   async findByOrganization(organizationId: string): Promise<Transaction[]> {
-    const results = await db
+    const results = await this.executor
       .select()
       .from(transactions)
       .where(eq(transactions.organizationId, organizationId))
@@ -60,7 +81,7 @@ export class DrizzleTransactionRepository implements TransactionRepository {
     const sinceDate = new Date();
     sinceDate.setDate(sinceDate.getDate() - sinceDays);
 
-    const results = await db
+    const results = await this.executor
       .select({
         establishment: transactions.establishment,
         count: sql<number>`count(*)`.as('count'),
@@ -93,7 +114,7 @@ export class DrizzleTransactionRepository implements TransactionRepository {
     const startOfMonth = new Date(year, month - 1, 1);
     const startOfNextMonth = new Date(year, month, 1);
 
-    const result = await db
+    const result = await this.executor
       .select({
         total: sql<number>`COALESCE(SUM(${transactions.amountCents}), 0)`.as('total'),
       })
@@ -130,7 +151,7 @@ export class DrizzleTransactionRepository implements TransactionRepository {
     );
 
     const [byCategory, bySubcategory, byEstablishment] = await Promise.all([
-      db
+      this.executor
         .select({
           categoryId: transactions.categoryId,
           totalCents: sql<number>`COALESCE(SUM(${transactions.amountCents}), 0)`.as('total_cents'),
@@ -139,7 +160,7 @@ export class DrizzleTransactionRepository implements TransactionRepository {
         .where(baseWhere)
         .groupBy(transactions.categoryId),
 
-      db
+      this.executor
         .select({
           subcategoryId: transactions.subcategoryId,
           totalCents: sql<number>`COALESCE(SUM(${transactions.amountCents}), 0)`.as('total_cents'),
@@ -148,7 +169,7 @@ export class DrizzleTransactionRepository implements TransactionRepository {
         .where(and(baseWhere, sql`${transactions.subcategoryId} IS NOT NULL`))
         .groupBy(transactions.subcategoryId),
 
-      db
+      this.executor
         .select({
           establishment: transactions.establishment,
           subcategoryId: transactions.subcategoryId,

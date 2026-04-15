@@ -15,6 +15,7 @@ import {
   Building2,
   BookText,
   Plus,
+  Receipt,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -39,6 +40,7 @@ const navSections: NavSection[] = [
     label: "Navegação",
     items: [
       { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { href: "/transactions", label: "Transações", icon: Receipt },
       { href: "/orcamentos", label: "Orçamentos", icon: PiggyBank },
       { href: "/checklist", label: "Checklist", icon: CheckSquare },
       { href: "/projecao", label: "Projeção", icon: TrendingUp },

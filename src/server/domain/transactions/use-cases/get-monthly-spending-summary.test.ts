@@ -7,6 +7,8 @@ function createMockRepository(
 ): TransactionRepository {
   return {
     create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
     findById: vi.fn(),
     findByOrganization: vi.fn(),
     findTopEstablishments: vi.fn(),

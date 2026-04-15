@@ -41,6 +41,14 @@ export interface TransactionRepository {
     createdBy: string;
   }): Promise<Transaction>;
 
+  update(
+    id: string,
+    organizationId: string,
+    data: Partial<Omit<Transaction, 'id' | 'organizationId' | 'createdBy' | 'createdAt'>>,
+  ): Promise<Transaction>;
+
+  delete(id: string, organizationId: string): Promise<void>;
+
   findById(id: string, organizationId: string): Promise<Transaction | null>;
 
   findByOrganization(organizationId: string): Promise<Transaction[]>;

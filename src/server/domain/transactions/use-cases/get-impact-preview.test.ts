@@ -6,6 +6,8 @@ import type { BankAccountRepository } from '@/server/domain/bank-accounts/reposi
 
 const mockTransactionRepository: TransactionRepository = {
   create: vi.fn(),
+  update: vi.fn(),
+  delete: vi.fn(),
   findById: vi.fn(),
   findByOrganization: vi.fn(),
   findTopEstablishments: vi.fn(),
