@@ -1,0 +1,903 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Estudo · Repensar filtros de /transactions (Story 3.4)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --background: #FAFAF9;
+      --foreground: #1C1917;
+      --card: #FFFFFF;
+      --muted: #F5F5F4;
+      --muted-foreground: #78716C;
+      --border: #E7E5E4;
+      --primary: #4F46E5;
+      --primary-light: #EEF2FF;
+      --positive: #22C55E;
+      --positive-bg: #DCFCE7;
+      --positive-text: #166534;
+      --info: #3B82F6;
+      --info-bg: #DBEAFE;
+      --info-text: #1E40AF;
+      --negative: #DC2626;
+    }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #F5F5F4;
+      color: var(--foreground);
+    }
+    .tabular-nums { font-variant-numeric: tabular-nums; }
+
+    /* ─── Header de cada abordagem ─── */
+    .approach-section {
+      background: var(--background);
+      border-radius: 16px;
+      padding: 32px 32px 40px;
+      margin-bottom: 32px;
+    }
+    .approach-title {
+      display: flex; align-items: baseline; gap: 12px;
+    }
+    .approach-num {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    /* ─── Shell mockup (sidebar + canvas) ─── */
+    .shell {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 580px;
+    }
+    .shell-sidebar {
+      background: var(--background);
+      border-right: 1px solid var(--border);
+      padding: 16px 12px;
+      display: flex; flex-direction: column; gap: 16px;
+      font-size: 13px;
+    }
+    .shell-brand {
+      display: flex; align-items: center; gap: 8px;
+      font-weight: 700; font-size: 15px;
+      padding: 4px 8px;
+    }
+    .shell-cta {
+      background: var(--primary);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 8px;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 500;
+      cursor: pointer;
+    }
+    .shell-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--muted-foreground);
+      text-transform: uppercase;
+      padding: 0 8px;
+      margin-top: 8px;
+    }
+    .shell-nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 10px;
+      border-radius: 6px;
+      color: var(--muted-foreground);
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .shell-nav-item:hover { background: var(--muted); }
+    .shell-nav-item.active { background: var(--muted); color: var(--foreground); font-weight: 600; }
+    .shell-nav-item svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .shell-footer {
+      margin-top: auto;
+      padding: 8px;
+      display: flex; align-items: center; gap: 8px;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+    .shell-avatar {
+      width: 28px; height: 28px;
+      background: var(--positive);
+      color: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 11px;
+    }
+    .shell-canvas {
+      padding: 24px 28px;
+      overflow: hidden;
+    }
+
+    /* ─── Page header ─── */
+    .page-breadcrumb {
+      font-size: 11px;
+      color: var(--muted-foreground);
+      margin-bottom: 4px;
+    }
+    .page-title-h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    /* ─── Filtros — base ─── */
+    .filter-input {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 13px;
+      color: var(--muted-foreground);
+      flex: 1;
+    }
+    .filter-input svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .filter-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .filter-pill svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--muted-foreground); }
+    .filter-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .filter-btn svg { width: 14px; height: 14px; }
+    .filter-btn-badge {
+      background: var(--primary);
+      color: #fff;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      margin-left: 2px;
+    }
+    .seg-control {
+      display: inline-flex;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 2px;
+    }
+    .seg-item {
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--muted-foreground);
+    }
+    .seg-item.active {
+      background: var(--primary);
+      color: #fff;
+    }
+    .chip-active {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .chip-active svg { width: 12px; height: 12px; }
+
+    /* ─── Cards de resumo (Abordagem 3) ─── */
+    .summary-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .summary-card-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted-foreground);
+    }
+    .summary-card-value {
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .summary-card-meta {
+      font-size: 11px;
+      color: var(--muted-foreground);
+      margin-top: 2px;
+    }
+
+    /* ─── Side sheet mockup (Abordagem 1) ─── */
+    .sheet-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.3);
+      display: flex; justify-content: flex-end;
+      pointer-events: none;
+    }
+    .sheet-panel {
+      background: var(--card);
+      width: 320px;
+      padding: 20px;
+      box-shadow: -4px 0 20px rgba(0,0,0,0.1);
+      overflow-y: auto;
+    }
+    .sheet-section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted-foreground);
+      margin-top: 16px;
+      margin-bottom: 8px;
+    }
+    .sheet-checkbox {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 0;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .sheet-checkbox input { width: 14px; height: 14px; }
+
+    /* ─── Sidebar de filtros (Abordagem 2) ─── */
+    .filter-sidebar {
+      background: var(--card);
+      border-left: 1px solid var(--border);
+      padding: 20px;
+      width: 240px;
+      flex-shrink: 0;
+    }
+
+    /* ─── Linha de transação (Proposta G já decidida) ─── */
+    .day-header {
+      padding: 8px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted-foreground);
+      background: var(--background);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .tx-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px 10px 13px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      border-left: 3px solid transparent;
+    }
+    .tx-row[data-type="expense"]  { border-left-color: var(--negative); }
+    .tx-row[data-type="income"]   { border-left-color: var(--positive); }
+    .tx-row[data-type="transfer"] { border-left-color: var(--info); }
+    .tx-icon {
+      width: 32px; height: 32px;
+      flex-shrink: 0;
+      border-radius: 9999px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+    .tx-icon[data-type="expense"]  { background: var(--muted); color: var(--muted-foreground); }
+    .tx-icon[data-type="income"]   { background: var(--positive-bg); color: var(--positive-text); }
+    .tx-icon[data-type="transfer"] { background: var(--info-bg); color: var(--info-text); }
+    .tx-content { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .tx-primary { font-weight: 600; font-size: 13px; }
+    .tx-secondary { font-size: 11px; color: var(--muted-foreground); }
+    .tx-right { flex-shrink: 0; text-align: right; display: flex; flex-direction: column; align-items: flex-end; }
+    .tx-amount { font-weight: 600; font-size: 13px; }
+    .tx-amount[data-type="expense"]  { color: var(--foreground); }
+    .tx-amount[data-type="income"]   { color: var(--positive-text); }
+    .tx-amount[data-type="transfer"] { color: var(--muted-foreground); }
+    .tx-method { font-size: 10px; color: var(--muted-foreground); margin-top: 1px; }
+    .bank-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px;
+      border-radius: 5px;
+      border: 1px solid rgba(0,0,0,0.06);
+      font-weight: 700; font-size: 7px;
+      flex-shrink: 0;
+    }
+    .bank-itau { background: #003399; color: #fff; }
+    .bank-santander { background: #CC0000; color: #fff; }
+    .bank-inter { background: #FF7A00; color: #fff; }
+    .bank-nubank { background: #820AD1; color: #fff; }
+
+    /* ─── Pros/contras card ─── */
+    .pros-cons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .pros-cons-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .pros-cons-card h4 {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+    .pros-cons-card.pros h4 { color: var(--positive-text); }
+    .pros-cons-card.cons h4 { color: var(--negative); }
+    .pros-cons-card ul { font-size: 12px; color: var(--foreground); }
+    .pros-cons-card li { padding: 3px 0; }
+  </style>
+</head>
+<body>
+
+  <header class="max-w-[1400px] mx-auto px-6 pt-10 pb-6">
+    <p class="text-xs uppercase tracking-wider font-semibold" style="color: var(--primary)">Estudo · Filtros de /transactions</p>
+    <h1 class="text-2xl font-bold mt-1">Repensar a estrutura de filtros</h1>
+    <p class="text-sm mt-2 max-w-3xl" style="color: var(--muted-foreground)">
+      O estado atual em produção tem 3 problemas de UX: hierarquia plana entre tipo/categoria/método, repetição visual ruidosa
+      ("Conta Corrente" 4 vezes), e os filtros consomem 1/3 da tela antes do usuário ver qualquer transação.
+      Este estudo apresenta 3 abordagens visualmente — escolha uma para eu desenvolver no protótipo canônico junto com
+      a tela completa (menu lateral + linha de transação Proposta G).
+    </p>
+  </header>
+
+  <main class="max-w-[1400px] mx-auto px-6 pb-16">
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         ESTADO ATUAL (referência)
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="approach-section" style="background: #FEF3C7;">
+      <div class="approach-title mb-3">
+        <span class="approach-num" style="background: #B45309;">📍</span>
+        <div>
+          <h2 class="text-xl font-bold">Estado atual (referência)</h2>
+          <p class="text-sm mt-1" style="color: var(--muted-foreground)">3 linhas de chips empilhados. Sem hierarquia. Repetição.</p>
+        </div>
+      </div>
+
+      <div class="shell">
+        <!-- Sidebar -->
+        <aside class="shell-sidebar">
+          <div class="shell-brand">📓 <span>Caderninho</span></div>
+          <div class="shell-cta"><i data-lucide="plus" style="width:14px;height:14px;"></i> Registrar gasto</div>
+          <div class="shell-section-label">Navegação</div>
+          <div class="shell-nav-item"><i data-lucide="layout-dashboard"></i> Dashboard</div>
+          <div class="shell-nav-item active"><i data-lucide="receipt"></i> Transações</div>
+          <div class="shell-nav-item"><i data-lucide="wallet"></i> Orçamentos</div>
+          <div class="shell-nav-item"><i data-lucide="check-square"></i> Checklist</div>
+          <div class="shell-nav-item"><i data-lucide="trending-up"></i> Projeção</div>
+          <div class="shell-section-label">Organização</div>
+          <div class="shell-nav-item"><i data-lucide="landmark"></i> Contas</div>
+          <div class="shell-nav-item"><i data-lucide="credit-card"></i> Cartões</div>
+          <div class="shell-nav-item"><i data-lucide="folder"></i> Categorias</div>
+          <div class="shell-footer">
+            <div class="shell-avatar">M</div>
+            <div class="text-xs"><div class="font-semibold">maria</div></div>
+          </div>
+        </aside>
+
+        <!-- Canvas -->
+        <div class="shell-canvas">
+          <div class="page-breadcrumb">Transações</div>
+          <h1 class="page-title-h1">Transações</h1>
+
+          <!-- Filtros atuais -->
+          <div class="flex gap-3 mb-3">
+            <div class="filter-input">
+              <i data-lucide="search"></i>
+              <span>Buscar por nome, categoria, valor ou data</span>
+            </div>
+            <div class="filter-pill">
+              <i data-lucide="chevron-left"></i>
+              <span class="font-semibold">Tudo</span>
+              <i data-lucide="chevron-right"></i>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-1.5 mb-3">
+            <span class="seg-control">
+              <span class="seg-item active">Tudo</span>
+              <span class="seg-item">Saídas</span>
+              <span class="seg-item">Entradas</span>
+              <span class="seg-item">Transferências</span>
+            </span>
+          </div>
+
+          <div class="flex flex-wrap gap-1.5 mb-3">
+            <span class="px-3 py-1.5 rounded-full text-xs font-medium" style="background: var(--muted); color: var(--muted-foreground)">Alimentação</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-medium" style="background: var(--muted); color: var(--muted-foreground)">Moradia</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-medium" style="background: var(--muted); color: var(--muted-foreground)">Transporte</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-medium" style="background: var(--muted); color: var(--muted-foreground)">Internet/Telefone</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-medium" style="background: var(--muted); color: var(--muted-foreground)">Educação</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-medium" style="background: var(--muted); color: var(--muted-foreground)">Restaurante</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-medium" style="background: var(--muted); color: var(--muted-foreground)">Alimentação</span>
+          </div>
+
+          <div class="flex flex-wrap gap-1.5 mb-4">
+            <span class="px-3 py-1.5 rounded-full text-xs font-medium" style="background: var(--muted); color: var(--muted-foreground)">Inter · Conta Corrente</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-medium" style="background: var(--muted); color: var(--muted-foreground)">Nubank · Conta Corrente</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-medium" style="background: var(--muted); color: var(--muted-foreground)">Itaú · Conta Corrente</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-medium" style="background: var(--muted); color: var(--muted-foreground)">Santander · Conta Corrente</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-medium" style="background: var(--muted); color: var(--muted-foreground)">Mastercard · Inter</span>
+          </div>
+
+          <div class="rounded-lg overflow-hidden border" style="border-color: var(--border)">
+            <div class="day-header">14 / 04 / 2026</div>
+            <div class="tx-row" data-type="transfer">
+              <div class="tx-icon" data-type="transfer"><i data-lucide="arrow-left-right" style="width:14px;height:14px;"></i></div>
+              <div class="tx-content">
+                <div class="tx-primary flex items-center gap-1.5">
+                  <span class="bank-badge bank-inter">Inter</span><span>Banco Inter</span>
+                  <span class="text-muted-foreground text-xs">→</span>
+                  <span class="bank-badge bank-santander">San</span><span>Santander</span>
+                </div>
+                <div class="tx-secondary">Transferência</div>
+              </div>
+              <div class="tx-right"><div class="tx-amount tabular-nums" data-type="transfer">R$ 33,03</div></div>
+            </div>
+            <div class="tx-row" data-type="expense">
+              <div class="tx-icon" data-type="expense">🛒</div>
+              <div class="tx-content"><div class="tx-primary">Imperatriz</div><div class="tx-secondary">Alimentação</div></div>
+              <div class="tx-right"><div class="tx-amount tabular-nums" data-type="expense">−R$ 100,00</div><div class="tx-method">Master Inter</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="text-xs mt-3" style="color: var(--muted-foreground)">
+        ⚠️ Repare como os filtros (4 linhas) ocupam quase metade do espaço útil antes de qualquer transação aparecer.
+      </p>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         ABORDAGEM 1 — Filtros condensados em "Filtros (N)"
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="approach-section">
+      <div class="approach-title mb-3">
+        <span class="approach-num">1</span>
+        <div>
+          <h2 class="text-xl font-bold">Filtros condensados em botão "Filtros (N)"</h2>
+          <p class="text-sm mt-1" style="color: var(--muted-foreground)">Linha única limpa. Side sheet abre quando precisa filtrar. Chips ativos visíveis abaixo.</p>
+        </div>
+      </div>
+
+      <div class="shell" style="position: relative;">
+        <aside class="shell-sidebar">
+          <div class="shell-brand">📓 <span>Caderninho</span></div>
+          <div class="shell-cta"><i data-lucide="plus" style="width:14px;height:14px;"></i> Registrar gasto</div>
+          <div class="shell-section-label">Navegação</div>
+          <div class="shell-nav-item"><i data-lucide="layout-dashboard"></i> Dashboard</div>
+          <div class="shell-nav-item active"><i data-lucide="receipt"></i> Transações</div>
+          <div class="shell-nav-item"><i data-lucide="wallet"></i> Orçamentos</div>
+          <div class="shell-nav-item"><i data-lucide="check-square"></i> Checklist</div>
+          <div class="shell-section-label">Organização</div>
+          <div class="shell-nav-item"><i data-lucide="landmark"></i> Contas</div>
+          <div class="shell-nav-item"><i data-lucide="credit-card"></i> Cartões</div>
+          <div class="shell-footer">
+            <div class="shell-avatar">M</div><div class="text-xs"><div class="font-semibold">maria</div></div>
+          </div>
+        </aside>
+
+        <div class="shell-canvas">
+          <div class="page-breadcrumb">Transações</div>
+          <h1 class="page-title-h1">Transações</h1>
+
+          <!-- LINHA ÚNICA DE FILTROS -->
+          <div class="flex gap-2 mb-3 items-center">
+            <div class="filter-input"><i data-lucide="search"></i><span>Buscar...</span></div>
+            <div class="filter-pill">
+              <i data-lucide="calendar"></i>
+              <span class="font-semibold">Abr 2026</span>
+              <i data-lucide="chevron-down"></i>
+            </div>
+            <div class="filter-btn">
+              <i data-lucide="sliders-horizontal"></i>
+              Filtros
+              <span class="filter-btn-badge">2</span>
+            </div>
+          </div>
+
+          <!-- CHIPS DE FILTROS ATIVOS -->
+          <div class="flex flex-wrap gap-1.5 mb-3">
+            <span class="chip-active">Saídas <i data-lucide="x"></i></span>
+            <span class="chip-active">Master Inter <i data-lucide="x"></i></span>
+            <span class="text-xs ml-2" style="color: var(--muted-foreground); font-style: italic;">Limpar tudo</span>
+          </div>
+
+          <div class="rounded-lg overflow-hidden border" style="border-color: var(--border)">
+            <div class="day-header">14 / 04 / 2026</div>
+            <div class="tx-row" data-type="expense">
+              <div class="tx-icon" data-type="expense">🛒</div>
+              <div class="tx-content"><div class="tx-primary">Imperatriz</div><div class="tx-secondary">Alimentação</div></div>
+              <div class="tx-right"><div class="tx-amount tabular-nums" data-type="expense">−R$ 100,00</div><div class="tx-method">Master Inter</div></div>
+            </div>
+            <div class="tx-row" data-type="expense">
+              <div class="tx-icon" data-type="expense">🛒</div>
+              <div class="tx-content"><div class="tx-primary">Fort Atacadista</div><div class="tx-secondary">Alimentação</div></div>
+              <div class="tx-right"><div class="tx-amount tabular-nums" data-type="expense">−R$ 80,00</div><div class="tx-method">Master Inter</div></div>
+            </div>
+            <div class="tx-row" data-type="expense">
+              <div class="tx-icon" data-type="expense">🍕</div>
+              <div class="tx-content"><div class="tx-primary">iFood</div><div class="tx-secondary">Restaurante</div></div>
+              <div class="tx-right"><div class="tx-amount tabular-nums" data-type="expense">−R$ 45,00</div><div class="tx-method">Master Inter</div></div>
+            </div>
+            <div class="tx-row" data-type="expense">
+              <div class="tx-icon" data-type="expense">⛽</div>
+              <div class="tx-content"><div class="tx-primary">Shell</div><div class="tx-secondary">Combustível</div></div>
+              <div class="tx-right"><div class="tx-amount tabular-nums" data-type="expense">−R$ 180,00</div><div class="tx-method">Itaú · Débito</div></div>
+            </div>
+          </div>
+
+          <p class="text-xs mt-3 text-center italic" style="color: var(--muted-foreground)">
+            ↑ Mais espaço pra lista. Filtros ativos visíveis. Clique em "Filtros" abre side sheet à direita ↓
+          </p>
+        </div>
+
+        <!-- SIDE SHEET MOCKUP -->
+        <div class="sheet-overlay">
+          <div class="sheet-panel">
+            <div class="flex items-center justify-between mb-3">
+              <div class="font-bold text-base">Filtros</div>
+              <i data-lucide="x" style="width:16px;height:16px;color:var(--muted-foreground);cursor:pointer;"></i>
+            </div>
+
+            <div class="sheet-section-label">Tipo de transação</div>
+            <label class="sheet-checkbox"><input type="checkbox" checked /> Saídas</label>
+            <label class="sheet-checkbox"><input type="checkbox" /> Entradas</label>
+            <label class="sheet-checkbox"><input type="checkbox" /> Transferências</label>
+
+            <div class="sheet-section-label">Categoria</div>
+            <label class="sheet-checkbox"><input type="checkbox" /> 🛒 Alimentação</label>
+            <label class="sheet-checkbox"><input type="checkbox" /> 🏠 Moradia</label>
+            <label class="sheet-checkbox"><input type="checkbox" /> 🚌 Transporte</label>
+            <label class="sheet-checkbox"><input type="checkbox" /> 📚 Educação</label>
+            <label class="sheet-checkbox"><input type="checkbox" /> 🍕 Restaurante</label>
+
+            <div class="sheet-section-label">Método de pagamento</div>
+            <label class="sheet-checkbox"><input type="checkbox" /> <span class="bank-badge bank-inter" style="width:18px;height:18px;font-size:6px;">Inter</span> Inter · Corrente</label>
+            <label class="sheet-checkbox"><input type="checkbox" /> <span class="bank-badge bank-nubank" style="width:18px;height:18px;font-size:6px;">Nu</span> Nubank · Corrente</label>
+            <label class="sheet-checkbox"><input type="checkbox" /> <span class="bank-badge bank-itau" style="width:18px;height:18px;font-size:6px;">Itaú</span> Itaú · Corrente</label>
+            <label class="sheet-checkbox"><input type="checkbox" checked /> Master Inter</label>
+
+            <div class="mt-6 flex gap-2">
+              <button class="flex-1 py-2 rounded-lg border text-sm font-medium" style="border-color: var(--border)">Limpar</button>
+              <button class="flex-1 py-2 rounded-lg text-sm font-semibold text-white" style="background: var(--primary)">Aplicar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pros-cons">
+        <div class="pros-cons-card pros">
+          <h4>✓ Prós</h4>
+          <ul class="space-y-0.5">
+            <li>• Tela super respira — quase todo o espaço útil é da lista</li>
+            <li>• Filtros ativos sempre visíveis como chips removíveis</li>
+            <li>• Categoria com emoji (mais escaneável que texto puro)</li>
+            <li>• Side sheet permite organizar por seções claras</li>
+            <li>• Padrão familiar (Notion, Linear, Things)</li>
+          </ul>
+        </div>
+        <div class="pros-cons-card cons">
+          <h4>✗ Contras</h4>
+          <ul class="space-y-0.5">
+            <li>• Filtrar exige 2 cliques (abrir sheet + selecionar)</li>
+            <li>• Tipo "Saídas" não fica sempre à mão (mais usado)</li>
+            <li>• Em desktop, "esconder" pode parecer minimalismo demais pra alguns</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         ABORDAGEM 2 — Sidebar direita (desktop) + drawer (mobile)
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="approach-section">
+      <div class="approach-title mb-3">
+        <span class="approach-num">2</span>
+        <div>
+          <h2 class="text-xl font-bold">Sidebar de filtros à direita</h2>
+          <p class="text-sm mt-1" style="color: var(--muted-foreground)">Coluna fixa de 240px com filtros sempre visíveis e organizados por seção. Mobile: vira drawer.</p>
+        </div>
+      </div>
+
+      <div class="shell" style="grid-template-columns: 200px 1fr 240px;">
+        <aside class="shell-sidebar">
+          <div class="shell-brand">📓 <span>Caderninho</span></div>
+          <div class="shell-cta"><i data-lucide="plus" style="width:14px;height:14px;"></i> Registrar</div>
+          <div class="shell-section-label">Navegação</div>
+          <div class="shell-nav-item"><i data-lucide="layout-dashboard"></i> Dashboard</div>
+          <div class="shell-nav-item active"><i data-lucide="receipt"></i> Transações</div>
+          <div class="shell-nav-item"><i data-lucide="wallet"></i> Orçamentos</div>
+          <div class="shell-section-label">Organização</div>
+          <div class="shell-nav-item"><i data-lucide="landmark"></i> Contas</div>
+          <div class="shell-nav-item"><i data-lucide="credit-card"></i> Cartões</div>
+          <div class="shell-footer">
+            <div class="shell-avatar">M</div><div class="text-xs"><div class="font-semibold">maria</div></div>
+          </div>
+        </aside>
+
+        <div class="shell-canvas">
+          <div class="page-breadcrumb">Transações</div>
+          <h1 class="page-title-h1">Transações</h1>
+
+          <div class="flex gap-2 mb-3 items-center">
+            <div class="filter-input"><i data-lucide="search"></i><span>Buscar...</span></div>
+            <div class="filter-pill"><i data-lucide="calendar"></i><span class="font-semibold">Abr 2026</span><i data-lucide="chevron-down"></i></div>
+          </div>
+
+          <div class="rounded-lg overflow-hidden border" style="border-color: var(--border)">
+            <div class="day-header">14 / 04 / 2026</div>
+            <div class="tx-row" data-type="transfer">
+              <div class="tx-icon" data-type="transfer"><i data-lucide="arrow-left-right" style="width:14px;height:14px;"></i></div>
+              <div class="tx-content">
+                <div class="tx-primary flex items-center gap-1.5">
+                  <span class="bank-badge bank-inter">Inter</span><span>Inter</span>
+                  <span class="text-muted-foreground text-xs">→</span>
+                  <span class="bank-badge bank-santander">San</span><span>Santander</span>
+                </div>
+                <div class="tx-secondary">Transferência</div>
+              </div>
+              <div class="tx-right"><div class="tx-amount tabular-nums" data-type="transfer">R$ 33,03</div></div>
+            </div>
+            <div class="tx-row" data-type="expense">
+              <div class="tx-icon" data-type="expense">🛒</div>
+              <div class="tx-content"><div class="tx-primary">Imperatriz</div><div class="tx-secondary">Alimentação</div></div>
+              <div class="tx-right"><div class="tx-amount tabular-nums" data-type="expense">−R$ 100,00</div><div class="tx-method">Master Inter</div></div>
+            </div>
+            <div class="tx-row" data-type="income">
+              <div class="tx-icon" data-type="income"><i data-lucide="arrow-down-left" style="width:14px;height:14px;"></i></div>
+              <div class="tx-content"><div class="tx-primary">Freela</div><div class="tx-secondary">Receita</div></div>
+              <div class="tx-right"><div class="tx-amount tabular-nums" data-type="income">+R$ 99,98</div><div class="tx-method">Nubank · Corrente</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SIDEBAR DE FILTROS -->
+        <aside class="filter-sidebar">
+          <div class="flex items-center justify-between mb-2">
+            <div class="font-bold text-sm">Filtros</div>
+            <span class="text-xs" style="color: var(--primary); cursor: pointer; font-weight: 500;">Limpar (2)</span>
+          </div>
+
+          <div class="sheet-section-label" style="margin-top: 12px;">Tipo</div>
+          <label class="sheet-checkbox"><input type="checkbox" checked /> Saídas</label>
+          <label class="sheet-checkbox"><input type="checkbox" /> Entradas</label>
+          <label class="sheet-checkbox"><input type="checkbox" /> Transferências</label>
+
+          <div class="sheet-section-label">Categoria</div>
+          <label class="sheet-checkbox"><input type="checkbox" /> 🛒 Alimentação</label>
+          <label class="sheet-checkbox"><input type="checkbox" /> 🏠 Moradia</label>
+          <label class="sheet-checkbox"><input type="checkbox" /> 🚌 Transporte</label>
+          <label class="sheet-checkbox"><input type="checkbox" /> 🍕 Restaurante</label>
+
+          <div class="sheet-section-label">Método</div>
+          <label class="sheet-checkbox"><input type="checkbox" /> <span class="bank-badge bank-inter" style="width:18px;height:18px;font-size:6px;">Inter</span> Inter</label>
+          <label class="sheet-checkbox"><input type="checkbox" /> <span class="bank-badge bank-nubank" style="width:18px;height:18px;font-size:6px;">Nu</span> Nubank</label>
+          <label class="sheet-checkbox"><input type="checkbox" checked /> Master Inter</label>
+        </aside>
+      </div>
+
+      <div class="pros-cons">
+        <div class="pros-cons-card pros">
+          <h4>✓ Prós</h4>
+          <ul class="space-y-0.5">
+            <li>• Filtros sempre à mão — sem cliques extras</li>
+            <li>• Organização explícita por seção (Tipo, Categoria, Método)</li>
+            <li>• Marcas/desmarca com checkbox é familiar</li>
+            <li>• Limpar filtros visível e acessível</li>
+          </ul>
+        </div>
+        <div class="pros-cons-card cons">
+          <h4>✗ Contras</h4>
+          <ul class="space-y-0.5">
+            <li>• Tira ~240px de espaço útil da lista (importante em monitores médios)</li>
+            <li>• Padrão "antigo" estilo Gmail/Outlook — não é mais o padrão moderno</li>
+            <li>• Mobile precisa de drawer (mais complexidade)</li>
+            <li>• Na maioria das visitas, usuário não filtra — sidebar fica lá ocupando</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         ABORDAGEM 3 — Inline esperto + cards de resumo (recomendada)
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="approach-section" style="border: 2px solid var(--primary);">
+      <div class="approach-title mb-3">
+        <span class="approach-num">3</span>
+        <div>
+          <h2 class="text-xl font-bold">Inline esperto + cards de resumo do período <span class="text-xs ml-2" style="color: var(--primary)">⭐ Minha recomendação</span></h2>
+          <p class="text-sm mt-1" style="color: var(--muted-foreground)">Cards no topo dão contexto financeiro. Tipo (mais usado) sempre visível. Categoria/Método em "+ Filtros" sob demanda.</p>
+        </div>
+      </div>
+
+      <div class="shell">
+        <aside class="shell-sidebar">
+          <div class="shell-brand">📓 <span>Caderninho</span></div>
+          <div class="shell-cta"><i data-lucide="plus" style="width:14px;height:14px;"></i> Registrar gasto</div>
+          <div class="shell-section-label">Navegação</div>
+          <div class="shell-nav-item"><i data-lucide="layout-dashboard"></i> Dashboard</div>
+          <div class="shell-nav-item active"><i data-lucide="receipt"></i> Transações</div>
+          <div class="shell-nav-item"><i data-lucide="wallet"></i> Orçamentos</div>
+          <div class="shell-nav-item"><i data-lucide="check-square"></i> Checklist</div>
+          <div class="shell-section-label">Organização</div>
+          <div class="shell-nav-item"><i data-lucide="landmark"></i> Contas</div>
+          <div class="shell-nav-item"><i data-lucide="credit-card"></i> Cartões</div>
+          <div class="shell-footer">
+            <div class="shell-avatar">M</div><div class="text-xs"><div class="font-semibold">maria</div></div>
+          </div>
+        </aside>
+
+        <div class="shell-canvas">
+          <div class="page-breadcrumb">Transações</div>
+          <h1 class="page-title-h1">Transações</h1>
+
+          <!-- CARDS DE RESUMO -->
+          <div class="grid grid-cols-3 gap-3 mb-4">
+            <div class="summary-card">
+              <div class="summary-card-label" style="color: var(--negative);">↓ Saídas no mês</div>
+              <div class="summary-card-value" style="color: var(--foreground);">R$ 1.247,00</div>
+              <div class="summary-card-meta">12 transações</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-card-label" style="color: var(--positive-text);">↑ Entradas no mês</div>
+              <div class="summary-card-value" style="color: var(--positive-text);">R$ 1.334,98</div>
+              <div class="summary-card-meta">2 transações</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-card-label" style="color: var(--info-text);">⇄ Transferências</div>
+              <div class="summary-card-value" style="color: var(--muted-foreground);">R$ 483,03</div>
+              <div class="summary-card-meta">2 movimentações</div>
+            </div>
+          </div>
+
+          <!-- LINHA DE FILTROS -->
+          <div class="flex gap-2 mb-3 items-center flex-wrap">
+            <div class="filter-input" style="max-width: 280px;"><i data-lucide="search"></i><span>Buscar...</span></div>
+            <span class="seg-control">
+              <span class="seg-item active">Tudo</span>
+              <span class="seg-item">Saídas</span>
+              <span class="seg-item">Entradas</span>
+              <span class="seg-item">Transferências</span>
+            </span>
+            <div class="filter-pill"><i data-lucide="calendar"></i><span class="font-semibold">Abr 2026</span><i data-lucide="chevron-down"></i></div>
+            <div class="filter-btn"><i data-lucide="sliders-horizontal"></i> Filtros</div>
+          </div>
+
+          <div class="rounded-lg overflow-hidden border" style="border-color: var(--border)">
+            <div class="day-header">14 / 04 / 2026</div>
+            <div class="tx-row" data-type="transfer">
+              <div class="tx-icon" data-type="transfer"><i data-lucide="arrow-left-right" style="width:14px;height:14px;"></i></div>
+              <div class="tx-content">
+                <div class="tx-primary flex items-center gap-1.5">
+                  <span class="bank-badge bank-inter">Inter</span><span>Inter</span>
+                  <span class="text-muted-foreground text-xs">→</span>
+                  <span class="bank-badge bank-santander">San</span><span>Santander</span>
+                </div>
+                <div class="tx-secondary">Transferência</div>
+              </div>
+              <div class="tx-right"><div class="tx-amount tabular-nums" data-type="transfer">R$ 33,03</div></div>
+            </div>
+            <div class="tx-row" data-type="expense">
+              <div class="tx-icon" data-type="expense">🛒</div>
+              <div class="tx-content"><div class="tx-primary">Imperatriz</div><div class="tx-secondary">Alimentação</div></div>
+              <div class="tx-right"><div class="tx-amount tabular-nums" data-type="expense">−R$ 100,00</div><div class="tx-method">Master Inter</div></div>
+            </div>
+            <div class="tx-row" data-type="expense">
+              <div class="tx-icon" data-type="expense">🛒</div>
+              <div class="tx-content"><div class="tx-primary">Fort Atacadista</div><div class="tx-secondary">Alimentação</div></div>
+              <div class="tx-right"><div class="tx-amount tabular-nums" data-type="expense">−R$ 80,00</div><div class="tx-method">Master Inter</div></div>
+            </div>
+            <div class="tx-row" data-type="income">
+              <div class="tx-icon" data-type="income"><i data-lucide="arrow-down-left" style="width:14px;height:14px;"></i></div>
+              <div class="tx-content"><div class="tx-primary">Freela</div><div class="tx-secondary">Receita</div></div>
+              <div class="tx-right"><div class="tx-amount tabular-nums" data-type="income">+R$ 99,98</div><div class="tx-method">Nubank · Corrente</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pros-cons">
+        <div class="pros-cons-card pros">
+          <h4>✓ Prós</h4>
+          <ul class="space-y-0.5">
+            <li>• Cards de resumo dão contexto financeiro imediato (saldo do mês)</li>
+            <li>• Tipo (filtro mais usado) sempre acessível em 1 clique</li>
+            <li>• Mês destacado como pílula clara</li>
+            <li>• Categoria/método em "+ Filtros" → sai do caminho até precisar</li>
+            <li>• Padrão de bancos modernos (Nubank, Inter, C6)</li>
+            <li>• Hierarquia visual clara: contexto → ação rápida → detalhamento</li>
+          </ul>
+        </div>
+        <div class="pros-cons-card cons">
+          <h4>✗ Contras</h4>
+          <ul class="space-y-0.5">
+            <li>• Cards de resumo são feature nova → exige cálculo backend (sum por tipo no período)</li>
+            <li>• Mais elementos na tela inicial (mas todos com função)</li>
+            <li>• "+ Filtros" pode abrir popover OU side sheet (escolher um padrão)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         RESUMO COMPARATIVO
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="approach-section" style="background: var(--primary-light);">
+      <h2 class="text-xl font-bold mb-2" style="color: var(--primary)">📊 Resumo comparativo</h2>
+      <p class="text-sm mb-4" style="color: var(--foreground);">Por critério, como cada abordagem se sai:</p>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b-2" style="border-color: var(--primary)">
+              <th class="text-left py-2 pr-4" style="color: var(--muted-foreground); font-weight: 600;">Critério</th>
+              <th class="text-center py-2 px-4">Atual</th>
+              <th class="text-center py-2 px-4">1 · Condensado</th>
+              <th class="text-center py-2 px-4">2 · Sidebar</th>
+              <th class="text-center py-2 px-4 font-bold" style="color: var(--primary);">3 · Inline ⭐</th>
+            </tr>
+          </thead>
+          <tbody style="color: var(--foreground);">
+            <tr class="border-b" style="border-color: var(--border)"><td class="py-2 pr-4">Espaço pra lista</td><td class="text-center">🔴</td><td class="text-center">🟢🟢</td><td class="text-center">🟡</td><td class="text-center">🟢</td></tr>
+            <tr class="border-b" style="border-color: var(--border)"><td class="py-2 pr-4">Filtro tipo (mais usado) acessível</td><td class="text-center">🟢</td><td class="text-center">🔴</td><td class="text-center">🟢</td><td class="text-center">🟢</td></tr>
+            <tr class="border-b" style="border-color: var(--border)"><td class="py-2 pr-4">Hierarquia visual clara</td><td class="text-center">🔴</td><td class="text-center">🟢</td><td class="text-center">🟢</td><td class="text-center">🟢🟢</td></tr>
+            <tr class="border-b" style="border-color: var(--border)"><td class="py-2 pr-4">Contexto financeiro (saldo período)</td><td class="text-center">🔴</td><td class="text-center">🔴</td><td class="text-center">🔴</td><td class="text-center">🟢🟢</td></tr>
+            <tr class="border-b" style="border-color: var(--border)"><td class="py-2 pr-4">Esforço de implementação</td><td class="text-center">—</td><td class="text-center">🟢 Médio</td><td class="text-center">🟡 Alto</td><td class="text-center">🟡 Médio-alto</td></tr>
+            <tr class="border-b" style="border-color: var(--border)"><td class="py-2 pr-4">Mobile-friendly</td><td class="text-center">🔴</td><td class="text-center">🟢</td><td class="text-center">🟡 (precisa drawer)</td><td class="text-center">🟢</td></tr>
+            <tr><td class="py-2 pr-4">Padrão moderno (apps fintech)</td><td class="text-center">🔴</td><td class="text-center">🟢</td><td class="text-center">🔴</td><td class="text-center">🟢🟢</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="text-sm mt-4" style="color: var(--foreground);">
+        <strong>Legenda:</strong> 🟢🟢 ótimo · 🟢 bom · 🟡 ok · 🔴 fraco
+      </p>
+
+      <div class="mt-6 p-4 rounded-lg" style="background: var(--card); border: 1px solid var(--primary);">
+        <h3 class="font-bold text-sm mb-2" style="color: var(--primary);">🎯 Minha recomendação: Abordagem 3 (Inline esperto + cards de resumo)</h3>
+        <p class="text-sm" style="color: var(--foreground);">
+          Resolve os 3 problemas do estado atual <em>e</em> agrega valor (cards de contexto que faltavam).
+          O custo extra (backend pra calcular totais) é baixo — uma única query SUM por tipo no período filtrado, que aproveita os mesmos índices da listagem.
+          Padrão que usuário já reconhece de bancos modernos brasileiros.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    if (window.lucide) lucide.createIcons();
+  </script>
+</body>
+</html>

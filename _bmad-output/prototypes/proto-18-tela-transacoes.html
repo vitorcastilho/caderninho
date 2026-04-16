@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tela /transactions · Protótipo canônico (Story 3.4 — refinamento)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --background: #FAFAF9;
+      --foreground: #1C1917;
+      --card: #FFFFFF;
+      --muted: #F5F5F4;
+      --muted-foreground: #78716C;
+      --border: #E7E5E4;
+      --primary: #4F46E5;
+      --primary-light: #EEF2FF;
+      --positive: #22C55E;
+      --positive-bg: #DCFCE7;
+      --positive-text: #166534;
+      --info: #3B82F6;
+      --info-bg: #DBEAFE;
+      --info-text: #1E40AF;
+      --negative: #DC2626;
+    }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #F5F5F4;
+      color: var(--foreground);
+    }
+    .tabular-nums { font-variant-numeric: tabular-nums; }
+
+    .canvas-section {
+      background: var(--background);
+      border-radius: 16px;
+      padding: 32px 32px 40px;
+      margin-bottom: 32px;
+    }
+    .canvas-eyebrow {
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--primary); margin-bottom: 4px;
+    }
+    .canvas-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+    .canvas-subtitle { font-size: 13px; color: var(--muted-foreground); margin-bottom: 20px; }
+
+    /* SHELL desktop */
+    .shell {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 720px;
+    }
+    .shell-sidebar {
+      background: var(--background);
+      border-right: 1px solid var(--border);
+      padding: 16px 12px;
+      display: flex; flex-direction: column; gap: 16px;
+      font-size: 13px;
+    }
+    .shell-brand {
+      display: flex; align-items: center; gap: 8px;
+      font-weight: 700; font-size: 15px; padding: 4px 8px;
+    }
+    .shell-cta {
+      background: var(--primary); color: #fff;
+      padding: 8px 12px; border-radius: 8px;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+    }
+    .shell-section-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
+      color: var(--muted-foreground); text-transform: uppercase;
+      padding: 0 8px; margin-top: 8px;
+    }
+    .shell-nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 10px; border-radius: 6px;
+      color: var(--muted-foreground); cursor: pointer; font-size: 13px;
+    }
+    .shell-nav-item:hover { background: var(--muted); }
+    .shell-nav-item.active { background: var(--muted); color: var(--foreground); font-weight: 600; }
+    .shell-nav-item svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .shell-footer {
+      margin-top: auto; padding: 8px;
+      display: flex; align-items: center; gap: 8px;
+      border-top: 1px solid var(--border); padding-top: 16px;
+    }
+    .shell-avatar {
+      width: 28px; height: 28px;
+      background: var(--positive); color: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 11px;
+    }
+    .shell-canvas { padding: 24px 28px 32px; }
+
+    /* Page header */
+    .page-breadcrumb { font-size: 11px; color: var(--muted-foreground); margin-bottom: 4px; }
+    .page-title-h1 { font-size: 24px; font-weight: 700; margin-bottom: 20px; }
+
+    /* Summary cards desktop */
+    .summary-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .summary-card-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+      text-transform: uppercase;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .summary-card-value { font-size: 20px; font-weight: 700; margin-top: 6px; }
+    .summary-card-meta { font-size: 11px; color: var(--muted-foreground); margin-top: 2px; }
+
+    /* Filtros */
+    .filter-input {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 12px; font-size: 13px;
+      color: var(--muted-foreground);
+      flex: 1; min-width: 0;
+    }
+    .filter-input svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .filter-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 12px; font-size: 13px;
+      cursor: pointer; white-space: nowrap;
+    }
+    .filter-pill svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--muted-foreground); }
+    .filter-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 12px; font-size: 13px; font-weight: 500;
+      cursor: pointer; white-space: nowrap;
+    }
+    .filter-btn svg { width: 14px; height: 14px; }
+    .filter-btn-badge {
+      background: var(--primary); color: #fff;
+      border-radius: 999px;
+      font-size: 10px; font-weight: 700;
+      padding: 1px 6px; margin-left: 2px;
+    }
+    .seg-control {
+      display: inline-flex;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3px; gap: 2px; flex-shrink: 0;
+    }
+    .seg-item {
+      padding: 6px 12px; border-radius: 6px;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      color: var(--muted-foreground); white-space: nowrap;
+    }
+    .seg-item.active { background: var(--primary); color: #fff; }
+    .chip-active {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--primary-light); color: var(--primary);
+      padding: 4px 10px; border-radius: 999px;
+      font-size: 12px; font-weight: 500; cursor: pointer;
+    }
+    .chip-active svg { width: 12px; height: 12px; }
+    .chip-clear-all {
+      font-size: 12px; color: var(--muted-foreground);
+      cursor: pointer; padding: 4px 8px; font-style: italic;
+    }
+    .chip-clear-all:hover { color: var(--foreground); }
+
+    /* Lista (Proposta G) */
+    .tx-list {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+    .day-header {
+      padding: 8px 16px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+      text-transform: uppercase; color: var(--muted-foreground);
+      background: var(--background);
+      border-bottom: 1px solid var(--border);
+    }
+    .day-header:not(:first-child) { border-top: 1px solid var(--border); }
+    .tx-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px 12px 13px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      border-left: 3px solid transparent;
+      cursor: pointer; transition: background-color 150ms;
+    }
+    .tx-row:hover { background: rgba(245, 245, 244, 0.5); }
+    .tx-row:last-child { border-bottom: none; }
+    .tx-row[data-type="expense"]  { border-left-color: var(--negative); }
+    .tx-row[data-type="income"]   { border-left-color: var(--positive); }
+    .tx-row[data-type="transfer"] { border-left-color: var(--info); }
+    .tx-icon {
+      width: 36px; height: 36px;
+      flex-shrink: 0; border-radius: 9999px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; line-height: 1;
+    }
+    .tx-icon[data-type="expense"]  { background: var(--muted); color: var(--muted-foreground); }
+    .tx-icon[data-type="income"]   { background: var(--positive-bg); color: var(--positive-text); }
+    .tx-icon[data-type="transfer"] { background: var(--info-bg); color: var(--info-text); }
+    .tx-icon-letter { font-size: 13px; font-weight: 600; }
+    .tx-content { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .tx-primary {
+      font-weight: 600; font-size: 14px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .tx-primary-transfer {
+      display: inline-flex; align-items: center; gap: 6px;
+      flex-wrap: wrap; min-width: 0;
+    }
+    .tx-secondary {
+      font-size: 12px; color: var(--muted-foreground);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-top: 1px;
+    }
+    .tx-right {
+      flex-shrink: 0; text-align: right;
+      display: flex; flex-direction: column; align-items: flex-end;
+    }
+    .tx-amount { font-weight: 600; font-size: 14px; }
+    .tx-amount[data-type="expense"]  { color: var(--foreground); }
+    .tx-amount[data-type="income"]   { color: var(--positive-text); }
+    .tx-amount[data-type="transfer"] { color: var(--muted-foreground); }
+    .tx-method { font-size: 11px; color: var(--muted-foreground); margin-top: 1px; }
+    .tx-action {
+      flex-shrink: 0; width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted-foreground);
+      border-radius: 6px; cursor: pointer;
+    }
+    .tx-action:hover { background: var(--muted); color: var(--foreground); }
+
+    /* Badges institucionais */
+    .bank-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px;
+      border-radius: 6px;
+      border: 1px solid rgba(0,0,0,0.06);
+      font-weight: 700; font-size: 8px; line-height: 1;
+      flex-shrink: 0;
+    }
+    .bank-itau { background: #003399; color: #fff; }
+    .bank-santander { background: #CC0000; color: #fff; }
+    .bank-inter { background: #FF7A00; color: #fff; }
+    .bank-nubank { background: #820AD1; color: #fff; }
+    .arrow-sep { color: var(--muted-foreground); font-size: 12px; line-height: 1; }
+
+    /* Mobile shell */
+    .mobile-frame {
+      max-width: 360px; margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .mobile-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--background);
+    }
+    .mobile-topbar-title { font-weight: 700; font-size: 16px; }
+    .mobile-topbar-icon {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted-foreground); cursor: pointer;
+    }
+    .mobile-content { padding: 16px 12px; }
+    .mobile-frame .tx-bank-name { display: none; }
+
+    /* Mobile cards */
+    .mobile-summary-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+    .mobile-summary-card-label {
+      font-size: 9px; font-weight: 600; letter-spacing: 0.04em;
+      text-transform: uppercase;
+      display: flex; align-items: center; gap: 3px;
+    }
+    .mobile-summary-card-value { font-size: 13px; font-weight: 700; margin-top: 4px; }
+    .mobile-summary-card-meta { font-size: 10px; color: var(--muted-foreground); margin-top: 1px; }
+
+    /* Side sheet */
+    .sheet-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.3);
+      display: flex; justify-content: flex-end;
+      pointer-events: none;
+      border-radius: 12px;
+    }
+    .sheet-panel {
+      background: var(--card);
+      width: 360px;
+      padding: 20px 24px;
+      box-shadow: -4px 0 20px rgba(0,0,0,0.12);
+      overflow-y: auto;
+      display: flex; flex-direction: column;
+    }
+    .sheet-section-label {
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--muted-foreground);
+      margin-top: 16px; margin-bottom: 8px;
+    }
+    .sheet-checkbox {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 0;
+      font-size: 13px; cursor: pointer;
+    }
+    .sheet-checkbox input { width: 14px; height: 14px; flex-shrink: 0; }
+
+    /* Anatomia */
+    .anatomy-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .anatomy-label {
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="max-w-[1400px] mx-auto px-6 pt-10 pb-6">
+    <p class="canvas-eyebrow">Protótipo canônico · Story 3.4 · Refinamento</p>
+    <h1 class="text-2xl font-bold mt-1">Tela <code>/transactions</code> — versão final</h1>
+    <p class="text-sm mt-2 max-w-3xl" style="color: var(--muted-foreground)">
+      Tela completa com menu lateral, header, cards de resumo do período (Abordagem 3 dos filtros) e
+      lista usando o componente <code>TransactionRow</code> (Proposta G da linha de transação).
+      Especificação técnica em <code>proto-18-tela-transacoes-spec.md</code>.
+    </p>
+    <div class="flex flex-wrap items-center gap-3 mt-4 text-xs" style="color: var(--muted-foreground)">
+      <span>📌 Decisões consolidadas:</span>
+      <span class="px-2 py-1 rounded" style="background: var(--card); border: 1px solid var(--border);">Linha · Proposta G</span>
+      <span class="px-2 py-1 rounded" style="background: var(--card); border: 1px solid var(--border);">Filtros · Abordagem 3</span>
+      <span class="px-2 py-1 rounded" style="background: var(--card); border: 1px solid var(--border);">Cards de resumo do mês</span>
+      <span class="px-2 py-1 rounded" style="background: var(--card); border: 1px solid var(--border);">Tipo segmentado inline</span>
+    </div>
+  </header>
+
+  <main class="max-w-[1400px] mx-auto px-6 pb-16">
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         DESKTOP — TELA COMPLETA
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="canvas-section">
+      <p class="canvas-eyebrow">Desktop</p>
+      <h2 class="canvas-title">Tela completa · ≥ 1024px</h2>
+      <p class="canvas-subtitle">Menu lateral fixo · Cards de resumo · Filtros inline · Lista com agrupamento por dia</p>
+
+      <div class="shell">
+        <aside class="shell-sidebar">
+          <div class="shell-brand">📓 <span>Caderninho</span></div>
+          <div class="shell-cta"><i data-lucide="plus" style="width:14px;height:14px;"></i> Registrar gasto</div>
+          <div class="shell-section-label">Navegação</div>
+          <div class="shell-nav-item"><i data-lucide="layout-dashboard"></i> Dashboard</div>
+          <div class="shell-nav-item active"><i data-lucide="receipt"></i> Transações</div>
+          <div class="shell-nav-item"><i data-lucide="wallet"></i> Orçamentos</div>
+          <div class="shell-nav-item"><i data-lucide="check-square"></i> Checklist</div>
+          <div class="shell-nav-item"><i data-lucide="trending-up"></i> Projeção</div>
+          <div class="shell-section-label">Organização</div>
+          <div class="shell-nav-item"><i data-lucide="landmark"></i> Contas</div>
+          <div class="shell-nav-item"><i data-lucide="credit-card"></i> Cartões</div>
+          <div class="shell-nav-item"><i data-lucide="trending-up"></i> Investimentos</div>
+          <div class="shell-nav-item"><i data-lucide="hand-coins"></i> Receitas</div>
+          <div class="shell-nav-item"><i data-lucide="folder"></i> Categorias</div>
+          <div class="shell-footer">
+            <div class="shell-avatar">M</div>
+            <div class="text-xs flex-1">
+              <div class="font-semibold">maria</div>
+              <div style="color: var(--muted-foreground)">Sair</div>
+            </div>
+          </div>
+        </aside>
+
+        <div class="shell-canvas">
+          <div class="page-breadcrumb">Transações</div>
+          <h1 class="page-title-h1">Transações</h1>
+
+          <!-- Cards de resumo -->
+          <div class="grid grid-cols-3 gap-3 mb-5">
+            <div class="summary-card">
+              <div class="summary-card-label" style="color: var(--negative);">
+                <i data-lucide="trending-down" style="width:12px;height:12px;"></i> Saídas no mês
+              </div>
+              <div class="summary-card-value tabular-nums" style="color: var(--foreground);">R$ 1.247,00</div>
+              <div class="summary-card-meta">12 transações</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-card-label" style="color: var(--positive-text);">
+                <i data-lucide="trending-up" style="width:12px;height:12px;"></i> Entradas no mês
+              </div>
+              <div class="summary-card-value tabular-nums" style="color: var(--positive-text);">R$ 1.334,98</div>
+              <div class="summary-card-meta">2 transações</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-card-label" style="color: var(--info-text);">
+                <i data-lucide="arrow-left-right" style="width:12px;height:12px;"></i> Transferências
+              </div>
+              <div class="summary-card-value tabular-nums" style="color: var(--muted-foreground);">R$ 483,03</div>
+              <div class="summary-card-meta">2 movimentações</div>
+            </div>
+          </div>
+
+          <!-- Linha de filtros -->
+          <div class="flex gap-2 items-center flex-wrap">
+            <div class="filter-input">
+              <i data-lucide="search"></i><span>Buscar por nome, valor ou data</span>
+            </div>
+            <span class="seg-control">
+              <span class="seg-item active">Tudo</span>
+              <span class="seg-item">Saídas</span>
+              <span class="seg-item">Entradas</span>
+              <span class="seg-item">Transferências</span>
+            </span>
+            <div class="filter-pill">
+              <i data-lucide="calendar"></i>
+              <span class="font-semibold">Abr 2026</span>
+              <i data-lucide="chevron-down"></i>
+            </div>
+            <div class="filter-btn">
+              <i data-lucide="sliders-horizontal"></i>
+              Filtros
+              <span class="filter-btn-badge">2</span>
+            </div>
+          </div>
+
+          <!-- Chips ativos -->
+          <div class="flex flex-wrap gap-1.5 items-center mt-3">
+            <span class="chip-active">🛒 Alimentação <i data-lucide="x"></i></span>
+            <span class="chip-active">Master Inter <i data-lucide="x"></i></span>
+            <span class="chip-clear-all">Limpar tudo</span>
+          </div>
+
+          <!-- Lista -->
+          <div class="tx-list">
+            <div class="day-header">14 / 04 / 2026</div>
+
+            <div class="tx-row" data-type="transfer">
+              <div class="tx-icon" data-type="transfer">
+                <i data-lucide="arrow-left-right" style="width: 16px; height: 16px;"></i>
+              </div>
+              <div class="tx-content">
+                <div class="tx-primary tx-primary-transfer">
+                  <span class="bank-badge bank-inter">Inter</span>
+                  <span class="tx-bank-name">Banco Inter</span>
+                  <span class="arrow-sep">→</span>
+                  <span class="bank-badge bank-santander">San</span>
+                  <span class="tx-bank-name">Santander</span>
+                </div>
+                <div class="tx-secondary">Transferência</div>
+              </div>
+              <div class="tx-right">
+                <div class="tx-amount tabular-nums" data-type="transfer">R$ 33,03</div>
+              </div>
+              <div class="tx-action"><i data-lucide="more-vertical" style="width: 16px; height: 16px;"></i></div>
+            </div>
+
+            <div class="tx-row" data-type="expense">
+              <div class="tx-icon" data-type="expense"><span>🛒</span></div>
+              <div class="tx-content">
+                <div class="tx-primary">Imperatriz</div>
+                <div class="tx-secondary">Alimentação</div>
+              </div>
+              <div class="tx-right">
+                <div class="tx-amount tabular-nums" data-type="expense">−R$ 100,00</div>
+                <div class="tx-method">Master Inter</div>
+              </div>
+              <div class="tx-action"><i data-lucide="more-vertical" style="width: 16px; height: 16px;"></i></div>
+            </div>
+
+            <div class="tx-row" data-type="expense">
+              <div class="tx-icon" data-type="expense"><span>🛒</span></div>
+              <div class="tx-content">
+                <div class="tx-primary">Fort Atacadista</div>
+                <div class="tx-secondary">Alimentação</div>
+              </div>
+              <div class="tx-right">
+                <div class="tx-amount tabular-nums" data-type="expense">−R$ 80,00</div>
+                <div class="tx-method">Master Inter</div>
+              </div>
+              <div class="tx-action"><i data-lucide="more-vertical" style="width: 16px; height: 16px;"></i></div>
+            </div>
+
+            <div class="tx-row" data-type="transfer">
+              <div class="tx-icon" data-type="transfer">
+                <i data-lucide="arrow-left-right" style="width: 16px; height: 16px;"></i>
+              </div>
+              <div class="tx-content">
+                <div class="tx-primary tx-primary-transfer">
+                  <span class="bank-badge bank-itau">Itaú</span>
+                  <span class="tx-bank-name">Itaú</span>
+                  <span class="arrow-sep">→</span>
+                  <span class="bank-badge bank-santander">San</span>
+                  <span class="tx-bank-name">Santander</span>
+                </div>
+                <div class="tx-secondary">Transferência</div>
+              </div>
+              <div class="tx-right">
+                <div class="tx-amount tabular-nums" data-type="transfer">R$ 450,00</div>
+              </div>
+              <div class="tx-action"><i data-lucide="more-vertical" style="width: 16px; height: 16px;"></i></div>
+            </div>
+
+            <div class="tx-row" data-type="income">
+              <div class="tx-icon" data-type="income">
+                <i data-lucide="arrow-down-left" style="width: 16px; height: 16px;"></i>
+              </div>
+              <div class="tx-content">
+                <div class="tx-primary">Freela</div>
+                <div class="tx-secondary">Receita</div>
+              </div>
+              <div class="tx-right">
+                <div class="tx-amount tabular-nums" data-type="income">+R$ 99,98</div>
+                <div class="tx-method">Nubank · Corrente</div>
+              </div>
+              <div class="tx-action"><i data-lucide="more-vertical" style="width: 16px; height: 16px;"></i></div>
+            </div>
+
+            <div class="day-header">13 / 04 / 2026</div>
+
+            <div class="tx-row" data-type="expense">
+              <div class="tx-icon" data-type="expense"><span>⛽</span></div>
+              <div class="tx-content">
+                <div class="tx-primary">Shell</div>
+                <div class="tx-secondary">Combustível</div>
+              </div>
+              <div class="tx-right">
+                <div class="tx-amount tabular-nums" data-type="expense">−R$ 180,00</div>
+                <div class="tx-method">Itaú · Débito</div>
+              </div>
+              <div class="tx-action"><i data-lucide="more-vertical" style="width: 16px; height: 16px;"></i></div>
+            </div>
+
+            <div class="tx-row" data-type="expense">
+              <div class="tx-icon" data-type="expense"><span>🍕</span></div>
+              <div class="tx-content">
+                <div class="tx-primary">iFood</div>
+                <div class="tx-secondary">Restaurante</div>
+              </div>
+              <div class="tx-right">
+                <div class="tx-amount tabular-nums" data-type="expense">−R$ 45,00</div>
+                <div class="tx-method">Master Inter</div>
+              </div>
+              <div class="tx-action"><i data-lucide="more-vertical" style="width: 16px; height: 16px;"></i></div>
+            </div>
+
+            <div class="tx-row" data-type="expense">
+              <div class="tx-icon" data-type="expense"><span>🚌</span></div>
+              <div class="tx-content">
+                <div class="tx-primary">Uber</div>
+                <div class="tx-secondary">Transporte</div>
+              </div>
+              <div class="tx-right">
+                <div class="tx-amount tabular-nums" data-type="expense">−R$ 32,00</div>
+                <div class="tx-method">Itaú · Débito</div>
+              </div>
+              <div class="tx-action"><i data-lucide="more-vertical" style="width: 16px; height: 16px;"></i></div>
+            </div>
+
+            <div class="tx-row" data-type="income">
+              <div class="tx-icon" data-type="income">
+                <i data-lucide="arrow-down-left" style="width: 16px; height: 16px;"></i>
+              </div>
+              <div class="tx-content">
+                <div class="tx-primary">Benefício Nexfar</div>
+                <div class="tx-secondary">Receita</div>
+              </div>
+              <div class="tx-right">
+                <div class="tx-amount tabular-nums" data-type="income">+R$ 1.235,00</div>
+                <div class="tx-method">Itaú · Corrente</div>
+              </div>
+              <div class="tx-action"><i data-lucide="more-vertical" style="width: 16px; height: 16px;"></i></div>
+            </div>
+
+            <div class="tx-row" data-type="expense">
+              <div class="tx-icon" data-type="expense"><span class="tx-icon-letter">A</span></div>
+              <div class="tx-content">
+                <div class="tx-primary">Outros</div>
+                <div class="tx-secondary">Sem categoria</div>
+              </div>
+              <div class="tx-right">
+                <div class="tx-amount tabular-nums" data-type="expense">−R$ 12,00</div>
+                <div class="tx-method">Itaú · Débito</div>
+              </div>
+              <div class="tx-action"><i data-lucide="more-vertical" style="width: 16px; height: 16px;"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         DESKTOP · SIDE SHEET DE FILTROS
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="canvas-section">
+      <p class="canvas-eyebrow">Desktop · "+ Filtros" aberto</p>
+      <h2 class="canvas-title">Side sheet de filtros</h2>
+      <p class="canvas-subtitle">Drawer da direita abre quando o usuário clica em "+ Filtros". Padrão consistente com EditExpenseSheet/ConfirmDeleteTransactionDialog do app.</p>
+
+      <div class="shell" style="position: relative; min-height: 620px;">
+        <aside class="shell-sidebar">
+          <div class="shell-brand">📓 <span>Caderninho</span></div>
+          <div class="shell-cta"><i data-lucide="plus" style="width:14px;height:14px;"></i> Registrar gasto</div>
+          <div class="shell-section-label">Navegação</div>
+          <div class="shell-nav-item"><i data-lucide="layout-dashboard"></i> Dashboard</div>
+          <div class="shell-nav-item active"><i data-lucide="receipt"></i> Transações</div>
+          <div class="shell-nav-item"><i data-lucide="wallet"></i> Orçamentos</div>
+          <div class="shell-section-label">Organização</div>
+          <div class="shell-nav-item"><i data-lucide="landmark"></i> Contas</div>
+          <div class="shell-nav-item"><i data-lucide="credit-card"></i> Cartões</div>
+          <div class="shell-footer">
+            <div class="shell-avatar">M</div>
+            <div class="text-xs flex-1"><div class="font-semibold">maria</div></div>
+          </div>
+        </aside>
+
+        <div class="shell-canvas">
+          <div class="page-breadcrumb">Transações</div>
+          <h1 class="page-title-h1">Transações</h1>
+
+          <!-- Cards de resumo (continuam visíveis quando sheet abre) -->
+          <div class="grid grid-cols-3 gap-3 mb-5">
+            <div class="summary-card">
+              <div class="summary-card-label" style="color: var(--negative);">
+                <i data-lucide="trending-down" style="width:12px;height:12px;"></i> Saídas no mês
+              </div>
+              <div class="summary-card-value tabular-nums" style="color: var(--foreground);">R$ 1.247,00</div>
+              <div class="summary-card-meta">12 transações</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-card-label" style="color: var(--positive-text);">
+                <i data-lucide="trending-up" style="width:12px;height:12px;"></i> Entradas no mês
+              </div>
+              <div class="summary-card-value tabular-nums" style="color: var(--positive-text);">R$ 1.334,98</div>
+              <div class="summary-card-meta">2 transações</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-card-label" style="color: var(--info-text);">
+                <i data-lucide="arrow-left-right" style="width:12px;height:12px;"></i> Transferências
+              </div>
+              <div class="summary-card-value tabular-nums" style="color: var(--muted-foreground);">R$ 483,03</div>
+              <div class="summary-card-meta">2 movimentações</div>
+            </div>
+          </div>
+
+          <div class="flex gap-2 items-center flex-wrap mb-3">
+            <div class="filter-input"><i data-lucide="search"></i><span>Buscar...</span></div>
+            <span class="seg-control">
+              <span class="seg-item active">Tudo</span>
+              <span class="seg-item">Saídas</span>
+              <span class="seg-item">Entradas</span>
+              <span class="seg-item">Transferências</span>
+            </span>
+            <div class="filter-pill"><i data-lucide="calendar"></i><span class="font-semibold">Abr 2026</span><i data-lucide="chevron-down"></i></div>
+            <div class="filter-btn" style="background: var(--primary-light); border-color: var(--primary); color: var(--primary);"><i data-lucide="sliders-horizontal"></i> Filtros</div>
+          </div>
+
+          <div class="tx-list">
+            <div class="day-header">14 / 04 / 2026</div>
+            <div class="tx-row" data-type="expense">
+              <div class="tx-icon" data-type="expense">🛒</div>
+              <div class="tx-content"><div class="tx-primary">Imperatriz</div><div class="tx-secondary">Alimentação</div></div>
+              <div class="tx-right"><div class="tx-amount tabular-nums" data-type="expense">−R$ 100,00</div><div class="tx-method">Master Inter</div></div>
+              <div class="tx-action"><i data-lucide="more-vertical" style="width: 16px; height: 16px;"></i></div>
+            </div>
+            <div class="tx-row" data-type="expense">
+              <div class="tx-icon" data-type="expense">🛒</div>
+              <div class="tx-content"><div class="tx-primary">Fort Atacadista</div><div class="tx-secondary">Alimentação</div></div>
+              <div class="tx-right"><div class="tx-amount tabular-nums" data-type="expense">−R$ 80,00</div><div class="tx-method">Master Inter</div></div>
+              <div class="tx-action"><i data-lucide="more-vertical" style="width: 16px; height: 16px;"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sheet-overlay">
+          <div class="sheet-panel">
+            <div class="flex items-center justify-between">
+              <div class="font-bold text-base">Filtros</div>
+              <i data-lucide="x" style="width:18px;height:18px;color:var(--muted-foreground);cursor:pointer;"></i>
+            </div>
+
+            <div class="sheet-section-label">Categoria</div>
+            <label class="sheet-checkbox"><input type="checkbox" checked /> 🛒 Alimentação</label>
+            <label class="sheet-checkbox"><input type="checkbox" /> 🏠 Moradia</label>
+            <label class="sheet-checkbox"><input type="checkbox" /> 🚌 Transporte</label>
+            <label class="sheet-checkbox"><input type="checkbox" /> 📚 Educação</label>
+            <label class="sheet-checkbox"><input type="checkbox" /> 🍕 Restaurante</label>
+            <label class="sheet-checkbox"><input type="checkbox" /> 📡 Internet/Telefone</label>
+
+            <div class="sheet-section-label">Método de pagamento</div>
+            <label class="sheet-checkbox">
+              <input type="checkbox" />
+              <span class="bank-badge bank-inter" style="width:18px;height:18px;font-size:6px;">Inter</span>
+              Inter · Corrente
+            </label>
+            <label class="sheet-checkbox">
+              <input type="checkbox" />
+              <span class="bank-badge bank-nubank" style="width:18px;height:18px;font-size:6px;">Nu</span>
+              Nubank · Corrente
+            </label>
+            <label class="sheet-checkbox">
+              <input type="checkbox" />
+              <span class="bank-badge bank-itau" style="width:18px;height:18px;font-size:6px;">Itaú</span>
+              Itaú · Corrente
+            </label>
+            <label class="sheet-checkbox"><input type="checkbox" checked /> Master Inter</label>
+
+            <div class="mt-auto pt-6 flex gap-2">
+              <button class="flex-1 py-2 rounded-lg border text-sm font-medium" style="border-color: var(--border); background: var(--card); cursor: pointer;">Limpar</button>
+              <button class="flex-1 py-2 rounded-lg text-sm font-semibold text-white" style="background: var(--primary); cursor: pointer;">Aplicar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="text-xs mt-3" style="color: var(--muted-foreground)">
+        💡 <strong>Tipo</strong> e <strong>mês</strong> ficam fora do sheet — são filtros frequentes, devem estar sempre à mão. Sheet contém só <strong>categoria</strong> e <strong>método</strong>.
+      </p>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         MOBILE
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="canvas-section" style="background: #F5F5F4;">
+      <p class="canvas-eyebrow">Mobile</p>
+      <h2 class="canvas-title">Tela completa · ≤ 360px</h2>
+      <p class="canvas-subtitle">Menu lateral vira drawer (hamburguer) · Cards de resumo lado a lado apertados · Tipo abreviado ("Transf.") · Nome do banco oculto em transferências</p>
+
+      <div class="mobile-frame">
+        <div class="mobile-topbar">
+          <div class="mobile-topbar-icon"><i data-lucide="menu"></i></div>
+          <div class="mobile-topbar-title">Transações</div>
+          <div class="mobile-topbar-icon"><i data-lucide="user"></i></div>
+        </div>
+
+        <div class="mobile-content">
+
+          <!-- Cards de resumo apertados -->
+          <div class="grid grid-cols-3 gap-2 mb-3">
+            <div class="mobile-summary-card">
+              <div class="mobile-summary-card-label" style="color: var(--negative);">
+                <i data-lucide="trending-down" style="width:9px;height:9px;"></i> Saídas
+              </div>
+              <div class="mobile-summary-card-value tabular-nums" style="color: var(--foreground);">R$ 1.247</div>
+              <div class="mobile-summary-card-meta">12 trans.</div>
+            </div>
+            <div class="mobile-summary-card">
+              <div class="mobile-summary-card-label" style="color: var(--positive-text);">
+                <i data-lucide="trending-up" style="width:9px;height:9px;"></i> Entradas
+              </div>
+              <div class="mobile-summary-card-value tabular-nums" style="color: var(--positive-text);">R$ 1.334</div>
+              <div class="mobile-summary-card-meta">2 trans.</div>
+            </div>
+            <div class="mobile-summary-card">
+              <div class="mobile-summary-card-label" style="color: var(--info-text);">
+                <i data-lucide="arrow-left-right" style="width:9px;height:9px;"></i> Transf.
+              </div>
+              <div class="mobile-summary-card-value tabular-nums" style="color: var(--muted-foreground);">R$ 483</div>
+              <div class="mobile-summary-card-meta">2 mov.</div>
+            </div>
+          </div>
+
+          <div class="flex gap-2 mb-2">
+            <div class="filter-input"><i data-lucide="search"></i><span>Buscar...</span></div>
+            <div class="filter-pill"><i data-lucide="calendar"></i><span class="font-semibold">Abr</span></div>
+          </div>
+
+          <div class="flex gap-2 items-center mb-3">
+            <span class="seg-control" style="flex: 1; justify-content: space-between;">
+              <span class="seg-item active" style="padding: 5px 8px; font-size: 12px;">Tudo</span>
+              <span class="seg-item" style="padding: 5px 8px; font-size: 12px;">Saídas</span>
+              <span class="seg-item" style="padding: 5px 8px; font-size: 12px;">Entradas</span>
+              <span class="seg-item" style="padding: 5px 8px; font-size: 12px;">Transf.</span>
+            </span>
+            <div class="filter-btn" style="padding: 5px 10px;"><i data-lucide="sliders-horizontal"></i></div>
+          </div>
+
+          <div class="tx-list" style="margin-top: 0;">
+            <div class="day-header">14 / 04 / 2026</div>
+
+            <div class="tx-row" data-type="transfer">
+              <div class="tx-icon" data-type="transfer">
+                <i data-lucide="arrow-left-right" style="width: 16px; height: 16px;"></i>
+              </div>
+              <div class="tx-content">
+                <div class="tx-primary tx-primary-transfer">
+                  <span class="bank-badge bank-inter">Inter</span>
+                  <span class="tx-bank-name">Banco Inter</span>
+                  <span class="arrow-sep">→</span>
+                  <span class="bank-badge bank-santander">San</span>
+                  <span class="tx-bank-name">Santander</span>
+                </div>
+                <div class="tx-secondary">Transferência</div>
+              </div>
+              <div class="tx-right">
+                <div class="tx-amount tabular-nums" data-type="transfer">R$ 33,03</div>
+              </div>
+            </div>
+
+            <div class="tx-row" data-type="expense">
+              <div class="tx-icon" data-type="expense"><span>🛒</span></div>
+              <div class="tx-content">
+                <div class="tx-primary">Imperatriz</div>
+                <div class="tx-secondary">Alimentação</div>
+              </div>
+              <div class="tx-right">
+                <div class="tx-amount tabular-nums" data-type="expense">−R$ 100,00</div>
+                <div class="tx-method">Master Inter</div>
+              </div>
+            </div>
+
+            <div class="tx-row" data-type="expense">
+              <div class="tx-icon" data-type="expense"><span>🛒</span></div>
+              <div class="tx-content">
+                <div class="tx-primary">Fort Atacadista</div>
+                <div class="tx-secondary">Alimentação</div>
+              </div>
+              <div class="tx-right">
+                <div class="tx-amount tabular-nums" data-type="expense">−R$ 80,00</div>
+                <div class="tx-method">Master Inter</div>
+              </div>
+            </div>
+
+            <div class="tx-row" data-type="income">
+              <div class="tx-icon" data-type="income">
+                <i data-lucide="arrow-down-left" style="width: 16px; height: 16px;"></i>
+              </div>
+              <div class="tx-content">
+                <div class="tx-primary">Freela</div>
+                <div class="tx-secondary">Receita</div>
+              </div>
+              <div class="tx-right">
+                <div class="tx-amount tabular-nums" data-type="income">+R$ 99,98</div>
+                <div class="tx-method">Nubank · Corrente</div>
+              </div>
+            </div>
+
+            <div class="day-header">13 / 04 / 2026</div>
+
+            <div class="tx-row" data-type="expense">
+              <div class="tx-icon" data-type="expense"><span>⛽</span></div>
+              <div class="tx-content">
+                <div class="tx-primary">Shell</div>
+                <div class="tx-secondary">Combustível</div>
+              </div>
+              <div class="tx-right">
+                <div class="tx-amount tabular-nums" data-type="expense">−R$ 180,00</div>
+                <div class="tx-method">Itaú · Débito</div>
+              </div>
+            </div>
+
+            <div class="tx-row" data-type="income">
+              <div class="tx-icon" data-type="income">
+                <i data-lucide="arrow-down-left" style="width: 16px; height: 16px;"></i>
+              </div>
+              <div class="tx-content">
+                <div class="tx-primary">Benefício Nexfar</div>
+                <div class="tx-secondary">Receita</div>
+              </div>
+              <div class="tx-right">
+                <div class="tx-amount tabular-nums" data-type="income">+R$ 1.235,00</div>
+                <div class="tx-method">Itaú · Corrente</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         ANATOMIA / TOKENS
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="canvas-section">
+      <p class="canvas-eyebrow">Anatomia</p>
+      <h2 class="canvas-title">Tokens e regras</h2>
+      <p class="canvas-subtitle">Referência rápida para implementação. Veja a spec completa em <code>proto-18-tela-transacoes-spec.md</code>.</p>
+
+      <div class="grid gap-4 lg:grid-cols-3 grid-cols-1">
+        <div class="anatomy-card">
+          <div class="anatomy-label" style="color: var(--primary)">Cards de resumo</div>
+          <ul class="text-xs space-y-1.5" style="color: var(--foreground)">
+            <li><strong>3 cards:</strong> Saídas / Entradas / Transferências</li>
+            <li><strong>Cor do label:</strong> negative / positive-text / info-text</li>
+            <li><strong>Cor do valor:</strong> foreground / positive-text / muted-foreground</li>
+            <li><strong>Ícone do label:</strong> trending-down / trending-up / arrow-left-right</li>
+            <li><strong>Padding:</strong> 14×16px · <strong>border-radius:</strong> 10px</li>
+            <li><strong>Backend:</strong> SUM agrupado por tipo no período filtrado</li>
+            <li><strong>Mobile:</strong> 3 cards lado a lado com fonte/padding reduzidos</li>
+          </ul>
+        </div>
+
+        <div class="anatomy-card">
+          <div class="anatomy-label" style="color: var(--primary)">Filtros (Abordagem 3)</div>
+          <ul class="text-xs space-y-1.5" style="color: var(--foreground)">
+            <li><strong>Linha 1:</strong> Busca · Tipo (segmented) · Mês (pílula) · Filtros (botão)</li>
+            <li><strong>Tipo:</strong> Tudo / Saídas / Entradas / Transferências</li>
+            <li><strong>Tipo mobile:</strong> "Transf." abreviado</li>
+            <li><strong>Mês:</strong> pílula clicável que abre dropdown</li>
+            <li><strong>Filtros (botão):</strong> abre side sheet com Categoria + Método</li>
+            <li><strong>Badge (N):</strong> contador de filtros ativos no botão</li>
+            <li><strong>Chips ativos:</strong> abaixo da linha, removíveis (✕) + "Limpar tudo"</li>
+          </ul>
+        </div>
+
+        <div class="anatomy-card">
+          <div class="anatomy-label" style="color: var(--primary)">Side Sheet de filtros</div>
+          <ul class="text-xs space-y-1.5" style="color: var(--foreground)">
+            <li><strong>Largura desktop:</strong> 360px · <strong>mobile:</strong> 100vw</li>
+            <li><strong>Conteúdo:</strong> só Categoria + Método</li>
+            <li><strong>Categorias:</strong> checkbox + emoji + nome</li>
+            <li><strong>Métodos:</strong> checkbox + BankLogo (sm) + nome</li>
+            <li><strong>Footer:</strong> Limpar (ghost) + Aplicar (primary)</li>
+            <li><strong>Padrão:</strong> reusa estilo do EditExpenseSheet/ConfirmDeleteTransactionDialog</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    if (window.lucide) lucide.createIcons();
+  </script>
+</body>
+</html>
