@@ -85,6 +85,8 @@ development_status:
   3-2-registro-de-receitas-e-transferencias: done
   3-3-edicao-e-exclusao-de-transacoes: done
   3-4-listagem-e-historico-de-transacoes: done
+  3-4b-componentes-ds-transacoes: done
+  3-4c-refatoracao-tela-transacoes: backlog
   3-5-reclassificacao-retroativa-de-categorias: backlog
   3-6-acompanhamento-de-orcamento-por-categoria: backlog
   epic-3-retrospective: optional

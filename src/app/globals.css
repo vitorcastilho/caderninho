@@ -86,6 +86,8 @@
   --color-critical-bg: #FEE2E2;
   --color-critical-text: #991B1B;
 
+  --color-negative: #DC2626;
+
   /* Extended palette tokens */
   --color-primary-hover: #4338CA;
   --color-primary-light: #EEF2FF;
@@ -100,6 +102,9 @@
   --radius-card-lg: 12px;
   --radius-badge: 100px;
   --radius-mobile-frame: 24px;
+
+  /* Breakpoints */
+  --breakpoint-xs: 380px;
 }
 
 /* ============================================

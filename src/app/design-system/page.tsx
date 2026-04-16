@@ -48,7 +48,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/client/components/ui/sheet"
-import { ChevronDown, ChevronLeft, ChevronRight, Plus, Pencil, Archive, Loader2, Clock, X, AlertTriangle, CheckCircle2, LayoutDashboard, PiggyBank, CheckSquare, TrendingUp, ShoppingCart, GraduationCap, Home, Fuel, Bus, UtensilsCrossed, Package, MoreVertical, Settings, Building2, Users, GripVertical, Trash2, Copy, CreditCard, Smartphone, Tablet, Monitor, Wallet, Tags, Landmark, LogOut } from "lucide-react"
+import { ChevronDown, ChevronLeft, ChevronRight, Plus, Pencil, Archive, Loader2, Clock, X, AlertTriangle, CheckCircle2, LayoutDashboard, PiggyBank, CheckSquare, TrendingUp, ShoppingCart, GraduationCap, Home, Fuel, UtensilsCrossed, Package, MoreVertical, Settings, Building2, Users, GripVertical, Trash2, Copy, CreditCard, Smartphone, Tablet, Monitor, Wallet, Tags, Landmark, LogOut } from "lucide-react"
 import { toast } from "sonner"
 import { centsToDisplayValue } from "@/client/utils/currency-input"
 import { CurrencyInput } from "@/client/components/ui/currency-input"
@@ -60,6 +60,14 @@ import { SummaryCard } from "@/client/components/ui/summary-card"
 import { ImpactPreview } from "@/client/components/ui/impact-preview"
 import { BottomNavigation } from "@/client/components/ui/bottom-navigation"
 import { CascadeInput } from "@/client/components/ui/cascade-input"
+import { TransactionRow } from "@/client/components/ui/transaction-row"
+import { TransactionSummaryCards } from "@/client/components/ui/transaction-summary-cards"
+import {
+  TransactionFiltersBar,
+  type TransactionTypeFilter,
+  type MonthFilter,
+} from "@/client/components/ui/transaction-filters-bar"
+import { TransactionFiltersSheet } from "@/client/components/ui/transaction-filters-sheet"
 
 /* ─── helpers ─── */
 
@@ -135,7 +143,10 @@ export default function DesignSystemPage() {
       <BarraResumoSection />
       <SeletorMesSection />
       <ControleSegmentadoSection />
-      <ListaTransacoesSection />
+      {/* Tela /transactions — DS v2 (Story 3.4b) */}
+      <TransactionRowSection />
+      <TransactionSummaryCardsSection />
+      <TransactionFiltersSection />
       <ChecklistSection />
       <ParcelasAtivasSection />
       <CardCartaoCreditoSection />
@@ -213,6 +224,7 @@ function CoresSection() {
             <Swatch color="#FEE2E2" label="critical-bg" cssVar="--color-critical-bg" />
             <Swatch color="#DC2626" label="critical" cssVar="--color-critical" />
             <Swatch color="#991B1B" label="critical-text" cssVar="--color-critical-text" />
+            <Swatch color="#DC2626" label="negative" cssVar="--color-negative" />
           </div>
         </div>
       </div>
@@ -1816,76 +1828,333 @@ function ControleSegmentadoSection() {
   )
 }
 
-/* ─── Lista de Transações ─── */
+/* ─── Tela /transactions — componentes DS v2 (Story 3.4b) ─── */
 
-const transacoes = [
-  { date: "20/03", icon: ShoppingCart, name: "Pão de Açúcar", category: "Supermercado", amount: "R$ 87,00", method: "Latam Pass Visa" },
-  { date: "19/03", icon: Fuel, name: "Shell", category: "Gasolina", amount: "R$ 180,00", method: "Itaú Débito" },
-  { date: "18/03", icon: UtensilsCrossed, name: "iFood", category: "Restaurante", amount: "R$ 45,00", method: "Latam Pass Visa" },
-  { date: "17/03", icon: Bus, name: "Uber", category: "Transporte", amount: "R$ 32,00", method: "Débito" },
-  { date: "15/03", icon: Package, name: "Amazon", category: "Compras", amount: "R$ 250,00", method: "Uniclass 3x", installment: "2/3" },
+function CodeSnippet({ code }: { code: string }) {
+  return (
+    <pre className="mt-4 overflow-x-auto rounded-lg border border-border bg-muted/40 p-3 text-[12px] leading-relaxed font-mono text-foreground">
+      <code>{code}</code>
+    </pre>
+  )
+}
+
+function TransactionRowSection() {
+  return (
+    <Section id="transaction-row" title="TransactionRow (tela /transactions)">
+      <div className="space-y-6">
+        <div>
+          <h3 className="mb-2 text-sm font-medium">Desktop — os 3 tipos</h3>
+          <div className="max-w-2xl rounded-lg border border-border bg-card">
+            <ul className="divide-y divide-border">
+              <TransactionRow
+                type="expense"
+                primary="Imperatriz"
+                secondary="Alimentação"
+                amountCents={10000}
+                method="Master · Inter"
+                icon={{ kind: 'emoji', value: '🛒' }}
+                onClick={() => {}}
+                onAction={() => {}}
+              />
+              <TransactionRow
+                type="expense"
+                primary="Padaria do João"
+                secondary="Alimentação"
+                amountCents={1850}
+                method="Débito · Inter"
+                icon={{ kind: 'letter', value: 'P' }}
+                onClick={() => {}}
+                onAction={() => {}}
+              />
+              <TransactionRow
+                type="income"
+                primary="Salário — Nexfar"
+                secondary="Receita"
+                amountCents={650000}
+                method="Itaú · Corrente"
+                icon={{ kind: 'lucide', name: 'ArrowDownLeft' }}
+                onClick={() => {}}
+                onAction={() => {}}
+              />
+              <TransactionRow
+                type="transfer"
+                secondary="Transferência"
+                amountCents={50000}
+                icon={{ kind: 'lucide', name: 'ArrowLeftRight' }}
+                transferEndpoints={{
+                  source: { bank: 'Nubank' },
+                  destination: { bank: 'Itaú' },
+                }}
+                onClick={() => {}}
+                onAction={() => {}}
+              />
+            </ul>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Faixa lateral de 3px por tipo (vermelho/verde/azul). Ícone circular com emoji (gasto com categoria),
+            letra (fallback sem emoji) ou Lucide (receita/transferência). Valor com sinal{' '}
+            <code>−</code> / <code>+</code> / sem sinal, <code>tabular-nums</code>. Botão MoreVertical usa{' '}
+            <code>stopPropagation</code> — não dispara o <code>onClick</code> da linha.
+          </p>
+        </div>
+
+        <CodeSnippet
+          code={`<TransactionRow
+  type="expense"
+  primary="Imperatriz"
+  secondary="Alimentação"
+  amountCents={10000}
+  method="Master · Inter"
+  icon={{ kind: 'emoji', value: '🛒' }}
+  onClick={() => openEdit(tx)}
+  onAction={() => openDelete(tx)}
+/>`}
+        />
+      </div>
+    </Section>
+  )
+}
+
+function TransactionSummaryCardsSection() {
+  return (
+    <Section id="transaction-summary-cards" title="TransactionSummaryCards (tela /transactions)">
+      <div className="space-y-6">
+        <div>
+          <h3 className="mb-2 text-sm font-medium">Desktop (md+)</h3>
+          <div className="max-w-2xl">
+            <TransactionSummaryCards
+              expense={{ totalCents: 124700, count: 12 }}
+              income={{ totalCents: 650000, count: 2 }}
+              transfer={{ totalCents: 48303, count: 3 }}
+            />
+          </div>
+        </div>
+
+        <div>
+          <h3 className="mb-2 text-sm font-medium">Mobile (&lt; 768px)</h3>
+          <div className="max-w-[360px]">
+            <TransactionSummaryCards
+              expense={{ totalCents: 124700, count: 12 }}
+              income={{ totalCents: 650000, count: 2 }}
+              transfer={{ totalCents: 48303, count: 3 }}
+              compact
+            />
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Variante compacta — labels abreviados (<code>Saídas</code>, <code>Entradas</code>,{' '}
+            <code>Transf.</code>), padding e fonte reduzidos. Em produção, a troca acontece
+            automaticamente via classes Tailwind responsivas (<code>md:*</code>) conforme o
+            viewport — aqui forçamos via prop <code>compact</code> porque o demo fica num
+            container estreito dentro de um viewport desktop.
+          </p>
+        </div>
+
+        <div>
+          <h3 className="mb-2 text-sm font-medium">Loading (skeleton)</h3>
+          <div className="max-w-2xl">
+            <TransactionSummaryCards
+              expense={{ totalCents: 0, count: 0 }}
+              income={{ totalCents: 0, count: 0 }}
+              transfer={{ totalCents: 0, count: 0 }}
+              isLoading
+            />
+          </div>
+        </div>
+
+        <CodeSnippet
+          code={`<TransactionSummaryCards
+  expense={{ totalCents: 124700, count: 12 }}
+  income={{ totalCents: 650000, count: 2 }}
+  transfer={{ totalCents: 48303, count: 3 }}
+  isLoading={false}
+/>`}
+        />
+      </div>
+    </Section>
+  )
+}
+
+const FILTERS_DEMO_CATEGORIES = [
+  { id: 'cat-1', name: 'Alimentação', emoji: '🍔' },
+  { id: 'cat-2', name: 'Moradia', emoji: '🏠' },
+  { id: 'cat-3', name: 'Transporte', emoji: '🚗' },
+  { id: 'cat-4', name: 'Lazer', emoji: '🎮' },
 ]
 
-function ListaTransacoesSection() {
+const FILTERS_DEMO_PAYMENT_METHODS = [
+  { id: 'pm-1', label: 'Inter · Corrente', bankName: 'Inter' },
+  { id: 'pm-2', label: 'Master Inter', cardBrand: 'mastercard' },
+  { id: 'pm-3', label: 'Nubank · Crédito', cardBrand: 'mastercard' },
+]
+
+function ActiveFilterChip({
+  children,
+  onRemove,
+}: {
+  children: React.ReactNode
+  onRemove: () => void
+}) {
   return (
-    <Section id="lista-transacoes" title="Lista de Transações">
-      <div className="max-w-2xl">
-        <Card>
-          <CardHeader>
-            <CardTitle>Transações recentes</CardTitle>
-            <CardAction>
-              <Button variant="link" size="sm" className="text-primary">
-                Ver todas
-              </Button>
-            </CardAction>
-          </CardHeader>
-          <CardContent className="px-0 pb-0">
-            <ul className="divide-y divide-border">
-              {transacoes.map((tx) => {
-                const Icon = tx.icon
+    <span className="inline-flex items-center gap-1 bg-primary-light text-primary px-2.5 py-1 rounded-full text-xs font-medium">
+      <span className="flex items-center gap-1">{children}</span>
+      <button
+        type="button"
+        onClick={onRemove}
+        className="ml-0.5 rounded-full hover:bg-primary/10 p-0.5"
+        aria-label="Remover filtro"
+      >
+        <X className="size-3" />
+      </button>
+    </span>
+  )
+}
+
+function TransactionFiltersSection() {
+  const [search, setSearch] = useState('')
+  const [type, setType] = useState<TransactionTypeFilter>('all')
+  const [month, setMonth] = useState<MonthFilter>({ year: 2026, month: 4 })
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<Set<string>>(
+    new Set(['cat-1', 'cat-3']),
+  )
+  const [selectedPaymentMethodIds, setSelectedPaymentMethodIds] = useState<Set<string>>(
+    new Set(['pm-2']),
+  )
+  const [sheetOpen, setSheetOpen] = useState(false)
+
+  const activeCount = selectedCategoryIds.size + selectedPaymentMethodIds.size
+
+  const removeCategory = (id: string) => {
+    const next = new Set(selectedCategoryIds)
+    next.delete(id)
+    setSelectedCategoryIds(next)
+  }
+  const removePaymentMethod = (id: string) => {
+    const next = new Set(selectedPaymentMethodIds)
+    next.delete(id)
+    setSelectedPaymentMethodIds(next)
+  }
+  const clearAllAdvanced = () => {
+    setSelectedCategoryIds(new Set())
+    setSelectedPaymentMethodIds(new Set())
+  }
+
+  return (
+    <Section id="transaction-filters" title="TransactionFiltersBar + Sheet (tela /transactions)">
+      <div className="space-y-6">
+        <div>
+          <h3 className="mb-2 text-sm font-medium">Barra de filtros (interativa)</h3>
+          <TransactionFiltersBar
+            search={search}
+            type={type}
+            month={month}
+            activeFiltersCount={activeCount}
+            onSearchChange={setSearch}
+            onTypeChange={setType}
+            onMonthClick={() =>
+              setMonth(month === 'all' ? { year: 2026, month: 4 } : 'all')
+            }
+            onOpenAdvancedFilters={() => setSheetOpen(true)}
+          />
+
+          {activeCount > 0 && (
+            <div className="flex flex-wrap gap-1.5 items-center mt-3">
+              {Array.from(selectedCategoryIds).map((catId) => {
+                const cat = FILTERS_DEMO_CATEGORIES.find((c) => c.id === catId)
+                if (!cat) return null
                 return (
-                  <li
-                    key={tx.name}
-                    className="group flex items-center gap-3 px-5 py-3 transition-colors hover:bg-muted/30"
+                  <ActiveFilterChip
+                    key={catId}
+                    onRemove={() => removeCategory(catId)}
                   >
-                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted">
-                      <Icon className="size-4 text-muted-foreground" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold">{tx.name}</span>
-                        {tx.installment && (
-                          <Badge className="border-transparent bg-primary-light text-primary text-[10px] font-semibold px-1.5 py-0">
-                            {tx.installment}
-                          </Badge>
-                        )}
-                      </div>
-                      <span className="text-xs text-muted-foreground">{tx.category}</span>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-sm font-semibold tabular-nums">{tx.amount}</span>
-                      <p className="text-[11px] text-muted-foreground">
-                        {tx.method} · {tx.date}
-                      </p>
-                    </div>
-                    <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                      <Button variant="ghost" size="icon-xs">
-                        <Pencil />
-                      </Button>
-                      <Button variant="ghost" size="icon-xs">
-                        <MoreVertical />
-                      </Button>
-                    </div>
-                  </li>
+                    <span>{cat.emoji}</span>
+                    <span>{cat.name}</span>
+                  </ActiveFilterChip>
                 )
               })}
-            </ul>
-          </CardContent>
-        </Card>
+              {Array.from(selectedPaymentMethodIds).map((pmId) => {
+                const pm = FILTERS_DEMO_PAYMENT_METHODS.find((p) => p.id === pmId)
+                if (!pm) return null
+                return (
+                  <ActiveFilterChip
+                    key={pmId}
+                    onRemove={() => removePaymentMethod(pmId)}
+                  >
+                    {pm.label}
+                  </ActiveFilterChip>
+                )
+              })}
+              <button
+                type="button"
+                onClick={clearAllAdvanced}
+                className="text-xs text-muted-foreground italic ml-2 hover:text-foreground"
+              >
+                Limpar tudo
+              </button>
+            </div>
+          )}
+
+          <p className="mt-3 text-xs text-muted-foreground">
+            Busca expansível (<code>flex-1 min-w-0</code> — cresce para preencher todo o
+            espaço sobrando), segmented control (Tudo/Saídas/Entradas/Transf.), pílula de
+            mês (callback controlado — consumer decide popover ou toggle) e botão Filtros
+            com badge. Chips de filtros ativos ficam <strong>fora</strong> da barra
+            (renderizados pelo consumer) — padrão da spec (seção 4.4). Clique em Filtros
+            para abrir o sheet e alterar a seleção.
+          </p>
+        </div>
+
+        <TransactionFiltersSheet
+          open={sheetOpen}
+          onOpenChange={setSheetOpen}
+          categories={FILTERS_DEMO_CATEGORIES}
+          paymentMethods={FILTERS_DEMO_PAYMENT_METHODS}
+          selectedCategoryIds={selectedCategoryIds}
+          selectedPaymentMethodIds={selectedPaymentMethodIds}
+          onApply={(sel) => {
+            setSelectedCategoryIds(sel.categoryIds)
+            setSelectedPaymentMethodIds(sel.paymentMethodIds)
+          }}
+        />
+
+        <CodeSnippet
+          code={`<TransactionFiltersBar
+  search={search}
+  type={type}
+  month={month}
+  activeFiltersCount={activeCount}
+  onSearchChange={setSearch}
+  onTypeChange={setType}
+  onMonthClick={openMonthPopover}
+  onOpenAdvancedFilters={() => setSheetOpen(true)}
+/>
+
+{/* Chips de filtros ativos — renderizados pelo consumer */}
+{activeCount > 0 && (
+  <div className="flex flex-wrap gap-1.5 items-center mt-3">
+    {Array.from(selectedCategoryIds).map(id => (
+      <Chip key={id} onRemove={() => removeCategory(id)}>
+        {cat.emoji} {cat.name}
+      </Chip>
+    ))}
+    {/* ... métodos ... */}
+    <button onClick={clearAllAdvanced}>Limpar tudo</button>
+  </div>
+)}
+
+<TransactionFiltersSheet
+  open={sheetOpen}
+  onOpenChange={setSheetOpen}
+  categories={categories}
+  paymentMethods={paymentMethods}
+  selectedCategoryIds={selectedCategoryIds}
+  selectedPaymentMethodIds={selectedPaymentMethodIds}
+  onApply={(sel) => {
+    setSelectedCategoryIds(sel.categoryIds)
+    setSelectedPaymentMethodIds(sel.paymentMethodIds)
+  }}
+/>`}
+        />
       </div>
-      <p className="mt-3 text-xs text-muted-foreground">
-        Ícone circular + nome + categoria, valor + método + data à direita. Badge de parcela quando aplicável. Ações (editar, detalhes) no hover.
-      </p>
     </Section>
   )
 }

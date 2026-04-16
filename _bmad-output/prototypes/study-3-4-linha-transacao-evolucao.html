@@ -1,0 +1,1430 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Linha de Transação — 3 Propostas Visuais (Story 3.4)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --background: #FAFAF9;
+      --foreground: #1C1917;
+      --card: #FFFFFF;
+      --muted: #F5F5F4;
+      --muted-foreground: #78716C;
+      --border: #E7E5E4;
+      --primary: #4F46E5;
+      --primary-light: #EEF2FF;
+      --positive: #22C55E;
+      --positive-bg: #DCFCE7;
+      --positive-text: #166534;
+      --info: #3B82F6;
+      --info-bg: #DBEAFE;
+      --info-text: #1E40AF;
+      --negative: #DC2626;
+    }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--background);
+      color: var(--foreground);
+    }
+    .tabular-nums { font-variant-numeric: tabular-nums; }
+    .col-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .col-header {
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .col-title { font-weight: 700; font-size: 14px; color: var(--foreground); }
+    .col-subtitle { font-size: 12px; color: var(--muted-foreground); margin-top: 2px; }
+    .day-header {
+      padding: 8px 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted-foreground);
+      background: var(--background);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .row:last-child { border-bottom: none; }
+    .row-icon {
+      width: 36px; height: 36px;
+      flex-shrink: 0;
+      border-radius: 9999px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .row-content {
+      flex: 1; min-width: 0;
+      display: flex; flex-direction: column;
+    }
+    .row-primary {
+      font-weight: 600; font-size: 14px; color: var(--foreground);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .row-secondary {
+      font-size: 12px; color: var(--muted-foreground);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-top: 1px;
+    }
+    .row-right {
+      flex-shrink: 0;
+      text-align: right;
+      display: flex; flex-direction: column; align-items: flex-end;
+    }
+    .row-amount { font-weight: 600; font-size: 14px; }
+    .row-meta { font-size: 11px; color: var(--muted-foreground); margin-top: 1px; }
+    .amount-expense { color: var(--foreground); }
+    .amount-income  { color: var(--positive-text); }
+    .amount-transfer { color: var(--muted-foreground); }
+    .legend-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; padding: 2px 8px; border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+  <header class="max-w-[1400px] mx-auto px-6 pt-8 pb-4">
+    <h1 class="text-2xl font-bold">Linha de Transação — 3 Propostas Visuais</h1>
+    <p class="text-sm mt-1" style="color: var(--muted-foreground)">
+      Story 3.4 · Diferenciação visual de gasto / receita / transferência na listagem <code>/transactions</code>
+    </p>
+    <div class="flex flex-wrap items-center gap-4 mt-4 text-xs">
+      <span style="color: var(--muted-foreground)">Mesmos 8 dados em todas as colunas (próximos do estado real)</span>
+      <span class="legend-pill" style="background: var(--muted); color: var(--muted-foreground)">
+        <span class="inline-block w-2 h-2 rounded-full" style="background: var(--muted-foreground)"></span> Gasto
+      </span>
+      <span class="legend-pill" style="background: var(--positive-bg); color: var(--positive-text)">
+        <span class="inline-block w-2 h-2 rounded-full" style="background: var(--positive)"></span> Receita
+      </span>
+      <span class="legend-pill" style="background: var(--info-bg); color: var(--info-text)">
+        <span class="inline-block w-2 h-2 rounded-full" style="background: var(--info)"></span> Transferência
+      </span>
+    </div>
+    <div class="mt-4 p-4 rounded-xl border-2" style="border-color: var(--primary); background: var(--primary-light);">
+      <div class="font-bold text-sm" style="color: var(--primary)">⭐ Evolução das propostas (role até embaixo)</div>
+      <div class="text-xs mt-1" style="color: var(--foreground)">
+        <strong>Proposta D</strong>: híbrido A + B com faixa lateral colorida. Duas variantes — D1 (vermelho na saída) e D2 (saída neutra).<br>
+        <strong>Proposta E</strong>: D2 + badges de banco e cartão (<code>BankLogo</code> / <code>CardBrand</code>) — padrão já estabelecido no DS.<br>
+        <strong>Proposta F</strong>: D1 + E + método numa coluna do meio separada (em vez de embaixo do valor).<br>
+        <strong>Proposta G</strong>: E (método com badge embaixo do valor à direita) + faixa lateral em todas as 3 cores (incluindo vermelho na saída). <em>✓ Escolha final.</em>
+      </div>
+    </div>
+    <style>
+      /* Badges de banco e cartão (replicam BankLogo e CardBrand) */
+      .bank-badge {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 24px; height: 24px;
+        border-radius: 6px;
+        border: 1px solid rgba(0,0,0,0.06);
+        font-weight: 700;
+        font-size: 8px;
+        line-height: 1;
+        flex-shrink: 0;
+      }
+      .bank-nubank   { background: #820AD1; color: #fff; }
+      .bank-itau     { background: #003399; color: #fff; }
+      .bank-santander{ background: #CC0000; color: #fff; }
+      .bank-inter    { background: #FF7A00; color: #fff; }
+      .bank-bradesco { background: #CC092F; color: #fff; }
+      .card-brand {
+        position: relative;
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 26px; height: 16px;
+        border-radius: 3px;
+        border: 1px solid rgba(0,0,0,0.06);
+        flex-shrink: 0;
+      }
+      .card-master {
+        background: #252525;
+      }
+      .card-master::before, .card-master::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 12px; height: 12px;
+        border-radius: 50%;
+        transform: translateY(-50%);
+      }
+      .card-master::before { left: 3px;  background: #EB001B; }
+      .card-master::after  { right: 3px; background: #F79E1B; }
+      .card-visa {
+        background: #1A1F71;
+        font-style: italic; font-weight: 800;
+        font-size: 7px; color: #fff;
+      }
+      .card-visa::before { content: 'VISA'; }
+      .meta-with-badge {
+        display: inline-flex; align-items: center; gap: 4px;
+        font-size: 11px; color: var(--muted-foreground);
+      }
+      .primary-with-badges {
+        display: inline-flex; align-items: center; gap: 6px;
+        flex-wrap: wrap;
+      }
+      .arrow-sep { color: var(--muted-foreground); font-size: 12px; }
+    </style>
+  </header>
+
+  <main class="max-w-[1400px] mx-auto px-6 pb-16 grid gap-6 lg:grid-cols-3 grid-cols-1">
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         COLUNA 0 — ATUAL (referência do que está em produção hoje)
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="col-card lg:col-span-3">
+      <div class="col-header" style="background: #FEF3C7;">
+        <div class="col-title">📍 Como está hoje (referência)</div>
+        <div class="col-subtitle">Sem ícone à esquerda. Tipo decodificado só pelo sinal/cor à direita. "Transferência" repetida como primary.</div>
+      </div>
+      <div class="day-header">14 / 04 / 2026</div>
+
+      <div class="row">
+        <div class="row-content">
+          <div class="row-primary">Transferência</div>
+          <div class="row-secondary">Inter - Conta Corrente → Santander - Conta Corrente</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-transfer">R$ 33,03</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-content">
+          <div class="row-primary">Imperatriz</div>
+          <div class="row-secondary">Alimentação · Mastercard Inter</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-expense">−R$ 100,00</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-content">
+          <div class="row-primary">Fort Atacadista</div>
+          <div class="row-secondary">Alimentação · Mastercard Inter</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-expense">−R$ 80,00</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-content">
+          <div class="row-primary">Transferência</div>
+          <div class="row-secondary">Itaú - Conta Corrente → Santander - Conta Corrente</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-transfer">R$ 450,00</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-content">
+          <div class="row-primary">Freela</div>
+          <div class="row-secondary">Nubank · Conta Corrente</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-income">+R$ 99,98</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-content">
+          <div class="row-primary">Benefício Nexfar</div>
+          <div class="row-secondary">Itaú - Conta Corrente</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-income">+R$ 1.235,00</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         PROPOSTA A — Ícone circular com emoji + tom por tipo (recomendada)
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="col-card">
+      <div class="col-header" style="background: var(--primary-light);">
+        <div class="col-title" style="color: var(--primary)">🅰️ Proposta A · Ícone circular + emoji + tom por tipo</div>
+        <div class="col-subtitle"><strong>Recomendada.</strong> Usa o emoji da categoria (Story 3.1e) como identidade do gasto. Receita e transferência ganham círculo colorido com seta.</div>
+      </div>
+
+      <div class="day-header">14 / 04 / 2026</div>
+
+      <!-- Transferência -->
+      <div class="row">
+        <div class="row-icon" style="background: var(--info-bg); color: var(--info-text)">
+          <i data-lucide="arrow-left-right" style="width: 16px; height: 16px;"></i>
+        </div>
+        <div class="row-content">
+          <div class="row-primary">Inter · Corrente → Santander · Corrente</div>
+          <div class="row-secondary">Transferência</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-transfer">R$ 33,03</div>
+        </div>
+      </div>
+
+      <!-- Gasto (emoji) -->
+      <div class="row">
+        <div class="row-icon" style="background: var(--muted);">
+          <span>🛒</span>
+        </div>
+        <div class="row-content">
+          <div class="row-primary">Imperatriz</div>
+          <div class="row-secondary">Alimentação</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-expense">−R$ 100,00</div>
+          <div class="row-meta">Master Inter</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-icon" style="background: var(--muted);">
+          <span>🛒</span>
+        </div>
+        <div class="row-content">
+          <div class="row-primary">Fort Atacadista</div>
+          <div class="row-secondary">Alimentação</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-expense">−R$ 80,00</div>
+          <div class="row-meta">Master Inter</div>
+        </div>
+      </div>
+
+      <!-- Transferência -->
+      <div class="row">
+        <div class="row-icon" style="background: var(--info-bg); color: var(--info-text)">
+          <i data-lucide="arrow-left-right" style="width: 16px; height: 16px;"></i>
+        </div>
+        <div class="row-content">
+          <div class="row-primary">Itaú · Corrente → Santander · Corrente</div>
+          <div class="row-secondary">Transferência</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-transfer">R$ 450,00</div>
+        </div>
+      </div>
+
+      <!-- Receita -->
+      <div class="row">
+        <div class="row-icon" style="background: var(--positive-bg); color: var(--positive-text)">
+          <i data-lucide="arrow-down-left" style="width: 16px; height: 16px;"></i>
+        </div>
+        <div class="row-content">
+          <div class="row-primary">Freela</div>
+          <div class="row-secondary">Receita</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-income">+R$ 99,98</div>
+          <div class="row-meta">Nubank · Corrente</div>
+        </div>
+      </div>
+
+      <!-- Receita -->
+      <div class="row">
+        <div class="row-icon" style="background: var(--positive-bg); color: var(--positive-text)">
+          <i data-lucide="arrow-down-left" style="width: 16px; height: 16px;"></i>
+        </div>
+        <div class="row-content">
+          <div class="row-primary">Benefício Nexfar</div>
+          <div class="row-secondary">Receita</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-income">+R$ 1.235,00</div>
+          <div class="row-meta">Itaú · Corrente</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         PROPOSTA B — Borda lateral colorida (minimalista)
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="col-card">
+      <div class="col-header" style="background: var(--muted);">
+        <div class="col-title">🅱️ Proposta B · Borda lateral colorida</div>
+        <div class="col-subtitle">Sem ícone. Barra lateral de 3px à esquerda como marcador. Mais quieto e fácil de implementar, mas perde personalidade visual.</div>
+      </div>
+
+      <div class="day-header">14 / 04 / 2026</div>
+
+      <!-- Transferência -->
+      <div class="row" style="border-left: 3px solid var(--info);">
+        <div class="row-content">
+          <div class="row-primary">Inter · Corrente → Santander · Corrente</div>
+          <div class="row-secondary">Transferência</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-transfer">R$ 33,03</div>
+        </div>
+      </div>
+
+      <!-- Gasto -->
+      <div class="row" style="border-left: 3px solid transparent;">
+        <div class="row-content">
+          <div class="row-primary">Imperatriz</div>
+          <div class="row-secondary">Alimentação · Master Inter</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-expense">−R$ 100,00</div>
+        </div>
+      </div>
+
+      <div class="row" style="border-left: 3px solid transparent;">
+        <div class="row-content">
+          <div class="row-primary">Fort Atacadista</div>
+          <div class="row-secondary">Alimentação · Master Inter</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-expense">−R$ 80,00</div>
+        </div>
+      </div>
+
+      <!-- Transferência -->
+      <div class="row" style="border-left: 3px solid var(--info);">
+        <div class="row-content">
+          <div class="row-primary">Itaú · Corrente → Santander · Corrente</div>
+          <div class="row-secondary">Transferência</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-transfer">R$ 450,00</div>
+        </div>
+      </div>
+
+      <!-- Receita -->
+      <div class="row" style="border-left: 3px solid var(--positive);">
+        <div class="row-content">
+          <div class="row-primary">Freela</div>
+          <div class="row-secondary">Nubank · Corrente</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-income">+R$ 99,98</div>
+        </div>
+      </div>
+
+      <!-- Receita -->
+      <div class="row" style="border-left: 3px solid var(--positive);">
+        <div class="row-content">
+          <div class="row-primary">Benefício Nexfar</div>
+          <div class="row-secondary">Itaú · Corrente</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-income">+R$ 1.235,00</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         PROPOSTA C — Sub-grupos por tipo dentro do dia
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="col-card">
+      <div class="col-header" style="background: var(--muted);">
+        <div class="col-title">🅲 Proposta C · Sub-grupos por tipo dentro do dia</div>
+        <div class="col-subtitle">Agrupamento semântico: Saídas, Entradas, Transferências dentro de cada dia. Mais organizado, mas empilha mais.</div>
+      </div>
+
+      <div class="day-header">14 / 04 / 2026</div>
+
+      <!-- Sub-grupo Saídas -->
+      <div style="padding: 6px 20px; font-size: 10px; font-weight: 700; color: var(--negative); letter-spacing: 0.06em; text-transform: uppercase;">↓ Saídas</div>
+      <div class="row">
+        <div class="row-content">
+          <div class="row-primary">Imperatriz</div>
+          <div class="row-secondary">Alimentação · Master Inter</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-expense">−R$ 100,00</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-content">
+          <div class="row-primary">Fort Atacadista</div>
+          <div class="row-secondary">Alimentação · Master Inter</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-expense">−R$ 80,00</div>
+        </div>
+      </div>
+
+      <!-- Sub-grupo Entradas -->
+      <div style="padding: 6px 20px; font-size: 10px; font-weight: 700; color: var(--positive-text); letter-spacing: 0.06em; text-transform: uppercase;">↑ Entradas</div>
+      <div class="row">
+        <div class="row-content">
+          <div class="row-primary">Freela</div>
+          <div class="row-secondary">Nubank · Corrente</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-income">+R$ 99,98</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-content">
+          <div class="row-primary">Benefício Nexfar</div>
+          <div class="row-secondary">Itaú · Corrente</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-income">+R$ 1.235,00</div>
+        </div>
+      </div>
+
+      <!-- Sub-grupo Transferências -->
+      <div style="padding: 6px 20px; font-size: 10px; font-weight: 700; color: var(--info-text); letter-spacing: 0.06em; text-transform: uppercase;">⇄ Transferências</div>
+      <div class="row">
+        <div class="row-content">
+          <div class="row-primary">Inter · Corrente → Santander · Corrente</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-transfer">R$ 33,03</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-content">
+          <div class="row-primary">Itaú · Corrente → Santander · Corrente</div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount tabular-nums amount-transfer">R$ 450,00</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         PROPOSTA D — Híbrida (A + B): ícone circular + faixa lateral colorida
+         Duas variantes para Vitorcastilho comparar:
+           D1: faixa nas 3 cores (vermelho saída + verde receita + azul transferência)
+           D2: faixa só em receita e transferência (saída fica neutra)
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="lg:col-span-3">
+      <div class="mb-3">
+        <h2 class="text-lg font-bold" style="color: var(--primary)">⭐ Proposta D · Híbrida A + B (ícone circular + faixa lateral)</h2>
+        <p class="text-xs mt-1" style="color: var(--muted-foreground)">
+          Mantém tudo da A (ícone circular com emoji + tom por tipo + reorganização das transferências) e
+          adiciona a faixa lateral colorida da B como reforço visual rápido.
+          Duas variantes para você decidir o tratamento da saída.
+        </p>
+      </div>
+
+      <div class="grid gap-6 lg:grid-cols-2 grid-cols-1">
+
+        <!-- D1: Faixa nas 3 cores (incluindo vermelho na saída) -->
+        <div class="col-card">
+          <div class="col-header" style="background: #FEE2E2;">
+            <div class="col-title" style="color: var(--negative)">D1 · Faixa nas 3 cores (vermelho na saída)</div>
+            <div class="col-subtitle">Sistema completo: vermelho = saída, verde = receita, azul = transferência. Mais "óbvio" mas pode ficar dominante visual em listas com muitos gastos.</div>
+          </div>
+
+          <div class="day-header">14 / 04 / 2026</div>
+
+          <div class="row" style="border-left: 3px solid var(--info);">
+            <div class="row-icon" style="background: var(--info-bg); color: var(--info-text)">
+              <i data-lucide="arrow-left-right" style="width: 16px; height: 16px;"></i>
+            </div>
+            <div class="row-content">
+              <div class="row-primary">Inter · Corrente → Santander · Corrente</div>
+              <div class="row-secondary">Transferência</div>
+            </div>
+            <div class="row-right">
+              <div class="row-amount tabular-nums amount-transfer">R$ 33,03</div>
+            </div>
+          </div>
+
+          <div class="row" style="border-left: 3px solid var(--negative);">
+            <div class="row-icon" style="background: var(--muted);"><span>🛒</span></div>
+            <div class="row-content">
+              <div class="row-primary">Imperatriz</div>
+              <div class="row-secondary">Alimentação</div>
+            </div>
+            <div class="row-right">
+              <div class="row-amount tabular-nums amount-expense">−R$ 100,00</div>
+              <div class="row-meta">Master Inter</div>
+            </div>
+          </div>
+
+          <div class="row" style="border-left: 3px solid var(--negative);">
+            <div class="row-icon" style="background: var(--muted);"><span>🛒</span></div>
+            <div class="row-content">
+              <div class="row-primary">Fort Atacadista</div>
+              <div class="row-secondary">Alimentação</div>
+            </div>
+            <div class="row-right">
+              <div class="row-amount tabular-nums amount-expense">−R$ 80,00</div>
+              <div class="row-meta">Master Inter</div>
+            </div>
+          </div>
+
+          <div class="row" style="border-left: 3px solid var(--info);">
+            <div class="row-icon" style="background: var(--info-bg); color: var(--info-text)">
+              <i data-lucide="arrow-left-right" style="width: 16px; height: 16px;"></i>
+            </div>
+            <div class="row-content">
+              <div class="row-primary">Itaú · Corrente → Santander · Corrente</div>
+              <div class="row-secondary">Transferência</div>
+            </div>
+            <div class="row-right">
+              <div class="row-amount tabular-nums amount-transfer">R$ 450,00</div>
+            </div>
+          </div>
+
+          <div class="row" style="border-left: 3px solid var(--positive);">
+            <div class="row-icon" style="background: var(--positive-bg); color: var(--positive-text)">
+              <i data-lucide="arrow-down-left" style="width: 16px; height: 16px;"></i>
+            </div>
+            <div class="row-content">
+              <div class="row-primary">Freela</div>
+              <div class="row-secondary">Receita</div>
+            </div>
+            <div class="row-right">
+              <div class="row-amount tabular-nums amount-income">+R$ 99,98</div>
+              <div class="row-meta">Nubank · Corrente</div>
+            </div>
+          </div>
+
+          <div class="row" style="border-left: 3px solid var(--negative);">
+            <div class="row-icon" style="background: var(--muted);"><span>⛽</span></div>
+            <div class="row-content">
+              <div class="row-primary">Shell</div>
+              <div class="row-secondary">Combustível</div>
+            </div>
+            <div class="row-right">
+              <div class="row-amount tabular-nums amount-expense">−R$ 180,00</div>
+              <div class="row-meta">Itaú · Débito</div>
+            </div>
+          </div>
+
+          <div class="row" style="border-left: 3px solid var(--negative);">
+            <div class="row-icon" style="background: var(--muted);"><span>🍕</span></div>
+            <div class="row-content">
+              <div class="row-primary">iFood</div>
+              <div class="row-secondary">Restaurante</div>
+            </div>
+            <div class="row-right">
+              <div class="row-amount tabular-nums amount-expense">−R$ 45,00</div>
+              <div class="row-meta">Master Inter</div>
+            </div>
+          </div>
+
+          <div class="row" style="border-left: 3px solid var(--negative);">
+            <div class="row-icon" style="background: var(--muted);"><span>🚌</span></div>
+            <div class="row-content">
+              <div class="row-primary">Uber</div>
+              <div class="row-secondary">Transporte</div>
+            </div>
+            <div class="row-right">
+              <div class="row-amount tabular-nums amount-expense">−R$ 32,00</div>
+              <div class="row-meta">Itaú · Débito</div>
+            </div>
+          </div>
+
+          <div class="row" style="border-left: 3px solid var(--positive);">
+            <div class="row-icon" style="background: var(--positive-bg); color: var(--positive-text)">
+              <i data-lucide="arrow-down-left" style="width: 16px; height: 16px;"></i>
+            </div>
+            <div class="row-content">
+              <div class="row-primary">Benefício Nexfar</div>
+              <div class="row-secondary">Receita</div>
+            </div>
+            <div class="row-right">
+              <div class="row-amount tabular-nums amount-income">+R$ 1.235,00</div>
+              <div class="row-meta">Itaú · Corrente</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- D2: Faixa só em receita e transferência (saída neutra) -->
+        <div class="col-card">
+          <div class="col-header" style="background: var(--primary-light);">
+            <div class="col-title" style="color: var(--primary)">D2 · Faixa só destaca o "fora do comum" (saída neutra)</div>
+            <div class="col-subtitle">Saída (caso comum) fica quieta. Receita e transferência ganham faixa porque são raras e merecem atenção. Lista respira mais.</div>
+          </div>
+
+          <div class="day-header">14 / 04 / 2026</div>
+
+          <div class="row" style="border-left: 3px solid var(--info);">
+            <div class="row-icon" style="background: var(--info-bg); color: var(--info-text)">
+              <i data-lucide="arrow-left-right" style="width: 16px; height: 16px;"></i>
+            </div>
+            <div class="row-content">
+              <div class="row-primary">Inter · Corrente → Santander · Corrente</div>
+              <div class="row-secondary">Transferência</div>
+            </div>
+            <div class="row-right">
+              <div class="row-amount tabular-nums amount-transfer">R$ 33,03</div>
+            </div>
+          </div>
+
+          <div class="row" style="border-left: 3px solid transparent;">
+            <div class="row-icon" style="background: var(--muted);"><span>🛒</span></div>
+            <div class="row-content">
+              <div class="row-primary">Imperatriz</div>
+              <div class="row-secondary">Alimentação</div>
+            </div>
+            <div class="row-right">
+              <div class="row-amount tabular-nums amount-expense">−R$ 100,00</div>
+              <div class="row-meta">Master Inter</div>
+            </div>
+          </div>
+
+          <div class="row" style="border-left: 3px solid transparent;">
+            <div class="row-icon" style="background: var(--muted);"><span>🛒</span></div>
+            <div class="row-content">
+              <div class="row-primary">Fort Atacadista</div>
+              <div class="row-secondary">Alimentação</div>
+            </div>
+            <div class="row-right">
+              <div class="row-amount tabular-nums amount-expense">−R$ 80,00</div>
+              <div class="row-meta">Master Inter</div>
+            </div>
+          </div>
+
+          <div class="row" style="border-left: 3px solid var(--info);">
+            <div class="row-icon" style="background: var(--info-bg); color: var(--info-text)">
+              <i data-lucide="arrow-left-right" style="width: 16px; height: 16px;"></i>
+            </div>
+            <div class="row-content">
+              <div class="row-primary">Itaú · Corrente → Santander · Corrente</div>
+              <div class="row-secondary">Transferência</div>
+            </div>
+            <div class="row-right">
+              <div class="row-amount tabular-nums amount-transfer">R$ 450,00</div>
+            </div>
+          </div>
+
+          <div class="row" style="border-left: 3px solid var(--positive);">
+            <div class="row-icon" style="background: var(--positive-bg); color: var(--positive-text)">
+              <i data-lucide="arrow-down-left" style="width: 16px; height: 16px;"></i>
+            </div>
+            <div class="row-content">
+              <div class="row-primary">Freela</div>
+              <div class="row-secondary">Receita</div>
+            </div>
+            <div class="row-right">
+              <div class="row-amount tabular-nums amount-income">+R$ 99,98</div>
+              <div class="row-meta">Nubank · Corrente</div>
+            </div>
+          </div>
+
+          <div class="row" style="border-left: 3px solid transparent;">
+            <div class="row-icon" style="background: var(--muted);"><span>⛽</span></div>
+            <div class="row-content">
+              <div class="row-primary">Shell</div>
+              <div class="row-secondary">Combustível</div>
+            </div>
+            <div class="row-right">
+              <div class="row-amount tabular-nums amount-expense">−R$ 180,00</div>
+              <div class="row-meta">Itaú · Débito</div>
+            </div>
+          </div>
+
+          <div class="row" style="border-left: 3px solid transparent;">
+            <div class="row-icon" style="background: var(--muted);"><span>🍕</span></div>
+            <div class="row-content">
+              <div class="row-primary">iFood</div>
+              <div class="row-secondary">Restaurante</div>
+            </div>
+            <div class="row-right">
+              <div class="row-amount tabular-nums amount-expense">−R$ 45,00</div>
+              <div class="row-meta">Master Inter</div>
+            </div>
+          </div>
+
+          <div class="row" style="border-left: 3px solid transparent;">
+            <div class="row-icon" style="background: var(--muted);"><span>🚌</span></div>
+            <div class="row-content">
+              <div class="row-primary">Uber</div>
+              <div class="row-secondary">Transporte</div>
+            </div>
+            <div class="row-right">
+              <div class="row-amount tabular-nums amount-expense">−R$ 32,00</div>
+              <div class="row-meta">Itaú · Débito</div>
+            </div>
+          </div>
+
+          <div class="row" style="border-left: 3px solid var(--positive);">
+            <div class="row-icon" style="background: var(--positive-bg); color: var(--positive-text)">
+              <i data-lucide="arrow-down-left" style="width: 16px; height: 16px;"></i>
+            </div>
+            <div class="row-content">
+              <div class="row-primary">Benefício Nexfar</div>
+              <div class="row-secondary">Receita</div>
+            </div>
+            <div class="row-right">
+              <div class="row-amount tabular-nums amount-income">+R$ 1.235,00</div>
+              <div class="row-meta">Itaú · Corrente</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 grid gap-4 lg:grid-cols-2 grid-cols-1">
+        <div class="rounded-xl border p-4" style="border-color: var(--negative); background: #FEF2F2;">
+          <div class="font-semibold text-sm mb-2" style="color: var(--negative)">D1 · Pros / Contras</div>
+          <ul class="text-xs space-y-1" style="color: var(--foreground)">
+            <li>✓ Sistema completo e simétrico (todas as 3 marcadas)</li>
+            <li>✓ Reconhecimento instantâneo do tipo</li>
+            <li>✗ Vermelho dominante quando há muitos gastos (caso comum)</li>
+            <li>✗ Pode passar sensação de "alerta" constante</li>
+            <li>✗ Receita e transferência perdem destaque relativo</li>
+          </ul>
+        </div>
+        <div class="rounded-xl border p-4" style="border-color: var(--primary); background: var(--primary-light);">
+          <div class="font-semibold text-sm mb-2" style="color: var(--primary)">D2 · Pros / Contras (minha preferida)</div>
+          <ul class="text-xs space-y-1" style="color: var(--foreground)">
+            <li>✓ "Calma operacional" — gasto é o normal, fica quieto</li>
+            <li>✓ Receita e transferência ganham destaque genuíno</li>
+            <li>✓ Lista respira mais visualmente</li>
+            <li>✓ Vermelho mantém significado quando aparece (no valor à direita)</li>
+            <li>~ Menos "óbvio" para alguém que não conhece o app na primeira olhada</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         PROPOSTA E — D2 + badges de banco e cartão (BankLogo / CardBrand)
+         Aplica o padrão consolidado do DS de identidade visual de instituições.
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="lg:col-span-3">
+      <div class="mb-3">
+        <h2 class="text-lg font-bold" style="color: var(--primary)">⭐ Proposta E · D2 + badges de banco e cartão (recomendação final)</h2>
+        <p class="text-xs mt-1" style="color: var(--muted-foreground)">
+          Mantém tudo da D2 (ícone circular + emoji + faixa lateral só em receita/transferência + reorganização das transferências) e
+          aplica o padrão <code>BankLogo</code> / <code>CardBrand</code> que já está consolidado no design system.
+          Cada banco aparece com sua cor institucional (Inter laranja, Santander vermelho, Itaú azul, Nubank roxo) e cartão com bandeira real.
+        </p>
+      </div>
+
+      <div class="col-card max-w-3xl">
+        <div class="col-header" style="background: var(--primary-light);">
+          <div class="col-title" style="color: var(--primary)">E · Versão final com badges institucionais</div>
+          <div class="col-subtitle">Reconhecimento visual em ~1 fixação ocular. Banco e cartão deixam de ser "texto" e viram identidade.</div>
+        </div>
+
+        <div class="day-header">14 / 04 / 2026</div>
+
+        <!-- Transferência: badges nos dois lados -->
+        <div class="row" style="border-left: 3px solid var(--info);">
+          <div class="row-icon" style="background: var(--info-bg); color: var(--info-text)">
+            <i data-lucide="arrow-left-right" style="width: 16px; height: 16px;"></i>
+          </div>
+          <div class="row-content">
+            <div class="row-primary primary-with-badges">
+              <span class="bank-badge bank-inter">Inter</span>
+              <span>Corrente</span>
+              <span class="arrow-sep">→</span>
+              <span class="bank-badge bank-santander">San</span>
+              <span>Corrente</span>
+            </div>
+            <div class="row-secondary">Transferência</div>
+          </div>
+          <div class="row-right">
+            <div class="row-amount tabular-nums amount-transfer">R$ 33,03</div>
+          </div>
+        </div>
+
+        <!-- Gasto com cartão: CardBrand à direita -->
+        <div class="row" style="border-left: 3px solid transparent;">
+          <div class="row-icon" style="background: var(--muted);"><span>🛒</span></div>
+          <div class="row-content">
+            <div class="row-primary">Imperatriz</div>
+            <div class="row-secondary">Alimentação</div>
+          </div>
+          <div class="row-right">
+            <div class="row-amount tabular-nums amount-expense">−R$ 100,00</div>
+            <div class="meta-with-badge">
+              <span class="card-brand card-master"></span>
+              <span>Inter</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" style="border-left: 3px solid transparent;">
+          <div class="row-icon" style="background: var(--muted);"><span>🛒</span></div>
+          <div class="row-content">
+            <div class="row-primary">Fort Atacadista</div>
+            <div class="row-secondary">Alimentação</div>
+          </div>
+          <div class="row-right">
+            <div class="row-amount tabular-nums amount-expense">−R$ 80,00</div>
+            <div class="meta-with-badge">
+              <span class="card-brand card-master"></span>
+              <span>Inter</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transferência -->
+        <div class="row" style="border-left: 3px solid var(--info);">
+          <div class="row-icon" style="background: var(--info-bg); color: var(--info-text)">
+            <i data-lucide="arrow-left-right" style="width: 16px; height: 16px;"></i>
+          </div>
+          <div class="row-content">
+            <div class="row-primary primary-with-badges">
+              <span class="bank-badge bank-itau">Itaú</span>
+              <span>Corrente</span>
+              <span class="arrow-sep">→</span>
+              <span class="bank-badge bank-santander">San</span>
+              <span>Corrente</span>
+            </div>
+            <div class="row-secondary">Transferência</div>
+          </div>
+          <div class="row-right">
+            <div class="row-amount tabular-nums amount-transfer">R$ 450,00</div>
+          </div>
+        </div>
+
+        <!-- Receita: BankLogo da conta destino -->
+        <div class="row" style="border-left: 3px solid var(--positive);">
+          <div class="row-icon" style="background: var(--positive-bg); color: var(--positive-text)">
+            <i data-lucide="arrow-down-left" style="width: 16px; height: 16px;"></i>
+          </div>
+          <div class="row-content">
+            <div class="row-primary">Freela</div>
+            <div class="row-secondary">Receita</div>
+          </div>
+          <div class="row-right">
+            <div class="row-amount tabular-nums amount-income">+R$ 99,98</div>
+            <div class="meta-with-badge">
+              <span class="bank-badge bank-nubank">Nu</span>
+              <span>Corrente</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gasto com débito (BankLogo Itaú) -->
+        <div class="row" style="border-left: 3px solid transparent;">
+          <div class="row-icon" style="background: var(--muted);"><span>⛽</span></div>
+          <div class="row-content">
+            <div class="row-primary">Shell</div>
+            <div class="row-secondary">Combustível</div>
+          </div>
+          <div class="row-right">
+            <div class="row-amount tabular-nums amount-expense">−R$ 180,00</div>
+            <div class="meta-with-badge">
+              <span class="bank-badge bank-itau">Itaú</span>
+              <span>Débito</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" style="border-left: 3px solid transparent;">
+          <div class="row-icon" style="background: var(--muted);"><span>🍕</span></div>
+          <div class="row-content">
+            <div class="row-primary">iFood</div>
+            <div class="row-secondary">Restaurante</div>
+          </div>
+          <div class="row-right">
+            <div class="row-amount tabular-nums amount-expense">−R$ 45,00</div>
+            <div class="meta-with-badge">
+              <span class="card-brand card-master"></span>
+              <span>Inter</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" style="border-left: 3px solid transparent;">
+          <div class="row-icon" style="background: var(--muted);"><span>🚌</span></div>
+          <div class="row-content">
+            <div class="row-primary">Uber</div>
+            <div class="row-secondary">Transporte</div>
+          </div>
+          <div class="row-right">
+            <div class="row-amount tabular-nums amount-expense">−R$ 32,00</div>
+            <div class="meta-with-badge">
+              <span class="bank-badge bank-itau">Itaú</span>
+              <span>Débito</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Receita: BankLogo Itaú -->
+        <div class="row" style="border-left: 3px solid var(--positive);">
+          <div class="row-icon" style="background: var(--positive-bg); color: var(--positive-text)">
+            <i data-lucide="arrow-down-left" style="width: 16px; height: 16px;"></i>
+          </div>
+          <div class="row-content">
+            <div class="row-primary">Benefício Nexfar</div>
+            <div class="row-secondary">Receita</div>
+          </div>
+          <div class="row-right">
+            <div class="row-amount tabular-nums amount-income">+R$ 1.235,00</div>
+            <div class="meta-with-badge">
+              <span class="bank-badge bank-itau">Itaú</span>
+              <span>Corrente</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 rounded-xl border-2 p-4" style="border-color: var(--primary); background: var(--primary-light);">
+        <div class="font-semibold text-sm mb-2" style="color: var(--primary)">Por que E é a recomendação final</div>
+        <ul class="text-xs space-y-1" style="color: var(--foreground)">
+          <li>✓ Reaproveita 100% de componentes já existentes no DS (<code>BankLogo</code>, <code>CardBrand</code>) — zero invenção</li>
+          <li>✓ Consistência com outras telas (cartões, contas, transferências) — usuário já reconhece os badges</li>
+          <li>✓ Tripla codificação visual: emoji + faixa lateral + cor institucional</li>
+          <li>✓ Identidade do banco vira pré-atentiva — você reconhece "Inter" pela cor laranja antes de ler</li>
+          <li>✓ Funciona bem em transferências: mostrar Inter→Santander com 2 badges é instantâneo</li>
+          <li>~ Pequeno custo de altura na transferência (badges quebram linha em mobile estreito) — solução: truncar "Corrente" se necessário</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         PROPOSTA F — D1 + E + método numa coluna do meio (escolha final)
+         Faixa em todas as 3 cores (incluindo vermelho na saída) + badges + método separado
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="lg:col-span-3">
+      <div class="mb-3">
+        <h2 class="text-lg font-bold" style="color: var(--primary)">⭐⭐ Proposta F · D1 + E + método em coluna separada (escolha final)</h2>
+        <p class="text-xs mt-1" style="color: var(--muted-foreground)">
+          Junta o melhor de tudo: faixa lateral em todas as 3 cores (incluindo vermelho na saída), badges institucionais
+          de banco e cartão, e o <strong>método de pagamento ganha uma coluna própria no meio</strong> em vez de ficar embaixo do valor.
+          A coluna direita fica limpa, só com o valor — escaneamento financeiro instantâneo.
+        </p>
+      </div>
+
+      <style>
+        /* Layout em 4 colunas para a Proposta F */
+        .row-f {
+          display: grid;
+          grid-template-columns: 36px 1fr auto auto;
+          align-items: center;
+          gap: 12px;
+          padding: 12px 20px;
+          border-bottom: 1px solid var(--border);
+          font-size: 14px;
+        }
+        .row-f:last-child { border-bottom: none; }
+        .col-method {
+          display: inline-flex; align-items: center; gap: 6px;
+          padding: 4px 10px;
+          background: var(--muted);
+          border-radius: 999px;
+          font-size: 12px;
+          color: var(--foreground);
+          white-space: nowrap;
+          min-width: 0;
+        }
+        .col-method-text { font-weight: 500; }
+        .col-method-empty {
+          font-size: 11px;
+          color: var(--muted-foreground);
+          font-style: italic;
+        }
+      </style>
+
+      <div class="col-card max-w-4xl">
+        <div class="col-header" style="background: var(--primary-light);">
+          <div class="col-title" style="color: var(--primary)">F · Layout em 4 colunas: ícone | nome | método | valor</div>
+          <div class="col-subtitle">Faixa lateral em vermelho/verde/azul · Badge institucional na coluna método · Coluna direita só com valor</div>
+        </div>
+
+        <div class="day-header">14 / 04 / 2026</div>
+
+        <!-- Transferência -->
+        <div class="row-f" style="border-left: 3px solid var(--info);">
+          <div class="row-icon" style="background: var(--info-bg); color: var(--info-text)">
+            <i data-lucide="arrow-left-right" style="width: 16px; height: 16px;"></i>
+          </div>
+          <div class="row-content">
+            <div class="row-primary primary-with-badges">
+              <span class="bank-badge bank-inter">Inter</span>
+              <span>Corrente</span>
+              <span class="arrow-sep">→</span>
+              <span class="bank-badge bank-santander">San</span>
+              <span>Corrente</span>
+            </div>
+            <div class="row-secondary">Transferência</div>
+          </div>
+          <div class="col-method-empty">—</div>
+          <div class="row-amount tabular-nums amount-transfer">R$ 33,03</div>
+        </div>
+
+        <!-- Gasto crédito Master Inter -->
+        <div class="row-f" style="border-left: 3px solid var(--negative);">
+          <div class="row-icon" style="background: var(--muted);"><span>🛒</span></div>
+          <div class="row-content">
+            <div class="row-primary">Imperatriz</div>
+            <div class="row-secondary">Alimentação</div>
+          </div>
+          <div class="col-method">
+            <span class="card-brand card-master"></span>
+            <span class="col-method-text">Inter</span>
+          </div>
+          <div class="row-amount tabular-nums amount-expense">−R$ 100,00</div>
+        </div>
+
+        <div class="row-f" style="border-left: 3px solid var(--negative);">
+          <div class="row-icon" style="background: var(--muted);"><span>🛒</span></div>
+          <div class="row-content">
+            <div class="row-primary">Fort Atacadista</div>
+            <div class="row-secondary">Alimentação</div>
+          </div>
+          <div class="col-method">
+            <span class="card-brand card-master"></span>
+            <span class="col-method-text">Inter</span>
+          </div>
+          <div class="row-amount tabular-nums amount-expense">−R$ 80,00</div>
+        </div>
+
+        <!-- Transferência -->
+        <div class="row-f" style="border-left: 3px solid var(--info);">
+          <div class="row-icon" style="background: var(--info-bg); color: var(--info-text)">
+            <i data-lucide="arrow-left-right" style="width: 16px; height: 16px;"></i>
+          </div>
+          <div class="row-content">
+            <div class="row-primary primary-with-badges">
+              <span class="bank-badge bank-itau">Itaú</span>
+              <span>Corrente</span>
+              <span class="arrow-sep">→</span>
+              <span class="bank-badge bank-santander">San</span>
+              <span>Corrente</span>
+            </div>
+            <div class="row-secondary">Transferência</div>
+          </div>
+          <div class="col-method-empty">—</div>
+          <div class="row-amount tabular-nums amount-transfer">R$ 450,00</div>
+        </div>
+
+        <!-- Receita destino Nubank -->
+        <div class="row-f" style="border-left: 3px solid var(--positive);">
+          <div class="row-icon" style="background: var(--positive-bg); color: var(--positive-text)">
+            <i data-lucide="arrow-down-left" style="width: 16px; height: 16px;"></i>
+          </div>
+          <div class="row-content">
+            <div class="row-primary">Freela</div>
+            <div class="row-secondary">Receita</div>
+          </div>
+          <div class="col-method">
+            <span class="bank-badge bank-nubank">Nu</span>
+            <span class="col-method-text">Corrente</span>
+          </div>
+          <div class="row-amount tabular-nums amount-income">+R$ 99,98</div>
+        </div>
+
+        <!-- Gasto débito Itaú -->
+        <div class="row-f" style="border-left: 3px solid var(--negative);">
+          <div class="row-icon" style="background: var(--muted);"><span>⛽</span></div>
+          <div class="row-content">
+            <div class="row-primary">Shell</div>
+            <div class="row-secondary">Combustível</div>
+          </div>
+          <div class="col-method">
+            <span class="bank-badge bank-itau">Itaú</span>
+            <span class="col-method-text">Débito</span>
+          </div>
+          <div class="row-amount tabular-nums amount-expense">−R$ 180,00</div>
+        </div>
+
+        <div class="row-f" style="border-left: 3px solid var(--negative);">
+          <div class="row-icon" style="background: var(--muted);"><span>🍕</span></div>
+          <div class="row-content">
+            <div class="row-primary">iFood</div>
+            <div class="row-secondary">Restaurante</div>
+          </div>
+          <div class="col-method">
+            <span class="card-brand card-master"></span>
+            <span class="col-method-text">Inter</span>
+          </div>
+          <div class="row-amount tabular-nums amount-expense">−R$ 45,00</div>
+        </div>
+
+        <div class="row-f" style="border-left: 3px solid var(--negative);">
+          <div class="row-icon" style="background: var(--muted);"><span>🚌</span></div>
+          <div class="row-content">
+            <div class="row-primary">Uber</div>
+            <div class="row-secondary">Transporte</div>
+          </div>
+          <div class="col-method">
+            <span class="bank-badge bank-itau">Itaú</span>
+            <span class="col-method-text">Débito</span>
+          </div>
+          <div class="row-amount tabular-nums amount-expense">−R$ 32,00</div>
+        </div>
+
+        <!-- Receita destino Itaú -->
+        <div class="row-f" style="border-left: 3px solid var(--positive);">
+          <div class="row-icon" style="background: var(--positive-bg); color: var(--positive-text)">
+            <i data-lucide="arrow-down-left" style="width: 16px; height: 16px;"></i>
+          </div>
+          <div class="row-content">
+            <div class="row-primary">Benefício Nexfar</div>
+            <div class="row-secondary">Receita</div>
+          </div>
+          <div class="col-method">
+            <span class="bank-badge bank-itau">Itaú</span>
+            <span class="col-method-text">Corrente</span>
+          </div>
+          <div class="row-amount tabular-nums amount-income">+R$ 1.235,00</div>
+        </div>
+      </div>
+
+      <div class="mt-4 grid gap-4 lg:grid-cols-2 grid-cols-1">
+        <div class="rounded-xl border-2 p-4" style="border-color: var(--primary); background: var(--primary-light);">
+          <div class="font-semibold text-sm mb-2" style="color: var(--primary)">Por que F funciona</div>
+          <ul class="text-xs space-y-1" style="color: var(--foreground)">
+            <li>✓ Coluna direita limpa = leitura financeira instantânea (apenas valores alinhados em <code>tabular-nums</code>)</li>
+            <li>✓ Coluna método = chip com badge institucional + texto curto (Débito/Corrente/etc)</li>
+            <li>✓ Faixa lateral em todas as 3 cores = sistema completo, simétrico</li>
+            <li>✓ Vermelho da faixa + vermelho do valor reforçam consistência</li>
+            <li>✓ Transferência tem traço "—" no lugar do método (não é confuso, é coerente)</li>
+            <li>✓ Triple coding: faixa lateral + ícone circular + cor do valor</li>
+          </ul>
+        </div>
+        <div class="rounded-xl border p-4" style="border-color: var(--border); background: var(--card);">
+          <div class="font-semibold text-sm mb-2">⚠️ Pontos de atenção</div>
+          <ul class="text-xs space-y-1" style="color: var(--muted-foreground)">
+            <li>• Em mobile estreito, a coluna método pode quebrar — solução: esconder a coluna em <code>sm:</code> e mostrar inline embaixo do nome</li>
+            <li>• Transferência ocupa mais espaço (badges nas duas pontas) — pode quebrar linha em telas estreitas</li>
+            <li>• Vermelho na saída ainda traz o "alerta visual" que descutimos no D1, mas com a coluna método aliviando o lado direito, fica mais respirável</li>
+            <li>• Padrão das instituições brasileiras (Inter, Nubank, Itaú) tem 4 colunas similares — usuário já está acostumado</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         PROPOSTA G — ESCOLHA FINAL
+         E (badges no método da direita) + faixa lateral em todas as 3 cores (D1 style)
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="lg:col-span-3">
+      <div class="mb-3">
+        <h2 class="text-lg font-bold" style="color: var(--primary)">⭐⭐⭐ Proposta G · Escolha final</h2>
+        <p class="text-xs mt-1" style="color: var(--muted-foreground)">
+          Combinação validada por Vitorcastilho:
+          <strong>coluna direita da E</strong> (valor em cima + método com badge institucional embaixo) +
+          <strong>faixa lateral colorida em todas as 3 cores</strong> (incluindo vermelho na saída).
+          Layout em 3 colunas (sem coluna método separada).
+        </p>
+      </div>
+
+      <div class="col-card max-w-3xl">
+        <div class="col-header" style="background: var(--primary-light);">
+          <div class="col-title" style="color: var(--primary)">G · Faixa em todas as cores + badges no método à direita</div>
+          <div class="col-subtitle">3 colunas: ícone | nome+categoria | valor + método com badge embaixo. Faixa lateral reforça o tipo à distância.</div>
+        </div>
+
+        <div class="day-header">14 / 04 / 2026</div>
+
+        <!-- Transferência -->
+        <div class="row" style="border-left: 3px solid var(--info);">
+          <div class="row-icon" style="background: var(--info-bg); color: var(--info-text)">
+            <i data-lucide="arrow-left-right" style="width: 16px; height: 16px;"></i>
+          </div>
+          <div class="row-content">
+            <div class="row-primary primary-with-badges">
+              <span class="bank-badge bank-inter">Inter</span>
+              <span>Banco Inter</span>
+              <span class="arrow-sep">→</span>
+              <span class="bank-badge bank-santander">San</span>
+              <span>Santander</span>
+            </div>
+            <div class="row-secondary">Transferência</div>
+          </div>
+          <div class="row-right">
+            <div class="row-amount tabular-nums amount-transfer">R$ 33,03</div>
+          </div>
+        </div>
+
+        <!-- Gasto crédito -->
+        <div class="row" style="border-left: 3px solid var(--negative);">
+          <div class="row-icon" style="background: var(--muted);"><span>🛒</span></div>
+          <div class="row-content">
+            <div class="row-primary">Imperatriz</div>
+            <div class="row-secondary">Alimentação</div>
+          </div>
+          <div class="row-right">
+            <div class="row-amount tabular-nums amount-expense">−R$ 100,00</div>
+            <div class="row-meta">Master Inter</div>
+          </div>
+        </div>
+
+        <div class="row" style="border-left: 3px solid var(--negative);">
+          <div class="row-icon" style="background: var(--muted);"><span>🛒</span></div>
+          <div class="row-content">
+            <div class="row-primary">Fort Atacadista</div>
+            <div class="row-secondary">Alimentação</div>
+          </div>
+          <div class="row-right">
+            <div class="row-amount tabular-nums amount-expense">−R$ 80,00</div>
+            <div class="row-meta">Master Inter</div>
+          </div>
+        </div>
+
+        <!-- Transferência -->
+        <div class="row" style="border-left: 3px solid var(--info);">
+          <div class="row-icon" style="background: var(--info-bg); color: var(--info-text)">
+            <i data-lucide="arrow-left-right" style="width: 16px; height: 16px;"></i>
+          </div>
+          <div class="row-content">
+            <div class="row-primary primary-with-badges">
+              <span class="bank-badge bank-itau">Itaú</span>
+              <span>Itaú</span>
+              <span class="arrow-sep">→</span>
+              <span class="bank-badge bank-santander">San</span>
+              <span>Santander</span>
+            </div>
+            <div class="row-secondary">Transferência</div>
+          </div>
+          <div class="row-right">
+            <div class="row-amount tabular-nums amount-transfer">R$ 450,00</div>
+          </div>
+        </div>
+
+        <!-- Receita destino Nubank -->
+        <div class="row" style="border-left: 3px solid var(--positive);">
+          <div class="row-icon" style="background: var(--positive-bg); color: var(--positive-text)">
+            <i data-lucide="arrow-down-left" style="width: 16px; height: 16px;"></i>
+          </div>
+          <div class="row-content">
+            <div class="row-primary">Freela</div>
+            <div class="row-secondary">Receita</div>
+          </div>
+          <div class="row-right">
+            <div class="row-amount tabular-nums amount-income">+R$ 99,98</div>
+            <div class="row-meta">Nubank · Corrente</div>
+          </div>
+        </div>
+
+        <!-- Gasto débito Itaú -->
+        <div class="row" style="border-left: 3px solid var(--negative);">
+          <div class="row-icon" style="background: var(--muted);"><span>⛽</span></div>
+          <div class="row-content">
+            <div class="row-primary">Shell</div>
+            <div class="row-secondary">Combustível</div>
+          </div>
+          <div class="row-right">
+            <div class="row-amount tabular-nums amount-expense">−R$ 180,00</div>
+            <div class="row-meta">Itaú · Débito</div>
+          </div>
+        </div>
+
+        <div class="row" style="border-left: 3px solid var(--negative);">
+          <div class="row-icon" style="background: var(--muted);"><span>🍕</span></div>
+          <div class="row-content">
+            <div class="row-primary">iFood</div>
+            <div class="row-secondary">Restaurante</div>
+          </div>
+          <div class="row-right">
+            <div class="row-amount tabular-nums amount-expense">−R$ 45,00</div>
+            <div class="row-meta">Master Inter</div>
+          </div>
+        </div>
+
+        <div class="row" style="border-left: 3px solid var(--negative);">
+          <div class="row-icon" style="background: var(--muted);"><span>🚌</span></div>
+          <div class="row-content">
+            <div class="row-primary">Uber</div>
+            <div class="row-secondary">Transporte</div>
+          </div>
+          <div class="row-right">
+            <div class="row-amount tabular-nums amount-expense">−R$ 32,00</div>
+            <div class="row-meta">Itaú · Débito</div>
+          </div>
+        </div>
+
+        <!-- Receita destino Itaú -->
+        <div class="row" style="border-left: 3px solid var(--positive);">
+          <div class="row-icon" style="background: var(--positive-bg); color: var(--positive-text)">
+            <i data-lucide="arrow-down-left" style="width: 16px; height: 16px;"></i>
+          </div>
+          <div class="row-content">
+            <div class="row-primary">Benefício Nexfar</div>
+            <div class="row-secondary">Receita</div>
+          </div>
+          <div class="row-right">
+            <div class="row-amount tabular-nums amount-income">+R$ 1.235,00</div>
+            <div class="row-meta">Itaú · Corrente</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 rounded-xl border-2 p-4" style="border-color: var(--primary); background: var(--primary-light);">
+        <div class="font-semibold text-sm mb-2" style="color: var(--primary)">Resumo da decisão (Proposta G)</div>
+        <div class="text-xs space-y-2" style="color: var(--foreground)">
+          <div>
+            <strong>Layout:</strong> 3 colunas — ícone (36px) | conteúdo (flex) | direita (auto, alinhado à direita).
+          </div>
+          <div>
+            <strong>Faixa lateral:</strong> 3px sólido em todas as 3 cores —
+            <code>border-l-negative</code> (saída),
+            <code>border-l-positive</code> (receita),
+            <code>border-l-info</code> (transferência).
+          </div>
+          <div>
+            <strong>Ícone circular (size-9, rounded-full):</strong>
+            saída → <code>bg-muted</code> + emoji da categoria;
+            receita → <code>bg-positive-bg</code> + <code>ArrowDownLeft</code>;
+            transferência → <code>bg-info-bg</code> + <code>ArrowLeftRight</code>.
+          </div>
+          <div>
+            <strong>Conteúdo principal:</strong>
+            saída/receita → nome bold + categoria/"Receita" muted;
+            transferência → badges <code>BankLogo</code> nos dois lados separados por <code>→</code> + "Transferência" muted embaixo.
+          </div>
+          <div>
+            <strong>Coluna direita:</strong> valor (tabular-nums, cor por tipo) em cima +
+            badge institucional (<code>BankLogo</code>/<code>CardBrand</code>) + texto curto embaixo (text-[11px]).
+            Transferência: só valor (sem método).
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         Notas finais
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="lg:col-span-3 mt-4 grid gap-4 lg:grid-cols-3 grid-cols-1">
+      <div class="rounded-xl border p-4" style="border-color: var(--border); background: var(--card);">
+        <div class="font-semibold text-sm mb-2" style="color: var(--primary)">🅰️ Pros / Contras</div>
+        <ul class="text-xs space-y-1" style="color: var(--muted-foreground)">
+          <li>✓ Âncora visual à esquerda (DS canônico)</li>
+          <li>✓ Emoji da categoria = identidade pessoal</li>
+          <li>✓ Dupla codificação (esquerda + direita)</li>
+          <li>✓ Acessível (cor + ícone + sinal)</li>
+          <li>✗ Requer expor emoji da categoria no DTO</li>
+        </ul>
+      </div>
+      <div class="rounded-xl border p-4" style="border-color: var(--border); background: var(--card);">
+        <div class="font-semibold text-sm mb-2">🅱️ Pros / Contras</div>
+        <ul class="text-xs space-y-1" style="color: var(--muted-foreground)">
+          <li>✓ Implementação ultra simples</li>
+          <li>✓ Zero altura adicional</li>
+          <li>✗ Pode confundir com "selecionado"</li>
+          <li>✗ Perde personalidade do emoji</li>
+          <li>✗ Esquerda fica visualmente "vazia"</li>
+        </ul>
+      </div>
+      <div class="rounded-xl border p-4" style="border-color: var(--border); background: var(--card);">
+        <div class="font-semibold text-sm mb-2">🅲 Pros / Contras</div>
+        <ul class="text-xs space-y-1" style="color: var(--muted-foreground)">
+          <li>✓ Organização semântica explícita</li>
+          <li>✗ Headers com 1 item parecem desperdício</li>
+          <li>✗ Quebra ordenação cronológica dentro do dia</li>
+          <li>✗ Mais scroll vertical</li>
+          <li>✗ Difícil para o cenário "tudo o que aconteceu"</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    if (window.lucide) lucide.createIcons();
+  </script>
+</body>
+</html>
