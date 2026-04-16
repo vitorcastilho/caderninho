@@ -78,6 +78,19 @@ export const recreateTransactionSnapshotSchema = z.object({
 
 export const transactionIdSchema = idSchema;
 
+export const listTransactionsFilterSchema = z.object({
+  types: z.array(z.enum(['expense', 'income', 'transfer'])).optional(),
+  categoryIds: z.array(idSchema).optional(),
+  paymentMethodIds: z.array(idSchema).optional(),
+  dateFrom: z.coerce.date().optional(),
+  dateTo: z.coerce.date().optional(),
+  search: z.string().max(200).optional(),
+  limit: z.number().int().positive().max(100).optional(),
+  offset: z.number().int().nonnegative().optional(),
+});
+
+export type ListTransactionsFilterInput = z.infer<typeof listTransactionsFilterSchema>;
+
 export const getImpactPreviewSchema = z.object({
   amountCents: positiveAmountCentsSchema,
   paymentMethodType: z.enum(['debit', 'credit', 'pix']),

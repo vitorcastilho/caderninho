@@ -1,4 +1,4 @@
-import { eq, and, desc, sql, gte, lt } from 'drizzle-orm';
+import { eq, and, or, desc, sql, gte, lte, lt, inArray, ilike, count } from 'drizzle-orm';
 
 import { db, type DbExecutor } from '@/server/infrastructure/database/client';
 import { transactions } from '@/server/infrastructure/database/schema';
@@ -6,6 +6,13 @@ import type {
   Transaction,
   TransactionRepository,
 } from '@/server/domain/transactions/repositories/transaction.repository';
+
+// Escapa wildcards LIKE/ILIKE (`\`, `%`, `_`) para que caracteres digitados pelo
+// usuário não sejam interpretados como coringas. PostgreSQL usa `\` como escape
+// padrão do LIKE, então este prefixo neutraliza a interpretação.
+export function escapeLikePattern(input: string): string {
+  return input.replace(/[\\%_]/g, (char) => `\\${char}`);
+}
 
 export class DrizzleTransactionRepository implements TransactionRepository {
   constructor(private readonly executor: DbExecutor = db) {}
@@ -70,6 +77,85 @@ export class DrizzleTransactionRepository implements TransactionRepository {
       .where(eq(transactions.organizationId, organizationId))
       .orderBy(desc(transactions.transactionDate));
     return results as Transaction[];
+  }
+
+  async findByOrganizationFiltered(
+    organizationId: string,
+    filters: {
+      types?: Array<'expense' | 'income' | 'transfer'>;
+      categoryIds?: string[];
+      paymentMethodIds?: string[];
+      dateFrom?: Date;
+      dateTo?: Date;
+      search?: string;
+      searchAmountCents?: number | null;
+    },
+    pagination: { limit: number; offset: number },
+  ): Promise<{ rows: Transaction[]; total: number }> {
+    const conditions = [eq(transactions.organizationId, organizationId)];
+
+    if (filters.types && filters.types.length > 0) {
+      conditions.push(inArray(transactions.type, filters.types));
+    }
+
+    if (filters.categoryIds && filters.categoryIds.length > 0) {
+      conditions.push(inArray(transactions.categoryId, filters.categoryIds));
+    }
+
+    if (filters.paymentMethodIds && filters.paymentMethodIds.length > 0) {
+      const paymentOr = or(
+        inArray(transactions.paymentMethodId, filters.paymentMethodIds),
+        inArray(transactions.sourceAccountId, filters.paymentMethodIds),
+        inArray(transactions.destinationAccountId, filters.paymentMethodIds),
+      );
+      if (paymentOr) conditions.push(paymentOr);
+    }
+
+    if (filters.dateFrom) {
+      conditions.push(gte(transactions.transactionDate, filters.dateFrom));
+    }
+
+    if (filters.dateTo) {
+      conditions.push(lte(transactions.transactionDate, filters.dateTo));
+    }
+
+    if (filters.search && filters.search.length > 0) {
+      // Escapar wildcards LIKE — ver `escapeLikePattern` acima.
+      const pattern = `%${escapeLikePattern(filters.search)}%`;
+      const searchClauses = [
+        ilike(transactions.establishment, pattern),
+        ilike(transactions.description, pattern),
+      ];
+      if (
+        typeof filters.searchAmountCents === 'number' &&
+        Number.isFinite(filters.searchAmountCents)
+      ) {
+        searchClauses.push(eq(transactions.amountCents, filters.searchAmountCents));
+      }
+      const searchOr = or(...searchClauses);
+      if (searchOr) conditions.push(searchOr);
+    }
+
+    const whereClause = and(...conditions);
+
+    const [rows, totalResult] = await Promise.all([
+      this.executor
+        .select()
+        .from(transactions)
+        .where(whereClause)
+        .orderBy(desc(transactions.transactionDate), desc(transactions.createdAt))
+        .limit(pagination.limit)
+        .offset(pagination.offset),
+      this.executor
+        .select({ value: count() })
+        .from(transactions)
+        .where(whereClause),
+    ]);
+
+    return {
+      rows: rows as Transaction[],
+      total: Number(totalResult[0]?.value ?? 0),
+    };
   }
 
   async findTopEstablishments(

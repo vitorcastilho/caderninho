@@ -53,6 +53,20 @@ export interface TransactionRepository {
 
   findByOrganization(organizationId: string): Promise<Transaction[]>;
 
+  findByOrganizationFiltered(
+    organizationId: string,
+    filters: {
+      types?: Array<'expense' | 'income' | 'transfer'>;
+      categoryIds?: string[];
+      paymentMethodIds?: string[];
+      dateFrom?: Date;
+      dateTo?: Date;
+      search?: string;
+      searchAmountCents?: number | null;
+    },
+    pagination: { limit: number; offset: number },
+  ): Promise<{ rows: Transaction[]; total: number }>;
+
   findTopEstablishments(
     subcategoryId: string,
     organizationId: string,

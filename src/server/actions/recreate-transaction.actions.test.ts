@@ -51,6 +51,7 @@ vi.mock('@/server/factories/transaction', () => ({
       update: vi.fn(),
       delete: vi.fn(),
       findByOrganization: vi.fn(),
+  findByOrganizationFiltered: vi.fn(),
       findTopEstablishments: vi.fn(),
       sumMonthlySpentByCategory: vi.fn(),
       getMonthlySpendingSummary: vi.fn(),

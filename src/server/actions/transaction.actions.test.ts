@@ -106,6 +106,10 @@ vi.mock('@/server/domain/transactions/use-cases/delete-transaction', () => ({
   deleteTransaction: vi.fn(),
 }));
 
+vi.mock('@/server/domain/transactions/use-cases/list-transactions', () => ({
+  listTransactions: vi.fn(),
+}));
+
 const { createIncome: mockedCreateIncome } = await import(
   '@/server/domain/transactions/use-cases/create-income'
 );
@@ -117,6 +121,9 @@ const { updateExpenseTransaction: mockedUpdate } = await import(
 );
 const { deleteTransaction: mockedDelete } = await import(
   '@/server/domain/transactions/use-cases/delete-transaction'
+);
+const { listTransactions: mockedListTransactions } = await import(
+  '@/server/domain/transactions/use-cases/list-transactions'
 );
 
 const {
@@ -520,6 +527,65 @@ describe('Transaction Actions', () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.code).toBe('NO_ACTIVE_ORGANIZATION');
+      }
+    });
+
+    it('deve aceitar chamada sem filtros (undefined → {})', async () => {
+      mockGetSession.mockResolvedValue(fakeSession);
+      vi.mocked(mockedListTransactions).mockResolvedValue({
+        success: true,
+        data: { rows: [], total: 0, hasMore: false },
+      });
+
+      const result = await listTransactionsAction(undefined);
+
+      expect(result.success).toBe(true);
+      expect(mockedListTransactions).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.objectContaining({
+          organizationId: 'org-123',
+          pagination: { limit: undefined, offset: undefined },
+        }),
+      );
+    });
+
+    it('deve propagar filtros validados para o use case', async () => {
+      mockGetSession.mockResolvedValue(fakeSession);
+      vi.mocked(mockedListTransactions).mockResolvedValue({
+        success: true,
+        data: { rows: [], total: 0, hasMore: false },
+      });
+
+      const result = await listTransactionsAction({
+        types: ['expense'],
+        categoryIds: ['550e8400-e29b-41d4-a716-446655440000'],
+        search: 'mercado',
+        limit: 20,
+        offset: 0,
+      });
+
+      expect(result.success).toBe(true);
+      expect(mockedListTransactions).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.objectContaining({
+          filters: expect.objectContaining({
+            types: ['expense'],
+            categoryIds: ['550e8400-e29b-41d4-a716-446655440000'],
+            search: 'mercado',
+          }),
+          pagination: { limit: 20, offset: 0 },
+        }),
+      );
+    });
+
+    it('deve rejeitar filtros inválidos', async () => {
+      mockGetSession.mockResolvedValue(fakeSession);
+
+      const result = await listTransactionsAction({ limit: 500 });
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('VALIDATION_ERROR');
       }
     });
   });

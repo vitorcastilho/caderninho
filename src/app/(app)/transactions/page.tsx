@@ -15,7 +15,7 @@ export default async function TransactionsPage() {
     creditCardsResult,
     incomeSourcesResult,
   ] = await Promise.all([
-    listTransactionsAction(undefined),
+    listTransactionsAction({}),
     listCategoriesAction(undefined),
     listSubcategoriesAction(undefined),
     listBankAccountsAction(undefined),
@@ -23,7 +23,9 @@ export default async function TransactionsPage() {
     listIncomeSourcesAction(undefined),
   ]);
 
-  const transactions = transactionsResult.success ? transactionsResult.data : [];
+  const initialTransactions = transactionsResult.success ? transactionsResult.data.rows : [];
+  const initialTotal = transactionsResult.success ? transactionsResult.data.total : 0;
+  const initialHasMore = transactionsResult.success ? transactionsResult.data.hasMore : false;
   const categories = categoriesResult.success ? categoriesResult.data : [];
   const subcategories = subcategoriesResult.success ? subcategoriesResult.data : [];
   const bankAccounts = bankAccountsResult.success ? bankAccountsResult.data : [];
@@ -32,7 +34,9 @@ export default async function TransactionsPage() {
 
   return (
     <TransactionList
-      initialTransactions={transactions}
+      initialTransactions={initialTransactions}
+      initialTotal={initialTotal}
+      initialHasMore={initialHasMore}
       categories={categories}
       subcategories={subcategories}
       bankAccounts={bankAccounts}
