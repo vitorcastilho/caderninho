@@ -1,6 +1,6 @@
 # Story 3.4b: Componentes DS para tela de transações
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -18,7 +18,7 @@ so that `/transactions` (Story 3.4c) e telas futuras (`/dashboard`, `/drill-down
 
 3. **Given** o DS deve oferecer cards de resumo do período **When** o dev importa `TransactionSummaryCards` de `@/client/components/ui/transaction-summary-cards` **Then** renderiza 3 cards lado a lado (`grid-cols-3`) — Saídas (`TrendingDown`, label `text-negative`, valor `text-foreground`), Entradas (`TrendingUp`, label `text-positive-text`, valor `text-positive-text`), Transferências (`ArrowLeftRight`, label `text-info-text`, valor `text-muted-foreground`) — cada um com `totalCents` formatado e `count` de transações **And** em mobile (< 768px) usa variante compacta (padding/fonte reduzidos, labels abreviados "Saídas"/"Entradas"/"Transf.", count "12 trans.").
 
-4. **Given** o DS deve oferecer uma barra de filtros **When** o dev importa `TransactionFiltersBar` de `@/client/components/ui/transaction-filters-bar` **Then** renderiza linha única com (a) busca expansível (`flex-1`, ícone `Search`, controlada via `value`/`onSearchChange`), (b) segmented control de tipo (Tudo/Saídas/Entradas/Transferências, ativo `bg-primary text-white`, em mobile usa labels abreviados quando definidos), (c) pílula clicável de mês (ícone `Calendar` + label formatado + `ChevronDown`, dispara `onMonthChange` ou abre popover interno), (d) botão "Filtros" com badge de `activeFiltersCount` (visual destaca quando count > 0 — `border-primary bg-primary-light text-primary`).
+4. **Given** o DS deve oferecer uma barra de filtros **When** o dev importa `TransactionFiltersBar` de `@/client/components/ui/transaction-filters-bar` **Then** renderiza linha única com (a) busca expansível (`flex-1`, ícone `Search`, controlada via `value`/`onSearchChange`), (b) segmented control de tipo (Tudo/Saídas/Entradas/Transferências, ativo `bg-primary text-white`, em mobile usa labels abreviados quando definidos), (c) pílula clicável de mês (ícone `Calendar` + label formatado + `ChevronDown`, dispara `onMonthClick: () => void` — consumer decide popover/toggle/select externo), (d) botão "Filtros" com badge de `activeFiltersCount` (visual destaca quando count > 0 — `border-primary bg-primary-light text-primary`).
 
 5. **Given** o DS deve oferecer um side sheet de filtros avançados **When** o dev importa `TransactionFiltersSheet` de `@/client/components/ui/transaction-filters-sheet` **Then** abre/fecha controlado via `open`/`onOpenChange`, lista categorias (com emoji) e métodos de pagamento (`BankLogo` + label) com `Checkbox` para multi-seleção, mantém **estado local** (cópia da seleção) que só é commitada via `onApply`, fechar sem aplicar **descarta** mudanças, botão "Limpar" zera apenas a seleção interna do sheet (não mexe em tipo/mês/busca externos), em mobile ocupa 100% da largura.
 
@@ -158,14 +158,15 @@ so that `/transactions` (Story 3.4c) e telas futuras (`/dashboard`, `/drill-down
       activeFiltersCount: number;
       onSearchChange: (value: string) => void;
       onTypeChange: (type: TransactionTypeFilter) => void;
-      onMonthChange: (month: MonthFilter) => void;
+      onMonthClick: () => void;
       onOpenAdvancedFilters: () => void;
+      searchPlaceholder?: string;
     }
     ```
   - [x] 5.2: Layout (spec 4.2) — `<div className="flex gap-2 items-center flex-wrap">` com 4 sub-blocos: busca (`flex-1`), segmented control de tipo (`shrink-0`), pílula de mês (`shrink-0`), botão "Filtros" com badge (`shrink-0`).
   - [x] 5.3: Busca — input controlado, ícone `Search` à esquerda, placeholder "Buscar por nome, valor ou data", `flex-1 bg-transparent text-sm outline-none`. Container `rounded-lg border border-border bg-card px-3 py-2`.
   - [x] 5.4: Segmented control de tipo — array `TYPE_OPTIONS` (constante interna) com ids/labels/mobileLabels. Renderizar 4 botões em container `inline-flex shrink-0 gap-0.5 rounded-lg border border-border bg-card p-[3px]`. Ativo: `bg-primary text-white`. Inativo: `text-muted-foreground hover:text-foreground`. Em mobile (`md:hidden`/`md:inline`) trocar label "Transferências" por "Transf.".
-  - [x] 5.5: Pílula de mês — `<button>` que dispara `onMonthChange` (callback decide se abre popover externo ou cycle). Helper interno `formatMonthLabel(month)`:
+  - [x] 5.5: Pílula de mês — `<button>` que dispara `onMonthClick` (sem payload; consumer decide se abre popover externo, select nativo, ou cycle). Helper interno `formatMonthLabel(month)`:
     - `month === 'all'` → "Todos os meses" ou "Tudo"
     - `{ year, month }` → formatar `MMM yyyy` em pt-BR via `Intl.DateTimeFormat('pt-BR', { month: 'short', year: 'numeric' })`
   - [x] 5.6: Botão "Filtros" — abre o sheet (chama `onOpenAdvancedFilters`), badge condicional quando `activeFiltersCount > 0`. Visual destaca com `border-primary bg-primary-light text-primary` quando ativo, `border-border bg-card` quando neutro.
@@ -174,15 +175,15 @@ so that `/transactions` (Story 3.4c) e telas futuras (`/dashboard`, `/drill-down
     - Render com busca vazia, type 'all', month 'all', count 0
     - `onSearchChange` dispara ao digitar
     - `onTypeChange` dispara ao clicar em cada opção do segmented
-    - `onMonthChange` dispara ao clicar na pílula (com payload — se pílula só abre popover externo, validar callback)
+    - `onMonthClick` dispara ao clicar na pílula (callback sem payload — consumer é responsável pelo seletor externo)
     - Botão "Filtros" mostra badge quando `activeFiltersCount > 0` e dispara `onOpenAdvancedFilters` ao clicar
     - Badge não aparece quando count = 0
-  - [x] 5.9: **Decisão sobre pílula de mês:** implementar como botão que dispara `onMonthChange` recebendo o novo valor (consumer controla o popover/select de seleção). Documentar que o consumer pode envolver com seu próprio `Popover`/`<select>` invisível. **NÃO** embutir popover dentro do componente nesta versão para manter simplicidade.
+  - [x] 5.9: **Decisão sobre pílula de mês:** implementar como botão que dispara `onMonthClick` (sem payload — consumer controla popover/select de seleção). Documentar que o consumer pode envolver com seu próprio `Popover`/`<select>` invisível. **NÃO** embutir popover dentro do componente nesta versão para manter simplicidade.
 
 ### Fase 6: Componente `TransactionFiltersSheet`
 
 - [x] Task 6 (AC: #5): Criar `src/client/components/ui/transaction-filters-sheet.tsx`
-  - [x] 6.1: Implementar props (spec seção 5.1) — categorias, paymentMethods, selecteds (Set), onApply, onClear, open/onOpenChange.
+  - [x] 6.1: Implementar props (spec seção 5.1) — categorias, paymentMethods, selecteds (Set), onApply, open/onOpenChange. (Nota: `onClear` mencionado na spec foi omitido — ver Task 6.7 para a decisão; "Limpar" é totalmente interno.)
   - [x] 6.2: Estrutura (spec 5.2) — usar `Sheet` + `SheetContent side="right"` (verificar API atual de `src/client/components/ui/sheet.tsx`), `w-full sm:max-w-[360px] p-6 flex flex-col`. Header "Filtros".
   - [x] 6.3: Estado interno (spec 5.3 — CRÍTICO) — usar `useState` com cópia da seleção inicial (`new Set(selectedCategoryIds)`). Toggle local atualiza essa cópia. **Reset** sincroniza com props quando `open` muda de false → true (`useEffect`):
     ```ts
@@ -245,7 +246,11 @@ so that `/transactions` (Story 3.4c) e telas futuras (`/dashboard`, `/drill-down
 
 ### Fase 9: Review Follow-ups (AI)
 
-<!-- Será preenchido pelo code review adversarial. Severidade MEDIUM/HIGH é blocking. -->
+<!-- Code review rodado em 2026-04-16. Sem HIGH/MEDIUM. LOWs abaixo → backlog, não-blocking. Doc stales #1, #2, #5 corrigidos nesta rodada. -->
+
+- [ ] [AI-Review][LOW] Adicionar suporte a teclado em `TransactionRow` — `role="button"`, `tabIndex` e `onKeyDown` (Enter/Space) quando `onClick` presente. Alinhado hoje com padrão existente de `TransactionListRow` (3.4), mas DS canônico deveria subir o bar. [`src/client/components/ui/transaction-row.tsx:87-96`]
+- [ ] [AI-Review][LOW] Converter `TransactionRowProps` em discriminated union para garantir que `type='transfer'` exige `transferEndpoints` (e `expense`/`income` exigem `primary`) em tempo de compilação. [`src/client/components/ui/transaction-row.tsx:16-30`]
+- [ ] [AI-Review][LOW] Remover `aria-label` dos `<input type="checkbox">` dentro de `<label>` em `TransactionFiltersSheet` — a `<label>` envolvente já provê nome acessível com emoji+nome. [`src/client/components/ui/transaction-filters-sheet.tsx:127-137`, `:170-180`]
 
 ## Dev Notes
 
@@ -394,7 +399,7 @@ claude-opus-4-7 (1M context)
 
 ### Debug Log References
 
-- Suite completa: `npx vitest run` → 136 arquivos, 1097 testes, 100% passando
+- Suite completa: `npx vitest run` → 136 arquivos, 1099 testes, 100% passando
 - Tipagem: `npx tsc --noEmit` → 0 erros
 - Lint: `npx eslint src --max-warnings=0` → 0 warnings (removido import órfão `Bus` em `design-system/page.tsx`)
 - Build: `npx next build` → sucesso, rotas `/design-system` e `/transactions` compilam
@@ -481,4 +486,5 @@ claude-opus-4-7 (1M context)
 
 ## Change Log
 
-- 2026-04-16 — Story 3.4b implementada: 4 componentes DS (`TransactionRow`, `TransactionSummaryCards`, `TransactionFiltersBar`, `TransactionFiltersSheet`) + tokens `--color-negative` e `--breakpoint-xs` + 3 seções novas em `/design-system`. Sem mudanças em `TransactionList.tsx` (escopo da 3.4c). Testes: 35 novos, suite 1097/1097 passando, tsc/eslint/build OK. Status: review.
+- 2026-04-16 — Story 3.4b implementada: 4 componentes DS (`TransactionRow`, `TransactionSummaryCards`, `TransactionFiltersBar`, `TransactionFiltersSheet`) + tokens `--color-negative` e `--breakpoint-xs` + 3 seções novas em `/design-system`. Sem mudanças em `TransactionList.tsx` (escopo da 3.4c). Testes: 37 novos, suite 1099/1099 passando, tsc/eslint/build OK. Status: review.
+- 2026-04-16 — Code review R1: sem HIGH/MEDIUM. 3 doc stales corrigidos (`onMonthChange` → `onMonthClick`, `onClear` removido da Task 6.1, count de testes 1097 → 1099). 3 LOWs registrados como backlog em "Fase 9: Review Follow-ups (AI)". Status: done.
