@@ -489,6 +489,8 @@ claude-opus-4-6[1m]
 
 ### Change Log
 
+- 2026-04-16 (smoke test fix): Seletor de mês exibia "Tudo" ao navegar via setas além dos últimos 12 meses. Causa: `monthOptions` não incluía o mês selecionado quando ele caía fora do range, então o `<select>` controlado fallback-ava para a primeira option visualmente. Fix: incluir dinamicamente o `filters.month` selecionado nas options (ordenadas desc) quando ele não está no range padrão. Novo teste em `TransactionListFilters.test.tsx`.
+
 - 2026-04-15 (R2): Addressed code review findings — 3 MEDIUMs resolved. Debounce agora depende de fields granulares (previne loadPage extra por keystroke); chips de filtro de método só listam contas/cartões ativos (mantendo lista completa para Row/EditExpenseSheet); busca textual escapa wildcards LIKE (`\`, `%`, `_`) no `findByOrganizationFiltered`. Novo helper `escapeLikePattern` exportado + testes.
 
 - 2026-04-15: Implementação completa da Story 3.4 — repositório com filtros, use case, schema, server action, refactor do componente em subcomponentes, scroll infinito, grouping por dia, filtros contextuais.

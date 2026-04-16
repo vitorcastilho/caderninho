@@ -73,9 +73,9 @@ function shiftMonth(month: MonthFilter, delta: number): MonthFilter {
   return { year, month: monthIdx + 1 };
 }
 
-function getLastNMonths(n: number): MonthFilter[] {
+function getLastNMonths(n: number): { year: number; month: number }[] {
   const now = new Date();
-  const result: MonthFilter[] = [];
+  const result: { year: number; month: number }[] = [];
   for (let i = 0; i < n; i++) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     result.push({ year: d.getFullYear(), month: d.getMonth() + 1 });
@@ -113,7 +113,25 @@ export function TransactionListFilters({
     filters.paymentMethodIds.size > 0 ||
     filters.month !== 'all';
 
-  const monthOptions: MonthFilter[] = ['all', ...getLastNMonths(12)] as MonthFilter[];
+  // Inclui o mês selecionado se ele cair fora dos últimos 12 meses (ex: usuário
+  // navegou via setas para um mês futuro ou anterior ao range padrão). Sem isso,
+  // o `<select>` exibiria a primeira option ("Tudo") quando o `value` não bate
+  // com nenhuma `<option>`, mesmo com o estado interno correto.
+  const baseMonths = getLastNMonths(12);
+  const selectedMonth = filters.month;
+  const concreteMonths: { year: number; month: number }[] = [...baseMonths];
+  if (
+    selectedMonth !== 'all' &&
+    !concreteMonths.some(
+      (m) => m.year === selectedMonth.year && m.month === selectedMonth.month,
+    )
+  ) {
+    concreteMonths.push(selectedMonth);
+    concreteMonths.sort(
+      (a, b) => b.year * 12 + b.month - (a.year * 12 + a.month),
+    );
+  }
+  const monthOptions: MonthFilter[] = ['all', ...concreteMonths];
 
   return (
     <div className="flex flex-col gap-3">

@@ -146,6 +146,23 @@ describe('TransactionListFilters', () => {
     expect(handlers.onClearAll).toHaveBeenCalled();
   });
 
+  it('inclui o mês selecionado nas options quando ele cai fora dos últimos 12 meses', () => {
+    // Cenário: usuário navegou via setas para um mês no futuro (ex: mês +1).
+    // Sem o fix, o `<select>` exibia "Tudo" porque o value não batia com nenhuma option.
+    const now = new Date();
+    const futureYear = now.getMonth() === 11 ? now.getFullYear() + 1 : now.getFullYear();
+    const futureMonth = now.getMonth() === 11 ? 1 : now.getMonth() + 2; // mês atual+1 (1-indexed)
+
+    renderFilters(buildFilters({ month: { year: futureYear, month: futureMonth } }));
+
+    const select = screen.getByLabelText('Selecionar mês') as HTMLSelectElement;
+    const expectedValue = `${futureYear}-${String(futureMonth).padStart(2, '0')}`;
+
+    expect(select.value).toBe(expectedValue);
+    const options = Array.from(select.options).map((o) => o.value);
+    expect(options).toContain(expectedValue);
+  });
+
   it('marca chip ativo com aria-pressed=true', () => {
     renderFilters(
       buildFilters({
