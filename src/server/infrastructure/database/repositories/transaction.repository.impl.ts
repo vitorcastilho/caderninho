@@ -1,4 +1,4 @@
-import { eq, and, or, desc, sql, gte, lte, lt, inArray, ilike, count } from 'drizzle-orm';
+import { eq, and, or, desc, sql, gte, lte, lt, inArray, ilike, count, type SQL } from 'drizzle-orm';
 
 import { db, type DbExecutor } from '@/server/infrastructure/database/client';
 import { transactions } from '@/server/infrastructure/database/schema';
@@ -12,6 +12,70 @@ import type {
 // padrão do LIKE, então este prefixo neutraliza a interpretação.
 export function escapeLikePattern(input: string): string {
   return input.replace(/[\\%_]/g, (char) => `\\${char}`);
+}
+
+interface TransactionFilterSet {
+  types?: Array<'expense' | 'income' | 'transfer'>;
+  categoryIds?: string[];
+  paymentMethodIds?: string[];
+  dateFrom?: Date;
+  dateTo?: Date;
+  search?: string;
+  searchAmountCents?: number | null;
+}
+
+// Compartilhado entre `findByOrganizationFiltered` e `aggregateByTypeForOrganizationFiltered`
+// para garantir que listagem e summary considerem exatamente o mesmo conjunto de
+// transações dado o mesmo input de filtros.
+function buildFilterConditions(
+  organizationId: string,
+  filters: TransactionFilterSet,
+): SQL[] {
+  const conditions: SQL[] = [eq(transactions.organizationId, organizationId)];
+
+  if (filters.types && filters.types.length > 0) {
+    conditions.push(inArray(transactions.type, filters.types));
+  }
+
+  if (filters.categoryIds && filters.categoryIds.length > 0) {
+    conditions.push(inArray(transactions.categoryId, filters.categoryIds));
+  }
+
+  if (filters.paymentMethodIds && filters.paymentMethodIds.length > 0) {
+    const paymentOr = or(
+      inArray(transactions.paymentMethodId, filters.paymentMethodIds),
+      inArray(transactions.sourceAccountId, filters.paymentMethodIds),
+      inArray(transactions.destinationAccountId, filters.paymentMethodIds),
+    );
+    if (paymentOr) conditions.push(paymentOr);
+  }
+
+  if (filters.dateFrom) {
+    conditions.push(gte(transactions.transactionDate, filters.dateFrom));
+  }
+
+  if (filters.dateTo) {
+    conditions.push(lte(transactions.transactionDate, filters.dateTo));
+  }
+
+  if (filters.search && filters.search.length > 0) {
+    // Escapar wildcards LIKE — ver `escapeLikePattern` acima.
+    const pattern = `%${escapeLikePattern(filters.search)}%`;
+    const searchClauses = [
+      ilike(transactions.establishment, pattern),
+      ilike(transactions.description, pattern),
+    ];
+    if (
+      typeof filters.searchAmountCents === 'number' &&
+      Number.isFinite(filters.searchAmountCents)
+    ) {
+      searchClauses.push(eq(transactions.amountCents, filters.searchAmountCents));
+    }
+    const searchOr = or(...searchClauses);
+    if (searchOr) conditions.push(searchOr);
+  }
+
+  return conditions;
 }
 
 export class DrizzleTransactionRepository implements TransactionRepository {
@@ -81,62 +145,10 @@ export class DrizzleTransactionRepository implements TransactionRepository {
 
   async findByOrganizationFiltered(
     organizationId: string,
-    filters: {
-      types?: Array<'expense' | 'income' | 'transfer'>;
-      categoryIds?: string[];
-      paymentMethodIds?: string[];
-      dateFrom?: Date;
-      dateTo?: Date;
-      search?: string;
-      searchAmountCents?: number | null;
-    },
+    filters: TransactionFilterSet,
     pagination: { limit: number; offset: number },
   ): Promise<{ rows: Transaction[]; total: number }> {
-    const conditions = [eq(transactions.organizationId, organizationId)];
-
-    if (filters.types && filters.types.length > 0) {
-      conditions.push(inArray(transactions.type, filters.types));
-    }
-
-    if (filters.categoryIds && filters.categoryIds.length > 0) {
-      conditions.push(inArray(transactions.categoryId, filters.categoryIds));
-    }
-
-    if (filters.paymentMethodIds && filters.paymentMethodIds.length > 0) {
-      const paymentOr = or(
-        inArray(transactions.paymentMethodId, filters.paymentMethodIds),
-        inArray(transactions.sourceAccountId, filters.paymentMethodIds),
-        inArray(transactions.destinationAccountId, filters.paymentMethodIds),
-      );
-      if (paymentOr) conditions.push(paymentOr);
-    }
-
-    if (filters.dateFrom) {
-      conditions.push(gte(transactions.transactionDate, filters.dateFrom));
-    }
-
-    if (filters.dateTo) {
-      conditions.push(lte(transactions.transactionDate, filters.dateTo));
-    }
-
-    if (filters.search && filters.search.length > 0) {
-      // Escapar wildcards LIKE — ver `escapeLikePattern` acima.
-      const pattern = `%${escapeLikePattern(filters.search)}%`;
-      const searchClauses = [
-        ilike(transactions.establishment, pattern),
-        ilike(transactions.description, pattern),
-      ];
-      if (
-        typeof filters.searchAmountCents === 'number' &&
-        Number.isFinite(filters.searchAmountCents)
-      ) {
-        searchClauses.push(eq(transactions.amountCents, filters.searchAmountCents));
-      }
-      const searchOr = or(...searchClauses);
-      if (searchOr) conditions.push(searchOr);
-    }
-
-    const whereClause = and(...conditions);
+    const whereClause = and(...buildFilterConditions(organizationId, filters));
 
     const [rows, totalResult] = await Promise.all([
       this.executor
@@ -156,6 +168,37 @@ export class DrizzleTransactionRepository implements TransactionRepository {
       rows: rows as Transaction[],
       total: Number(totalResult[0]?.value ?? 0),
     };
+  }
+
+  async aggregateByTypeForOrganizationFiltered(
+    organizationId: string,
+    filters: TransactionFilterSet,
+  ): Promise<
+    Array<{ type: 'expense' | 'income' | 'transfer'; totalCents: number; count: number }>
+  > {
+    const whereClause = and(...buildFilterConditions(organizationId, filters));
+
+    const results = await this.executor
+      .select({
+        type: transactions.type,
+        totalCents: sql<number>`COALESCE(SUM(${transactions.amountCents}), 0)`.as(
+          'total_cents',
+        ),
+        count: count(),
+      })
+      .from(transactions)
+      .where(whereClause)
+      .groupBy(transactions.type);
+
+    return results
+      .filter((r): r is typeof r & { type: 'expense' | 'income' | 'transfer' } =>
+        r.type === 'expense' || r.type === 'income' || r.type === 'transfer',
+      )
+      .map((r) => ({
+        type: r.type,
+        totalCents: Number(r.totalCents),
+        count: Number(r.count),
+      }));
   }
 
   async findTopEstablishments(

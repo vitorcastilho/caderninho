@@ -2,23 +2,42 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { Receipt } from 'lucide-react';
+import { Receipt, X } from 'lucide-react';
 
 import { Breadcrumb } from '@/client/components/ui/breadcrumb';
 import { PageHeader } from '@/client/components/ui/page-header';
 import { EmptyState } from '@/client/components/ui/empty-state';
 import { Skeleton } from '@/client/components/ui/skeleton';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/client/components/ui/sheet';
+import { cn } from '@/client/utils/utils';
 import { formatCurrency } from '@/client/utils/format-currency';
-import { listTransactionsAction } from '@/server/actions/transaction.actions';
+import {
+  getTransactionPeriodSummaryAction,
+  listTransactionsAction,
+} from '@/server/actions/transaction.actions';
+import type { TransactionPeriodSummary } from '@/server/domain/transactions/use-cases/get-transaction-period-summary';
+import {
+  TransactionRow,
+  type TransactionRowIcon,
+} from '@/client/components/ui/transaction-row';
+import { TransactionSummaryCards } from '@/client/components/ui/transaction-summary-cards';
+import {
+  TransactionFiltersBar,
+  formatMonthLabel,
+  type MonthFilter,
+  type TransactionTypeFilter,
+} from '@/client/components/ui/transaction-filters-bar';
+import {
+  TransactionFiltersSheet,
+  type TransactionFilterPaymentMethod,
+} from '@/client/components/ui/transaction-filters-sheet';
 import { EditExpenseSheet } from './EditExpenseSheet';
 import { ConfirmDeleteTransactionDialog } from './ConfirmDeleteTransactionDialog';
-import { TransactionListRow, resolveTransactionLabel } from './TransactionListRow';
-import {
-  TransactionListFilters,
-  type MonthFilter,
-  type TransactionListFiltersState,
-  type TypeFilter,
-} from './TransactionListFilters';
 
 export interface TransactionDTO {
   id: string;
@@ -47,6 +66,7 @@ export interface CategoryOption {
   name: string;
   classificationId: string;
   budgetMaxCents?: number | null;
+  emoji?: string;
 }
 
 export interface SubcategoryOption {
@@ -77,10 +97,19 @@ export interface IncomeSourceOption {
   name: string;
 }
 
+interface TransactionListFiltersState {
+  search: string;
+  type: TransactionTypeFilter;
+  categoryIds: Set<string>;
+  paymentMethodIds: Set<string>;
+  month: MonthFilter;
+}
+
 interface TransactionListProps {
   initialTransactions: TransactionDTO[];
   initialTotal: number;
   initialHasMore: boolean;
+  initialSummary?: TransactionPeriodSummary;
   categories: CategoryOption[];
   subcategories: SubcategoryOption[];
   bankAccounts: BankAccountOption[];
@@ -90,6 +119,12 @@ interface TransactionListProps {
 
 const PAGE_SIZE = 50;
 const SEARCH_DEBOUNCE_MS = 300;
+
+const EMPTY_SUMMARY: TransactionPeriodSummary = {
+  expense: { totalCents: 0, count: 0 },
+  income: { totalCents: 0, count: 0 },
+  transfer: { totalCents: 0, count: 0 },
+};
 
 const dayFormatter = new Intl.DateTimeFormat('pt-BR', {
   day: '2-digit',
@@ -133,12 +168,168 @@ function monthToDateRange(month: MonthFilter): { dateFrom?: Date; dateTo?: Date 
   return { dateFrom, dateTo };
 }
 
+function getLastNMonths(n: number): { year: number; month: number }[] {
+  const now = new Date();
+  const result: { year: number; month: number }[] = [];
+  for (let i = 0; i < n; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    result.push({ year: d.getFullYear(), month: d.getMonth() + 1 });
+  }
+  return result;
+}
+
+function monthKey(month: MonthFilter): string {
+  if (month === 'all') return 'all';
+  return `${month.year}-${String(month.month).padStart(2, '0')}`;
+}
+
+// Helpers de transformação TransactionDTO → props de TransactionRow.
+// Exportados para reuso em testes.
+
+export function buildIcon(
+  tx: TransactionDTO,
+  categories: CategoryOption[],
+): TransactionRowIcon {
+  if (tx.type === 'income') return { kind: 'lucide', name: 'ArrowDownLeft' };
+  if (tx.type === 'transfer') return { kind: 'lucide', name: 'ArrowLeftRight' };
+  const cat = categories.find((c) => c.id === tx.categoryId);
+  if (cat?.emoji) return { kind: 'emoji', value: cat.emoji };
+  const letter = cat?.name?.charAt(0).toUpperCase();
+  return { kind: 'letter', value: letter && letter.length > 0 ? letter : '?' };
+}
+
+export function buildMethod(
+  tx: TransactionDTO,
+  bankAccounts: BankAccountOption[],
+  creditCards: CreditCardOption[],
+): string | undefined {
+  if (tx.type !== 'expense') return undefined;
+  if (tx.paymentMethodType === 'credit') {
+    const card = creditCards.find((c) => c.id === tx.paymentMethodId);
+    return card ? `${card.brand} ${card.name}` : 'Crédito';
+  }
+  if (tx.paymentMethodType === 'debit' || tx.paymentMethodType === 'pix') {
+    const acc = bankAccounts.find((a) => a.id === tx.paymentMethodId);
+    const prefix = tx.paymentMethodType === 'pix' ? 'PIX' : 'Débito';
+    return acc ? `${prefix} · ${acc.bank} · ${acc.name}` : prefix;
+  }
+  return undefined;
+}
+
+export function buildPrimary(
+  tx: TransactionDTO,
+  categories: CategoryOption[],
+  incomeSources: IncomeSourceOption[],
+): string | undefined {
+  if (tx.type === 'expense') {
+    const category = categories.find((c) => c.id === tx.categoryId);
+    return tx.establishment || category?.name || 'Gasto';
+  }
+  if (tx.type === 'income') {
+    const source = incomeSources.find((s) => s.id === tx.incomeSourceId);
+    return source?.name || 'Receita';
+  }
+  // transfer: o componente DS renderiza os bancos como primary
+  return undefined;
+}
+
+export function buildSecondary(
+  tx: TransactionDTO,
+  categories: CategoryOption[],
+  bankAccounts: BankAccountOption[],
+): string {
+  if (tx.type === 'expense') {
+    const category = categories.find((c) => c.id === tx.categoryId);
+    return category?.name && tx.establishment ? category.name : '';
+  }
+  if (tx.type === 'income') {
+    const account = bankAccounts.find((a) => a.id === tx.destinationAccountId);
+    return account ? `→ ${account.bank} · ${account.name}` : 'Receita';
+  }
+  if (tx.type === 'transfer') {
+    const src = bankAccounts.find((a) => a.id === tx.sourceAccountId);
+    const dst = bankAccounts.find((a) => a.id === tx.destinationAccountId);
+    const srcLabel = src ? src.name : '?';
+    const dstLabel = dst ? dst.name : '?';
+    return `${srcLabel} → ${dstLabel}`;
+  }
+  return '';
+}
+
+export function buildTransferEndpoints(
+  tx: TransactionDTO,
+  bankAccounts: BankAccountOption[],
+): { source: { bank: string }; destination: { bank: string } } | undefined {
+  if (tx.type !== 'transfer') return undefined;
+  const src = bankAccounts.find((a) => a.id === tx.sourceAccountId);
+  const dst = bankAccounts.find((a) => a.id === tx.destinationAccountId);
+  return {
+    source: { bank: src?.bank ?? '?' },
+    destination: { bank: dst?.bank ?? '?' },
+  };
+}
+
+function buildPaymentMethodOptions(
+  activeBankAccounts: BankAccountOption[],
+  activeCreditCards: CreditCardOption[],
+): TransactionFilterPaymentMethod[] {
+  return [
+    ...activeBankAccounts.map(
+      (a): TransactionFilterPaymentMethod => ({
+        id: a.id,
+        label: a.name,
+        bankName: a.bank,
+      }),
+    ),
+    ...activeCreditCards.map(
+      (c): TransactionFilterPaymentMethod => ({
+        id: c.id,
+        label: c.name,
+        cardBrand: c.brand,
+      }),
+    ),
+  ];
+}
+
+export function resolveTransactionLabel(
+  tx: TransactionDTO,
+  categories: CategoryOption[],
+  bankAccounts: BankAccountOption[],
+  incomeSources: IncomeSourceOption[],
+): { primary: string; secondary: string } {
+  if (tx.type === 'expense') {
+    const category = categories.find((c) => c.id === tx.categoryId);
+    const primary = tx.establishment || category?.name || 'Gasto';
+    const secondary = category?.name && tx.establishment ? category.name : '';
+    return { primary, secondary };
+  }
+  if (tx.type === 'income') {
+    const source = incomeSources.find((s) => s.id === tx.incomeSourceId);
+    const account = bankAccounts.find((a) => a.id === tx.destinationAccountId);
+    return {
+      primary: source?.name || 'Receita',
+      secondary: account ? `→ ${account.bank} - ${account.name}` : '',
+    };
+  }
+  if (tx.type === 'transfer') {
+    const source = bankAccounts.find((a) => a.id === tx.sourceAccountId);
+    const dest = bankAccounts.find((a) => a.id === tx.destinationAccountId);
+    const sourceLabel = source ? `${source.bank} - ${source.name}` : '?';
+    const destLabel = dest ? `${dest.bank} - ${dest.name}` : '?';
+    return {
+      primary: 'Transferência',
+      secondary: `${sourceLabel} → ${destLabel}`,
+    };
+  }
+  return { primary: tx.type, secondary: '' };
+}
+
 function filtersToActionInput(
   filters: TransactionListFiltersState,
   categories: CategoryOption[],
   bankAccounts: BankAccountOption[],
   creditCards: CreditCardOption[],
-  pagination: { limit: number; offset: number },
+  pagination?: { limit: number; offset: number },
 ) {
   const types: Array<'expense' | 'income' | 'transfer'> | undefined =
     filters.type === 'all' ? undefined : [filters.type];
@@ -187,8 +378,7 @@ function filtersToActionInput(
     dateFrom,
     dateTo,
     search: rawSearch.length > 0 ? rawSearch : undefined,
-    limit: pagination.limit,
-    offset: pagination.offset,
+    ...(pagination ? { limit: pagination.limit, offset: pagination.offset } : {}),
   };
 }
 
@@ -207,16 +397,16 @@ export function TransactionList({
   initialTransactions,
   initialTotal,
   initialHasMore,
+  initialSummary,
   categories,
   subcategories,
   bankAccounts,
   creditCards,
   incomeSources,
 }: TransactionListProps) {
-  // Chips de método só oferecem contas/cartões ativos (Task 5.5). Historicamente,
-  // transações podem estar ligadas a contas arquivadas — `bankAccounts`/`creditCards`
-  // completos continuam sendo passados para Row/EditExpenseSheet/LabelResolver para
-  // que a resolução de rótulo e a edição funcionem em registros antigos.
+  // Métodos de pagamento só listam contas/cartões ativos no filtro — histórico
+  // de transações pode referenciar contas arquivadas, por isso as listas completas
+  // continuam chegando para resolver labels via `buildMethod` e no EditExpenseSheet.
   const activeBankAccounts = useMemo(
     () => bankAccounts.filter((a) => a.status === 'active'),
     [bankAccounts],
@@ -226,6 +416,11 @@ export function TransactionList({
     [creditCards],
   );
 
+  const paymentMethodOptions = useMemo(
+    () => buildPaymentMethodOptions(activeBankAccounts, activeCreditCards),
+    [activeBankAccounts, activeCreditCards],
+  );
+
   const [filters, setFilters] = useState<TransactionListFiltersState>(buildInitialFilters);
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
@@ -233,12 +428,23 @@ export function TransactionList({
   const [total, setTotal] = useState<number>(initialTotal);
   const [hasMore, setHasMore] = useState<boolean>(initialHasMore);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [summary, setSummary] = useState<TransactionPeriodSummary | undefined>(
+    initialSummary,
+  );
+  const [isSummaryLoading, setIsSummaryLoading] = useState<boolean>(false);
+
+  const [filtersSheetOpen, setFiltersSheetOpen] = useState(false);
+  const [monthSheetOpen, setMonthSheetOpen] = useState(false);
 
   useEffect(() => {
     setRows(initialTransactions);
     setTotal(initialTotal);
     setHasMore(initialHasMore);
   }, [initialTransactions, initialTotal, initialHasMore]);
+
+  useEffect(() => {
+    setSummary(initialSummary);
+  }, [initialSummary]);
 
   // Debounce da busca
   useEffect(() => {
@@ -285,21 +491,38 @@ export function TransactionList({
     async (offset: number, currentFilters: TransactionListFiltersState) => {
       const myRequestId = ++requestIdRef.current;
       setIsLoading(true);
+      const shouldRefetchSummary = offset === 0;
+      if (shouldRefetchSummary) setIsSummaryLoading(true);
       try {
-        const input = filtersToActionInput(
+        const listInput = filtersToActionInput(
           currentFilters,
           categories,
           bankAccounts,
           creditCards,
           { limit: PAGE_SIZE, offset },
         );
-        const result = await listTransactionsAction(input);
+        const summaryInput = shouldRefetchSummary
+          ? filtersToActionInput(currentFilters, categories, bankAccounts, creditCards)
+          : null;
+
+        const [listResult, summaryResult] = await Promise.all([
+          listTransactionsAction(listInput),
+          shouldRefetchSummary
+            ? getTransactionPeriodSummaryAction(summaryInput ?? {})
+            : Promise.resolve(null),
+        ]);
+
         if (myRequestId !== requestIdRef.current) return;
-        if (!isActionSuccess<{ rows: TransactionDTO[]; total: number; hasMore: boolean }>(result)) {
+
+        if (
+          !isActionSuccess<{ rows: TransactionDTO[]; total: number; hasMore: boolean }>(
+            listResult,
+          )
+        ) {
           toast.error('Erro ao carregar transações.');
           return;
         }
-        const data = result.data;
+        const data = listResult.data;
         setTotal(data.total);
         setHasMore(data.hasMore);
         if (offset === 0) {
@@ -307,9 +530,17 @@ export function TransactionList({
         } else {
           setRows((prev) => [...prev, ...data.rows]);
         }
+
+        if (shouldRefetchSummary) {
+          if (summaryResult && isActionSuccess<TransactionPeriodSummary>(summaryResult)) {
+            setSummary(summaryResult.data);
+          }
+          // Se o summary falhar, mantemos o último conhecido para não flickar os cards.
+        }
       } finally {
         if (myRequestId === requestIdRef.current) {
           setIsLoading(false);
+          if (shouldRefetchSummary) setIsSummaryLoading(false);
         }
       }
     },
@@ -359,10 +590,31 @@ export function TransactionList({
     loadPage(0, buildEffectiveFilters());
   }, [loadPage, buildEffectiveFilters]);
 
-  const handleClearFilters = useCallback(() => {
+  const handleClearAllFilters = useCallback(() => {
     setFilters(buildInitialFilters());
     setDebouncedSearch('');
   }, []);
+
+  const clearAdvancedFilters = useCallback(() => {
+    setFilters((prev) => ({
+      ...prev,
+      categoryIds: new Set<string>(),
+      paymentMethodIds: new Set<string>(),
+    }));
+  }, []);
+
+  const monthOptions = useMemo<MonthFilter[]>(() => {
+    const baseMonths = getLastNMonths(12);
+    const selected = filterMonth;
+    if (
+      selected !== 'all' &&
+      !baseMonths.some((m) => m.year === selected.year && m.month === selected.month)
+    ) {
+      baseMonths.push(selected);
+      baseMonths.sort((a, b) => b.year * 12 + b.month - (a.year * 12 + a.month));
+    }
+    return ['all', ...baseMonths];
+  }, [filterMonth]);
 
   // Grouping por dia (client-side sobre rows já ordenadas DESC)
   const groups = useMemo(() => {
@@ -386,6 +638,51 @@ export function TransactionList({
   }, [rows]);
 
   const isListEmpty = rows.length === 0;
+  const summaryData = summary ?? EMPTY_SUMMARY;
+  const activeFiltersCount = filterCategoryIds.size + filterPaymentMethodIds.size;
+  const hasAdvancedFilters =
+    filterCategoryIds.size > 0 || filterPaymentMethodIds.size > 0;
+
+  const activeCategoryChips = useMemo(() => {
+    const chips: Array<{ id: string; label: string; emoji?: string }> = [];
+    for (const id of filterCategoryIds) {
+      const cat = categories.find((c) => c.id === id);
+      if (cat) chips.push({ id, label: cat.name, emoji: cat.emoji });
+    }
+    return chips;
+  }, [filterCategoryIds, categories]);
+
+  const activePaymentChips = useMemo(() => {
+    const chips: Array<{ id: string; label: string }> = [];
+    for (const id of filterPaymentMethodIds) {
+      const bank = activeBankAccounts.find((b) => b.id === id);
+      if (bank) {
+        chips.push({ id, label: `${bank.bank} · ${bank.name}` });
+        continue;
+      }
+      const card = activeCreditCards.find((c) => c.id === id);
+      if (card) {
+        chips.push({ id, label: `${card.brand} ${card.name}` });
+      }
+    }
+    return chips;
+  }, [filterPaymentMethodIds, activeBankAccounts, activeCreditCards]);
+
+  const removeCategory = (id: string) => {
+    setFilters((prev) => {
+      const next = new Set(prev.categoryIds);
+      next.delete(id);
+      return { ...prev, categoryIds: next };
+    });
+  };
+
+  const removePaymentMethod = (id: string) => {
+    setFilters((prev) => {
+      const next = new Set(prev.paymentMethodIds);
+      next.delete(id);
+      return { ...prev, paymentMethodIds: next };
+    });
+  };
 
   return (
     <div className="col-span-full flex flex-col gap-4">
@@ -394,32 +691,51 @@ export function TransactionList({
         <PageHeader title="Transações" />
       </div>
 
-      <TransactionListFilters
-        filters={filters}
-        categories={categories}
-        bankAccounts={activeBankAccounts}
-        creditCards={activeCreditCards}
-        onSearchChange={(value) => setFilters((prev) => ({ ...prev, search: value }))}
-        onTypeChange={(type: TypeFilter) => setFilters((prev) => ({ ...prev, type }))}
-        onToggleCategory={(id) =>
-          setFilters((prev) => {
-            const next = new Set(prev.categoryIds);
-            if (next.has(id)) next.delete(id);
-            else next.add(id);
-            return { ...prev, categoryIds: next };
-          })
-        }
-        onTogglePaymentMethod={(id) =>
-          setFilters((prev) => {
-            const next = new Set(prev.paymentMethodIds);
-            if (next.has(id)) next.delete(id);
-            else next.add(id);
-            return { ...prev, paymentMethodIds: next };
-          })
-        }
-        onMonthChange={(month) => setFilters((prev) => ({ ...prev, month }))}
-        onClearAll={handleClearFilters}
+      <TransactionSummaryCards
+        expense={summaryData.expense}
+        income={summaryData.income}
+        transfer={summaryData.transfer}
+        isLoading={isSummaryLoading && summary === undefined}
       />
+
+      <TransactionFiltersBar
+        search={filters.search}
+        type={filters.type}
+        month={filters.month}
+        activeFiltersCount={activeFiltersCount}
+        onSearchChange={(value) =>
+          setFilters((prev) => ({ ...prev, search: value }))
+        }
+        onTypeChange={(type) => setFilters((prev) => ({ ...prev, type }))}
+        onMonthClick={() => setMonthSheetOpen(true)}
+        onOpenAdvancedFilters={() => setFiltersSheetOpen(true)}
+      />
+
+      {hasAdvancedFilters && (
+        <div className="flex flex-wrap items-center gap-1.5">
+          {activeCategoryChips.map((chip) => (
+            <ActiveFilterChip
+              key={`cat-${chip.id}`}
+              label={chip.emoji ? `${chip.emoji} ${chip.label}` : chip.label}
+              onRemove={() => removeCategory(chip.id)}
+            />
+          ))}
+          {activePaymentChips.map((chip) => (
+            <ActiveFilterChip
+              key={`pm-${chip.id}`}
+              label={chip.label}
+              onRemove={() => removePaymentMethod(chip.id)}
+            />
+          ))}
+          <button
+            type="button"
+            onClick={clearAdvancedFilters}
+            className="ml-2 text-xs italic text-muted-foreground hover:text-foreground"
+          >
+            Limpar tudo
+          </button>
+        </div>
+      )}
 
       {isListEmpty && !isLoading ? (
         hasAnyActiveFilter ? (
@@ -428,7 +744,7 @@ export function TransactionList({
             title="Nenhuma transação encontrada"
             description="Tente ajustar ou limpar os filtros ativos."
             actionLabel="Limpar filtros"
-            onAction={handleClearFilters}
+            onAction={handleClearAllFilters}
           />
         ) : (
           <EmptyState
@@ -445,18 +761,24 @@ export function TransactionList({
                 {group.label}
               </h2>
               <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
-                {group.rows.map((tx) => (
-                  <TransactionListRow
-                    key={tx.id}
-                    transaction={tx}
-                    categories={categories}
-                    bankAccounts={bankAccounts}
-                    creditCards={creditCards}
-                    incomeSources={incomeSources}
-                    onClick={handleRowClick}
-                    onDeleteClick={setDeletingTransaction}
-                  />
-                ))}
+                {group.rows.map((tx) => {
+                  const txType = tx.type as 'expense' | 'income' | 'transfer';
+                  return (
+                    <TransactionRow
+                      key={tx.id}
+                      type={txType}
+                      primary={buildPrimary(tx, categories, incomeSources)}
+                      secondary={buildSecondary(tx, categories, bankAccounts)}
+                      amountCents={tx.amountCents}
+                      method={buildMethod(tx, bankAccounts, creditCards)}
+                      icon={buildIcon(tx, categories)}
+                      transferEndpoints={buildTransferEndpoints(tx, bankAccounts)}
+                      onClick={() => handleRowClick(tx)}
+                      onAction={() => setDeletingTransaction(tx)}
+                      actionLabel="Excluir transação"
+                    />
+                  );
+                })}
               </ul>
             </section>
           ))}
@@ -477,6 +799,55 @@ export function TransactionList({
           <div ref={sentinelRef} aria-hidden="true" />
         </div>
       )}
+
+      <TransactionFiltersSheet
+        open={filtersSheetOpen}
+        onOpenChange={setFiltersSheetOpen}
+        categories={categories.map((c) => ({ id: c.id, name: c.name, emoji: c.emoji }))}
+        paymentMethods={paymentMethodOptions}
+        selectedCategoryIds={filters.categoryIds}
+        selectedPaymentMethodIds={filters.paymentMethodIds}
+        onApply={({ categoryIds, paymentMethodIds }) =>
+          setFilters((prev) => ({ ...prev, categoryIds, paymentMethodIds }))
+        }
+      />
+
+      <Sheet open={monthSheetOpen} onOpenChange={setMonthSheetOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-[320px] flex flex-col">
+          <SheetHeader>
+            <SheetTitle>Selecionar mês</SheetTitle>
+          </SheetHeader>
+          <div className="flex-1 overflow-y-auto px-4 pb-4">
+            <ul className="flex flex-col gap-0.5">
+              {monthOptions.map((opt) => {
+                const key = monthKey(opt);
+                const activeKey = monthKey(filters.month);
+                const active = key === activeKey;
+                return (
+                  <li key={key}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFilters((prev) => ({ ...prev, month: opt }));
+                        setMonthSheetOpen(false);
+                      }}
+                      className={cn(
+                        'w-full rounded-md px-3 py-2 text-left text-sm transition-colors',
+                        active
+                          ? 'bg-primary text-white font-semibold'
+                          : 'hover:bg-muted/50 text-foreground',
+                      )}
+                      aria-pressed={active}
+                    >
+                      {formatMonthLabel(opt)}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       <EditExpenseSheet
         open={!!editingTransaction}
@@ -509,5 +880,27 @@ export function TransactionList({
         onDeleted={refresh}
       />
     </div>
+  );
+}
+
+function ActiveFilterChip({
+  label,
+  onRemove,
+}: {
+  label: string;
+  onRemove: () => void;
+}) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-badge bg-primary-light px-2.5 py-1 text-xs font-medium text-primary">
+      {label}
+      <button
+        type="button"
+        onClick={onRemove}
+        className="inline-flex size-4 items-center justify-center rounded-full hover:bg-primary/10"
+        aria-label={`Remover filtro ${label}`}
+      >
+        <X className="size-3" />
+      </button>
+    </span>
   );
 }

@@ -15,6 +15,7 @@ import {
   getImpactPreviewSchema,
   getMonthlySpendingSummarySchema,
   listTransactionsFilterSchema,
+  transactionPeriodSummaryFilterSchema,
 } from '@/shared/schemas/transaction.schema';
 import { idSchema } from '@/shared/schemas/common.schema';
 import { transactionDeps } from '@/server/factories/transaction';
@@ -28,6 +29,7 @@ import { getSuggestedEstablishments } from '@/server/domain/transactions/use-cas
 import { getImpactPreview } from '@/server/domain/transactions/use-cases/get-impact-preview';
 import { createGetMonthlySpendingSummary } from '@/server/domain/transactions/use-cases/get-monthly-spending-summary';
 import { listTransactions } from '@/server/domain/transactions/use-cases/list-transactions';
+import { getTransactionPeriodSummary } from '@/server/domain/transactions/use-cases/get-transaction-period-summary';
 import { autoCreateEstablishment } from '@/server/domain/establishments/use-cases/auto-create-establishment';
 
 function getOrganizationId(session: { session: { activeOrganizationId?: string | null } }) {
@@ -165,6 +167,25 @@ export const listTransactionsAction = withAuth(async (session, input: unknown) =
       organizationId,
       filters,
       pagination: { limit, offset },
+    },
+  );
+});
+
+export const getTransactionPeriodSummaryAction = withAuth(async (session, input: unknown) => {
+  const organizationId = getOrganizationId(session);
+  if (!organizationId) {
+    return err('NO_ACTIVE_ORGANIZATION', 'Nenhuma organização ativa. Selecione uma organização.');
+  }
+
+  const normalizedInput = input ?? {};
+  const validation = validateInput(transactionPeriodSummaryFilterSchema, normalizedInput);
+  if (!validation.success) return validation;
+
+  return getTransactionPeriodSummary(
+    { repository: transactionDeps.repository },
+    {
+      organizationId,
+      filters: validation.data,
     },
   );
 });

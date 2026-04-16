@@ -91,6 +91,16 @@ export const listTransactionsFilterSchema = z.object({
 
 export type ListTransactionsFilterInput = z.infer<typeof listTransactionsFilterSchema>;
 
+// O summary compartilha os mesmos filtros da listagem, mas não faz paginação —
+// omitimos `limit`/`offset` para recusar inputs que sugiram expectativa de página.
+export const transactionPeriodSummaryFilterSchema = listTransactionsFilterSchema.omit({
+  limit: true,
+  offset: true,
+});
+export type TransactionPeriodSummaryFilterInput = z.infer<
+  typeof transactionPeriodSummaryFilterSchema
+>;
+
 export const getImpactPreviewSchema = z.object({
   amountCents: positiveAmountCentsSchema,
   paymentMethodType: z.enum(['debit', 'credit', 'pix']),

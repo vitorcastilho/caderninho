@@ -67,6 +67,21 @@ export interface TransactionRepository {
     pagination: { limit: number; offset: number },
   ): Promise<{ rows: Transaction[]; total: number }>;
 
+  aggregateByTypeForOrganizationFiltered(
+    organizationId: string,
+    filters: {
+      types?: Array<'expense' | 'income' | 'transfer'>;
+      categoryIds?: string[];
+      paymentMethodIds?: string[];
+      dateFrom?: Date;
+      dateTo?: Date;
+      search?: string;
+      searchAmountCents?: number | null;
+    },
+  ): Promise<
+    Array<{ type: 'expense' | 'income' | 'transfer'; totalCents: number; count: number }>
+  >;
+
   findTopEstablishments(
     subcategoryId: string,
     organizationId: string,

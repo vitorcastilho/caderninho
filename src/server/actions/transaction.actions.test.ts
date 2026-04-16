@@ -110,6 +110,10 @@ vi.mock('@/server/domain/transactions/use-cases/list-transactions', () => ({
   listTransactions: vi.fn(),
 }));
 
+vi.mock('@/server/domain/transactions/use-cases/get-transaction-period-summary', () => ({
+  getTransactionPeriodSummary: vi.fn(),
+}));
+
 const { createIncome: mockedCreateIncome } = await import(
   '@/server/domain/transactions/use-cases/create-income'
 );
@@ -125,6 +129,9 @@ const { deleteTransaction: mockedDelete } = await import(
 const { listTransactions: mockedListTransactions } = await import(
   '@/server/domain/transactions/use-cases/list-transactions'
 );
+const { getTransactionPeriodSummary: mockedGetSummary } = await import(
+  '@/server/domain/transactions/use-cases/get-transaction-period-summary'
+);
 
 const {
   createTransactionAction,
@@ -133,6 +140,7 @@ const {
   updateExpenseTransactionAction,
   deleteTransactionAction,
   listTransactionsAction,
+  getTransactionPeriodSummaryAction,
   getSuggestedEstablishmentsAction,
 } = await import('./transaction.actions');
 
@@ -586,6 +594,112 @@ describe('Transaction Actions', () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.code).toBe('VALIDATION_ERROR');
+      }
+    });
+  });
+
+  describe('getTransactionPeriodSummaryAction', () => {
+    const zeroSummary = {
+      expense: { totalCents: 0, count: 0 },
+      income: { totalCents: 0, count: 0 },
+      transfer: { totalCents: 0, count: 0 },
+    };
+
+    it('deve exigir autenticacao', async () => {
+      mockGetSession.mockResolvedValue(null);
+
+      const result = await getTransactionPeriodSummaryAction({});
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('UNAUTHORIZED');
+      }
+    });
+
+    it('deve retornar erro sem organizacao ativa', async () => {
+      mockGetSession.mockResolvedValue({
+        ...fakeSession,
+        session: { ...fakeSession.session, activeOrganizationId: null },
+      });
+
+      const result = await getTransactionPeriodSummaryAction({});
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('NO_ACTIVE_ORGANIZATION');
+      }
+    });
+
+    it('deve aceitar chamada sem filtros e propagar ao use case', async () => {
+      mockGetSession.mockResolvedValue(fakeSession);
+      vi.mocked(mockedGetSummary).mockResolvedValue({
+        success: true,
+        data: zeroSummary,
+      });
+
+      const result = await getTransactionPeriodSummaryAction({});
+
+      expect(result.success).toBe(true);
+      expect(mockedGetSummary).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.objectContaining({
+          organizationId: 'org-123',
+          filters: expect.any(Object),
+        }),
+      );
+    });
+
+    it('deve propagar filtros válidos', async () => {
+      mockGetSession.mockResolvedValue(fakeSession);
+      vi.mocked(mockedGetSummary).mockResolvedValue({
+        success: true,
+        data: zeroSummary,
+      });
+
+      await getTransactionPeriodSummaryAction({
+        types: ['expense'],
+        categoryIds: ['550e8400-e29b-41d4-a716-446655440000'],
+        search: 'mercado',
+      });
+
+      expect(mockedGetSummary).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.objectContaining({
+          organizationId: 'org-123',
+          filters: expect.objectContaining({
+            types: ['expense'],
+            categoryIds: ['550e8400-e29b-41d4-a716-446655440000'],
+            search: 'mercado',
+          }),
+        }),
+      );
+    });
+
+    it('deve rejeitar filtros inválidos (categoryIds com string inválida)', async () => {
+      mockGetSession.mockResolvedValue(fakeSession);
+
+      const result = await getTransactionPeriodSummaryAction({
+        categoryIds: ['not-a-uuid'],
+      });
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('VALIDATION_ERROR');
+      }
+    });
+
+    it('deve propagar erro do use case', async () => {
+      mockGetSession.mockResolvedValue(fakeSession);
+      vi.mocked(mockedGetSummary).mockResolvedValue({
+        success: false,
+        error: { code: 'REPOSITORY_ERROR', message: 'boom' },
+      });
+
+      const result = await getTransactionPeriodSummaryAction({});
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('REPOSITORY_ERROR');
       }
     });
   });
