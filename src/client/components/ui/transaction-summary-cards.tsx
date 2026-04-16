@@ -12,6 +12,15 @@ export interface TransactionSummaryCardsProps {
   income: { totalCents: number; count: number };
   transfer: { totalCents: number; count: number };
   isLoading?: boolean;
+  /**
+   * When true, always render the compact (mobile) variant, regardless of viewport.
+   * When false/undefined (default), the component uses responsive classes to
+   * switch between compact (below md) and spacious (md and up) automatically.
+   *
+   * Useful for demos (e.g., /design-system) where the component is placed in a
+   * narrow container while the viewport is wide.
+   */
+  compact?: boolean;
 }
 
 type CardKey = 'expense' | 'income' | 'transfer';
@@ -65,17 +74,21 @@ export function TransactionSummaryCards({
   income,
   transfer,
   isLoading,
+  compact,
 }: TransactionSummaryCardsProps) {
+  const gridClass = cn(
+    'grid grid-cols-3',
+    compact ? 'gap-2' : 'gap-2 md:gap-3',
+  );
+  const cardHeightClass = compact ? 'h-[78px]' : 'h-[78px] md:h-[92px]';
+
   if (isLoading) {
     return (
-      <div
-        className="grid grid-cols-3 gap-2 md:gap-3"
-        data-slot="transaction-summary-cards-loading"
-      >
+      <div className={gridClass} data-slot="transaction-summary-cards-loading">
         {CARD_ORDER.map((cfg) => (
           <Skeleton
             key={cfg.key}
-            className="h-[78px] md:h-[92px] rounded-[10px]"
+            className={cn(cardHeightClass, 'rounded-[10px]')}
           />
         ))}
       </div>
@@ -89,10 +102,7 @@ export function TransactionSummaryCards({
   };
 
   return (
-    <div
-      className="grid grid-cols-3 gap-2 md:gap-3"
-      data-slot="transaction-summary-cards"
-    >
+    <div className={gridClass} data-slot="transaction-summary-cards">
       {CARD_ORDER.map((cfg) => {
         const data = values[cfg.key];
         const Icon = cfg.icon;
@@ -101,32 +111,57 @@ export function TransactionSummaryCards({
             key={cfg.key}
             data-slot="transaction-summary-card"
             data-key={cfg.key}
-            className="rounded-[10px] border border-border bg-card p-2.5 md:p-4"
+            className={cn(
+              'rounded-[10px] border border-border bg-card min-w-0',
+              compact ? 'p-2.5' : 'p-2.5 md:p-4',
+            )}
           >
             <div
               className={cn(
-                'flex items-center gap-1 md:gap-1.5 font-semibold uppercase tracking-wider',
-                'text-[9px] md:text-[11px]',
+                'flex items-center font-semibold uppercase tracking-wider',
+                compact
+                  ? 'text-[9px] gap-1'
+                  : 'text-[9px] md:text-[11px] gap-1 md:gap-1.5',
                 cfg.labelClass,
               )}
             >
-              <Icon className="size-2.5 md:size-3" aria-hidden />
-              <span className="hidden md:inline">{cfg.labelDesktop}</span>
-              <span className="md:hidden">{cfg.labelMobile}</span>
+              <Icon
+                className={cn(compact ? 'size-2.5' : 'size-2.5 md:size-3')}
+                aria-hidden
+              />
+              {compact ? (
+                <span>{cfg.labelMobile}</span>
+              ) : (
+                <>
+                  <span className="hidden md:inline">{cfg.labelDesktop}</span>
+                  <span className="md:hidden">{cfg.labelMobile}</span>
+                </>
+              )}
             </div>
             <div
               className={cn(
-                'font-bold tabular-nums mt-1 md:mt-1.5',
-                'text-sm md:text-xl',
+                'font-bold tabular-nums whitespace-nowrap truncate',
+                compact ? 'text-sm mt-1' : 'text-sm md:text-xl mt-1 md:mt-1.5',
                 cfg.valueClass,
               )}
             >
               {formatCurrency(data.totalCents)}
             </div>
-            <div className="text-[10px] md:text-[11px] text-muted-foreground mt-0.5">
+            <div
+              className={cn(
+                'text-muted-foreground mt-0.5',
+                compact ? 'text-[10px]' : 'text-[10px] md:text-[11px]',
+              )}
+            >
               {data.count}{' '}
-              <span className="hidden md:inline">{cfg.countLabelDesktop}</span>
-              <span className="md:hidden">{cfg.countLabelMobile}</span>
+              {compact ? (
+                <span>{cfg.countLabelMobile}</span>
+              ) : (
+                <>
+                  <span className="hidden md:inline">{cfg.countLabelDesktop}</span>
+                  <span className="md:hidden">{cfg.countLabelMobile}</span>
+                </>
+              )}
             </div>
           </div>
         );

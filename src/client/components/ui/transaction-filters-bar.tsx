@@ -62,7 +62,7 @@ export function TransactionFiltersBar({
       className="flex gap-2 items-center flex-wrap"
       data-slot="transaction-filters-bar"
     >
-      <div className="flex-1 min-w-[180px] flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2">
+      <div className="flex-1 min-w-0 flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2">
         <Search className="size-4 text-muted-foreground shrink-0" aria-hidden />
         <input
           type="search"

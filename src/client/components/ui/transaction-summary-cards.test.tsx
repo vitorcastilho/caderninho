@@ -67,6 +67,34 @@ describe('TransactionSummaryCards', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('compact variant renders only abbreviated labels (no desktop strings)', () => {
+    render(<TransactionSummaryCards {...sample} compact />);
+
+    expect(screen.getByText('Saídas')).toBeInTheDocument();
+    expect(screen.getByText('Entradas')).toBeInTheDocument();
+    expect(screen.getByText('Transf.')).toBeInTheDocument();
+
+    // Desktop labels must NOT be rendered when compact is forced
+    expect(screen.queryByText('Saídas no mês')).not.toBeInTheDocument();
+    expect(screen.queryByText('Entradas no mês')).not.toBeInTheDocument();
+    expect(screen.queryByText('Transferências')).not.toBeInTheDocument();
+    expect(screen.queryByText('transações')).not.toBeInTheDocument();
+    expect(screen.queryByText('movimentações')).not.toBeInTheDocument();
+  });
+
+  it('compact skeleton variant does not apply md: height class', () => {
+    const { container } = render(
+      <TransactionSummaryCards {...sample} compact isLoading />,
+    );
+    const skeletons = container.querySelectorAll(
+      '[data-slot="transaction-summary-cards-loading"] > *',
+    );
+    expect(skeletons).toHaveLength(3);
+    skeletons.forEach((s) => {
+      expect(s.className).not.toContain('md:h-[92px]');
+    });
+  });
+
   it('applies correct label color classes per card', () => {
     const { container } = render(<TransactionSummaryCards {...sample} />);
 

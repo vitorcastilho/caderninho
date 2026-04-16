@@ -1937,12 +1937,15 @@ function TransactionSummaryCardsSection() {
               expense={{ totalCents: 124700, count: 12 }}
               income={{ totalCents: 650000, count: 2 }}
               transfer={{ totalCents: 48303, count: 3 }}
+              compact
             />
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            A variante mobile usa classes Tailwind responsivas (sem media-query JS) —
-            labels abreviados (<code>Saídas</code>, <code>Entradas</code>, <code>Transf.</code>),
-            padding e fonte reduzidos. Redimensione a janela para ver a troca.
+            Variante compacta — labels abreviados (<code>Saídas</code>, <code>Entradas</code>,{' '}
+            <code>Transf.</code>), padding e fonte reduzidos. Em produção, a troca acontece
+            automaticamente via classes Tailwind responsivas (<code>md:*</code>) conforme o
+            viewport — aqui forçamos via prop <code>compact</code> porque o demo fica num
+            container estreito dentro de um viewport desktop.
           </p>
         </div>
 
@@ -1971,60 +1974,140 @@ function TransactionSummaryCardsSection() {
   )
 }
 
+const FILTERS_DEMO_CATEGORIES = [
+  { id: 'cat-1', name: 'Alimentação', emoji: '🍔' },
+  { id: 'cat-2', name: 'Moradia', emoji: '🏠' },
+  { id: 'cat-3', name: 'Transporte', emoji: '🚗' },
+  { id: 'cat-4', name: 'Lazer', emoji: '🎮' },
+]
+
+const FILTERS_DEMO_PAYMENT_METHODS = [
+  { id: 'pm-1', label: 'Inter · Corrente', bankName: 'Inter' },
+  { id: 'pm-2', label: 'Master Inter', cardBrand: 'mastercard' },
+  { id: 'pm-3', label: 'Nubank · Crédito', cardBrand: 'mastercard' },
+]
+
+function ActiveFilterChip({
+  children,
+  onRemove,
+}: {
+  children: React.ReactNode
+  onRemove: () => void
+}) {
+  return (
+    <span className="inline-flex items-center gap-1 bg-primary-light text-primary px-2.5 py-1 rounded-full text-xs font-medium">
+      <span className="flex items-center gap-1">{children}</span>
+      <button
+        type="button"
+        onClick={onRemove}
+        className="ml-0.5 rounded-full hover:bg-primary/10 p-0.5"
+        aria-label="Remover filtro"
+      >
+        <X className="size-3" />
+      </button>
+    </span>
+  )
+}
+
 function TransactionFiltersSection() {
   const [search, setSearch] = useState('')
   const [type, setType] = useState<TransactionTypeFilter>('all')
   const [month, setMonth] = useState<MonthFilter>({ year: 2026, month: 4 })
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<Set<string>>(
-    new Set(['cat-1']),
+    new Set(['cat-1', 'cat-3']),
   )
   const [selectedPaymentMethodIds, setSelectedPaymentMethodIds] = useState<Set<string>>(
-    new Set(),
+    new Set(['pm-2']),
   )
   const [sheetOpen, setSheetOpen] = useState(false)
 
   const activeCount = selectedCategoryIds.size + selectedPaymentMethodIds.size
+
+  const removeCategory = (id: string) => {
+    const next = new Set(selectedCategoryIds)
+    next.delete(id)
+    setSelectedCategoryIds(next)
+  }
+  const removePaymentMethod = (id: string) => {
+    const next = new Set(selectedPaymentMethodIds)
+    next.delete(id)
+    setSelectedPaymentMethodIds(next)
+  }
+  const clearAllAdvanced = () => {
+    setSelectedCategoryIds(new Set())
+    setSelectedPaymentMethodIds(new Set())
+  }
 
   return (
     <Section id="transaction-filters" title="TransactionFiltersBar + Sheet (tela /transactions)">
       <div className="space-y-6">
         <div>
           <h3 className="mb-2 text-sm font-medium">Barra de filtros (interativa)</h3>
-          <div className="max-w-3xl">
-            <TransactionFiltersBar
-              search={search}
-              type={type}
-              month={month}
-              activeFiltersCount={activeCount}
-              onSearchChange={setSearch}
-              onTypeChange={setType}
-              onMonthClick={() =>
-                setMonth(month === 'all' ? { year: 2026, month: 4 } : 'all')
-              }
-              onOpenAdvancedFilters={() => setSheetOpen(true)}
-            />
-          </div>
+          <TransactionFiltersBar
+            search={search}
+            type={type}
+            month={month}
+            activeFiltersCount={activeCount}
+            onSearchChange={setSearch}
+            onTypeChange={setType}
+            onMonthClick={() =>
+              setMonth(month === 'all' ? { year: 2026, month: 4 } : 'all')
+            }
+            onOpenAdvancedFilters={() => setSheetOpen(true)}
+          />
+
+          {activeCount > 0 && (
+            <div className="flex flex-wrap gap-1.5 items-center mt-3">
+              {Array.from(selectedCategoryIds).map((catId) => {
+                const cat = FILTERS_DEMO_CATEGORIES.find((c) => c.id === catId)
+                if (!cat) return null
+                return (
+                  <ActiveFilterChip
+                    key={catId}
+                    onRemove={() => removeCategory(catId)}
+                  >
+                    <span>{cat.emoji}</span>
+                    <span>{cat.name}</span>
+                  </ActiveFilterChip>
+                )
+              })}
+              {Array.from(selectedPaymentMethodIds).map((pmId) => {
+                const pm = FILTERS_DEMO_PAYMENT_METHODS.find((p) => p.id === pmId)
+                if (!pm) return null
+                return (
+                  <ActiveFilterChip
+                    key={pmId}
+                    onRemove={() => removePaymentMethod(pmId)}
+                  >
+                    {pm.label}
+                  </ActiveFilterChip>
+                )
+              })}
+              <button
+                type="button"
+                onClick={clearAllAdvanced}
+                className="text-xs text-muted-foreground italic ml-2 hover:text-foreground"
+              >
+                Limpar tudo
+              </button>
+            </div>
+          )}
+
           <p className="mt-3 text-xs text-muted-foreground">
-            Busca expansível (<code>flex-1</code>), segmented control (Tudo/Saídas/Entradas/Transf.),
-            pílula de mês (callback controlado — consumer decide popover ou toggle) e botão Filtros
-            com badge. Clique em Filtros para abrir o sheet.
+            Busca expansível (<code>flex-1 min-w-0</code> — cresce para preencher todo o
+            espaço sobrando), segmented control (Tudo/Saídas/Entradas/Transf.), pílula de
+            mês (callback controlado — consumer decide popover ou toggle) e botão Filtros
+            com badge. Chips de filtros ativos ficam <strong>fora</strong> da barra
+            (renderizados pelo consumer) — padrão da spec (seção 4.4). Clique em Filtros
+            para abrir o sheet e alterar a seleção.
           </p>
         </div>
 
         <TransactionFiltersSheet
           open={sheetOpen}
           onOpenChange={setSheetOpen}
-          categories={[
-            { id: 'cat-1', name: 'Alimentação', emoji: '🍔' },
-            { id: 'cat-2', name: 'Moradia', emoji: '🏠' },
-            { id: 'cat-3', name: 'Transporte', emoji: '🚗' },
-            { id: 'cat-4', name: 'Lazer', emoji: '🎮' },
-          ]}
-          paymentMethods={[
-            { id: 'pm-1', label: 'Inter · Corrente', bankName: 'Inter' },
-            { id: 'pm-2', label: 'Master Inter', cardBrand: 'mastercard' },
-            { id: 'pm-3', label: 'Nubank · Crédito', cardBrand: 'mastercard' },
-          ]}
+          categories={FILTERS_DEMO_CATEGORIES}
+          paymentMethods={FILTERS_DEMO_PAYMENT_METHODS}
           selectedCategoryIds={selectedCategoryIds}
           selectedPaymentMethodIds={selectedPaymentMethodIds}
           onApply={(sel) => {
@@ -2044,6 +2127,19 @@ function TransactionFiltersSection() {
   onMonthClick={openMonthPopover}
   onOpenAdvancedFilters={() => setSheetOpen(true)}
 />
+
+{/* Chips de filtros ativos — renderizados pelo consumer */}
+{activeCount > 0 && (
+  <div className="flex flex-wrap gap-1.5 items-center mt-3">
+    {Array.from(selectedCategoryIds).map(id => (
+      <Chip key={id} onRemove={() => removeCategory(id)}>
+        {cat.emoji} {cat.name}
+      </Chip>
+    ))}
+    {/* ... métodos ... */}
+    <button onClick={clearAllAdvanced}>Limpar tudo</button>
+  </div>
+)}
 
 <TransactionFiltersSheet
   open={sheetOpen}
