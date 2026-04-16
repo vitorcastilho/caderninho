@@ -46,9 +46,11 @@ function resolveLabel(
   if (tx.type === 'transfer') {
     const source = bankAccounts.find((a) => a.id === tx.sourceAccountId);
     const dest = bankAccounts.find((a) => a.id === tx.destinationAccountId);
+    const sourceLabel = source ? `${source.bank} - ${source.name}` : '?';
+    const destLabel = dest ? `${dest.bank} - ${dest.name}` : '?';
     return {
       primary: 'Transferência',
-      secondary: `${source?.name || '?'} → ${dest?.name || '?'}`,
+      secondary: `${sourceLabel} → ${destLabel}`,
     };
   }
   return { primary: tx.type, secondary: '' };
