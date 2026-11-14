@@ -18,6 +18,7 @@ export default async function TransactionsPage() {
 
   const [
     transactionsResult,
+    anyTransactionResult,
     summaryResult,
     categoriesResult,
     subcategoriesResult,
@@ -26,6 +27,9 @@ export default async function TransactionsPage() {
     incomeSourcesResult,
   ] = await Promise.all([
     listTransactionsAction(monthRange),
+    // Só para saber se a organização tem alguma transação (qualquer mês):
+    // define o empty state de primeiro uso.
+    listTransactionsAction({ limit: 1 }),
     getTransactionPeriodSummaryAction(monthRange),
     listCategoriesAction(undefined),
     listSubcategoriesAction(undefined),
@@ -37,6 +41,9 @@ export default async function TransactionsPage() {
   const initialTransactions = transactionsResult.success ? transactionsResult.data.rows : [];
   const initialTotal = transactionsResult.success ? transactionsResult.data.total : 0;
   const initialHasMore = transactionsResult.success ? transactionsResult.data.hasMore : false;
+  const hasAnyTransactions = anyTransactionResult.success
+    ? anyTransactionResult.data.total > 0
+    : true;
   const initialSummary = summaryResult.success ? summaryResult.data : undefined;
   const categories = categoriesResult.success ? categoriesResult.data : [];
   const subcategories = subcategoriesResult.success ? subcategoriesResult.data : [];
@@ -51,6 +58,7 @@ export default async function TransactionsPage() {
       initialHasMore={initialHasMore}
       initialSummary={initialSummary}
       initialMonth={initialMonth}
+      hasAnyTransactions={hasAnyTransactions}
       categories={categories}
       subcategories={subcategories}
       bankAccounts={bankAccounts}

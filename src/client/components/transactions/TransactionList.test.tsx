@@ -115,6 +115,7 @@ function renderList(
       initialHasMore={props.initialHasMore ?? false}
       initialSummary={props.initialSummary}
       initialMonth={props.initialMonth ?? 'all'}
+      hasAnyTransactions={props.hasAnyTransactions ?? true}
       categories={props.categories ?? categories}
       subcategories={props.subcategories ?? subcategories}
       bankAccounts={props.bankAccounts ?? bankAccounts}
@@ -484,6 +485,35 @@ describe('TransactionList', () => {
       expect(
         buildDeleteLabel(transfer as never, categories, bankAccounts, incomeSources),
       ).toMatch(/— Transferência Corrente → \?/);
+    });
+  });
+
+  describe('Story 3.4d', () => {
+    it('busca envia o texto cru: não transforma nome de conta em filtro de método', async () => {
+      const user = userEvent.setup();
+      renderList({
+        initialTransactions: [makeTx('tx-1', '2026-04-10T12:00:00Z')],
+        initialTotal: 1,
+      });
+
+      await user.type(screen.getByLabelText('Buscar transações'), 'nubank');
+      await waitFor(() =>
+        expect(mockListAction).toHaveBeenCalledWith(expect.objectContaining({ search: 'nubank' })),
+      );
+      const input = mockListAction.mock.calls.at(-1)![0] as Record<string, unknown>;
+      expect(input.paymentMethodIds).toBeUndefined();
+      expect(input.categoryIds).toBeUndefined();
+    });
+
+    it('usuário sem nenhuma transação vê "Nenhuma transação registrada ainda" mesmo com o mês corrente selecionado', () => {
+      renderList({ initialMonth: { year: 2026, month: 11 }, hasAnyTransactions: false });
+      expect(screen.getByText('Nenhuma transação registrada ainda')).toBeInTheDocument();
+      expect(screen.queryByText('Nenhuma transação encontrada')).not.toBeInTheDocument();
+    });
+
+    it('com transações em outros meses, mês vazio mostra o empty state de filtro', () => {
+      renderList({ initialMonth: { year: 2026, month: 11 }, hasAnyTransactions: true });
+      expect(screen.getByText('Nenhuma transação encontrada')).toBeInTheDocument();
     });
   });
 });

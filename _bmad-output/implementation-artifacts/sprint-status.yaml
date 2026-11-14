@@ -90,6 +90,9 @@ development_status:
   3-4-listagem-e-historico-de-transacoes: done
   3-4b-componentes-ds-transacoes: done
   3-4c-refatoracao-tela-transacoes: done
+  3-4d-busca-por-nomes-relacionados-e-empty-state: review
+  3-4e-subcategorias-sugeridas-e-criacao-inline: backlog
+  3-4f-ajustes-mobile-a11y-e-sidebar: backlog
   3-5-reclassificacao-retroativa-de-categorias: backlog
   3-6-acompanhamento-de-orcamento-por-categoria: backlog
   epic-3-retrospective: optional
