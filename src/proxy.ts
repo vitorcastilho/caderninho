@@ -7,9 +7,43 @@ import { logger } from "@/server/infrastructure/logging/logger";
 const PUBLIC_PATHS = ["/login", "/register", "/api/auth"];
 const AUTH_PATHS = ["/api/auth"];
 
+// Limites por IP, por janela de 1 minuto, separados por tipo de requisição.
+// - auth: rígido (força bruta em login/registro)
+// - action: server actions (POST com header `next-action`)
+// - default: navegação (páginas e payloads RSC)
+// - prefetch: cota própria e alta — a sidebar dispara um prefetch por link
+//   visível e, somado à navegação, esgotava o antigo limite de 30 req/min
+//   (Story 1.11). Não fica ilimitado porque o header pode ser forjado.
 const AUTH_RATE_LIMIT = 10;
-const DEFAULT_RATE_LIMIT = 30;
+const ACTION_RATE_LIMIT = 120;
+const DEFAULT_RATE_LIMIT = 300;
+const PREFETCH_RATE_LIMIT = 600;
 const RATE_WINDOW_MS = 60_000;
+
+type RateLimitBucket = "auth" | "action" | "prefetch" | "default";
+
+function isPrefetch(request: NextRequest): boolean {
+  const h = request.headers;
+  return (
+    h.get("next-router-prefetch") === "1" ||
+    h.get("purpose") === "prefetch" ||
+    (h.get("sec-purpose") ?? "").includes("prefetch")
+  );
+}
+
+function getBucket(request: NextRequest, pathname: string): RateLimitBucket {
+  if (AUTH_PATHS.some((path) => pathname.startsWith(path))) return "auth";
+  if (request.method === "POST" && request.headers.has("next-action")) return "action";
+  if (request.method === "GET" && isPrefetch(request)) return "prefetch";
+  return "default";
+}
+
+const LIMIT_BY_BUCKET: Record<RateLimitBucket, number> = {
+  auth: AUTH_RATE_LIMIT,
+  action: ACTION_RATE_LIMIT,
+  prefetch: PREFETCH_RATE_LIMIT,
+  default: DEFAULT_RATE_LIMIT,
+};
 
 function getClientIp(request: NextRequest): string {
   const ip =
@@ -32,11 +66,12 @@ export function proxy(request: NextRequest) {
 
   // Rate limiting — antes de qualquer outra verificacao
   const ip = getClientIp(request);
-  const isAuthRoute = AUTH_PATHS.some((path) => pathname.startsWith(path));
-  const limit = isAuthRoute ? AUTH_RATE_LIMIT : DEFAULT_RATE_LIMIT;
-  const rateLimitKey = `${ip}:${isAuthRoute ? "auth" : "default"}`;
-
-  const { success, retryAfterMs } = rateLimit(rateLimitKey, limit, RATE_WINDOW_MS);
+  const bucket = getBucket(request, pathname);
+  const { success, retryAfterMs } = rateLimit(
+    `${ip}:${bucket}`,
+    LIMIT_BY_BUCKET[bucket],
+    RATE_WINDOW_MS,
+  );
 
   if (!success) {
     return new NextResponse("Too Many Requests", {
