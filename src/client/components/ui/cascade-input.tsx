@@ -76,6 +76,12 @@ interface CascadeInputProps {
   onConfirm: (data: CascadeInputData) => void;
   onCancel: () => void;
   onSubcategorySelect?: (subcategoryId: string) => void;
+  /**
+   * Cria uma subcategoria na categoria selecionada sem sair do registro
+   * (Story 3.4e). O consumer persiste, acrescenta a nova à lista `subcategories`
+   * e devolve a criada (ou `null` em erro). Sem este callback, a opção não aparece.
+   */
+  onCreateSubcategory?: (input: { categoryId: string; name: string }) => Promise<Subcategory | null>;
   onRequestImpact?: (data: {
     amountCents: number;
     paymentMethodId: string;
@@ -99,6 +105,7 @@ export function CascadeInput({
   onConfirm,
   onCancel,
   onSubcategorySelect,
+  onCreateSubcategory,
   onRequestImpact,
   className,
 }: CascadeInputProps) {
@@ -113,6 +120,9 @@ export function CascadeInput({
   const [showCustomEstablishment, setShowCustomEstablishment] = useState(false);
   const [paymentMethodId, setPaymentMethodId] = useState(defaultPaymentMethodId ?? '');
   const [installments, setInstallments] = useState(0);
+  const [showNewSubcategory, setShowNewSubcategory] = useState(false);
+  const [newSubcategoryName, setNewSubcategoryName] = useState('');
+  const [isCreatingSubcategory, setIsCreatingSubcategory] = useState(false);
 
   // ── Derived ──
   const selectedClassification = classifications.find((c) => c.id === classificationId);
@@ -148,6 +158,8 @@ export function CascadeInput({
   }, []);
 
   const handleSelectClassification = useCallback((id: string) => {
+    setShowNewSubcategory(false);
+    setNewSubcategoryName('');
     setClassificationId(id);
     setCategoryId('');
     setSubcategoryId('');
@@ -156,6 +168,8 @@ export function CascadeInput({
   }, []);
 
   const handleSelectCategory = useCallback((id: string) => {
+    setShowNewSubcategory(false);
+    setNewSubcategoryName('');
     setCategoryId(id);
     setSubcategoryId('');
     setEstablishment('');
@@ -179,6 +193,22 @@ export function CascadeInput({
       setCurrentStep(4);
     }
   }, [isMobile, onSubcategorySelect]);
+
+  const handleCreateSubcategory = useCallback(async () => {
+    const name = newSubcategoryName.trim();
+    if (!onCreateSubcategory || !categoryId || !name || isCreatingSubcategory) return;
+    setIsCreatingSubcategory(true);
+    try {
+      const created = await onCreateSubcategory({ categoryId, name });
+      if (created) {
+        setShowNewSubcategory(false);
+        setNewSubcategoryName('');
+        handleSelectSubcategory(created);
+      }
+    } finally {
+      setIsCreatingSubcategory(false);
+    }
+  }, [onCreateSubcategory, categoryId, newSubcategoryName, isCreatingSubcategory, handleSelectSubcategory]);
 
   const handleSelectEstablishment = useCallback((name: string) => {
     setEstablishment(name);
@@ -331,6 +361,48 @@ export function CascadeInput({
       return <>✓ Confirmar {installments}x {formatCurrency(Math.ceil(valueCents / installments))}</>;
     }
     return '✓ Confirmar';
+  };
+
+  const renderNewSubcategory = (padding: string) => {
+    if (!onCreateSubcategory) return null;
+    return (
+      <div className={cn('pt-2', padding)}>
+        {!showNewSubcategory ? (
+          <button
+            type="button"
+            onClick={() => setShowNewSubcategory(true)}
+            className="rounded-xl border border-indigo-100 px-3 py-2 text-xs font-medium text-indigo-600 transition-colors hover:bg-indigo-50"
+          >
+            + Nova subcategoria
+          </button>
+        ) : (
+          <div className="flex items-center gap-2">
+            <Input
+              value={newSubcategoryName}
+              onChange={(e) => setNewSubcategoryName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  void handleCreateSubcategory();
+                }
+              }}
+              placeholder="Nome da subcategoria"
+              maxLength={100}
+              autoFocus
+            />
+            <button
+              type="button"
+              onClick={() => void handleCreateSubcategory()}
+              disabled={!newSubcategoryName.trim() || isCreatingSubcategory}
+              aria-label="Criar subcategoria"
+              className="shrink-0 rounded-xl bg-indigo-600 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
+            >
+              {isCreatingSubcategory ? 'Criando...' : 'Criar'}
+            </button>
+          </div>
+        )}
+      </div>
+    );
   };
 
   const renderEstablishmentChips = (padding: string) => (
@@ -523,10 +595,13 @@ export function CascadeInput({
                 ))}
               </div>
             ) : (
-              <p className="px-5 text-center text-sm text-stone-400">
-                Nenhuma subcategoria disponível
-              </p>
+              !onCreateSubcategory && (
+                <p className="px-5 text-center text-sm text-stone-400">
+                  Nenhuma subcategoria disponível
+                </p>
+              )
             )}
+            {renderNewSubcategory('px-5')}
           </div>
         )}
 
@@ -708,7 +783,7 @@ export function CascadeInput({
         )}
 
         {/* Subcategoria — chips grid com badge método */}
-        {filteredSubcategories.length > 0 && (
+        {categoryId && (filteredSubcategories.length > 0 || onCreateSubcategory) && (
           <div className="mt-4">
             <div className="pb-2 text-[10px] font-semibold uppercase tracking-widest text-stone-400">
               Subcategoria
@@ -751,6 +826,7 @@ export function CascadeInput({
                 </button>
               ))}
             </div>
+            {renderNewSubcategory('')}
           </div>
         )}
 
