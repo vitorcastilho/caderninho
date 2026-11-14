@@ -33,7 +33,7 @@ so that consigo registrar o primeiro gasto sem passar por /categories e nunca fi
 - [x] Task 4 (AC: #1–#4): testes novos em `CategoriesStep.test.tsx`. Vermelho (3) → verde.
 - [x] Task 5 (AC: #1–#3): `onboarding-suggestions.ts` com `subcategories`; `CategoriesStep` envia `emoji`, cria as subcategorias de cada categoria criada e lista os nomes na sugestão.
 - [x] Task 6: `tsc` 0, `eslint` 0, `vitest` 140 arquivos / 1172 testes, `next build` ok.
-- [ ] Task 7: PR → `staging`, merge, validar em staging com um usuário novo (onboarding → primeiro gasto sem passar por /categories) e criação inline.
+- [x] Task 7: PR #45 → `staging` (merge `69eb2fa`). Staging com usuário novo, 9/9: onboarding lista as subcategorias; empty state de primeiro uso; primeiro gasto Supermercado › Padaria sem passar por /categories (linha com 🛒); "+ Nova subcategoria" criou "Feira" e o gasto foi registrado; /categories com emojis certos e Supermercado/Moradia com 6 itens.
 
 ## Dev Notes
 
@@ -69,3 +69,4 @@ Claude Opus 5.5 (claude-opus-5-5)
 ## Change Log
 
 - 2026-11-14 — Implementada com TDD. Status: review.
+- 2026-11-14 — Validada em staging (PR #45). Aguardando teste do usuário.
