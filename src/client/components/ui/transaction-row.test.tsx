@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
+import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 
 import { TransactionRow } from './transaction-row';
@@ -115,6 +116,81 @@ describe('TransactionRow', () => {
 
     fireEvent.click(screen.getByText('Padaria'));
     expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('exposes the row content as a focusable native button when onClick is provided (keyboard access)', () => {
+    const onClick = vi.fn();
+    render(
+      <ul>
+        <TransactionRow
+          type="expense"
+          primary="Padaria"
+          secondary="Alimentação"
+          amountCents={500}
+          icon={{ kind: 'emoji', value: '🥐' }}
+          onClick={onClick}
+          onAction={() => {}}
+          actionLabel="Excluir"
+        />
+      </ul>,
+    );
+
+    const main = screen.getByRole('button', { name: /Padaria/ });
+    expect(main.tagName).toBe('BUTTON');
+    expect(main).toHaveAttribute('type', 'button');
+    main.focus();
+    expect(main).toHaveFocus();
+    // Botão de ação é irmão, não descendente (sem interativo aninhado)
+    const action = screen.getByRole('button', { name: 'Excluir' });
+    expect(main.contains(action)).toBe(false);
+  });
+
+  it('activates onClick with Enter/Space and onAction (not onClick) when the action button is focused', async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    const onAction = vi.fn();
+    render(
+      <ul>
+        <TransactionRow
+          type="expense"
+          primary="Padaria"
+          secondary="Alimentação"
+          amountCents={500}
+          icon={{ kind: 'emoji', value: '🥐' }}
+          onClick={onClick}
+          onAction={onAction}
+          actionLabel="Excluir"
+        />
+      </ul>,
+    );
+
+    await user.tab();
+    expect(screen.getByRole('button', { name: /Padaria/ })).toHaveFocus();
+    await user.keyboard('{Enter}');
+    await user.keyboard(' ');
+    expect(onClick).toHaveBeenCalledTimes(2);
+
+    await user.tab();
+    expect(screen.getByRole('button', { name: 'Excluir' })).toHaveFocus();
+    await user.keyboard('{Enter}');
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not render an interactive main area when onClick is not provided', () => {
+    render(
+      <ul>
+        <TransactionRow
+          type="expense"
+          primary="Padaria"
+          secondary="Alimentação"
+          amountCents={500}
+          icon={{ kind: 'emoji', value: '🥐' }}
+        />
+      </ul>,
+    );
+
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
   it('calls onAction without triggering onClick when MoreVertical is clicked (stopPropagation)', () => {

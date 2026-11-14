@@ -1,4 +1,8 @@
-import { listTransactionsAction } from '@/server/actions/transaction.actions';
+import { getCurrentMonthBR, monthToDateRangeBR } from '@/shared/utils/month-range';
+import {
+  listTransactionsAction,
+  getTransactionPeriodSummaryAction,
+} from '@/server/actions/transaction.actions';
 import { listCategoriesAction } from '@/server/actions/category.actions';
 import { listSubcategoriesAction } from '@/server/actions/subcategory.actions';
 import { listBankAccountsAction } from '@/server/actions/bank-account.actions';
@@ -7,15 +11,22 @@ import { listIncomeSourcesAction } from '@/server/actions/income-source.actions'
 import { TransactionList } from '@/client/components/transactions/TransactionList';
 
 export default async function TransactionsPage() {
+  // A tela abre no mês corrente (fuso de Brasília) — os cards dizem "no mês".
+  // O client recebe o mesmo mês em `initialMonth` para não refazer o fetch.
+  const initialMonth = getCurrentMonthBR();
+  const monthRange = monthToDateRangeBR(initialMonth);
+
   const [
     transactionsResult,
+    summaryResult,
     categoriesResult,
     subcategoriesResult,
     bankAccountsResult,
     creditCardsResult,
     incomeSourcesResult,
   ] = await Promise.all([
-    listTransactionsAction({}),
+    listTransactionsAction(monthRange),
+    getTransactionPeriodSummaryAction(monthRange),
     listCategoriesAction(undefined),
     listSubcategoriesAction(undefined),
     listBankAccountsAction(undefined),
@@ -26,6 +37,7 @@ export default async function TransactionsPage() {
   const initialTransactions = transactionsResult.success ? transactionsResult.data.rows : [];
   const initialTotal = transactionsResult.success ? transactionsResult.data.total : 0;
   const initialHasMore = transactionsResult.success ? transactionsResult.data.hasMore : false;
+  const initialSummary = summaryResult.success ? summaryResult.data : undefined;
   const categories = categoriesResult.success ? categoriesResult.data : [];
   const subcategories = subcategoriesResult.success ? subcategoriesResult.data : [];
   const bankAccounts = bankAccountsResult.success ? bankAccountsResult.data : [];
@@ -37,6 +49,8 @@ export default async function TransactionsPage() {
       initialTransactions={initialTransactions}
       initialTotal={initialTotal}
       initialHasMore={initialHasMore}
+      initialSummary={initialSummary}
+      initialMonth={initialMonth}
       categories={categories}
       subcategories={subcategories}
       bankAccounts={bankAccounts}

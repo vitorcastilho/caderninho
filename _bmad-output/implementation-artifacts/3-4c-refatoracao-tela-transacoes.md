@@ -1,8 +1,8 @@
 # Story 3.4c: Refatoração da tela `/transactions` com novos componentes DS + summary backend
 
-Status: backlog
+Status: done
 
-<!-- Bloqueada pela Story 3.4b (componentes DS precisam estar prontos). Ao iniciar, mover para ready-for-dev (no sprint-status.yaml e no Status acima). -->
+<!-- Desbloqueada em 2026-04-16: Story 3.4b está done — os 4 componentes DS (transaction-row, transaction-summary-cards, transaction-filters-bar, transaction-filters-sheet) estão em src/client/components/ui/ com testes. -->
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
 ## Story
@@ -35,22 +35,22 @@ so that vejo de relance quanto gastei/recebi/transferi no período filtrado, com
 
 ### Fase 0: Design System & Protótipos (Obrigatória para stories com UI)
 
-- [ ] Task 0: Consultar Design System e protótipos relevantes
-  - [ ] 0.1: **Pré-requisito:** Story 3.4b deve estar `done` — os 4 componentes DS (`TransactionRow`, `TransactionSummaryCards`, `TransactionFiltersBar`, `TransactionFiltersSheet`) precisam existir em `src/client/components/ui/`. Confirmar antes de iniciar.
-  - [ ] 0.2: Ler protótipo canônico `_bmad-output/prototypes/proto-18-tela-transacoes.html` — visual de referência da tela final
-  - [ ] 0.3: Ler spec completa `_bmad-output/prototypes/proto-18-tela-transacoes-spec.md` — esta story implementa as **seções 6, 7, 9** da spec (backend + consumer + arquivos deletados)
-  - [ ] 0.4: Consultar `/design-system` no browser — testar os 3 componentes novos da 3.4b interativamente para entender props e comportamento
-  - [ ] 0.5: Confirmar componentes UI a importar (todos vêm da 3.4b):
+- [x] Task 0: Consultar Design System e protótipos relevantes
+  - [x] 0.1: **Pré-requisito CONFIRMADO (2026-04-16):** Story 3.4b está `done`. Os 4 componentes DS existem em `src/client/components/ui/`: `transaction-row.tsx`, `transaction-summary-cards.tsx`, `transaction-filters-bar.tsx`, `transaction-filters-sheet.tsx` (todos com testes ao lado). Antes de começar, rodar `/design-system` no browser para inspecionar os 3 novos componentes visualmente.
+  - [x] 0.2: Ler protótipo canônico `_bmad-output/prototypes/proto-18-tela-transacoes.html` — visual de referência da tela final
+  - [x] 0.3: Ler spec completa `_bmad-output/prototypes/proto-18-tela-transacoes-spec.md` — esta story implementa as **seções 6, 7, 9** da spec (backend + consumer + arquivos deletados)
+  - [x] 0.4: Consultar `/design-system` no browser — testar os 3 componentes novos da 3.4b interativamente para entender props e comportamento
+  - [x] 0.5: Confirmar componentes UI a importar (todos vêm da 3.4b):
     - `TransactionRow` de `@/client/components/ui/transaction-row`
     - `TransactionSummaryCards` de `@/client/components/ui/transaction-summary-cards`
     - `TransactionFiltersBar` de `@/client/components/ui/transaction-filters-bar`
     - `TransactionFiltersSheet` de `@/client/components/ui/transaction-filters-sheet`
-  - [ ] 0.6: **NÃO criar componentes UI novos nesta story** — todo o visual já está em DS. Esta story só refatora `TransactionList.tsx` e cria backend.
+  - [x] 0.6: **NÃO criar componentes UI novos nesta story** — todo o visual já está em DS. Esta story só refatora `TransactionList.tsx` e cria backend.
 
 ### Fase 1: Backend — Repository com agregação por tipo
 
-- [ ] Task 1 (AC: #2): Estender `TransactionRepository` com método de agregação filtrada
-  - [ ] 1.1: Adicionar à interface em `src/server/domain/transactions/repositories/transaction.repository.ts`:
+- [x] Task 1 (AC: #2): Estender `TransactionRepository` com método de agregação filtrada
+  - [x] 1.1: Adicionar à interface em `src/server/domain/transactions/repositories/transaction.repository.ts`:
     ```ts
     aggregateByTypeForOrganizationFiltered(
       organizationId: string,
@@ -65,7 +65,7 @@ so that vejo de relance quanto gastei/recebi/transferi no período filtrado, com
       },
     ): Promise<Array<{ type: 'expense' | 'income' | 'transfer'; totalCents: number; count: number }>>;
     ```
-  - [ ] 1.2: Implementar em `DrizzleTransactionRepository` (`src/server/infrastructure/database/repositories/transaction.repository.impl.ts`):
+  - [x] 1.2: Implementar em `DrizzleTransactionRepository` (`src/server/infrastructure/database/repositories/transaction.repository.impl.ts`):
     - Reusar a função interna que monta o WHERE de `findByOrganizationFiltered` (extrair como helper privado se necessário, **respeitando o escape de LIKE** com `escapeLikePattern` já existente da Story 3.4 R2)
     - Query Drizzle:
       ```ts
@@ -80,14 +80,14 @@ so that vejo de relance quanto gastei/recebi/transferi no período filtrado, com
         .groupBy(transactions.type);
       ```
     - Retornar mapped: `{ type, totalCents: Number(r.totalCents), count: Number(r.count) }`. Tipos cast para `'expense' | 'income' | 'transfer'`.
-  - [ ] 1.3: **DRY**: idealmente extrair o builder de WHERE em um helper privado dentro do `repository.impl.ts` (ex: `buildFilterConditions(orgId, filters)`) e usar tanto em `findByOrganizationFiltered` quanto em `aggregateByTypeForOrganizationFiltered`. Isso garante consistência de filtros entre listagem e summary. **Se a refatoração ficar muito invasiva, deixar para uma story de cleanup futura** — comentar com `// TODO: extrair builder compartilhado` e seguir.
-  - [ ] 1.4: Adicionar testes em `transaction.repository.impl.test.ts` (já existe da 3.4 R2):
+  - [x] 1.3: **DRY**: idealmente extrair o builder de WHERE em um helper privado dentro do `repository.impl.ts` (ex: `buildFilterConditions(orgId, filters)`) e usar tanto em `findByOrganizationFiltered` quanto em `aggregateByTypeForOrganizationFiltered`. Isso garante consistência de filtros entre listagem e summary. **Se a refatoração ficar muito invasiva, deixar para uma story de cleanup futura** — comentar com `// TODO: extrair builder compartilhado` e seguir.
+  - [x] 1.4: Adicionar testes em `transaction.repository.impl.test.ts` (já existe da 3.4 R2):
     - 6+ casos cobrindo: sem filtros (3 tipos), filtro por tipo, filtro por categoria, filtro por método, filtro por período, filtro combinado, busca textual com escape
 
 ### Fase 2: Domain — Use case `getTransactionPeriodSummary`
 
-- [ ] Task 2 (AC: #2): Criar use case
-  - [ ] 2.1: Criar `src/server/domain/transactions/use-cases/get-transaction-period-summary.ts`:
+- [x] Task 2 (AC: #2): Criar use case
+  - [x] 2.1: Criar `src/server/domain/transactions/use-cases/get-transaction-period-summary.ts`:
     ```ts
     export interface GetTransactionPeriodSummaryParams {
       organizationId: string;
@@ -123,8 +123,8 @@ so that vejo de relance quanto gastei/recebi/transferi no período filtrado, com
       return ok(summary);
     }
     ```
-  - [ ] 2.2: **Reusar** o helper `parseSearchAmountCents` exportado pelo `list-transactions.ts` (ou refatorar para módulo compartilhado se ambos usarem) para parsear "42,50" → 4250. Isso garante consistência: o que filtra na lista também filtra no summary.
-  - [ ] 2.3: Criar `get-transaction-period-summary.test.ts`:
+  - [x] 2.2: **Reusar** o helper `parseSearchAmountCents` exportado pelo `list-transactions.ts` (ou refatorar para módulo compartilhado se ambos usarem) para parsear "42,50" → 4250. Isso garante consistência: o que filtra na lista também filtra no summary.
+  - [x] 2.3: Criar `get-transaction-period-summary.test.ts`:
     - Sem dados → retorna 3 tipos com totalCents=0, count=0
     - Com dados → soma e count corretos por tipo
     - Filtros aplicados (mock do repo retornando subset filtrado) — propaga corretamente
@@ -132,8 +132,8 @@ so that vejo de relance quanto gastei/recebi/transferi no período filtrado, com
 
 ### Fase 3: Server action
 
-- [ ] Task 3 (AC: #2): Criar `getTransactionPeriodSummaryAction`
-  - [ ] 3.1: Em `src/server/actions/transaction.actions.ts`, adicionar:
+- [x] Task 3 (AC: #2): Criar `getTransactionPeriodSummaryAction`
+  - [x] 3.1: Em `src/server/actions/transaction.actions.ts`, adicionar:
     ```ts
     export const getTransactionPeriodSummaryAction = withAuth(async (session, input: unknown) => {
       const validation = validateInput(listTransactionsFilterSchema.optional(), input);
@@ -153,9 +153,9 @@ so that vejo de relance quanto gastei/recebi/transferi no período filtrado, com
       });
     });
     ```
-  - [ ] 3.2: Reusar `listTransactionsFilterSchema` (já existe da 3.4) — **NÃO** criar schema duplicado. As propriedades `limit` e `offset` do schema serão **ignoradas** (summary não pagina) — ou usar `omit({ limit: true, offset: true })` para um schema dedicado. Decidir e documentar.
-  - [ ] 3.3: Adicionar `getTransactionPeriodSummary` em `transactionDeps` (`src/server/factories/transaction.ts`) se o padrão de injeção for via factory.
-  - [ ] 3.4: Adicionar testes em `transaction.actions.test.ts`:
+  - [x] 3.2: Reusar `listTransactionsFilterSchema` (já existe da 3.4) — **NÃO** criar schema duplicado. As propriedades `limit` e `offset` do schema serão **ignoradas** (summary não pagina) — ou usar `omit({ limit: true, offset: true })` para um schema dedicado. Decidir e documentar.
+  - [x] 3.3: Adicionar `getTransactionPeriodSummary` em `transactionDeps` (`src/server/factories/transaction.ts`) se o padrão de injeção for via factory.
+  - [x] 3.4: Adicionar testes em `transaction.actions.test.ts`:
     - Validação de input inválido
     - Org ativa ausente
     - Propagação de erro do domain
@@ -163,8 +163,8 @@ so that vejo de relance quanto gastei/recebi/transferi no período filtrado, com
 
 ### Fase 4: SSR — `page.tsx`
 
-- [ ] Task 4 (AC: #1): Atualizar `src/app/(app)/transactions/page.tsx`
-  - [ ] 4.1: Adicionar `getTransactionPeriodSummaryAction({})` ao `Promise.all` existente:
+- [x] Task 4 (AC: #1): Atualizar `src/app/(app)/transactions/page.tsx`
+  - [x] 4.1: Adicionar `getTransactionPeriodSummaryAction({})` ao `Promise.all` existente:
     ```ts
     const [tx, summary, accounts, cards, ...] = await Promise.all([
       listTransactionsAction({}),
@@ -175,22 +175,22 @@ so that vejo de relance quanto gastei/recebi/transferi no período filtrado, com
       listCategoriesAction(undefined),
     ]);
     ```
-  - [ ] 4.2: Passar `initialSummary={summary.data}` para `<TransactionList />`. Definir o tipo no `TransactionList` props.
-  - [ ] 4.3: Garantir que `categories.data` carrega `emoji` (confirmado pela 3.4b) — se algum mapeamento intermediário desconsiderar `emoji`, ajustar.
-  - [ ] 4.4: Tratar erro do `summary` graciosamente — se `summary` falhar mas a lista funcionar, renderizar a tela com `initialSummary` undefined e o componente mostra cards zerados ou skeleton.
+  - [x] 4.2: Passar `initialSummary={summary.data}` para `<TransactionList />`. Definir o tipo no `TransactionList` props.
+  - [x] 4.3: Garantir que `categories.data` carrega `emoji` (confirmado pela 3.4b) — se algum mapeamento intermediário desconsiderar `emoji`, ajustar.
+  - [x] 4.4: Tratar erro do `summary` graciosamente — se `summary` falhar mas a lista funcionar, renderizar a tela com `initialSummary` undefined e o componente mostra cards zerados ou skeleton.
 
 ### Fase 5: Client — Refatoração do `TransactionList.tsx`
 
-- [ ] Task 5 (AC: #3, #4, #6, #7): Refatorar `src/client/components/transactions/TransactionList.tsx`
-  - [ ] 5.1: Adicionar prop `initialSummary?: TransactionPeriodSummary` e estado `const [summary, setSummary] = useState(initialSummary)`. Sincronização prop→state via `useEffect(() => setSummary(initialSummary), [initialSummary])` (lição 3.2/3.3).
-  - [ ] 5.2: Estender `CategoryOption` interface com `emoji?: string`.
-  - [ ] 5.3: Substituir o map atual `transactions.map(tx => <TransactionListRow ... />)` por `<TransactionRow ... />` usando os helpers:
+- [x] Task 5 (AC: #3, #4, #6, #7): Refatorar `src/client/components/transactions/TransactionList.tsx`
+  - [x] 5.1: Adicionar prop `initialSummary?: TransactionPeriodSummary` e estado `const [summary, setSummary] = useState(initialSummary)`. Sincronização prop→state via `useEffect(() => setSummary(initialSummary), [initialSummary])` (lição 3.2/3.3).
+  - [x] 5.2: Estender `CategoryOption` interface com `emoji?: string`.
+  - [x] 5.3: Substituir o map atual `transactions.map(tx => <TransactionListRow ... />)` por `<TransactionRow ... />` usando os helpers:
     - `buildIcon(tx, categories)` (spec 7.2) — emoji ou letra para gasto, lucide para receita/transferência
     - `buildMethod(tx, bankAccounts, creditCards)` (spec 7.2) — formatação de método
     - `buildPrimary(tx)` — `establishment` para gasto, "Receita" ou similar para income, undefined para transfer
     - `buildSecondary(tx, categories, incomeSources)` — nome da categoria para gasto, fonte de receita ou label para income, "Transferência" para transfer
     - `buildTransferEndpoints(tx, bankAccounts)` — só para transferência: source/destination com bank
-  - [ ] 5.4: Substituir `<TransactionListFilters .../>` por:
+  - [x] 5.4: Substituir `<TransactionListFilters .../>` por:
     ```tsx
     <TransactionFiltersBar
       search={filters.search}
@@ -216,8 +216,8 @@ so that vejo de relance quanto gastei/recebi/transferi no período filtrado, com
       onClear={...}
     />
     ```
-  - [ ] 5.5: Renderizar `<TransactionSummaryCards ...summary />` **acima** do `TransactionFiltersBar`. Variante de loading enquanto refetch acontece (`isSummaryLoading`).
-  - [ ] 5.6: Adicionar fetch do summary no `loadPage(0, ...)` e em paralelo com `listTransactionsAction`:
+  - [x] 5.5: Renderizar `<TransactionSummaryCards ...summary />` **acima** do `TransactionFiltersBar`. Variante de loading enquanto refetch acontece (`isSummaryLoading`).
+  - [x] 5.6: Adicionar fetch do summary no `loadPage(0, ...)` e em paralelo com `listTransactionsAction`:
     ```ts
     const [pageRes, summaryRes] = await Promise.all([
       listTransactionsAction({ ...effectiveFilters, limit: 50, offset }),
@@ -228,8 +228,8 @@ so that vejo de relance quanto gastei/recebi/transferi no período filtrado, com
       // ... resto do handling
     }
   ```
-  - [ ] 5.7: **NÃO** refetch o summary em `loadMore` (scroll infinito) — summary não muda quando carrega mais páginas, só quando filtros mudam.
-  - [ ] 5.8: Renderizar chips de filtros ativos abaixo do `TransactionFiltersBar` (spec 4.4):
+  - [x] 5.7: **NÃO** refetch o summary em `loadMore` (scroll infinito) — summary não muda quando carrega mais páginas, só quando filtros mudam.
+  - [x] 5.8: Renderizar chips de filtros ativos abaixo do `TransactionFiltersBar` (spec 4.4):
     ```tsx
     {(filters.categoryIds.size > 0 || filters.paymentMethodIds.size > 0) && (
       <div className="flex flex-wrap gap-1.5 items-center mt-3">
@@ -249,8 +249,8 @@ so that vejo de relance quanto gastei/recebi/transferi no período filtrado, com
       </div>
     )}
     ```
-  - [ ] 5.9: `clearAdvancedFilters()` zera APENAS `categoryIds` e `paymentMethodIds`. Mantém `type`, `month`, `search` intactos (spec 5.3).
-  - [ ] 5.10: Manter o resto do `TransactionList`:
+  - [x] 5.9: `clearAdvancedFilters()` zera APENAS `categoryIds` e `paymentMethodIds`. Mantém `type`, `month`, `search` intactos (spec 5.3).
+  - [x] 5.10: Manter o resto do `TransactionList`:
     - Debounce da busca (300ms)
     - Scroll infinito com IntersectionObserver
     - `requestId` race-safe
@@ -261,38 +261,38 @@ so that vejo de relance quanto gastei/recebi/transferi no período filtrado, com
 
 ### Fase 6: Deleção dos componentes ad-hoc
 
-- [ ] Task 6 (AC: #5): Deletar arquivos não usados
-  - [ ] 6.1: Confirmar via `grep -r 'TransactionListRow' src/` que não há mais imports de `TransactionListRow`. Se houver, migrar antes de deletar.
-  - [ ] 6.2: Deletar `src/client/components/transactions/TransactionListRow.tsx`
-  - [ ] 6.3: Confirmar via `grep -r 'TransactionListFilters' src/` que não há mais imports.
-  - [ ] 6.4: Deletar `src/client/components/transactions/TransactionListFilters.tsx`
-  - [ ] 6.5: Deletar `src/client/components/transactions/TransactionListFilters.test.tsx`
-  - [ ] 6.6: Rodar `npx tsc --noEmit` para confirmar zero erros (nada importava esses arquivos).
+- [x] Task 6 (AC: #5): Deletar arquivos não usados
+  - [x] 6.1: Confirmar via `grep -r 'TransactionListRow' src/` que não há mais imports de `TransactionListRow`. Se houver, migrar antes de deletar.
+  - [x] 6.2: Deletar `src/client/components/transactions/TransactionListRow.tsx`
+  - [x] 6.3: Confirmar via `grep -r 'TransactionListFilters' src/` que não há mais imports.
+  - [x] 6.4: Deletar `src/client/components/transactions/TransactionListFilters.tsx`
+  - [x] 6.5: Deletar `src/client/components/transactions/TransactionListFilters.test.tsx`
+  - [x] 6.6: Rodar `npx tsc --noEmit` para confirmar zero erros (nada importava esses arquivos).
 
 ### Fase 7: Atualização dos testes do `TransactionList`
 
-- [ ] Task 7 (AC: #6, #9): Adaptar `TransactionList.test.tsx`
-  - [ ] 7.1: Atualizar mocks para incluir `categories` com `emoji`, `initialSummary`, e novos props.
-  - [ ] 7.2: Mockar os 4 componentes DS importados (ou usar render real — decidir):
+- [x] Task 7 (AC: #6, #9): Adaptar `TransactionList.test.tsx`
+  - [x] 7.1: Atualizar mocks para incluir `categories` com `emoji`, `initialSummary`, e novos props.
+  - [x] 7.2: Mockar os 4 componentes DS importados (ou usar render real — decidir):
     - **Render real** é melhor (testa integração), mas pode quebrar se algum DOM/hook do componente DS não funcionar em jsdom. Tentar primeiro.
     - Se complicado: mockar com `vi.mock('@/client/components/ui/transaction-row', ...)` retornando placeholders.
-  - [ ] 7.3: Adicionar testes:
+  - [x] 7.3: Adicionar testes:
     - Render dos cards de summary com `initialSummary` correto
     - Mudança de filtro dispara refetch do summary (via spy/mock do `getTransactionPeriodSummaryAction`)
     - Chips ativos aparecem abaixo da barra quando há `categoryIds`/`paymentMethodIds` selecionados
     - "Limpar tudo" zera só categorias+métodos
     - `TransactionRow` recebe icons corretos (emoji para gasto, lucide para outros)
     - Comportamento de edit/delete continua funcionando (regressão da 3.4)
-  - [ ] 7.4: **Manter** os testes da 3.4 que ainda fazem sentido (scroll infinito, debounce, agrupamento).
+  - [x] 7.4: **Manter** os testes da 3.4 que ainda fazem sentido (scroll infinito, debounce, agrupamento).
 
 ### Fase 8: Validação
 
-- [ ] Task 8 (AC: #9): Validações finais
-  - [ ] 8.1: `npx tsc --noEmit` — 0 erros
-  - [ ] 8.2: `npx eslint src --max-warnings=0` — 0 warnings
-  - [ ] 8.3: `npx vitest run` — 100% passando, sem regressões
-  - [ ] 8.4: `npx next build` — build limpa
-  - [ ] 8.5: **Smoke test manual em `/transactions`** (OBRIGATÓRIO):
+- [x] Task 8 (AC: #9): Validações finais
+  - [x] 8.1: `npx tsc --noEmit` — 0 erros
+  - [x] 8.2: `npx eslint src --max-warnings=0` — 0 warnings
+  - [x] 8.3: `npx vitest run` — 100% passando, sem regressões
+  - [x] 8.4: `npx next build` — build limpa
+  - [x] 8.5: **Smoke test manual em `/transactions`** (OBRIGATÓRIO):
     - 3 cards de summary aparecem com totais corretos do mês inicial
     - Mudar tipo (Saídas) → cards atualizam mostrando só saídas
     - Mudar mês → cards atualizam
@@ -308,11 +308,25 @@ so that vejo de relance quanto gastei/recebi/transferi no período filtrado, com
     - Scroll infinito carrega mais páginas (mas summary NÃO refetcha — confirma economia)
     - Lista vazia por filtros → empty state com "Limpar filtros"
     - Resize para mobile (~375px) → cards compactos aparecem, segmented mostra "Transf." abreviado, transferência colapsa nomes dos bancos
-  - [ ] 8.6: Commit + push + PR conforme MEMORY.md (`epic-3/3-4c-refatoracao-tela-transacoes`).
+  - [x] 8.6: Commit + push + PR conforme MEMORY.md (`epic-3/3-4c-refatoracao-tela-transacoes`).
 
 ### Fase 9: Review Follow-ups (AI)
 
-<!-- Será preenchido pelo code review adversarial. Severidade MEDIUM/HIGH é blocking. -->
+<!-- Code review R1 em 2026-11-14 (PR #36, base trocada de main para staging). 1 CRITICAL + 7 MEDIUM corrigidos; LOWs triviais corrigidos; demais LOWs abaixo → backlog, não-blocking. -->
+
+- [x] [AI-Review][CRITICAL] Task 8.5 (smoke test) estava marcada `[x]` sem ter sido executada (Completion Notes diziam "não executado"). **Resolvido:** smoke test executado em 2026-11-14 contra o app local (HTTP, Supabase local) com usuário de teste e dados semeados — 40 cenários desktop + mobile, todos ok (ver Debug Log).
+- [x] [AI-Review][MEDIUM] Cards diziam "Saídas no mês" mas a tela abria em "Todos os meses" (totais de todo o histórico). **Resolvido:** tela abre no mês corrente (fuso de Brasília) via SSR + `initialMonth`; `TransactionSummaryCards` ganhou prop `period` (`'all'` remove o "no mês"). [`page.tsx`, `TransactionList.tsx`, `transaction-summary-cards.tsx`]
+- [x] [AI-Review][MEDIUM] Summary desatualizado sem indicação: skeleton só aparecia com `summary === undefined` (nunca no refetch); falha do summary mantinha totais de outro filtro em silêncio; falha da lista descartava summary válido. **Resolvido:** skeleton em todo refetch por filtro, toast em falha do summary, summary aplicado independente da lista. [`TransactionList.tsx`]
+- [x] [AI-Review][MEDIUM] Regressão de teclado: `TransactionRow` era `<li onClick>` sem foco/ativação (linha antiga era `<button>`). **Resolvido:** área principal da linha virou `<button>` nativo; botão de ação continua irmão (sem interativo aninhado). Resolve também o LOW #1 da 3.4b. [`transaction-row.tsx`]
+- [x] [AI-Review][MEDIUM] `ActiveFilterChip` duplicado localmente no consumer (e outra cópia no `/design-system`). **Resolvido:** extraído para `ui/active-filter-chip.tsx` (com testes); consumer e `/design-system` importam do DS.
+- [x] [AI-Review][MEDIUM] `client/` importava tipo de `@/server/domain/...` (viola `project-context.md:194`). **Resolvido:** `TransactionPeriodSummary` movido para `@/shared/types/transaction-summary`; use case re-exporta.
+- [x] [AI-Review][MEDIUM] Testes "filtra por tipo/categoria/método/período/busca" do repository só verificavam `where` chamado 1×. **Resolvido:** `buildFilterConditions` exportado e testado renderizando o SQL real com `PgDialect` (colunas, operadores, params, escape de LIKE, busca numérica).
+- [x] [AI-Review][MEDIUM] `resolveTransactionLabel` duplicava `buildPrimary`/`buildSecondary` com separador diferente no diálogo de exclusão. **Resolvido:** substituído por `buildDeleteLabel` (mesmos helpers da linha).
+- [x] [AI-Review][LOW] `text-white` hardcoded no seletor de mês → `text-primary-foreground`.
+- [x] [AI-Review][LOW] Comentário do schema dizia que `limit`/`offset` eram "recusados" — o Zod só descarta. Comentário corrigido.
+- [ ] [AI-Review][LOW] Após editar/excluir com filtro ativo, `revalidatePath('/transactions')` re-renderiza a página e os `useEffect` de sync prop→state copiam os valores do SSR (sem filtro) por um instante antes do refetch filtrado. Pré-existente para `rows` (3.4), agora também para `summary`. [`TransactionList.tsx`, efeitos de sync]
+- [ ] [AI-Review][LOW] Gasto sem estabelecimento renderiza linha secundária vazia; receita mostra a conta na linha secundária em vez de `method` (spec 7.2). [`TransactionList.tsx` `buildSecondary`/`buildMethod`]
+- [ ] [AI-Review][LOW] (encontrado no smoke test) Cards compactos em 375px truncam valores ≥ R$ 1.000 ("R$ 5.000,..."). Decisão de UX/DS (tamanho de fonte ou formato abreviado). [`transaction-summary-cards.tsx`]
 
 ## Dev Notes
 
@@ -456,10 +470,82 @@ so that vejo de relance quanto gastei/recebi/transferi no período filtrado, com
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+claude-opus-4-7 (1M context)
 
 ### Debug Log References
 
+- **Code review R1 (2026-11-14)** — validação: `npx tsc --noEmit` 0 erros; `npx eslint src --max-warnings=0` 0 warnings; `npx vitest run` 138 arquivos / 1148 testes passando (eram 1117); `npx next build` ok.
+- **Smoke test (2026-11-14)** — app local (`next dev`, Supabase local, HTTP), usuário de teste novo + dados semeados por SQL (3 contas, 1 arquivada; 1 cartão; 3 categorias; 7 gastos, 2 receitas, 1 transferência em out–nov/2026, incluindo 01/11 02:30Z = 31/10 em Brasília; +60 gastos em set para paginação). Roteiro automatizado com Playwright (Chromium headless), 1280×900 e 375×812:
+  - abre em Nov/2026; cards 312,50·5 / 5.000,00·1 / 1.000,00·1; borda de mês em Brasília correta (31/10 23:30 fica em outubro)
+  - tipo Saídas zera entradas/transferências; seletor de mês (Todos + 12 meses); outubro 140,00·2; Todos 452,50·7 com label sem "no mês"
+  - sheet de filtros lista só métodos ativos; Alimentação+Saúde → 222,50·5, badge 2, chips; remover chip → 197,50·4; "Limpar tudo" mantém tipo e mês
+  - busca "merc" 102,50·2; "42,50" → 1 linha; "100%" → só "Padaria 100% Pão" (escape de LIKE)
+  - transferência Nubank→Itaú; gasto em conta arquivada resolve "Bradesco · Antiga"; clique em gasto abre edição; ⋮ abre confirm com o label da linha; Enter na linha focada abre a edição; clique em receita mostra toast
+  - excluir atualiza lista e cards (312,50→287,50); desfazer restaura; excluir com tipo Saídas ativo mantém o filtro
+  - scroll infinito 50→70 sem refazer o summary; "Fim do histórico · 70"
+  - mobile: cards compactos, "Transf.", nomes de banco ocultos na transferência, sem scroll horizontal; **achado:** valores ≥ R$ 1.000 truncados nos cards (LOW em Fase 9)
+  - nenhum erro de console/página
+- **Pendente (fluxo de entrega):** repetir o smoke em `caderninho-staging.vercel.app` depois do merge em `staging` — depende do hotfix 1-9 (login em HTTPS).
+
+- `npx tsc --noEmit` → 0 erros
+- `npx eslint src --max-warnings=0` → 0 warnings
+- `npx vitest run` → 136 arquivos, 1117 testes, 100% passando
+- `npx next build` → build limpa (route `/transactions` como `ƒ` dinâmica, como esperado)
+
 ### Completion Notes List
 
+- Backend: `aggregateByTypeForOrganizationFiltered` implementado com `GROUP BY type` + `SUM` + `count()`. WHERE builder extraído em helper privado `buildFilterConditions` reutilizado tanto em `findByOrganizationFiltered` quanto na nova agregação — garante consistência de filtros entre listagem e summary.
+- Use case `getTransactionPeriodSummary` retorna os 3 tipos com `{ totalCents, count }` preenchidos com zeros quando o retorno do repo não contempla todos. Reutiliza `parseSearchAmountCents` para busca numérica — idêntico ao `listTransactions`.
+- Novo schema `transactionPeriodSummaryFilterSchema` (`omit({ limit, offset })`) aplicado na action para refletir que summary não pagina.
+- Frontend: `TransactionList.tsx` agora consome 4 componentes do DS (`TransactionRow`, `TransactionSummaryCards`, `TransactionFiltersBar`, `TransactionFiltersSheet`) e substitui completamente os ad-hocs deletados. Os 3 arquivos `TransactionListRow.tsx`, `TransactionListFilters.tsx`, `TransactionListFilters.test.tsx` foram removidos.
+- Seleção de mês: como não existe Popover no DS, o consumer abre um `Sheet` lateral enxuto com a lista dos últimos 12 meses + "Todos os meses" + o mês selecionado se fora do range. Consistente visualmente com o `TransactionFiltersSheet` de filtros avançados.
+- Helpers `buildIcon`/`buildMethod`/`buildPrimary`/`buildSecondary`/`buildTransferEndpoints` exportados no mesmo arquivo e cobertos indiretamente por `TransactionList.test.tsx` (ícone emoji para gasto, `ArrowDownLeft` para receita, `ArrowLeftRight` + `transferEndpoints` para transferência).
+- Summary só faz refetch em `loadPage(0)` (mudança de filtro); scroll infinito pagina a lista sem refetch do summary — economia de query alinhada à spec.
+- Race condition protegida com o mesmo `requestIdRef` da listagem: list e summary rodam em `Promise.all` e só commitam se o id ainda for o atual. Falha de summary mantém o último valor conhecido (não trava os cards).
+- `clearAdvancedFilters` (chip "Limpar tudo") zera apenas `categoryIds`/`paymentMethodIds` — tipo, mês e busca preservados, coberto por teste.
+- `CategoryOption` estendido com `emoji?: string`. `buildIcon` usa emoji da categoria → letra inicial → `?` como fallback final.
+- Todos os mocks de `TransactionRepository` nos testes de use cases existentes foram atualizados para incluir `aggregateByTypeForOrganizationFiltered: vi.fn()` (10 arquivos).
+- ~~Smoke test manual no browser (Task 8.5): não executado neste ciclo automatizado~~ — executado na code review R1 (2026-11-14), ver Debug Log.
+
+**Code review R1 (2026-11-14):**
+- Tela abre no mês corrente; recorte mensal centralizado em `@/shared/utils/month-range` (UTC−3 fixo) para SSR (UTC na Vercel) e client (fuso do navegador) produzirem o mesmo intervalo. `transactionDate` é gravado como instante (`new Date()`), então o mês de Brasília é o recorte correto.
+- "Limpar filtros" do empty state passa a ir para "Todos os meses" (voltar ao mês corrente seria no-op quando o mês está vazio).
+- `TransactionRow`: área principal é `<button>` nativo (Tab/Enter/Space) — mudança de estrutura no DS, API inalterada.
+- Novos componentes/tipos: `ActiveFilterChip` (DS), `TransactionPeriodSummary` (shared), prop `period` em `TransactionSummaryCards`.
+
 ### File List
+
+**Novos:**
+- `src/server/domain/transactions/use-cases/get-transaction-period-summary.ts`
+- `src/server/domain/transactions/use-cases/get-transaction-period-summary.test.ts`
+
+**Modificados:**
+- `src/server/domain/transactions/repositories/transaction.repository.ts` — adicionado método `aggregateByTypeForOrganizationFiltered` à interface
+- `src/server/infrastructure/database/repositories/transaction.repository.impl.ts` — helper `buildFilterConditions` extraído (DRY), método `aggregateByTypeForOrganizationFiltered` implementado
+- `src/server/infrastructure/database/repositories/transaction.repository.impl.test.ts` — testes da agregação (8 casos) + testes existentes do `escapeLikePattern`
+- `src/server/actions/transaction.actions.ts` — action `getTransactionPeriodSummaryAction`
+- `src/server/actions/transaction.actions.test.ts` — cobertura da nova action (auth/org/validação/propagação)
+- `src/shared/schemas/transaction.schema.ts` — `transactionPeriodSummaryFilterSchema` (omit limit/offset)
+- `src/app/(app)/transactions/page.tsx` — `getTransactionPeriodSummaryAction({})` no Promise.all + `initialSummary` prop
+- `src/client/components/transactions/TransactionList.tsx` — refatoração para 4 componentes DS + summary state + chips + helpers
+- `src/client/components/transactions/TransactionList.test.tsx` — adaptado para novos props e componentes DS; testes novos de summary/chips/limpar-tudo/ícones; R1: mês inicial, filtros idênticos lista/summary, skeleton, falhas, teclado, `buildDeleteLabel`
+- R1 — `src/client/components/ui/transaction-row.tsx` (+ `.test.tsx`) — área principal como `<button>` nativo
+- R1 — `src/client/components/ui/transaction-summary-cards.tsx` (+ `.test.tsx`) — prop `period`
+- R1 — `src/client/components/ui/active-filter-chip.tsx` (+ `.test.tsx`) — **novo**, extraído do consumer/`/design-system`
+- R1 — `src/app/design-system/page.tsx` — usa `ActiveFilterChip` do DS
+- R1 — `src/shared/types/transaction-summary.ts` (**novo**) + `src/shared/types/index.ts`
+- R1 — `src/shared/utils/month-range.ts` (+ `.test.ts`) — **novo**, recorte mensal em Brasília
+- R1 — `src/server/domain/transactions/use-cases/get-transaction-period-summary.ts` — tipo vindo de `shared`
+- `src/server/domain/transactions/use-cases/create-income.test.ts`, `create-transaction.test.ts`, `delete-transaction.test.ts`, `get-impact-preview.test.ts`, `get-monthly-spending-summary.test.ts`, `get-suggested-establishments.test.ts`, `list-transactions.test.ts`, `transfer-between-accounts.test.ts`, `update-expense-transaction.test.ts`, `src/server/actions/recreate-transaction.actions.test.ts` — mocks do repository estendidos com o novo método
+- `_bmad-output/implementation-artifacts/3-4c-refatoracao-tela-transacoes.md` — progresso + completion notes
+- `_bmad-output/implementation-artifacts/sprint-status.yaml` — story movida para `review`
+
+**Deletados:**
+- `src/client/components/transactions/TransactionListRow.tsx`
+- `src/client/components/transactions/TransactionListFilters.tsx`
+- `src/client/components/transactions/TransactionListFilters.test.tsx`
+
+### Change Log
+
+- 2026-04-16 — Implementação completa da Story 3.4c. Ver Completion Notes.
+- 2026-11-14 — PR #36 retargetada de `main` para `staging` (novo fluxo de branches). Code review R1: 1 CRITICAL (smoke test marcado sem execução) + 7 MEDIUM corrigidos, 2 LOWs corrigidos, 3 LOWs em backlog. Smoke test executado localmente (40 cenários ok). Suite 1148/1148. Status: done.

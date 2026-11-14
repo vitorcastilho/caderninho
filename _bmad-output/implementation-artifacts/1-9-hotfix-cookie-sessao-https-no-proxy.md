@@ -49,9 +49,9 @@ so that consigo usar o app em vez de voltar sempre para `/login`.
 
 - [ ] Task 5 (AC: #5): Entrega
   - [x] 5.1: Commit `fix: reconhece cookie de sessão __Secure- no proxy` → push → PR para `staging`
-  - [ ] 5.2: Depois do deploy em `caderninho-staging.vercel.app`: login com e-mail e senha → chega em `/dashboard`; navegar para `/transactions` e `/checklist`; abrir uma aba anônima e acessar `/dashboard` → redireciona para `/login`; logout → rotas protegidas voltam a redirecionar
+  - [x] 5.2: Depois do deploy em `caderninho-staging.vercel.app`: login com e-mail e senha → chega em `/dashboard`; navegar para `/transactions` e `/checklist`; abrir uma aba anônima e acessar `/dashboard` → redireciona para `/login`; logout → rotas protegidas voltam a redirecionar
   - [ ] 5.3: Login Google em staging (o mesmo cookie é usado, então o fluxo deve funcionar)
-  - [ ] 5.4: PR de `staging` para `main` → depois do deploy, repetir 5.2 em produção
+  - [x] 5.4: PR de `staging` para `main` → depois do deploy, repetir 5.2 em produção
 
 ## Dev Notes
 
@@ -118,7 +118,7 @@ Claude Opus 5.5 (claude-opus-5-5)
 - `src/proxy.ts`: a verificação otimista passou a usar `getSessionCookie(request)` de `better-auth/cookies`, que reconhece `better-auth.session_token` e `__Secure-better-auth.session_token`. Sem config (o projeto não customiza `cookiePrefix`/`cookieName`). `PUBLIC_PATHS`, rate limit e logging intactos.
 - `src/proxy.test.ts`: 3 testes novos (dashboard e checklist com cookie `__Secure-` em URL HTTPS; HTTPS sem cookie de sessão continua redirecionando). Os 7 existentes seguem passando, inclusive o cookie sem prefixo (dev/HTTP).
 - **Não validado localmente ponta a ponta:** em HTTP o Better Auth não usa o prefixo `__Secure-`, então o fluxo real só aparece em HTTPS. A validação fica na Task 5.2 (staging) e 5.4 (produção).
-- **Task 5 (entrega):** 5.1 feita (commit + PR para `staging`); 5.2–5.4 acontecem depois do merge (validação em staging e produção).
+- **Task 5 (entrega):** 5.1 PR #39 → `staging`; 5.2 validado pelo usuário em `caderninho-staging.vercel.app` (login com e-mail/senha OK, redirecionou para `/onboarding` — esperado para conta sem onboarding no banco de staging); 5.4 PR #40 `staging` → `main`, deploy de Production Ready e login validado pelo usuário em produção. **5.3 (login Google em staging) ainda não confirmado.**
 
 - 2026-11-14 (create-story): story criada a partir do relato do bug em staging/produção, separada da 3.4c.
 
@@ -131,4 +131,5 @@ Claude Opus 5.5 (claude-opus-5-5)
 
 ## Change Log
 
+- 2026-11-14 — Entregue: #39 (→ staging) e #40 (staging → main). Login validado em staging e produção. Pendente: 5.3 (Google em staging).
 - 2026-11-14 — Hotfix implementado com TDD: `getSessionCookie` no proxy + 3 testes. Suite 1102/1102, build ok. Status: review (entrega via PR para `staging` pendente).

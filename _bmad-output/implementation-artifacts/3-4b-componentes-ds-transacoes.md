@@ -248,7 +248,7 @@ so that `/transactions` (Story 3.4c) e telas futuras (`/dashboard`, `/drill-down
 
 <!-- Code review rodado em 2026-04-16. Sem HIGH/MEDIUM. LOWs abaixo → backlog, não-blocking. Doc stales #1, #2, #5 corrigidos nesta rodada. -->
 
-- [ ] [AI-Review][LOW] Adicionar suporte a teclado em `TransactionRow` — `role="button"`, `tabIndex` e `onKeyDown` (Enter/Space) quando `onClick` presente. Alinhado hoje com padrão existente de `TransactionListRow` (3.4), mas DS canônico deveria subir o bar. [`src/client/components/ui/transaction-row.tsx:87-96`]
+- [x] [AI-Review][LOW] ~~Resolvido na code review R1 da Story 3.4c (2026-11-14): área principal virou `<button>` nativo.~~ Adicionar suporte a teclado em `TransactionRow` — `role="button"`, `tabIndex` e `onKeyDown` (Enter/Space) quando `onClick` presente. Alinhado hoje com padrão existente de `TransactionListRow` (3.4), mas DS canônico deveria subir o bar. [`src/client/components/ui/transaction-row.tsx:87-96`]
 - [ ] [AI-Review][LOW] Converter `TransactionRowProps` em discriminated union para garantir que `type='transfer'` exige `transferEndpoints` (e `expense`/`income` exigem `primary`) em tempo de compilação. [`src/client/components/ui/transaction-row.tsx:16-30`]
 - [ ] [AI-Review][LOW] Remover `aria-label` dos `<input type="checkbox">` dentro de `<label>` em `TransactionFiltersSheet` — a `<label>` envolvente já provê nome acessível com emoji+nome. [`src/client/components/ui/transaction-filters-sheet.tsx:127-137`, `:170-180`]
 

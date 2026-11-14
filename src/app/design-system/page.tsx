@@ -68,6 +68,7 @@ import {
   type MonthFilter,
 } from "@/client/components/ui/transaction-filters-bar"
 import { TransactionFiltersSheet } from "@/client/components/ui/transaction-filters-sheet"
+import { ActiveFilterChip } from "@/client/components/ui/active-filter-chip"
 
 /* ─── helpers ─── */
 
@@ -1986,28 +1987,6 @@ const FILTERS_DEMO_PAYMENT_METHODS = [
   { id: 'pm-2', label: 'Master Inter', cardBrand: 'mastercard' },
   { id: 'pm-3', label: 'Nubank · Crédito', cardBrand: 'mastercard' },
 ]
-
-function ActiveFilterChip({
-  children,
-  onRemove,
-}: {
-  children: React.ReactNode
-  onRemove: () => void
-}) {
-  return (
-    <span className="inline-flex items-center gap-1 bg-primary-light text-primary px-2.5 py-1 rounded-full text-xs font-medium">
-      <span className="flex items-center gap-1">{children}</span>
-      <button
-        type="button"
-        onClick={onRemove}
-        className="ml-0.5 rounded-full hover:bg-primary/10 p-0.5"
-        aria-label="Remover filtro"
-      >
-        <X className="size-3" />
-      </button>
-    </span>
-  )
-}
 
 function TransactionFiltersSection() {
   const [search, setSearch] = useState('')

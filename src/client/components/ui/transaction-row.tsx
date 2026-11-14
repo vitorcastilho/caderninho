@@ -83,18 +83,8 @@ export function TransactionRow({
 }: TransactionRowProps) {
   const sign = SIGN_BY_TYPE[type];
 
-  return (
-    <li
-      data-type={type}
-      data-slot="transaction-row"
-      onClick={onClick}
-      className={cn(
-        'flex items-center gap-3 py-3 pl-[13px] pr-4 transition-colors hover:bg-muted/30',
-        'border-l-[3px]',
-        BORDER_BY_TYPE[type],
-        onClick && 'cursor-pointer',
-      )}
-    >
+  const content = (
+    <>
       <div
         className={cn(
           'size-9 shrink-0 rounded-full flex items-center justify-center',
@@ -147,6 +137,41 @@ export function TransactionRow({
           <span className="text-[11px] text-muted-foreground mt-0.5">{method}</span>
         )}
       </div>
+    </>
+  );
+
+  const contentClassName = 'flex min-w-0 flex-1 items-center gap-3 text-left';
+
+  return (
+    <li
+      data-type={type}
+      data-slot="transaction-row"
+      className={cn(
+        'flex items-center gap-3 py-3 pl-[13px] pr-4 transition-colors hover:bg-muted/30',
+        'border-l-[3px]',
+        BORDER_BY_TYPE[type],
+      )}
+    >
+      {onClick ? (
+        // <button> nativo: foco por Tab e ativação por Enter/Space sem handlers manuais.
+        // O botão de ação fica como irmão (não aninhado) para evitar elementos
+        // interativos dentro de interativos.
+        <button
+          type="button"
+          onClick={onClick}
+          data-slot="transaction-row-main"
+          className={cn(
+            contentClassName,
+            'cursor-pointer rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
+          )}
+        >
+          {content}
+        </button>
+      ) : (
+        <div data-slot="transaction-row-main" className={contentClassName}>
+          {content}
+        </div>
+      )}
 
       {onAction && (
         <button
