@@ -14,7 +14,7 @@ export function escapeLikePattern(input: string): string {
   return input.replace(/[\\%_]/g, (char) => `\\${char}`);
 }
 
-interface TransactionFilterSet {
+export interface TransactionFilterSet {
   types?: Array<'expense' | 'income' | 'transfer'>;
   categoryIds?: string[];
   paymentMethodIds?: string[];
@@ -27,7 +27,7 @@ interface TransactionFilterSet {
 // Compartilhado entre `findByOrganizationFiltered` e `aggregateByTypeForOrganizationFiltered`
 // para garantir que listagem e summary considerem exatamente o mesmo conjunto de
 // transações dado o mesmo input de filtros.
-function buildFilterConditions(
+export function buildFilterConditions(
   organizationId: string,
   filters: TransactionFilterSet,
 ): SQL[] {

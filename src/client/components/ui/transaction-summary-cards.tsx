@@ -21,6 +21,12 @@ export interface TransactionSummaryCardsProps {
    * narrow container while the viewport is wide.
    */
   compact?: boolean;
+  /**
+   * Período que os totais representam. `'month'` (default) mantém os labels
+   * "Saídas no mês"/"Entradas no mês"; `'all'` remove o "no mês" — usar quando o
+   * consumer mostra totais sem recorte de mês (ex.: filtro "Todos os meses").
+   */
+  period?: 'month' | 'all';
 }
 
 type CardKey = 'expense' | 'income' | 'transfer';
@@ -28,6 +34,7 @@ type CardKey = 'expense' | 'income' | 'transfer';
 interface CardConfig {
   key: CardKey;
   labelDesktop: string;
+  labelDesktopAll: string;
   labelMobile: string;
   icon: LucideIcon;
   labelClass: string;
@@ -40,6 +47,7 @@ const CARD_ORDER: readonly CardConfig[] = [
   {
     key: 'expense',
     labelDesktop: 'Saídas no mês',
+    labelDesktopAll: 'Saídas',
     labelMobile: 'Saídas',
     icon: TrendingDown,
     labelClass: 'text-negative',
@@ -50,6 +58,7 @@ const CARD_ORDER: readonly CardConfig[] = [
   {
     key: 'income',
     labelDesktop: 'Entradas no mês',
+    labelDesktopAll: 'Entradas',
     labelMobile: 'Entradas',
     icon: TrendingUp,
     labelClass: 'text-positive-text',
@@ -60,6 +69,7 @@ const CARD_ORDER: readonly CardConfig[] = [
   {
     key: 'transfer',
     labelDesktop: 'Transferências',
+    labelDesktopAll: 'Transferências',
     labelMobile: 'Transf.',
     icon: ArrowLeftRight,
     labelClass: 'text-info-text',
@@ -75,6 +85,7 @@ export function TransactionSummaryCards({
   transfer,
   isLoading,
   compact,
+  period = 'month',
 }: TransactionSummaryCardsProps) {
   const gridClass = cn(
     'grid grid-cols-3',
@@ -133,7 +144,9 @@ export function TransactionSummaryCards({
                 <span>{cfg.labelMobile}</span>
               ) : (
                 <>
-                  <span className="hidden md:inline">{cfg.labelDesktop}</span>
+                  <span className="hidden md:inline">
+                    {period === 'all' ? cfg.labelDesktopAll : cfg.labelDesktop}
+                  </span>
                   <span className="md:hidden">{cfg.labelMobile}</span>
                 </>
               )}

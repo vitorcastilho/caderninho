@@ -7,8 +7,12 @@ vi.mock('@/server/infrastructure/database/client', () => ({
 }));
 
 import { db } from '@/server/infrastructure/database/client';
+import { and } from 'drizzle-orm';
+import { PgDialect } from 'drizzle-orm/pg-core';
+
 import {
   DrizzleTransactionRepository,
+  buildFilterConditions,
   escapeLikePattern,
 } from './transaction.repository.impl';
 
@@ -180,5 +184,76 @@ describe('DrizzleTransactionRepository.aggregateByTypeForOrganizationFiltered', 
     const result = await repository.aggregateByTypeForOrganizationFiltered('org-1', {});
 
     expect(result).toEqual([{ type: 'expense', totalCents: 100, count: 1 }]);
+  });
+});
+
+describe('buildFilterConditions (WHERE compartilhado por lista e summary)', () => {
+  const dialect = new PgDialect();
+  const render = (filters: Parameters<typeof buildFilterConditions>[1]) => {
+    const conditions = buildFilterConditions('org-1', filters);
+    const query = dialect.sqlToQuery(and(...conditions)!);
+    return { count: conditions.length, sql: query.sql, params: query.params };
+  };
+
+  it('sem filtros: só o recorte por organização', () => {
+    const r = render({});
+    expect(r.count).toBe(1);
+    expect(r.sql).toContain('"organization_id" = $1');
+    expect(r.params).toEqual(['org-1']);
+  });
+
+  it('arrays vazios não geram condição', () => {
+    expect(render({ types: [], categoryIds: [], paymentMethodIds: [] }).count).toBe(1);
+  });
+
+  it('tipos viram IN sobre a coluna type', () => {
+    const r = render({ types: ['expense', 'income'] });
+    expect(r.sql).toMatch(/"type" in \(\$2, \$3\)/);
+    expect(r.params).toEqual(['org-1', 'expense', 'income']);
+  });
+
+  it('categorias viram IN sobre category_id', () => {
+    const r = render({ categoryIds: ['cat-1'] });
+    expect(r.sql).toMatch(/"category_id" in \(\$2\)/);
+    expect(r.params).toContain('cat-1');
+  });
+
+  it('método de pagamento casa paymentMethodId OU conta de origem OU destino', () => {
+    const r = render({ paymentMethodIds: ['bank-1'] });
+    expect(r.sql).toMatch(/"payment_method_id" in .* or .*"source_account_id" in .* or .*"destination_account_id" in/);
+    expect(r.params.filter((p) => p === 'bank-1')).toHaveLength(3);
+  });
+
+  it('período vira >= dateFrom e <= dateTo em transaction_date', () => {
+    const dateFrom = new Date('2026-11-01T03:00:00Z');
+    const dateTo = new Date('2026-12-01T02:59:59.999Z');
+    const r = render({ dateFrom, dateTo });
+    expect(r.sql).toMatch(/"transaction_date" >= \$2/);
+    expect(r.sql).toMatch(/"transaction_date" <= \$3/);
+    expect(r.count).toBe(3);
+  });
+
+  it('busca textual faz ILIKE em establishment/description com wildcards escapados', () => {
+    const r = render({ search: '100%', searchAmountCents: null });
+    expect(r.sql).toMatch(/"establishment" ilike \$2 or .*"description" ilike \$3/);
+    expect(r.params).toContain('%100\\%%');
+    expect(r.sql).not.toContain('"amount_cents" =');
+  });
+
+  it('busca numérica acrescenta igualdade em amount_cents', () => {
+    const r = render({ search: '42,50', searchAmountCents: 4250 });
+    expect(r.sql).toMatch(/"amount_cents" = \$4/);
+    expect(r.params).toContain(4250);
+  });
+
+  it('filtros combinados geram uma condição por filtro (AND)', () => {
+    const r = render({
+      types: ['expense'],
+      categoryIds: ['cat-1'],
+      paymentMethodIds: ['bank-1'],
+      dateFrom: new Date('2026-11-01T03:00:00Z'),
+      search: 'merc',
+    });
+    expect(r.count).toBe(6);
   });
 });

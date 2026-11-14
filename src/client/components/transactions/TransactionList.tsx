@@ -2,12 +2,16 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { Receipt, X } from 'lucide-react';
+import { Receipt } from 'lucide-react';
+
+import type { TransactionPeriodSummary } from '@/shared/types/transaction-summary';
+import { getLastNMonthsBR, monthToDateRangeBR } from '@/shared/utils/month-range';
 
 import { Breadcrumb } from '@/client/components/ui/breadcrumb';
 import { PageHeader } from '@/client/components/ui/page-header';
 import { EmptyState } from '@/client/components/ui/empty-state';
 import { Skeleton } from '@/client/components/ui/skeleton';
+import { ActiveFilterChip } from '@/client/components/ui/active-filter-chip';
 import {
   Sheet,
   SheetContent,
@@ -20,7 +24,6 @@ import {
   getTransactionPeriodSummaryAction,
   listTransactionsAction,
 } from '@/server/actions/transaction.actions';
-import type { TransactionPeriodSummary } from '@/server/domain/transactions/use-cases/get-transaction-period-summary';
 import {
   TransactionRow,
   type TransactionRowIcon,
@@ -110,6 +113,8 @@ interface TransactionListProps {
   initialTotal: number;
   initialHasMore: boolean;
   initialSummary?: TransactionPeriodSummary;
+  /** Mês usado no SSR — o estado inicial do client precisa bater com ele. */
+  initialMonth: MonthFilter;
   categories: CategoryOption[];
   subcategories: SubcategoryOption[];
   bankAccounts: BankAccountOption[];
@@ -151,31 +156,20 @@ function formatDayLabel(date: Date): string {
   return dayFormatter.format(date);
 }
 
-function buildInitialFilters(): TransactionListFiltersState {
+function buildInitialFilters(month: MonthFilter): TransactionListFiltersState {
   return {
     search: '',
     type: 'all',
     categoryIds: new Set<string>(),
     paymentMethodIds: new Set<string>(),
-    month: 'all',
+    month,
   };
 }
 
+// Mesmo recorte (fuso de Brasília) usado no SSR — ver `@/shared/utils/month-range`.
 function monthToDateRange(month: MonthFilter): { dateFrom?: Date; dateTo?: Date } {
   if (month === 'all') return {};
-  const dateFrom = new Date(month.year, month.month - 1, 1, 0, 0, 0, 0);
-  const dateTo = new Date(month.year, month.month, 0, 23, 59, 59, 999);
-  return { dateFrom, dateTo };
-}
-
-function getLastNMonths(n: number): { year: number; month: number }[] {
-  const now = new Date();
-  const result: { year: number; month: number }[] = [];
-  for (let i = 0; i < n; i++) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    result.push({ year: d.getFullYear(), month: d.getMonth() + 1 });
-  }
-  return result;
+  return monthToDateRangeBR(month);
 }
 
 function monthKey(month: MonthFilter): string {
@@ -291,37 +285,17 @@ function buildPaymentMethodOptions(
   ];
 }
 
-export function resolveTransactionLabel(
+/** Texto do diálogo de exclusão — reaproveita os mesmos helpers da linha. */
+export function buildDeleteLabel(
   tx: TransactionDTO,
   categories: CategoryOption[],
   bankAccounts: BankAccountOption[],
   incomeSources: IncomeSourceOption[],
-): { primary: string; secondary: string } {
-  if (tx.type === 'expense') {
-    const category = categories.find((c) => c.id === tx.categoryId);
-    const primary = tx.establishment || category?.name || 'Gasto';
-    const secondary = category?.name && tx.establishment ? category.name : '';
-    return { primary, secondary };
-  }
-  if (tx.type === 'income') {
-    const source = incomeSources.find((s) => s.id === tx.incomeSourceId);
-    const account = bankAccounts.find((a) => a.id === tx.destinationAccountId);
-    return {
-      primary: source?.name || 'Receita',
-      secondary: account ? `→ ${account.bank} - ${account.name}` : '',
-    };
-  }
-  if (tx.type === 'transfer') {
-    const source = bankAccounts.find((a) => a.id === tx.sourceAccountId);
-    const dest = bankAccounts.find((a) => a.id === tx.destinationAccountId);
-    const sourceLabel = source ? `${source.bank} - ${source.name}` : '?';
-    const destLabel = dest ? `${dest.bank} - ${dest.name}` : '?';
-    return {
-      primary: 'Transferência',
-      secondary: `${sourceLabel} → ${destLabel}`,
-    };
-  }
-  return { primary: tx.type, secondary: '' };
+): string {
+  const primary = buildPrimary(tx, categories, incomeSources);
+  const label =
+    primary ?? `Transferência ${buildSecondary(tx, categories, bankAccounts)}`;
+  return `${formatCurrency(tx.amountCents)} — ${label}`;
 }
 
 function filtersToActionInput(
@@ -398,6 +372,7 @@ export function TransactionList({
   initialTotal,
   initialHasMore,
   initialSummary,
+  initialMonth,
   categories,
   subcategories,
   bankAccounts,
@@ -421,7 +396,9 @@ export function TransactionList({
     [activeBankAccounts, activeCreditCards],
   );
 
-  const [filters, setFilters] = useState<TransactionListFiltersState>(buildInitialFilters);
+  const [filters, setFilters] = useState<TransactionListFiltersState>(() =>
+    buildInitialFilters(initialMonth),
+  );
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
   const [rows, setRows] = useState<TransactionDTO[]>(initialTransactions);
@@ -514,6 +491,18 @@ export function TransactionList({
 
         if (myRequestId !== requestIdRef.current) return;
 
+        // Summary é tratado antes (e independente) da lista: uma falha na lista
+        // não deve descartar um summary válido.
+        if (shouldRefetchSummary) {
+          if (summaryResult && isActionSuccess<TransactionPeriodSummary>(summaryResult)) {
+            setSummary(summaryResult.data);
+          } else {
+            // Mantém o último valor, mas avisa — senão os cards mostrariam totais
+            // de outro filtro sem nenhuma indicação.
+            toast.error('Não foi possível atualizar o resumo do período.');
+          }
+        }
+
         if (
           !isActionSuccess<{ rows: TransactionDTO[]; total: number; hasMore: boolean }>(
             listResult,
@@ -529,13 +518,6 @@ export function TransactionList({
           setRows(data.rows);
         } else {
           setRows((prev) => [...prev, ...data.rows]);
-        }
-
-        if (shouldRefetchSummary) {
-          if (summaryResult && isActionSuccess<TransactionPeriodSummary>(summaryResult)) {
-            setSummary(summaryResult.data);
-          }
-          // Se o summary falhar, mantemos o último conhecido para não flickar os cards.
         }
       } finally {
         if (myRequestId === requestIdRef.current) {
@@ -590,8 +572,11 @@ export function TransactionList({
     loadPage(0, buildEffectiveFilters());
   }, [loadPage, buildEffectiveFilters]);
 
+  // "Limpar filtros" do empty state: remove TODOS os recortes, inclusive o mês,
+  // para mostrar o histórico completo (voltar ao mês inicial poderia ser no-op
+  // quando o mês corrente está vazio).
   const handleClearAllFilters = useCallback(() => {
-    setFilters(buildInitialFilters());
+    setFilters(buildInitialFilters('all'));
     setDebouncedSearch('');
   }, []);
 
@@ -604,7 +589,7 @@ export function TransactionList({
   }, []);
 
   const monthOptions = useMemo<MonthFilter[]>(() => {
-    const baseMonths = getLastNMonths(12);
+    const baseMonths = getLastNMonthsBR(12);
     const selected = filterMonth;
     if (
       selected !== 'all' &&
@@ -695,7 +680,8 @@ export function TransactionList({
         expense={summaryData.expense}
         income={summaryData.income}
         transfer={summaryData.transfer}
-        isLoading={isSummaryLoading && summary === undefined}
+        isLoading={isSummaryLoading}
+        period={filterMonth === 'all' ? 'all' : 'month'}
       />
 
       <TransactionFiltersBar
@@ -716,16 +702,21 @@ export function TransactionList({
           {activeCategoryChips.map((chip) => (
             <ActiveFilterChip
               key={`cat-${chip.id}`}
-              label={chip.emoji ? `${chip.emoji} ${chip.label}` : chip.label}
               onRemove={() => removeCategory(chip.id)}
-            />
+              removeLabel={`Remover filtro ${chip.label}`}
+            >
+              {chip.emoji && <span>{chip.emoji}</span>}
+              <span>{chip.label}</span>
+            </ActiveFilterChip>
           ))}
           {activePaymentChips.map((chip) => (
             <ActiveFilterChip
               key={`pm-${chip.id}`}
-              label={chip.label}
               onRemove={() => removePaymentMethod(chip.id)}
-            />
+              removeLabel={`Remover filtro ${chip.label}`}
+            >
+              {chip.label}
+            </ActiveFilterChip>
           ))}
           <button
             type="button"
@@ -834,7 +825,7 @@ export function TransactionList({
                       className={cn(
                         'w-full rounded-md px-3 py-2 text-left text-sm transition-colors',
                         active
-                          ? 'bg-primary text-white font-semibold'
+                          ? 'bg-primary text-primary-foreground font-semibold'
                           : 'hover:bg-muted/50 text-foreground',
                       )}
                       aria-pressed={active}
@@ -868,39 +859,11 @@ export function TransactionList({
           if (!open) setDeletingTransaction(null);
         }}
         transaction={deletingTransaction}
-        labelResolver={(tx) => {
-          const { primary } = resolveTransactionLabel(
-            tx,
-            categories,
-            bankAccounts,
-            incomeSources,
-          );
-          return `${formatCurrency(tx.amountCents)} — ${primary}`;
-        }}
+        labelResolver={(tx) =>
+          buildDeleteLabel(tx, categories, bankAccounts, incomeSources)
+        }
         onDeleted={refresh}
       />
     </div>
-  );
-}
-
-function ActiveFilterChip({
-  label,
-  onRemove,
-}: {
-  label: string;
-  onRemove: () => void;
-}) {
-  return (
-    <span className="inline-flex items-center gap-1 rounded-badge bg-primary-light px-2.5 py-1 text-xs font-medium text-primary">
-      {label}
-      <button
-        type="button"
-        onClick={onRemove}
-        className="inline-flex size-4 items-center justify-center rounded-full hover:bg-primary/10"
-        aria-label={`Remover filtro ${label}`}
-      >
-        <X className="size-3" />
-      </button>
-    </span>
   );
 }

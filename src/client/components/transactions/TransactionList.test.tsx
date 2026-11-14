@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import userEvent from '@testing-library/user-event';
 
@@ -23,9 +23,10 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
+const mockToastError = vi.fn();
 vi.mock('sonner', () => ({
   toast: {
-    error: vi.fn(),
+    error: (...args: unknown[]) => mockToastError(...args),
     info: vi.fn(),
     success: vi.fn(),
   },
@@ -56,7 +57,7 @@ class IntersectionObserverMock {
 }
 vi.stubGlobal('IntersectionObserver', IntersectionObserverMock);
 
-const { TransactionList } = await import('./TransactionList');
+const { TransactionList, buildDeleteLabel } = await import('./TransactionList');
 
 const categories = [
   { id: 'cat-1', name: 'Alimentação', classificationId: 'cl-1', emoji: '🍔' },
@@ -113,6 +114,7 @@ function renderList(
       initialTotal={props.initialTotal ?? 0}
       initialHasMore={props.initialHasMore ?? false}
       initialSummary={props.initialSummary}
+      initialMonth={props.initialMonth ?? 'all'}
       categories={props.categories ?? categories}
       subcategories={props.subcategories ?? subcategories}
       bankAccounts={props.bankAccounts ?? bankAccounts}
@@ -272,11 +274,15 @@ describe('TransactionList', () => {
     await user.click(screen.getByRole('button', { name: 'Aplicar' }));
 
     // Chip deve aparecer + botão "Limpar tudo"
-    expect(await screen.findByText('🍔 Alimentação')).toBeInTheDocument();
+    expect(
+      await screen.findByRole('button', { name: 'Remover filtro Alimentação' }),
+    ).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Limpar tudo' }));
 
     // O chip some
-    expect(screen.queryByText('🍔 Alimentação')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Remover filtro Alimentação' }),
+    ).not.toBeInTheDocument();
     // Mas o tipo "Saídas" permanece selecionado
     expect(screen.getByRole('radio', { name: /Saídas/ })).toHaveAttribute(
       'aria-checked',
@@ -332,5 +338,152 @@ describe('TransactionList', () => {
       .getAllByRole('listitem')
       .filter((el) => el.getAttribute('data-type') === 'transfer');
     expect(rows).toHaveLength(1);
+  });
+
+  describe('revisão 3.4c (R1)', () => {
+    const someSummary = {
+      expense: { totalCents: 12300, count: 2 },
+      income: { totalCents: 0, count: 0 },
+      transfer: { totalCents: 0, count: 0 },
+    };
+
+    it('com mês inicial concreto, os cards usam o label "no mês" e a busca considera o mês', async () => {
+      const user = userEvent.setup();
+      renderList({
+        initialTransactions: [makeTx('tx-1', '2026-04-10T12:00:00Z')],
+        initialTotal: 1,
+        initialSummary: someSummary,
+        initialMonth: { year: 2026, month: 4 },
+      });
+
+      expect(screen.getByText('Saídas no mês')).toBeInTheDocument();
+
+      await user.click(screen.getByRole('radio', { name: /Saídas/ }));
+      expect(mockSummaryAction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          types: ['expense'],
+          dateFrom: new Date('2026-04-01T03:00:00.000Z'),
+          dateTo: new Date('2026-05-01T02:59:59.999Z'),
+        }),
+      );
+    });
+
+    it('com "Todos os meses", os cards não dizem "no mês"', () => {
+      renderList({ initialSummary: someSummary, initialMonth: 'all' });
+      expect(screen.queryByText('Saídas no mês')).not.toBeInTheDocument();
+    });
+
+    it('summary não recebe limit/offset e recebe os mesmos filtros da lista', async () => {
+      const user = userEvent.setup();
+      renderList({
+        initialTransactions: [makeTx('tx-1', '2026-04-10T12:00:00Z')],
+        initialTotal: 1,
+      });
+
+      await user.click(screen.getByRole('radio', { name: /Saídas/ }));
+
+      const listInput = mockListAction.mock.calls.at(-1)![0] as Record<string, unknown>;
+      const summaryInput = mockSummaryAction.mock.calls.at(-1)![0] as Record<string, unknown>;
+      const { limit, offset, ...listFilters } = listInput;
+      expect(limit).toBe(50);
+      expect(offset).toBe(0);
+      expect(summaryInput).toEqual(listFilters);
+    });
+
+    it('mostra skeleton nos cards enquanto o summary recarrega', async () => {
+      const user = userEvent.setup();
+      let resolveSummary: (v: unknown) => void = () => {};
+      mockSummaryAction.mockReturnValueOnce(
+        new Promise((r) => {
+          resolveSummary = r;
+        }),
+      );
+      const { container } = renderList({
+        initialTransactions: [makeTx('tx-1', '2026-04-10T12:00:00Z')],
+        initialTotal: 1,
+        initialSummary: someSummary,
+      });
+
+      await user.click(screen.getByRole('radio', { name: /Saídas/ }));
+      expect(
+        container.querySelector('[data-slot="transaction-summary-cards-loading"]'),
+      ).toBeInTheDocument();
+
+      resolveSummary({ success: true, data: someSummary });
+      await waitFor(() =>
+        expect(
+          container.querySelector('[data-slot="transaction-summary-cards-loading"]'),
+        ).not.toBeInTheDocument(),
+      );
+    });
+
+    it('avisa quando o summary falha (não mostra totais de outro filtro em silêncio)', async () => {
+      const user = userEvent.setup();
+      mockSummaryAction.mockResolvedValueOnce({
+        success: false,
+        error: { code: 'INTERNAL', message: 'x' },
+      });
+      renderList({
+        initialTransactions: [makeTx('tx-1', '2026-04-10T12:00:00Z')],
+        initialTotal: 1,
+        initialSummary: someSummary,
+      });
+
+      await user.click(screen.getByRole('radio', { name: /Saídas/ }));
+      await waitFor(() =>
+        expect(mockToastError).toHaveBeenCalledWith(
+          'Não foi possível atualizar o resumo do período.',
+        ),
+      );
+    });
+
+    it('aplica o summary mesmo quando a lista falha', async () => {
+      const user = userEvent.setup();
+      mockListAction.mockResolvedValueOnce({
+        success: false,
+        error: { code: 'INTERNAL', message: 'x' },
+      });
+      mockSummaryAction.mockResolvedValueOnce({
+        success: true,
+        data: { ...someSummary, expense: { totalCents: 77700, count: 3 } },
+      });
+      renderList({
+        initialTransactions: [makeTx('tx-1', '2026-04-10T12:00:00Z')],
+        initialTotal: 1,
+        initialSummary: someSummary,
+      });
+
+      await user.click(screen.getByRole('radio', { name: /Saídas/ }));
+      expect(await screen.findByText('R$ 777,00')).toBeInTheDocument();
+      expect(mockToastError).toHaveBeenCalledWith('Erro ao carregar transações.');
+    });
+
+    it('linha de gasto é acessível por teclado (Tab + Enter abre a edição)', async () => {
+      const user = userEvent.setup();
+      renderList({
+        initialTransactions: [makeTx('tx-1', '2026-04-10T12:00:00Z')],
+        initialTotal: 1,
+      });
+
+      const row = screen.getByRole('button', { name: /Mercado tx-1/ });
+      row.focus();
+      await user.keyboard('{Enter}');
+      expect(await screen.findByText('Editar gasto')).toBeInTheDocument();
+    });
+
+    it('buildDeleteLabel usa os mesmos textos da linha', () => {
+      const expense = makeTx('tx-1', '2026-04-10T12:00:00Z');
+      expect(buildDeleteLabel(expense as never, categories, bankAccounts, incomeSources)).toMatch(
+        /R\$\s*42,50 — Mercado tx-1/,
+      );
+      const transfer = makeTx('tx-2', '2026-04-10T12:00:00Z', {
+        type: 'transfer',
+        sourceAccountId: 'bank-1',
+        destinationAccountId: 'bank-x',
+      });
+      expect(
+        buildDeleteLabel(transfer as never, categories, bankAccounts, incomeSources),
+      ).toMatch(/— Transferência Corrente → \?/);
+    });
   });
 });

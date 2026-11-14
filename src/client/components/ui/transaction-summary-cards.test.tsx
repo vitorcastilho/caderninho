@@ -40,6 +40,17 @@ describe('TransactionSummaryCards', () => {
     expect(screen.getByText('Transf.')).toBeInTheDocument();
   });
 
+  it('period="all" drops "no mês" from desktop labels (totais sem recorte de mês)', () => {
+    render(<TransactionSummaryCards {...sample} period="all" />);
+
+    expect(screen.queryByText('Saídas no mês')).not.toBeInTheDocument();
+    expect(screen.queryByText('Entradas no mês')).not.toBeInTheDocument();
+    // desktop + mobile agora têm o mesmo texto para Saídas/Entradas
+    expect(screen.getAllByText('Saídas')).toHaveLength(2);
+    expect(screen.getAllByText('Entradas')).toHaveLength(2);
+    expect(screen.getByText('Transferências')).toBeInTheDocument();
+  });
+
   it('renders zero state when totalCents=0 and count=0 (does not hide card)', () => {
     const { container } = render(
       <TransactionSummaryCards

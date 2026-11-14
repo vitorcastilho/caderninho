@@ -1,5 +1,6 @@
 import { ok } from '@/shared/types/result';
 import type { Result } from '@/shared/types/result';
+import type { TransactionPeriodSummary } from '@/shared/types/transaction-summary';
 import type { TransactionRepository } from '../repositories/transaction.repository';
 import { parseSearchAmountCents } from './list-transactions';
 
@@ -17,11 +18,7 @@ export interface GetTransactionPeriodSummaryParams {
   filters?: GetTransactionPeriodSummaryFilters;
 }
 
-export interface TransactionPeriodSummary {
-  expense: { totalCents: number; count: number };
-  income: { totalCents: number; count: number };
-  transfer: { totalCents: number; count: number };
-}
+export type { TransactionPeriodSummary };
 
 export interface GetTransactionPeriodSummaryDeps {
   repository: TransactionRepository;

@@ -1,3 +1,4 @@
+import { getCurrentMonthBR, monthToDateRangeBR } from '@/shared/utils/month-range';
 import {
   listTransactionsAction,
   getTransactionPeriodSummaryAction,
@@ -10,6 +11,11 @@ import { listIncomeSourcesAction } from '@/server/actions/income-source.actions'
 import { TransactionList } from '@/client/components/transactions/TransactionList';
 
 export default async function TransactionsPage() {
+  // A tela abre no mês corrente (fuso de Brasília) — os cards dizem "no mês".
+  // O client recebe o mesmo mês em `initialMonth` para não refazer o fetch.
+  const initialMonth = getCurrentMonthBR();
+  const monthRange = monthToDateRangeBR(initialMonth);
+
   const [
     transactionsResult,
     summaryResult,
@@ -19,8 +25,8 @@ export default async function TransactionsPage() {
     creditCardsResult,
     incomeSourcesResult,
   ] = await Promise.all([
-    listTransactionsAction({}),
-    getTransactionPeriodSummaryAction({}),
+    listTransactionsAction(monthRange),
+    getTransactionPeriodSummaryAction(monthRange),
     listCategoriesAction(undefined),
     listSubcategoriesAction(undefined),
     listBankAccountsAction(undefined),
@@ -44,6 +50,7 @@ export default async function TransactionsPage() {
       initialTotal={initialTotal}
       initialHasMore={initialHasMore}
       initialSummary={initialSummary}
+      initialMonth={initialMonth}
       categories={categories}
       subcategories={subcategories}
       bankAccounts={bankAccounts}
