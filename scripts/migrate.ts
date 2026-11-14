@@ -12,8 +12,9 @@ if (!connectionString) {
   process.exit(1);
 }
 
-// Use max: 1 for migrations — required by postgres.js for transactional DDL
-const migrationClient = postgres(connectionString, { max: 1 });
+// Use max: 1 for migrations — required by postgres.js for transactional DDL.
+// prepare: false — compatível com o pooler do Supabase em modo transação (6543).
+const migrationClient = postgres(connectionString, { max: 1, prepare: false });
 const db = drizzle(migrationClient);
 
 async function main() {

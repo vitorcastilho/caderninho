@@ -16,7 +16,19 @@ const globalForDb = globalThis as unknown as {
   pgClient: ReturnType<typeof postgres> | undefined;
 };
 
-const client = globalForDb.pgClient ?? postgres(connectionString);
+// Configuração para Vercel (serverless) + pooler do Supabase em modo transação
+// (porta 6543). Cada instância da função mantém seu próprio pool:
+// - max: poucas conexões por instância (o pooler multiplexa entre instâncias)
+// - idle_timeout: devolve conexões ociosas em vez de segurá-las indefinidamente
+// - prepare: false: o modo transação não suporta prepared statements
+// Em dev (Postgres local direto) essas opções também funcionam.
+const client =
+  globalForDb.pgClient ??
+  postgres(connectionString, {
+    max: 3,
+    idle_timeout: 20,
+    prepare: false,
+  });
 
 if (process.env.NODE_ENV !== 'production') {
   globalForDb.pgClient = client;

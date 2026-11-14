@@ -51,6 +51,7 @@ development_status:
   1-7-validacao-logging-e-infraestrutura-compartilhada: done
   1-8-ci-cd-pipeline-ambientes-e-readme: done
   1-9-hotfix-cookie-sessao-https-no-proxy: review
+  1-10-hotfix-pool-conexoes-modo-transacao: review
   epic-1-retrospective: optional
 
   # Epic 2: Estrutura Financeira e Categorizacao
