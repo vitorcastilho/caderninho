@@ -111,4 +111,42 @@ describe("proxy", () => {
     expect(NextResponse.next).toHaveBeenCalled();
     expect(NextResponse.redirect).not.toHaveBeenCalled();
   });
+
+  // Story 1.9 — em HTTPS (staging/produção) o Better Auth grava o cookie com o
+  // prefixo seguro `__Secure-`. O proxy precisa reconhecer os dois nomes.
+  describe("cookie de sessao com prefixo __Secure- (HTTPS)", () => {
+    it("deve permitir /dashboard com __Secure-better-auth.session_token", () => {
+      const request = createRequest("https://caderninho-staging.vercel.app/dashboard", {
+        "__Secure-better-auth.session_token": "valid-token-123",
+      });
+
+      proxy(request);
+
+      expect(NextResponse.next).toHaveBeenCalled();
+      expect(NextResponse.redirect).not.toHaveBeenCalled();
+    });
+
+    it("deve permitir /checklist com __Secure-better-auth.session_token", () => {
+      const request = createRequest("https://caderninho-staging.vercel.app/checklist", {
+        "__Secure-better-auth.session_token": "valid-token-123",
+      });
+
+      proxy(request);
+
+      expect(NextResponse.next).toHaveBeenCalled();
+      expect(NextResponse.redirect).not.toHaveBeenCalled();
+    });
+
+    it("deve continuar redirecionando para /login em HTTPS sem cookie de sessao", () => {
+      const request = createRequest("https://caderninho-staging.vercel.app/dashboard", {
+        "outro-cookie": "x",
+      });
+
+      proxy(request);
+
+      expect(NextResponse.redirect).toHaveBeenCalled();
+      const redirectUrl = vi.mocked(NextResponse.redirect).mock.calls[0][0] as URL;
+      expect(redirectUrl.pathname).toBe("/login");
+    });
+  });
 });
