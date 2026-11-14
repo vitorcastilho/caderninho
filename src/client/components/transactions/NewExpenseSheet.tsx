@@ -21,7 +21,10 @@ import {
 import { useIsMobile } from '@/client/hooks/use-is-mobile';
 import { listClassificationsAction } from '@/server/actions/classification.actions';
 import { listCategoriesAction } from '@/server/actions/category.actions';
-import { listSubcategoriesAction } from '@/server/actions/subcategory.actions';
+import {
+  createSubcategoryAction,
+  listSubcategoriesAction,
+} from '@/server/actions/subcategory.actions';
 import { listBankAccountsAction } from '@/server/actions/bank-account.actions';
 import { listCreditCardsAction } from '@/server/actions/credit-card.actions';
 import {
@@ -156,6 +159,30 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
     setSuggestedEstablishments(uniqueNames);
   }, []);
 
+  // Story 3.4e — criar subcategoria sem sair do registro. A nova entra na
+  // lista local para o CascadeInput conseguir selecioná-la.
+  const handleCreateSubcategory = useCallback(
+    async ({ categoryId, name }: { categoryId: string; name: string }): Promise<Subcategory | null> => {
+      const result = await createSubcategoryAction({ categoryId, name });
+      if (!result.success) {
+        toast.error(result.error.message || 'Não foi possível criar a subcategoria.');
+        return null;
+      }
+      const created: Subcategory = {
+        id: result.data.id,
+        name: result.data.name,
+        categoryId: result.data.categoryId,
+        defaultPaymentMethodId: null,
+        defaultPaymentMethodLabel: null,
+        defaultPaymentMethodBrand: null,
+      };
+      setSubcategories((prev) => [...prev, created]);
+      toast.success(`Subcategoria "${created.name}" criada.`);
+      return created;
+    },
+    [],
+  );
+
   const handleRequestImpact = useCallback(
     async (data: { amountCents: number; paymentMethodId: string; categoryId: string }) => {
       const method = paymentMethods.find((m) => m.id === data.paymentMethodId);
@@ -289,6 +316,7 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
                   onConfirm={handleConfirm}
                   onCancel={handleCancel}
                   onSubcategorySelect={handleSubcategorySelect}
+                  onCreateSubcategory={handleCreateSubcategory}
                   onRequestImpact={handleRequestImpact}
                 />
               )}
@@ -318,6 +346,7 @@ export function NewExpenseSheet({ open, onOpenChange }: NewExpenseSheetProps) {
                   onConfirm={handleConfirm}
                   onCancel={handleCancel}
                   onSubcategorySelect={handleSubcategorySelect}
+                  onCreateSubcategory={handleCreateSubcategory}
                   onRequestImpact={handleRequestImpact}
                 />
               )}

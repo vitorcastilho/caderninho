@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { Pencil } from 'lucide-react';
 
 import { createCategoryAction } from '@/server/actions/category.actions';
+import { createSubcategoryAction } from '@/server/actions/subcategory.actions';
 import { ONBOARDING_CATEGORY_SUGGESTIONS } from '@/shared/constants/onboarding-suggestions';
 import { centsToDisplayValue } from '@/client/utils/currency-input';
 import { Button } from '@/client/components/ui/button';
@@ -30,6 +31,8 @@ interface CategorySuggestion {
   classificationName: string;
   budgetCents: number;
   emoji: string;
+  /** Subcategorias criadas junto com a categoria (vazio para categorias customizadas). */
+  subcategories: readonly { name: string; emoji: string }[];
   enabled: boolean;
 }
 
@@ -132,6 +135,7 @@ export function CategoriesStep({
           classificationName,
           budgetCents,
           emoji: newEmoji,
+          subcategories: [],
           enabled: true,
         },
       ]);
@@ -157,6 +161,7 @@ export function CategoriesStep({
 
           return createCategoryAction({
             name: suggestion.name,
+            emoji: suggestion.emoji,
             classificationId: classification.id,
             budgetMinCents: suggestion.budgetCents,
             budgetMaxCents: null,
@@ -178,6 +183,22 @@ export function CategoriesStep({
         }
       }
 
+      // Subcategorias sugeridas de cada categoria criada (Story 3.4e).
+      const subcategoryResults = await Promise.all(
+        results.flatMap((result, i) => {
+          if (!result?.success) return [];
+          const suggestion = enabledSuggestions[i]!;
+          return suggestion.subcategories.map((sub) =>
+            createSubcategoryAction({
+              name: sub.name,
+              emoji: sub.emoji,
+              categoryId: result.data.id,
+            }),
+          );
+        }),
+      );
+      const failedSubcategories = subcategoryResults.filter((r) => !r.success).length;
+
       if (created.length > 0) {
         toast.success(`${created.length} categorias criadas!`);
         onCategoriesCreated(created);
@@ -185,6 +206,10 @@ export function CategoriesStep({
 
       if (failedCount > 0) {
         toast.error(`${failedCount} categoria(s) não puderam ser criadas.`);
+      }
+
+      if (failedSubcategories > 0) {
+        toast.error(`${failedSubcategories} subcategoria(s) não puderam ser criadas.`);
       }
 
       onNext();
@@ -240,6 +265,11 @@ export function CategoriesStep({
                       {suggestion.name}
                       {existsAlready && (
                         <span className="ml-1 text-[10px] text-text-tertiary">(já existe)</span>
+                      )}
+                      {suggestion.subcategories.length > 0 && !existsAlready && (
+                        <span className="block truncate text-[11px] font-normal text-text-tertiary">
+                          {suggestion.subcategories.map((sub) => sub.name).join(', ')}
+                        </span>
                       )}
                     </span>
 

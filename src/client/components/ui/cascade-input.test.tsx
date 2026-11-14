@@ -528,3 +528,93 @@ describe('CascadeInput Desktop', () => {
     });
   });
 });
+
+// ── Story 3.4e — criar subcategoria sem sair do Novo Gasto ──
+
+import { useState } from 'react';
+import type { Subcategory } from './cascade-input';
+
+function CreateHarness({
+  isMobile,
+  onCreate,
+}: {
+  isMobile: boolean;
+  onCreate: (input: { categoryId: string; name: string }) => void;
+}) {
+  const [subs, setSubs] = useState<Subcategory[]>(mockSubcategories);
+  return (
+    <CascadeInput
+      {...defaultProps}
+      isMobile={isMobile}
+      subcategories={subs}
+      onCreateSubcategory={async (input) => {
+        onCreate(input);
+        const created: Subcategory = { id: 'nova-1', name: input.name, categoryId: input.categoryId };
+        setSubs((prev) => [...prev, created]); // o consumer acrescenta a nova à lista
+        return created;
+      }}
+    />
+  );
+}
+
+describe('CascadeInput — nova subcategoria (Story 3.4e)', () => {
+  it('desktop: categoria sem subcategorias mostra "+ Nova subcategoria"; criar seleciona e libera Onde?', async () => {
+    const onCreate = vi.fn();
+    const user = userEvent.setup();
+    render(<CreateHarness isMobile={false} onCreate={onCreate} />);
+
+    await user.selectOptions(screen.getByRole('combobox', { name: /classificação/i }), 'des');
+    await user.click(screen.getByText('Lazer'));
+
+    await user.click(screen.getByRole('button', { name: '+ Nova subcategoria' }));
+    await user.type(screen.getByPlaceholderText('Nome da subcategoria'), 'Cinema');
+    await user.click(screen.getByRole('button', { name: 'Criar subcategoria' }));
+
+    expect(onCreate).toHaveBeenCalledWith({ categoryId: 'lazer', name: 'Cinema' });
+    expect(await screen.findByText('Onde?', { exact: false })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Cinema/ })).toBeInTheDocument();
+  });
+
+  it('desktop: categoria com subcategorias também oferece "+ Nova subcategoria"', async () => {
+    const user = userEvent.setup();
+    render(<CreateHarness isMobile={false} onCreate={vi.fn()} />);
+    await user.selectOptions(screen.getByRole('combobox', { name: /classificação/i }), 'ess');
+    await user.click(screen.getByText('Alimentação'));
+    expect(screen.getByRole('button', { name: '+ Nova subcategoria' })).toBeInTheDocument();
+  });
+
+  it('não cria com nome vazio (botão Criar desabilitado)', async () => {
+    const user = userEvent.setup();
+    render(<CreateHarness isMobile={false} onCreate={vi.fn()} />);
+    await user.selectOptions(screen.getByRole('combobox', { name: /classificação/i }), 'des');
+    await user.click(screen.getByText('Lazer'));
+    await user.click(screen.getByRole('button', { name: '+ Nova subcategoria' }));
+    expect(screen.getByRole('button', { name: 'Criar subcategoria' })).toBeDisabled();
+  });
+
+  it('mobile: no passo 3, criar a subcategoria avança para Onde?', async () => {
+    const onCreate = vi.fn();
+    const user = userEvent.setup();
+    render(<CreateHarness isMobile onCreate={onCreate} />);
+    await user.click(screen.getByText('5'));
+    await user.click(screen.getByText('0'));
+    await user.click(screen.getByText('Continuar'));
+    await user.click(screen.getByText('🎯 Desejável'));
+    await user.click(screen.getByText('Lazer'));
+
+    await user.click(screen.getByRole('button', { name: '+ Nova subcategoria' }));
+    await user.type(screen.getByPlaceholderText('Nome da subcategoria'), 'Cinema');
+    await user.click(screen.getByRole('button', { name: 'Criar subcategoria' }));
+
+    expect(onCreate).toHaveBeenCalledWith({ categoryId: 'lazer', name: 'Cinema' });
+    expect(await screen.findByText('Onde?', { exact: false })).toBeInTheDocument();
+  });
+
+  it('sem onCreateSubcategory, o botão não aparece (comportamento anterior)', async () => {
+    const user = userEvent.setup();
+    render(<CascadeInput {...defaultProps} isMobile={false} />);
+    await user.selectOptions(screen.getByRole('combobox', { name: /classificação/i }), 'des');
+    await user.click(screen.getByText('Lazer'));
+    expect(screen.queryByRole('button', { name: '+ Nova subcategoria' })).not.toBeInTheDocument();
+  });
+});
