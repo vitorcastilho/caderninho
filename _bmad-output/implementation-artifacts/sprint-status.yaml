@@ -52,6 +52,7 @@ development_status:
   1-8-ci-cd-pipeline-ambientes-e-readme: done
   1-9-hotfix-cookie-sessao-https-no-proxy: review
   1-10-hotfix-pool-conexoes-modo-transacao: review
+  1-11-hotfix-rate-limit-por-tipo-de-requisicao: review
   epic-1-retrospective: optional
 
   # Epic 2: Estrutura Financeira e Categorizacao
