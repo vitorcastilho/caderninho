@@ -22,7 +22,7 @@ so that a interface fica legível, acessível e sem becos sem saída.
 - [x] Task 2 (AC: #2): `CategoryCard.a11y.test.tsx` (vermelho 3) → `aria-label` com nome nos botões de ícone de `CategoryCard`, `ClassificationSection`, `EstablishmentRow`; chevron vira `<button aria-expanded>` (clique na linha continua funcionando com mouse).
 - [x] Task 3 (AC: #3): testes em `Sidebar.test.tsx` / `BottomNavigation.test.tsx` (vermelho 2) → `comingSoon` nos itens; renderiza `<span aria-disabled>` com selo "Em breve" (sidebar) / `sr-only` "(em breve)" (mobile). Dois testes antigos usavam Checklist como "link inativo" e passaram a usar Transações/Cartões.
 - [x] Task 4: `tsc` 0, `eslint` 0, `vitest` 141 arquivos / 1179 testes, `next build` ok.
-- [ ] Task 5: PR → `staging`, merge, validar em staging (375px sem corte, nomes acessíveis, sem 404 de prefetch).
+- [x] Task 5: PR #46 → `staging` (merge `1015c43`). Staging, 7/7: 375px mostra R$ 1.817,50 / R$ 5.000,00 / R$ 1.000,00 inteiros; sidebar com 3 itens "Em breve" e navegação mobile com Checklist/Projeção desabilitados; sem 404 de prefetch; /categories com nomes acessíveis e expansão por teclado (Enter alterna aria-expanded).
 
 ## Dev Notes
 
@@ -56,3 +56,4 @@ Claude Opus 5.5 (claude-opus-5-5)
 ## Change Log
 
 - 2026-11-14 — Implementada com TDD. Status: review.
+- 2026-11-14 — Validada em staging (PR #46). Aguardando teste do usuário.

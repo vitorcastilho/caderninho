@@ -27,7 +27,7 @@ so that a busca encontra o que eu espero e a tela vazia não me manda "limpar fi
 - [x] Task 4 (AC: #5, #6): `page.tsx` calcula `hasAnyTransactions` (`listTransactionsAction({ limit: 1 })`, em paralelo); `TransactionList` mostra o empty state de primeiro uso quando `false`. Testes para os dois casos.
 - [x] Task 5: consulta real no Postgres local — "platinum"/"visa" → Posto Shell; "itaú" → transferência; "saúde" → Farmácia; "salário" → receitas; lista e agregação coerentes.
 - [x] Task 6: `tsc` 0, `eslint src` 0, `vitest` 139 arquivos / 1163 testes, `next build` ok.
-- [ ] Task 7: PR → `staging`, merge, validar em `caderninho-staging.vercel.app` (cenário 27).
+- [x] Task 7: PR #44 → `staging` (merge `d42d290`). Staging: "platinum"/"visa" → Posto Shell (cards R$ 200,00); "moradia" → Imobiliária Lar; "itaú" → transferência + gastos no Itaú; "salário" → receita; usuário novo vê "Nenhuma transação registrada ainda". Regressão 3.4c: "merc" passa a trazer também "Padaria 100% Pão" (subcategoria "Mercado") — comportamento esperado da busca por nomes, cards = soma das linhas.
 
 ## Dev Notes
 
@@ -64,3 +64,4 @@ Claude Opus 5.5 (claude-opus-5-5)
 ## Change Log
 
 - 2026-11-14 — Implementada com TDD. Status: review.
+- 2026-11-14 — Validada em staging (PR #44). Aguardando teste do usuário.
