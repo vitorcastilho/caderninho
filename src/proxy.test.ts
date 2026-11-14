@@ -52,6 +52,17 @@ describe("proxy", () => {
     expect(NextResponse.next).toHaveBeenCalled();
   });
 
+  it("deve permitir acesso com cookie de sessao seguro (HTTPS, prefixo __Secure-)", () => {
+    const request = createRequest("/dashboard", {
+      "__Secure-better-auth.session_token": "valid-token-123",
+    });
+
+    proxy(request);
+
+    expect(NextResponse.next).toHaveBeenCalled();
+    expect(NextResponse.redirect).not.toHaveBeenCalled();
+  });
+
   it("deve redirecionar para /login quando cookie de sessao esta ausente", () => {
     const request = createRequest("/dashboard");
 

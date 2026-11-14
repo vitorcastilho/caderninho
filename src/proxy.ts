@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getSessionCookie } from "better-auth/cookies";
 
 import { rateLimit } from "@/server/infrastructure/security/rate-limiter";
 import { logger } from "@/server/infrastructure/logging/logger";
@@ -53,7 +54,9 @@ export function proxy(request: NextRequest) {
 
   // Verificacao otimista — apenas cookie, sem DB
   // A validacao real acontece nos Server Components via auth.api.getSession()
-  const sessionCookie = request.cookies.get("better-auth.session_token");
+  // getSessionCookie reconhece tambem o prefixo "__Secure-", usado pelo
+  // Better Auth quando a aplicacao roda em HTTPS (staging e producao)
+  const sessionCookie = getSessionCookie(request);
 
   if (!sessionCookie) {
     return NextResponse.redirect(new URL("/login", request.url));
