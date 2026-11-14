@@ -240,9 +240,25 @@ describe('buildFilterConditions (WHERE compartilhado por lista e summary)', () =
     expect(r.sql).not.toContain('"amount_cents" =');
   });
 
+  // Story 3.4d — cenário 27 do smoke test: buscar "platinum" (nome do cartão)
+  // não achava nada, porque a expansão por nome virava filtro AND. Agora os
+  // nomes relacionados entram no MESMO OR da busca textual, no servidor.
+  it('busca também casa nomes de categoria, subcategoria, conta, cartão e fonte de receita (no mesmo OR)', () => {
+    const r = render({ search: 'platinum', searchAmountCents: null });
+    expect(r.count).toBe(2); // org + um único bloco de busca
+    for (const table of ['categories', 'subcategories', 'bank_accounts', 'credit_cards', 'income_sources']) {
+      expect(r.sql).toContain(`from "${table}"`);
+    }
+    expect(r.sql).toMatch(/"credit_cards"\."brand" ilike/);
+    expect(r.sql).toMatch(/"bank_accounts"\."bank" ilike/);
+    // subconsultas recortadas pela organização (sem vazar nomes de outra org)
+    expect(r.params.filter((p) => p === 'org-1').length).toBeGreaterThanOrEqual(6);
+    expect(r.params.filter((p) => p === '%platinum%').length).toBeGreaterThanOrEqual(7);
+  });
+
   it('busca numérica acrescenta igualdade em amount_cents', () => {
     const r = render({ search: '42,50', searchAmountCents: 4250 });
-    expect(r.sql).toMatch(/"amount_cents" = \$4/);
+    expect(r.sql).toMatch(/"amount_cents" = \$\d+/);
     expect(r.params).toContain(4250);
   });
 

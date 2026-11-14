@@ -115,6 +115,8 @@ interface TransactionListProps {
   initialSummary?: TransactionPeriodSummary;
   /** Mês usado no SSR — o estado inicial do client precisa bater com ele. */
   initialMonth: MonthFilter;
+  /** A organização tem alguma transação (em qualquer mês)? Define o empty state. */
+  hasAnyTransactions: boolean;
   categories: CategoryOption[];
   subcategories: SubcategoryOption[];
   bankAccounts: BankAccountOption[];
@@ -298,57 +300,25 @@ export function buildDeleteLabel(
   return `${formatCurrency(tx.amountCents)} — ${label}`;
 }
 
+// A busca vai crua para o servidor: lá ela casa estabelecimento, descrição,
+// valor e também os nomes de categoria, subcategoria, conta, cartão e fonte de
+// receita (Story 3.4d). Antes, o client transformava nomes em filtros de
+// categoria/método — que se somavam (AND) à busca e não traziam nada.
 function filtersToActionInput(
   filters: TransactionListFiltersState,
-  categories: CategoryOption[],
-  bankAccounts: BankAccountOption[],
-  creditCards: CreditCardOption[],
   pagination?: { limit: number; offset: number },
 ) {
   const types: Array<'expense' | 'income' | 'transfer'> | undefined =
     filters.type === 'all' ? undefined : [filters.type];
-
-  const categoryIdsList = Array.from(filters.categoryIds);
-
-  // Expandir busca textual para incluir matches por nome de categoria/conta/cartão.
+  const categoryIds = Array.from(filters.categoryIds);
+  const paymentMethodIds = Array.from(filters.paymentMethodIds);
   const rawSearch = filters.search.trim();
-  let combinedCategoryIds = categoryIdsList;
-  let combinedPaymentMethodIds = Array.from(filters.paymentMethodIds);
-
-  if (rawSearch.length > 0) {
-    const lower = rawSearch.toLowerCase();
-    const matchedCategoryIds = categories
-      .filter((c) => c.name.toLowerCase().includes(lower))
-      .map((c) => c.id);
-    if (matchedCategoryIds.length > 0 && combinedCategoryIds.length === 0) {
-      combinedCategoryIds = matchedCategoryIds;
-    }
-
-    const matchedBankIds = bankAccounts
-      .filter(
-        (a) =>
-          a.name.toLowerCase().includes(lower) || a.bank.toLowerCase().includes(lower),
-      )
-      .map((a) => a.id);
-    const matchedCardIds = creditCards
-      .filter(
-        (c) =>
-          c.name.toLowerCase().includes(lower) || c.brand.toLowerCase().includes(lower),
-      )
-      .map((c) => c.id);
-    const matchedPaymentIds = [...matchedBankIds, ...matchedCardIds];
-    if (matchedPaymentIds.length > 0 && combinedPaymentMethodIds.length === 0) {
-      combinedPaymentMethodIds = matchedPaymentIds;
-    }
-  }
-
   const { dateFrom, dateTo } = monthToDateRange(filters.month);
 
   return {
     types,
-    categoryIds: combinedCategoryIds.length > 0 ? combinedCategoryIds : undefined,
-    paymentMethodIds:
-      combinedPaymentMethodIds.length > 0 ? combinedPaymentMethodIds : undefined,
+    categoryIds: categoryIds.length > 0 ? categoryIds : undefined,
+    paymentMethodIds: paymentMethodIds.length > 0 ? paymentMethodIds : undefined,
     dateFrom,
     dateTo,
     search: rawSearch.length > 0 ? rawSearch : undefined,
@@ -373,6 +343,7 @@ export function TransactionList({
   initialHasMore,
   initialSummary,
   initialMonth,
+  hasAnyTransactions,
   categories,
   subcategories,
   bankAccounts,
@@ -471,15 +442,9 @@ export function TransactionList({
       const shouldRefetchSummary = offset === 0;
       if (shouldRefetchSummary) setIsSummaryLoading(true);
       try {
-        const listInput = filtersToActionInput(
-          currentFilters,
-          categories,
-          bankAccounts,
-          creditCards,
-          { limit: PAGE_SIZE, offset },
-        );
+        const listInput = filtersToActionInput(currentFilters, { limit: PAGE_SIZE, offset });
         const summaryInput = shouldRefetchSummary
-          ? filtersToActionInput(currentFilters, categories, bankAccounts, creditCards)
+          ? filtersToActionInput(currentFilters)
           : null;
 
         const [listResult, summaryResult] = await Promise.all([
@@ -526,7 +491,7 @@ export function TransactionList({
         }
       }
     },
-    [categories, bankAccounts, creditCards],
+    [],
   );
 
   // Recarregar quando filtros (granulares) mudam — NÃO dispara por `filters.search`
@@ -729,7 +694,9 @@ export function TransactionList({
       )}
 
       {isListEmpty && !isLoading ? (
-        hasAnyActiveFilter ? (
+        // Usuário que nunca registrou nada vê o empty state de "primeiro uso",
+        // mesmo com o mês corrente selecionado (Story 3.4d).
+        hasAnyTransactions && hasAnyActiveFilter ? (
           <EmptyState
             icon={Receipt}
             title="Nenhuma transação encontrada"

@@ -1,7 +1,14 @@
-import { eq, and, or, desc, sql, gte, lte, lt, inArray, ilike, count, type SQL } from 'drizzle-orm';
+import { eq, and, or, desc, sql, gte, lte, lt, inArray, ilike, count, type AnyColumn, type SQL } from 'drizzle-orm';
 
 import { db, type DbExecutor } from '@/server/infrastructure/database/client';
-import { transactions } from '@/server/infrastructure/database/schema';
+import {
+  bankAccounts,
+  categories,
+  creditCards,
+  incomeSources,
+  subcategories,
+  transactions,
+} from '@/server/infrastructure/database/schema';
 import type {
   Transaction,
   TransactionRepository,
@@ -61,9 +68,29 @@ export function buildFilterConditions(
   if (filters.search && filters.search.length > 0) {
     // Escapar wildcards LIKE — ver `escapeLikePattern` acima.
     const pattern = `%${escapeLikePattern(filters.search)}%`;
-    const searchClauses = [
+    // `<coluna> in (select id from <tabela> where org = ? and (<nome> ilike ? or ...))`
+    // — nomes relacionados entram no MESMO OR da busca (Story 3.4d). Antes a
+    // expansão por nome era feita no client e virava filtro AND, então buscar
+    // "platinum" (nome do cartão) não encontrava nada.
+    const idsWhereNameMatches = (
+      table: typeof categories | typeof subcategories | typeof bankAccounts | typeof creditCards | typeof incomeSources,
+      nameColumns: AnyColumn[],
+    ): SQL =>
+      sql`(select ${table.id} from ${table} where ${table.organizationId} = ${organizationId} and (${sql.join(
+        nameColumns.map((col) => sql`${col} ilike ${pattern}`),
+        sql` or `,
+      )}))`;
+    const bankIds = () => idsWhereNameMatches(bankAccounts, [bankAccounts.name, bankAccounts.bank]);
+    const searchClauses: SQL[] = [
       ilike(transactions.establishment, pattern),
       ilike(transactions.description, pattern),
+      sql`${transactions.categoryId} in ${idsWhereNameMatches(categories, [categories.name])}`,
+      sql`${transactions.subcategoryId} in ${idsWhereNameMatches(subcategories, [subcategories.name])}`,
+      sql`${transactions.paymentMethodId} in ${bankIds()}`,
+      sql`${transactions.sourceAccountId} in ${bankIds()}`,
+      sql`${transactions.destinationAccountId} in ${bankIds()}`,
+      sql`${transactions.paymentMethodId} in ${idsWhereNameMatches(creditCards, [creditCards.name, creditCards.brand])}`,
+      sql`${transactions.incomeSourceId} in ${idsWhereNameMatches(incomeSources, [incomeSources.name])}`,
     ];
     if (
       typeof filters.searchAmountCents === 'number' &&
