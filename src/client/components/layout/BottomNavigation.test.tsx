@@ -52,8 +52,8 @@ describe("BottomNavigation", () => {
     mockPathname.mockReturnValue("/dashboard");
     render(<BottomNavigation {...defaultProps} />);
 
-    const checklistLink = screen.getByRole("link", { name: /checklist/i });
-    expect(checklistLink).not.toHaveAttribute("aria-current");
+    const cardsLink = screen.getByRole("link", { name: /cartões/i });
+    expect(cardsLink).not.toHaveAttribute("aria-current");
   });
 
   it("deve ter o FAB central como botao que chama onFabClick", async () => {
@@ -115,5 +115,14 @@ describe("BottomNavigation", () => {
     });
 
     expect(mockPush).toHaveBeenCalledWith("/login");
+  });
+
+  // Story 3.4f
+  it("Checklist e Projeção aparecem como \"Em breve\", sem link", () => {
+    render(<BottomNavigation {...defaultProps} />);
+    for (const label of ["Checklist", "Projeção"]) {
+      expect(screen.queryByRole("link", { name: new RegExp(label, "i") })).not.toBeInTheDocument();
+      expect(screen.getByText(label).closest("[aria-disabled]")).toHaveAttribute("aria-disabled", "true");
+    }
   });
 });

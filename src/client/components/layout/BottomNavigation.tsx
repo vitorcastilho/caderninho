@@ -20,14 +20,16 @@ interface NavItem {
   icon: React.ComponentType<{ className?: string }>;
   isFab?: boolean;
   badge?: number;
+  /** Tela ainda não implementada: aparece desabilitada, sem link (Story 3.4f). */
+  comingSoon?: boolean;
 }
 
 export const navItems: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/credit-cards", label: "Cartões", icon: CreditCard },
   { href: "#registrar", label: "Registrar", icon: Plus, isFab: true },
-  { href: "/checklist", label: "Checklist", icon: CheckSquare },
-  { href: "/projecao", label: "Projeção", icon: TrendingUp },
+  { href: "/checklist", label: "Checklist", icon: CheckSquare, comingSoon: true },
+  { href: "/projecao", label: "Projeção", icon: TrendingUp, comingSoon: true },
 ];
 
 interface BottomNavigationProps {
@@ -65,6 +67,22 @@ export function BottomNavigation({ onFabClick }: BottomNavigationProps) {
                 </button>
                 <span className="mt-0.5 text-[10px] font-medium text-muted-foreground">
                   {item.label}
+                </span>
+              </li>
+            );
+          }
+
+          if (item.comingSoon) {
+            return (
+              <li key={item.href} className="flex-1">
+                <span
+                  aria-disabled="true"
+                  title={`${item.label} — em breve`}
+                  className="flex min-h-[44px] min-w-[75px] cursor-not-allowed flex-col items-center justify-center gap-0.5 py-1.5 text-muted-foreground opacity-50"
+                >
+                  <Icon className="size-5" />
+                  <span className="text-[10px] font-medium">{item.label}</span>
+                  <span className="sr-only">(em breve)</span>
                 </span>
               </li>
             );

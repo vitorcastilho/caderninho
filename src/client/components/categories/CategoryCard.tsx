@@ -198,12 +198,24 @@ export function CategoryCard({
         )}
         onClick={() => setExpanded(!expanded)}
       >
-        <ChevronDown
-          className={cn(
-            'size-4 shrink-0 text-muted-foreground transition-transform duration-150',
-            !expanded && '-rotate-90'
-          )}
-        />
+        <button
+          type="button"
+          aria-expanded={expanded}
+          aria-label={`${expanded ? 'Recolher' : 'Expandir'} ${category.name}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            setExpanded(!expanded);
+          }}
+          className="shrink-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2"
+        >
+          <ChevronDown
+            aria-hidden
+            className={cn(
+              'size-4 shrink-0 text-muted-foreground transition-transform duration-150',
+              !expanded && '-rotate-90'
+            )}
+          />
+        </button>
         <span className="shrink-0 text-sm">{category.emoji}</span>
         <div className="flex min-w-0 flex-shrink-0 flex-col">
           <span className="text-sm font-medium">{category.name}</span>
@@ -264,6 +276,7 @@ export function CategoryCard({
                 size="icon-xs"
                 onClick={onAddSubcategory}
                 title="Adicionar subcategoria"
+                aria-label={`Adicionar subcategoria em ${category.name}`}
               >
                 <Plus className="size-3.5" />
               </Button>
@@ -272,6 +285,7 @@ export function CategoryCard({
                 size="icon-xs"
                 onClick={onEdit}
                 title="Editar categoria"
+                aria-label={`Editar categoria ${category.name}`}
               >
                 <Pencil className="size-3.5" />
               </Button>
@@ -320,12 +334,24 @@ export function CategoryCard({
                 )}
                 onClick={() => toggleSubExpand(sub.id)}
               >
-                <ChevronDown
-                  className={cn(
-                    'size-3.5 shrink-0 text-muted-foreground transition-transform duration-150',
-                    !isSubExpanded && '-rotate-90'
-                  )}
-                />
+                <button
+                  type="button"
+                  aria-expanded={isSubExpanded}
+                  aria-label={`${isSubExpanded ? 'Recolher' : 'Expandir'} ${sub.name}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleSubExpand(sub.id);
+                  }}
+                  className="shrink-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2"
+                >
+                  <ChevronDown
+                    aria-hidden
+                    className={cn(
+                      'size-3.5 shrink-0 text-muted-foreground transition-transform duration-150',
+                      !isSubExpanded && '-rotate-90'
+                    )}
+                  />
+                </button>
                 <span className="shrink-0 text-sm">{sub.emoji}</span>
                 <div className="flex min-w-0 flex-shrink-0 flex-col">
                   <span className="text-sm">{sub.name}</span>
@@ -373,6 +399,7 @@ export function CategoryCard({
                     size="icon-xs"
                     onClick={() => onAddEstablishment(sub.id)}
                     title="Adicionar estabelecimento"
+                    aria-label={`Adicionar estabelecimento em ${sub.name}`}
                   >
                     <Plus className="size-3.5" />
                   </Button>
@@ -381,6 +408,7 @@ export function CategoryCard({
                     size="icon-xs"
                     onClick={() => onEditSubcategory(sub)}
                     title="Editar subcategoria"
+                    aria-label={`Editar subcategoria ${sub.name}`}
                   >
                     <Pencil className="size-3.5" />
                   </Button>

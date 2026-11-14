@@ -59,7 +59,7 @@ describe("Sidebar", () => {
     mockPathname.mockReturnValue("/dashboard");
     render(<Sidebar userName="Vitor" />);
 
-    const checklistLink = screen.getByRole("link", { name: /checklist/i });
+    const checklistLink = screen.getByRole("link", { name: /transações/i });
     expect(checklistLink).not.toHaveAttribute("aria-current");
   });
 
@@ -135,5 +135,19 @@ describe("Sidebar", () => {
     });
 
     expect(mockPush).toHaveBeenCalledWith("/login");
+  });
+
+  // Story 3.4f — telas dos épicos 4, 6 e 7 ainda não existem (davam 404)
+  it("Orçamentos, Checklist e Projeção aparecem como \"Em breve\", sem link", () => {
+    render(<Sidebar userName="Vitor" />);
+    for (const label of ["Orçamentos", "Checklist", "Projeção"]) {
+      expect(screen.queryByRole("link", { name: new RegExp(label, "i") })).not.toBeInTheDocument();
+      const item = screen.getByText(label).closest("[aria-disabled]");
+      expect(item).toHaveAttribute("aria-disabled", "true");
+    }
+    expect(screen.getAllByText("Em breve")).toHaveLength(3);
+    // itens existentes continuam como link
+    expect(screen.getByRole("link", { name: /dashboard/i })).toHaveAttribute("href", "/dashboard");
+    expect(screen.getByRole("link", { name: /transações/i })).toHaveAttribute("href", "/transactions");
   });
 });
