@@ -119,3 +119,29 @@ describe('TransactionSummaryCards', () => {
     expect(transferLabel).toBeInTheDocument();
   });
 });
+
+// Story 3.4f — em 375px o valor "R$ 5.000,00" era cortado ("R$ 5.000,...")
+describe('TransactionSummaryCards — valor no mobile', () => {
+  const big = {
+    expense: { totalCents: 181750, count: 5 },
+    income: { totalCents: 500000, count: 1 },
+    transfer: { totalCents: 100000, count: 1 },
+  };
+
+  it('no compacto, o valor usa fonte menor (text-xs + tracking-tight)', () => {
+    const { container } = render(<TransactionSummaryCards {...big} compact />);
+    const values = container.querySelectorAll('[data-slot="transaction-summary-card-value"]');
+    expect(values).toHaveLength(3);
+    values.forEach((v) => {
+      expect(v.className).toContain('text-xs');
+      expect(v.className).toContain('tracking-tight');
+    });
+  });
+
+  it('no responsivo, o mobile usa a fonte menor e o desktop mantém md:text-xl', () => {
+    const { container } = render(<TransactionSummaryCards {...big} />);
+    const v = container.querySelector('[data-slot="transaction-summary-card-value"]')!;
+    expect(v.className).toContain('text-xs');
+    expect(v.className).toContain('md:text-xl');
+  });
+});

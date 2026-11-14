@@ -151,10 +151,15 @@ export function TransactionSummaryCards({
                 </>
               )}
             </div>
+            {/* Mobile: text-xs + tracking-tight cabe até ~R$ 99.999,99 em 375px
+                (Story 3.4f); truncate fica só como proteção para valores maiores. */}
             <div
+              data-slot="transaction-summary-card-value"
               className={cn(
                 'font-bold tabular-nums whitespace-nowrap truncate',
-                compact ? 'text-sm mt-1' : 'text-sm md:text-xl mt-1 md:mt-1.5',
+                compact
+                  ? 'text-xs tracking-tight mt-1'
+                  : 'text-xs tracking-tight md:text-xl md:tracking-normal mt-1 md:mt-1.5',
                 cfg.valueClass,
               )}
             >

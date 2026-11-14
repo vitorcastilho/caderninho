@@ -195,12 +195,24 @@ export function ClassificationSection({
         )}
         onClick={() => setExpanded(!expanded)}
       >
-        <ChevronDown
-          className={cn(
-            'size-[18px] shrink-0 text-muted-foreground transition-transform duration-150',
-            !expanded && '-rotate-90'
-          )}
-        />
+        <button
+          type="button"
+          aria-expanded={expanded}
+          aria-label={`${expanded ? 'Recolher' : 'Expandir'} ${classification.name}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            setExpanded(!expanded);
+          }}
+          className="shrink-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2"
+        >
+          <ChevronDown
+            aria-hidden
+            className={cn(
+              'size-[18px] shrink-0 text-muted-foreground transition-transform duration-150',
+              !expanded && '-rotate-90'
+            )}
+          />
+        </button>
 
         <span className="shrink-0 text-sm">📊</span>
         <div className="flex min-w-0 flex-shrink-0 flex-col">
@@ -259,6 +271,7 @@ export function ClassificationSection({
                 size="icon-xs"
                 onClick={() => onAddCategory(classification.id)}
                 title="Adicionar categoria"
+                aria-label={`Adicionar categoria em ${classification.name}`}
               >
                 <Plus className="size-3.5" />
               </Button>
@@ -267,6 +280,7 @@ export function ClassificationSection({
                 size="icon-xs"
                 onClick={() => onEditClassification(classification)}
                 title="Editar classificação"
+                aria-label={`Editar classificação ${classification.name}`}
               >
                 <Pencil className="size-3.5" />
               </Button>

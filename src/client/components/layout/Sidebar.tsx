@@ -28,6 +28,8 @@ interface NavItem {
   href: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
+  /** Tela ainda não implementada: aparece desabilitada, sem link (Story 3.4f). */
+  comingSoon?: boolean;
 }
 
 interface NavSection {
@@ -41,9 +43,9 @@ const navSections: NavSection[] = [
     items: [
       { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { href: "/transactions", label: "Transações", icon: Receipt },
-      { href: "/orcamentos", label: "Orçamentos", icon: PiggyBank },
-      { href: "/checklist", label: "Checklist", icon: CheckSquare },
-      { href: "/projecao", label: "Projeção", icon: TrendingUp },
+      { href: "/orcamentos", label: "Orçamentos", icon: PiggyBank, comingSoon: true },
+      { href: "/checklist", label: "Checklist", icon: CheckSquare, comingSoon: true },
+      { href: "/projecao", label: "Projeção", icon: TrendingUp, comingSoon: true },
     ],
   },
   {
@@ -141,6 +143,33 @@ export function Sidebar({ userName, onRegisterClick }: SidebarProps) {
               {section.items.map((item) => {
                 const isActive = pathname?.startsWith(item.href);
                 const Icon = item.icon;
+                if (item.comingSoon) {
+                  return (
+                    <li key={item.href}>
+                      <span
+                        aria-disabled="true"
+                        title={`${item.label} — em breve`}
+                        className={cn(
+                          "flex cursor-not-allowed items-center gap-[10px] rounded-button px-3 py-2 text-[13px] font-medium text-text-tertiary opacity-70",
+                          collapsed && "lg:justify-center lg:px-0"
+                        )}
+                      >
+                        <Icon className="size-[18px] shrink-0" />
+                        <span className={cn("flex-1 truncate", expandedOnly(collapsed))}>
+                          {item.label}
+                        </span>
+                        <span
+                          className={cn(
+                            "rounded-badge bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground",
+                            expandedOnly(collapsed)
+                          )}
+                        >
+                          Em breve
+                        </span>
+                      </span>
+                    </li>
+                  );
+                }
                 return (
                   <li key={item.href}>
                     <Link

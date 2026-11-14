@@ -101,6 +101,7 @@ export function EstablishmentRow({
           size="icon-xs"
           onClick={() => onEdit(establishment)}
           title="Editar estabelecimento"
+          aria-label={`Editar estabelecimento ${establishment.name}`}
         >
           <Pencil className="size-3.5" />
         </Button>
