@@ -151,6 +151,7 @@ NFR-U4: Feedback visual para toda acao: confirmacao de sucesso em < 1 segundo, a
 - Dev obrigatoriamente valida contra o prototipo HTML correspondente antes de considerar pronto — prototipos sao a fonte da verdade visual
 - Cada story: branch a partir de `staging` -> PR para `staging` -> validacao em staging (atualizado em 2026-11-15)
 - Ao finalizar o epico, sem pendencias em staging: PR `staging` -> `main` (merge commit, nunca squash; nao apagar `staging`) -> validacao em producao
+- Toda story passa por `create-story` -> `dev-story` -> `code-review`, sempre invocados (comando ou ferramenta Skill) e seguidos pelo `workflow.xml`. O Claude Code nunca cria, implementa ou revisa story fora desses workflows; se um passo parecer nao se aplicar, pergunta ao PO (correct course de 2026-11-15)
 
 ### FR Coverage Map
 
@@ -463,6 +464,33 @@ So that I don't need a separate password.
 **And** cancelar no Google mostra a mensagem de cancelamento
 
 **And** TDD para o botao/provedor condicional; validacao em staging; producao na release do Epic 3
+
+### Story 1.14: Protecoes do Processo BMAD
+
+_(Criada pelo correct course de 2026-11-15, `sprint-change-proposal-2026-11-15-processo.md`, Proposta 5.)_
+
+As a PO,
+I want the project to block Claude Code from creating, implementing or reviewing stories outside the BMAD workflows,
+So that the process is never taken over silently in the middle of our work.
+
+**Acceptance Criteria:**
+
+**Given** qualquer sessao do Claude Code no repositorio
+**When** a sessao inicia
+**Then** o `CLAUDE.md` da raiz carrega a regra: criar/implementar/revisar/mudar o rumo de stories so pelos workflows BMAD invocados; fora disso, parar e perguntar
+
+**Given** o hook `PreToolUse` (`.claude/settings.json` + `.claude/hooks/bmad-story-guard.mjs`)
+**When** `Write`, `Edit` ou `Bash` tenta escrever num arquivo de story ou no `sprint-status.yaml`
+**Then** a acao so passa se o ultimo workflow BMAD invocado na sessao permitir: criar story -> `create-story`; editar story -> `create-story`, `dev-story` ou `code-review`; `sprint-status.yaml` -> qualquer workflow BMAD
+**And** fora disso, bloqueia com "Invoque o workflow BMAD correspondente ou pergunte ao usuario"
+**And** so contam invocacoes reais (comando `/bmad-...`, ferramenta Skill, leitura do `workflow.yaml`), nunca texto que cita um workflow
+**And** testes cobrem o caso real de 2026-11-15 (criacao da 1.12/1.13 e edicoes de review nas 1.9-1.11 depois de um `correct-course` sao bloqueadas)
+
+**Given** uma PR que altera stories
+**When** o job de CI `bmad-process` roda
+**Then** story em `review` sem Dev Agent Record preenchido (Agent Model, Completion Notes, File List) ou story em `done` sem registro de code review (`Review Follow-ups (AI)`, `Senior Developer Review (AI)` ou `[AI-Review]`) deixa o job vermelho, dizendo a story e o que falta
+
+**And** limites documentados: o hook do `Bash` reconhece so os padroes de escrita listados; sem protecao de branch, o CI vermelho avisa mas nao bloqueia o merge
 
 ---
 
