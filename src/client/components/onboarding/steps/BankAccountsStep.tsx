@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { Pencil } from 'lucide-react';
 
-import { createBankAccountAction, updateBankAccountAction, archiveBankAccountAction } from '@/server/actions/bank-account.actions';
+import { createBankAccountAction, updateBankAccountAction, archiveBankAccountAction } from '@/client/actions/bank-account.actions';
 import { centsToDisplayValue } from '@/client/utils/currency-input';
 import { BankLogo } from '@/client/components/ui/bank-logo';
 import { Button } from '@/client/components/ui/button';

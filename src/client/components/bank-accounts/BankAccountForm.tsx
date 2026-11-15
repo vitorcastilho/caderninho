@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
-import { createBankAccountAction, updateBankAccountAction } from '@/server/actions/bank-account.actions';
+import { createBankAccountAction, updateBankAccountAction } from '@/client/actions/bank-account.actions';
 import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';
 import { Label } from '@/client/components/ui/label';

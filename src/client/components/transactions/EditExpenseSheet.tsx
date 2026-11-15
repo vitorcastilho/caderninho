@@ -22,7 +22,7 @@ import {
 } from '@/client/components/ui/select';
 import { useIsMobile } from '@/client/hooks/use-is-mobile';
 import { formatCurrency } from '@/client/utils/format-currency';
-import { updateExpenseTransactionAction } from '@/server/actions/transaction.actions';
+import { updateExpenseTransactionAction } from '@/client/actions/transaction.actions';
 import type {
   TransactionDTO,
   CategoryOption,

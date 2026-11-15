@@ -21,9 +21,9 @@ import {
   SelectValue,
 } from '@/client/components/ui/select';
 import { useIsMobile } from '@/client/hooks/use-is-mobile';
-import { listBankAccountsAction } from '@/server/actions/bank-account.actions';
-import { listIncomeSourcesAction } from '@/server/actions/income-source.actions';
-import { createIncomeAction } from '@/server/actions/transaction.actions';
+import { listBankAccountsAction } from '@/client/actions/bank-account.actions';
+import { listIncomeSourcesAction } from '@/client/actions/income-source.actions';
+import { createIncomeAction } from '@/client/actions/transaction.actions';
 
 interface NewIncomeSheetProps {
   open: boolean;

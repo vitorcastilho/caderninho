@@ -12,10 +12,10 @@ import { CreditCardBrandBadge } from '@/client/components/ui/credit-card-brand-b
 import { formatCurrency } from '@/client/utils/format-currency';
 import {
   reactivateCategoryAction,
-} from '@/server/actions/category.actions';
+} from '@/client/actions/category.actions';
 import {
   reactivateSubcategoryAction,
-} from '@/server/actions/subcategory.actions';
+} from '@/client/actions/subcategory.actions';
 import { EstablishmentRow } from './EstablishmentRow';
 
 interface Category {

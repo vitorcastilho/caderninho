@@ -11,7 +11,7 @@ import { CategoryCard } from './CategoryCard';
 import { formatCurrency } from '@/client/utils/format-currency';
 import {
   reactivateClassificationAction,
-} from '@/server/actions/classification.actions';
+} from '@/client/actions/classification.actions';
 
 interface Classification {
   id: string;

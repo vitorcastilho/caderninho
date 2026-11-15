@@ -22,7 +22,7 @@ import {
   createEstablishmentAction,
   updateEstablishmentAction,
   deleteEstablishmentAction,
-} from '@/server/actions/establishment.actions';
+} from '@/client/actions/establishment.actions';
 import { PAYMENT_METHOD_TYPE_LABELS } from '@/shared/constants/category.constants';
 import type { PaymentMethodType } from '@/shared/constants/category.constants';
 

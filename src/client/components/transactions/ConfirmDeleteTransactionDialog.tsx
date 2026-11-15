@@ -15,7 +15,7 @@ import { Button } from '@/client/components/ui/button';
 import {
   deleteTransactionAction,
   recreateTransactionFromSnapshotAction,
-} from '@/server/actions/transaction.actions';
+} from '@/client/actions/transaction.actions';
 import type { TransactionDTO } from './TransactionList';
 
 interface ConfirmDeleteTransactionDialogProps {

@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/client/components/ui/select';
-import { mergeClassificationsAction } from '@/server/actions/classification.actions';
+import { mergeClassificationsAction } from '@/client/actions/classification.actions';
 
 interface Classification {
   id: string;

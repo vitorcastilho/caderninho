@@ -16,7 +16,7 @@ import {
 } from '@/client/components/ui/dialog';
 import { IncomeSourceCard } from './IncomeSourceCard';
 import { IncomeSourceForm } from './IncomeSourceForm';
-import { listIncomeSourcesAction, getIncomeSourceAction } from '@/server/actions/income-source.actions';
+import { listIncomeSourcesAction, getIncomeSourceAction } from '@/client/actions/income-source.actions';
 
 interface IncomeSource {
   id: string;

@@ -16,7 +16,7 @@ import {
 } from '@/client/components/ui/dialog';
 import { BankAccountCard } from './BankAccountCard';
 import { BankAccountForm } from './BankAccountForm';
-import { listBankAccountsAction, getBankAccountAction } from '@/server/actions/bank-account.actions';
+import { listBankAccountsAction, getBankAccountAction } from '@/client/actions/bank-account.actions';
 
 interface BankAccount {
   id: string;

@@ -23,7 +23,7 @@ import {
 } from '@/client/components/ui/dialog';
 import { formatCurrency } from '@/client/utils/format-currency';
 import { EMPLOYMENT_TYPE_LABELS } from '@/shared/constants/income-source.constants';
-import { archiveIncomeSourceAction, reactivateIncomeSourceAction } from '@/server/actions/income-source.actions';
+import { archiveIncomeSourceAction, reactivateIncomeSourceAction } from '@/client/actions/income-source.actions';
 
 interface IncomeSourceCardProps {
   incomeSource: {

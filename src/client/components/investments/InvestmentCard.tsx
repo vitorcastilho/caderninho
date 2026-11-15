@@ -24,7 +24,7 @@ import {
 import { formatCurrency } from '@/client/utils/format-currency';
 import { basisPointsToDisplayValue } from '@/client/utils/percentage-input';
 import { INVESTMENT_TYPE_LABELS } from '@/shared/constants/investment.constants';
-import { archiveInvestmentAction, reactivateInvestmentAction } from '@/server/actions/investment.actions';
+import { archiveInvestmentAction, reactivateInvestmentAction } from '@/client/actions/investment.actions';
 
 interface InvestmentCardProps {
   investment: {

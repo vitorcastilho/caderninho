@@ -10,7 +10,7 @@ import { Label } from '@/client/components/ui/label';
 import {
   createClassificationAction,
   updateClassificationAction,
-} from '@/server/actions/classification.actions';
+} from '@/client/actions/classification.actions';
 
 interface ClassificationFormProps {
   mode: 'create' | 'edit';

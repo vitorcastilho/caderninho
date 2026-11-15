@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
-import { createInvestmentAction, updateInvestmentAction } from '@/server/actions/investment.actions';
+import { createInvestmentAction, updateInvestmentAction } from '@/client/actions/investment.actions';
 import { INVESTMENT_TYPE_LABELS } from '@/shared/constants/investment.constants';
 import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';

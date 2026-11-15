@@ -4,8 +4,8 @@ import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { Pencil } from 'lucide-react';
 
-import { createCategoryAction } from '@/server/actions/category.actions';
-import { createSubcategoryAction } from '@/server/actions/subcategory.actions';
+import { createCategoryAction } from '@/client/actions/category.actions';
+import { createSubcategoryAction } from '@/client/actions/subcategory.actions';
 import { ONBOARDING_CATEGORY_SUGGESTIONS } from '@/shared/constants/onboarding-suggestions';
 import { centsToDisplayValue } from '@/client/utils/currency-input';
 import { Button } from '@/client/components/ui/button';

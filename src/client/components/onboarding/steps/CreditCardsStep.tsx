@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { Pencil } from 'lucide-react';
 
-import { createCreditCardAction, updateCreditCardAction, archiveCreditCardAction } from '@/server/actions/credit-card.actions';
+import { createCreditCardAction, updateCreditCardAction, archiveCreditCardAction } from '@/client/actions/credit-card.actions';
 import { centsToDisplayValue } from '@/client/utils/currency-input';
 import { CreditCardBrandBadge } from '@/client/components/ui/credit-card-brand-badge';
 import { Button } from '@/client/components/ui/button';

@@ -7,6 +7,12 @@ import { logger } from "@/server/infrastructure/logging/logger";
 const PUBLIC_PATHS = ["/login", "/register", "/api/auth"];
 const AUTH_PATHS = ["/api/auth"];
 
+// Casa o próprio caminho ou um subcaminho dele ("/login", "/login/..."), nunca
+// um prefixo de texto: "/login-qualquer-coisa" não é rota pública.
+function matchesPath(pathname: string, paths: readonly string[]): boolean {
+  return paths.some((path) => pathname === path || pathname.startsWith(`${path}/`));
+}
+
 // Limites por IP, por janela de 1 minuto, separados por tipo de requisição.
 // - auth: rígido (força bruta em login/registro)
 // - action: server actions (POST com header `next-action`)
@@ -32,7 +38,7 @@ function isPrefetch(request: NextRequest): boolean {
 }
 
 function getBucket(request: NextRequest, pathname: string): RateLimitBucket {
-  if (AUTH_PATHS.some((path) => pathname.startsWith(path))) return "auth";
+  if (matchesPath(pathname, AUTH_PATHS)) return "auth";
   if (request.method === "POST" && request.headers.has("next-action")) return "action";
   if (request.method === "GET" && isPrefetch(request)) return "prefetch";
   return "default";
@@ -83,7 +89,7 @@ export function proxy(request: NextRequest) {
   }
 
   // Skip public paths (auth pages and Better Auth API)
-  if (PUBLIC_PATHS.some((path) => pathname.startsWith(path))) {
+  if (matchesPath(pathname, PUBLIC_PATHS)) {
     return NextResponse.next();
   }
 
