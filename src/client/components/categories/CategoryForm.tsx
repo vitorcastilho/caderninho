@@ -20,7 +20,7 @@ import { CreditCardBrandBadge } from '@/client/components/ui/credit-card-brand-b
 import {
   createCategoryAction,
   updateCategoryAction,
-} from '@/server/actions/category.actions';
+} from '@/client/actions/category.actions';
 import { PAYMENT_METHOD_TYPE_LABELS } from '@/shared/constants/category.constants';
 import type { PaymentMethodType } from '@/shared/constants/category.constants';
 

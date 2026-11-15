@@ -160,6 +160,46 @@ describe("proxy", () => {
     });
   });
 
+  // Code review 1.9 — `startsWith("/login")` também liberava "/login-qualquer-coisa".
+  // Rota pública = o próprio caminho ou um subcaminho dele (segmento exato).
+  describe("rotas públicas por segmento exato", () => {
+    it.each(["/login", "/register", "/api/auth", "/login/", "/api/auth/sign-in/email", "/api/auth/callback/google"])(
+      "deve liberar %s sem cookie",
+      (path) => {
+        proxy(createRequest(path));
+
+        expect(NextResponse.next).toHaveBeenCalled();
+        expect(NextResponse.redirect).not.toHaveBeenCalled();
+      },
+    );
+
+    it.each(["/login-qualquer-coisa", "/loginx", "/register-admin", "/api/authorize", "/api/auth-fake"])(
+      "deve redirecionar %s para /login sem cookie",
+      (path) => {
+        proxy(createRequest(path));
+
+        expect(NextResponse.redirect).toHaveBeenCalled();
+        const redirectUrl = vi.mocked(NextResponse.redirect).mock.calls[0][0] as URL;
+        expect(redirectUrl.pathname).toBe("/login");
+      },
+    );
+
+    it("não deve aplicar o limite rígido de auth a caminhos que só começam com /api/auth", () => {
+      resetRateLimitStore();
+      const make = () => {
+        const request = new NextRequest(new URL("/api/auth-fake", "https://caderninho.example.com"), {
+          headers: { "x-forwarded-for": "198.51.100.77" },
+        });
+        request.cookies.set("better-auth.session_token", "valid-token-123");
+        return request;
+      };
+
+      const responses = Array.from({ length: 11 }, () => proxy(make())) as unknown as Array<{ status?: number }>;
+
+      expect(responses.filter((r) => r?.status === 429)).toHaveLength(0);
+    });
+  });
+
   // Story 1.11 — o limite de 30 req/min por IP derrubava usuários reais:
   // prefetch da sidebar + server actions passavam de 30 em poucas navegações.
   describe("rate limit por tipo de requisição", () => {

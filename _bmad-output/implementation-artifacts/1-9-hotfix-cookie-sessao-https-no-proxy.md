@@ -1,6 +1,6 @@
 # Story 1.9: Hotfix — proxy não reconhece cookie de sessão `__Secure-` em HTTPS
 
-Status: review
+Status: done
 
 <!-- Hotfix pós-Epic 1 (autenticação). Bug em staging e produção. Entrega isolada: branch de correção → PR para staging → validação → PR staging → main. -->
 
@@ -47,10 +47,10 @@ so that consigo usar o app em vez de voltar sempre para `/login`.
   - [x] 4.2: Se algum teste existente quebrar: `getSessionCookie` lê o **header** `cookie`, não `request.cookies`. O helper `createRequest` usa `request.cookies.set`, que no `NextRequest` também atualiza o header. Se não estiver atualizando, ajustar o helper para montar o header `cookie`, **sem** enfraquecer as asserções.
   - [x] 4.3: `npx tsc --noEmit`, `npx eslint src --max-warnings=0`, `npx vitest run`, `npx next build`
 
-- [ ] Task 5 (AC: #5): Entrega
+- [x] Task 5 (AC: #5): Entrega
   - [x] 5.1: Commit `fix: reconhece cookie de sessão __Secure- no proxy` → push → PR para `staging`
   - [x] 5.2: Depois do deploy em `caderninho-staging.vercel.app`: login com e-mail e senha → chega em `/dashboard`; navegar para `/transactions` e `/checklist`; abrir uma aba anônima e acessar `/dashboard` → redireciona para `/login`; logout → rotas protegidas voltam a redirecionar
-  - [ ] 5.3: Login Google em staging (o mesmo cookie é usado, então o fluxo deve funcionar)
+  - [x] 5.3: ~~Login Google em staging~~ → movida para a **Story 1.12** (o Google OAuth nunca foi configurado em staging/produção; não depende do código desta story)
   - [x] 5.4: PR de `staging` para `main` → depois do deploy, repetir 5.2 em produção
 
 ## Dev Notes
@@ -133,3 +133,10 @@ Claude Opus 5.5 (claude-opus-5-5)
 
 - 2026-11-14 — Entregue: #39 (→ staging) e #40 (staging → main). Login validado em staging e produção. Pendente: 5.3 (Google em staging).
 - 2026-11-14 — Hotfix implementado com TDD: `getSessionCookie` no proxy + 3 testes. Suite 1102/1102, build ok. Status: review (entrega via PR para `staging` pendente).
+
+## Senior Developer Review (AI) — 2026-11-15
+
+**Resultado:** aprovado → `done`. ACs 1–6 implementados; login com e-mail/senha validado em staging e produção.
+
+- [MÉDIO] Task 5.3 (Google em staging) dependia de configuração inexistente (sem `GOOGLE_CLIENT_ID`/`SECRET` na Vercel; botão aparece e falha). **Resolvido:** movida para a Story 1.12.
+- [BAIXO→corrigido] `PUBLIC_PATHS` usava `startsWith`, liberando `/login-qualquer-coisa`, `/register-admin`, `/api/authorize` sem sessão; e `/api/auth-fake` caía no limite rígido de auth. **Corrigido:** `matchesPath` (caminho exato ou subcaminho) em `src/proxy.ts`, com 12 testes novos em `src/proxy.test.ts` (vermelho antes: 6 falhas).

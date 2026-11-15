@@ -25,7 +25,7 @@ so that o app não quebra com "Application error" depois de poucas ações.
 - [x] Task 2 (AC: #1–#4): `src/proxy.ts` — buckets `auth` (10), `action` (120), `prefetch` (600), `default` (300) por IP/minuto.
 - [x] Task 3 (AC: #5, #6): teste `src/app/(app)/error.test.tsx` (vermelho: arquivo inexistente) → `src/app/(app)/error.tsx` com `EmptyState` do DS, "Tentar de novo" (`reset`) e digest do erro.
 - [x] Task 4 (AC: #6): `tsc` 0, `eslint src` 0, `vitest run` 139 arquivos / 1159 testes, `next build` ok.
-- [ ] Task 5: PR para `staging` → merge → retomar o smoke test da 3.4c em staging (valida AC #1–#3 com uso real).
+- [x] Task 5: PR para `staging` → merge → retomar o smoke test da 3.4c em staging (valida AC #1–#3 com uso real).
 
 ## Dev Notes
 
@@ -66,3 +66,11 @@ Claude Opus 5.5 (claude-opus-5-5)
 ## Change Log
 
 - 2026-11-14 — Rate limit por tipo de requisição + error boundary das páginas logadas, com TDD. Status: review.
+
+## Senior Developer Review (AI) — 2026-11-15
+
+**Resultado:** permanece `review` até a validação em produção (release do Epic 3).
+
+- [BAIXO→corrigido] Task 5 feita (smoke da 3.4c em staging sem 429), mas não marcada.
+- [MÉDIO→corrigido] AC 5 cobria só erros de renderização/navegação. Uma server action que recebe 429 tem a promise **rejeitada** pelo Next (`server-action-reducer`: resposta `text/plain` vira `Error`), o que não chega ao error boundary: o componente ficava preso (ex.: "Salvando…" para sempre) sem mensagem. **Corrigido:** `src/client/actions/with-action-fallback.ts` transforma a rejeição em `Result` de erro (`RATE_LIMITED` / `NETWORK_ERROR`, mensagens em português); `src/client/actions/*.actions.ts` envolvem todas as actions; os 30 componentes `'use client'` passaram a importar de `@/client/actions`. Testes: `with-action-fallback.test.ts` (4), `client-actions.test.ts` (guarda: nenhum componente do navegador importa direto de `@/server/actions`; toda action tem wrapper) e integração em `TransactionList.test.tsx` (429 nas actions de filtro → aviso e cards fora do carregamento; vermelho sem o wrapper: rejeição não tratada).
+- [BAIXO] Store do rate limit em memória por instância — limitação já documentada; fora do escopo.

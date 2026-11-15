@@ -3,7 +3,7 @@
 import { useState, useTransition, useCallback } from 'react';
 import { toast } from 'sonner';
 
-import { listCreditCardsAction, getCreditCardAction } from '@/server/actions/credit-card.actions';
+import { listCreditCardsAction, getCreditCardAction } from '@/client/actions/credit-card.actions';
 import { CreditCard as CreditCardIcon } from 'lucide-react';
 import { Button } from '@/client/components/ui/button';
 import { Breadcrumb } from '@/client/components/ui/breadcrumb';

@@ -22,7 +22,7 @@ import {
   DialogClose,
 } from '@/client/components/ui/dialog';
 import { formatCurrency } from '@/client/utils/format-currency';
-import { archiveCreditCardAction, reactivateCreditCardAction } from '@/server/actions/credit-card.actions';
+import { archiveCreditCardAction, reactivateCreditCardAction } from '@/client/actions/credit-card.actions';
 
 interface CreditCardCardProps {
   card: {

@@ -16,7 +16,7 @@ import {
 } from '@/client/components/ui/dialog';
 import { InvestmentCard } from './InvestmentCard';
 import { InvestmentForm } from './InvestmentForm';
-import { listInvestmentsAction, getInvestmentAction } from '@/server/actions/investment.actions';
+import { listInvestmentsAction, getInvestmentAction } from '@/client/actions/investment.actions';
 
 interface Investment {
   id: string;

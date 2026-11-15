@@ -23,7 +23,7 @@ import { formatCurrency } from '@/client/utils/format-currency';
 import {
   getTransactionPeriodSummaryAction,
   listTransactionsAction,
-} from '@/server/actions/transaction.actions';
+} from '@/client/actions/transaction.actions';
 import {
   TransactionRow,
   type TransactionRowIcon,

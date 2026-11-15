@@ -436,6 +436,32 @@ So that code quality is enforced and the project is maintainable long-term.
 **And** ambiente de staging esta configurado (projeto Supabase separado, Vercel preview)
 **And** README contem: visao geral, pre-requisitos, setup local completo, variaveis de ambiente, como rodar testes, fluxo de trabalho (branching), deploy, e visao da arquitetura
 
+
+### Hotfixes pós-Epic 1 (1.9 a 1.12)
+
+Criados depois do Epic 1 com os ambientes de staging e produção no ar (detalhes em `implementation-artifacts/`): 1.9 cookie de sessão `__Secure-` no proxy, 1.10 pool de conexões no modo transação do pooler, 1.11 rate limit por tipo de requisição + error boundary.
+
+### Story 1.12: Login com Google em Staging e Producao
+
+_(Criada no code review de 2026-11-15; era a Task 5.3 da Story 1.9.)_
+
+As a user,
+I want to sign in with Google in staging and production,
+So that I don't need a separate password.
+
+**Acceptance Criteria:**
+
+**Given** um ambiente sem credenciais do Google
+**When** as telas de login e registro carregam
+**Then** o botao "Entrar com Google" nao aparece e o provedor nao e registrado
+
+**Given** staging e producao com cliente OAuth proprio e variaveis na Vercel por ambiente
+**When** o usuario entra com o Google
+**Then** volta autenticado (conta nova -> onboarding; conta existente -> mesmos dados via account linking)
+**And** cancelar no Google mostra a mensagem de cancelamento
+
+**And** TDD para o botao/provedor condicional; validacao em staging; producao na release do Epic 3
+
 ---
 
 ## Epic 2: Estrutura Financeira e Categorizacao

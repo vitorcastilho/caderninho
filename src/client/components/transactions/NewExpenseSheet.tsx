@@ -19,20 +19,20 @@ import {
   SheetTitle,
 } from '@/client/components/ui/sheet';
 import { useIsMobile } from '@/client/hooks/use-is-mobile';
-import { listClassificationsAction } from '@/server/actions/classification.actions';
-import { listCategoriesAction } from '@/server/actions/category.actions';
+import { listClassificationsAction } from '@/client/actions/classification.actions';
+import { listCategoriesAction } from '@/client/actions/category.actions';
 import {
   createSubcategoryAction,
   listSubcategoriesAction,
-} from '@/server/actions/subcategory.actions';
-import { listBankAccountsAction } from '@/server/actions/bank-account.actions';
-import { listCreditCardsAction } from '@/server/actions/credit-card.actions';
+} from '@/client/actions/subcategory.actions';
+import { listBankAccountsAction } from '@/client/actions/bank-account.actions';
+import { listCreditCardsAction } from '@/client/actions/credit-card.actions';
 import {
   createTransactionAction,
   getSuggestedEstablishmentsAction,
   getImpactPreviewAction,
-} from '@/server/actions/transaction.actions';
-import { listEstablishmentsBySubcategoryAction } from '@/server/actions/establishment.actions';
+} from '@/client/actions/transaction.actions';
+import { listEstablishmentsBySubcategoryAction } from '@/client/actions/establishment.actions';
 
 interface NewExpenseSheetProps {
   open: boolean;

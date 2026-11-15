@@ -23,7 +23,7 @@ import {
 } from '@/client/components/ui/dialog';
 import { BankLogo } from '@/client/components/ui/bank-logo';
 import { formatCurrency } from '@/client/utils/format-currency';
-import { archiveBankAccountAction, reactivateBankAccountAction } from '@/server/actions/bank-account.actions';
+import { archiveBankAccountAction, reactivateBankAccountAction } from '@/client/actions/bank-account.actions';
 
 interface BankAccountCardProps {
   account: {

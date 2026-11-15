@@ -21,8 +21,8 @@ import {
   SelectValue,
 } from '@/client/components/ui/select';
 import { useIsMobile } from '@/client/hooks/use-is-mobile';
-import { listBankAccountsAction } from '@/server/actions/bank-account.actions';
-import { createTransferAction } from '@/server/actions/transaction.actions';
+import { listBankAccountsAction } from '@/client/actions/bank-account.actions';
+import { createTransferAction } from '@/client/actions/transaction.actions';
 
 interface NewTransferSheetProps {
   open: boolean;

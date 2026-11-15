@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
-import { createIncomeSourceAction, updateIncomeSourceAction } from '@/server/actions/income-source.actions';
+import { createIncomeSourceAction, updateIncomeSourceAction } from '@/client/actions/income-source.actions';
 import { EMPLOYMENT_TYPE_LABELS } from '@/shared/constants/income-source.constants';
 import { Button } from '@/client/components/ui/button';
 import { Input } from '@/client/components/ui/input';

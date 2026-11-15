@@ -438,6 +438,28 @@ describe('TransactionList', () => {
       );
     });
 
+    // Code review 1.11 — 429 do proxy rejeita a promise da action; antes, isso
+    // escapava como erro não tratado e os cards ficavam no skeleton para sempre.
+    it('429 nas actions de filtro mostra aviso e não deixa os cards presos no carregamento', async () => {
+      const user = userEvent.setup();
+      mockListAction.mockRejectedValueOnce(new Error('Too Many Requests'));
+      mockSummaryAction.mockRejectedValueOnce(new Error('Too Many Requests'));
+      const { container } = renderList({
+        initialTransactions: [makeTx('tx-1', '2026-04-10T12:00:00Z')],
+        initialTotal: 1,
+        initialSummary: someSummary,
+      });
+
+      await user.click(screen.getByRole('radio', { name: /Saídas/ }));
+
+      await waitFor(() => expect(mockToastError).toHaveBeenCalled());
+      await waitFor(() =>
+        expect(
+          container.querySelector('[data-slot="transaction-summary-cards-loading"]'),
+        ).not.toBeInTheDocument(),
+      );
+    });
+
     it('aplica o summary mesmo quando a lista falha', async () => {
       const user = userEvent.setup();
       mockListAction.mockResolvedValueOnce({

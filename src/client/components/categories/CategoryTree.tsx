@@ -29,11 +29,11 @@ import { ClassificationMergeDialog } from './ClassificationMergeDialog';
 import { CategoryForm } from './CategoryForm';
 import { SubcategoryForm } from './SubcategoryForm';
 import { EstablishmentForm } from './EstablishmentForm';
-import { listClassificationsAction, archiveClassificationAction } from '@/server/actions/classification.actions';
-import { listCategoriesAction, archiveCategoryAction } from '@/server/actions/category.actions';
-import { listSubcategoriesAction, archiveSubcategoryAction } from '@/server/actions/subcategory.actions';
-import { listEstablishmentsBySubcategoryAction } from '@/server/actions/establishment.actions';
-import { getMonthlySpendingSummaryAction } from '@/server/actions/transaction.actions';
+import { listClassificationsAction, archiveClassificationAction } from '@/client/actions/classification.actions';
+import { listCategoriesAction, archiveCategoryAction } from '@/client/actions/category.actions';
+import { listSubcategoriesAction, archiveSubcategoryAction } from '@/client/actions/subcategory.actions';
+import { listEstablishmentsBySubcategoryAction } from '@/client/actions/establishment.actions';
+import { getMonthlySpendingSummaryAction } from '@/client/actions/transaction.actions';
 
 interface Classification {
   id: string;

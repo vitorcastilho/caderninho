@@ -4,7 +4,7 @@ import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { completeOnboardingAction } from '@/server/actions/onboarding.actions';
+import { completeOnboardingAction } from '@/client/actions/onboarding.actions';
 import { centsToDisplayValue } from '@/client/utils/currency-input';
 import { Button } from '@/client/components/ui/button';
 
