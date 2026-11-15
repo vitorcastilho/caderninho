@@ -1,6 +1,6 @@
 # Story 1.14: Proteções do processo BMAD
 
-Status: in-progress
+Status: review
 
 <!-- Criada pelo create-story (invocado) em 2026-11-15, a partir do correct course de processo: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-processo.md (Proposta 5). Primeira da fila aprovada na Proposta 6. -->
 
@@ -63,10 +63,10 @@ Em 2026-11-15 o Claude Code criou as Stories 1.12 e 1.13 e implementou a 1.13 (P
 - [x] Task 5 (AC: #7, #8): documentação
   - [x] 5.1 `_bmad-output/project-context.md` → "Development Workflow Rules → Git & Branching" atualizado (AC 7)
   - [x] 5.2 README: seção curta "Processo BMAD e proteções" (as três camadas e os limites)
-- [ ] Task 6 (AC: #9): validação
+- [x] Task 6 (AC: #9): validação
   - [x] 6.1 `npx tsc --noEmit`, `npm run lint`, `npx vitest run`, `npx next build`
   - [x] 6.2 Teste real do hook: o Claude Code carrega os hooks no início da sessão e pede revisão de hooks alterados fora dela — o PO abre `/hooks` para aprovar o hook novo (ou reinicia a sessão). Depois, tentar uma escrita protegida sem workflow ativo e registrar o bloqueio (exit 2 + mensagem) no Debug Log; e uma leitura (`cat` da story) que deve passar
-  - [ ] 6.3 PR para `staging`; CI verde, incluindo `bmad-process`
+  - [x] 6.3 PR para `staging`; CI verde, incluindo `bmad-process`
 
 ## Dev Notes
 
@@ -207,3 +207,8 @@ Claude Opus 5.5 (claude-opus-5-5)
 - `_bmad-output/project-context.md`
 - `README.md`
 - `_bmad-output/implementation-artifacts/1-14-protecoes-do-processo-bmad.md`, `_bmad-output/implementation-artifacts/sprint-status.yaml`
+
+## Change Log
+
+- 2026-11-15 — Story criada pelo `create-story` (invocado); decisões do PO registradas (AC 3 refinado; janela pós-workflow aceita).
+- 2026-11-15 — `dev-story` (invocado): Camadas 1, 2 e 3 implementadas com TDD; `project-context.md` e README atualizados. Teste real da Task 6.2 revelou falso positivo na detecção de leitura de workflow via `Bash` e falso negativo na forma com chaves — corrigidos com TDD; bloqueio confirmado na sessão. PR #53, CI verde (`ci` + `bmad-process`). Status → review.
