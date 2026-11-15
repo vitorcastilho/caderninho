@@ -127,7 +127,7 @@ jobs:
   # PRODUCTION_DATABASE_URL) — ninguém cola senha no terminal. (Environments do
   # GitHub não existem em repositório privado no plano gratuito.)
   deploy-migrations:
-    name: Migrations no ${{ github.ref_name == 'main' && 'production' || 'staging' }}
+    name: Migrations no banco do ambiente (staging ou produção)
     if: github.event_name == 'push'
     needs: [ci, migrations]
     runs-on: ubuntu-latest
