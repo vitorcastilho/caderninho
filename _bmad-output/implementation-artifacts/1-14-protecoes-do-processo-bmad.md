@@ -161,10 +161,10 @@ Depois dele, a seção "Limites das proteções" (AC 8).
 - [Source: code.claude.com/docs/en/hooks] (contrato do PreToolUse, consultado em 2026-11-15)
 - [Source: _bmad-output/implementation-artifacts/1-13-ambiente-local-igual-staging-e-producao.md] (padrão scripts/lib + teste; CI)
 
-## Questões levantadas na criação (para o PO)
+## Decisões do PO na criação (2026-11-15 — ambas confirmadas)
 
-1. **AC 3 refinado em relação ao épico:** o épico diz que a leitura do `workflow.yaml` conta como invocação. Isso **não** barraria o caso real das edições de review nas 1.9–1.11 (foi feito `cat .../code-review/workflow.yaml` sem invocar o workflow). Esta story exige que a leitura do `workflow.yaml` só conte com um agente BMAD ativo. Confirmar.
-2. **Janela depois do workflow:** o hook considera o último workflow invocado até outro ser invocado (não sabe quando um workflow "terminou"). A Camada 1 cobre esse intervalo; está documentado no AC 8.
+1. **AC 3 refinado em relação ao épico:** o épico diz que a leitura do `workflow.yaml` conta como invocação. Isso **não** barraria o caso real das edições de review nas 1.9–1.11 (foi feito `cat .../code-review/workflow.yaml` sem invocar o workflow). Esta story exige que a leitura do `workflow.yaml` só conte com um agente BMAD ativo. **Confirmado pelo PO.**
+2. **Janela depois do workflow:** o hook considera o último workflow invocado até outro ser invocado (não sabe quando um workflow "terminou"). A Camada 1 cobre esse intervalo; está documentado no AC 8. **Aceito pelo PO.**
 
 ## Dev Agent Record
 
