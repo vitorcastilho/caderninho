@@ -30,12 +30,18 @@ Você precisa criar conta em **3 serviços** (todos têm plano gratuito):
    - `Connection string` (URI) → será o `DATABASE_URL`
    - Substituir `[YOUR-PASSWORD]` pela senha que você definiu no passo 4
 
-**Após criar o projeto, rodar as migrations:**
+**Após criar o projeto, aplicar as migrations (Story 1.13):**
+
+- **Use sempre a URL do pooler em modo transação (porta 6543)** — no app (Vercel), nas migrations e nos arquivos locais.
+- **Caminho normal:** guardar a URL no secret do repositório (`STAGING_DATABASE_URL` ou `PRODUCTION_DATABASE_URL`, em GitHub → Settings → Secrets and variables → Actions). O job `deploy-migrations` do CI aplica as migrations a cada merge em `staging`/`main`.
+- **Manual (só se necessário):** salvar a URL no arquivo local do ambiente e rodar
 
 ```bash
-# Configurar a DATABASE_URL do Supabase remoto temporariamente
-DATABASE_URL="postgresql://postgres.[ref]:[senha]@aws-0-sa-east-1.pooler.supabase.com:6543/postgres" npm run db:migrate
+npm run db:migrate -- --env staging                         # lê .env.staging.local
+npm run db:migrate -- --env production --confirm-production # lê .env.production.local
 ```
+
+O script recusa staging/produção fora da porta 6543 e recusa produção sem `--confirm-production`. Nunca cole a URL com senha direto no terminal.
 
 ### 2. Vercel — Hospedagem da Aplicação
 
@@ -114,7 +120,7 @@ Se quiser um staging com banco separado, cadastrar as mesmas variáveis acima ma
 
 - [ ] Criar conta no Supabase e criar projeto `caderninho` (região São Paulo)
 - [ ] Copiar as 4 credenciais do Supabase (URL, anon key, service role key, DATABASE_URL)
-- [ ] Rodar migrations no banco remoto (`DATABASE_URL=... npm run db:migrate`)
+- [ ] Guardar a URL (porta 6543) no secret `PRODUCTION_DATABASE_URL` do repositório — as migrations rodam no merge em `main` (manual: `npm run db:migrate -- --env production --confirm-production`)
 - [ ] Criar conta na Vercel e importar o repositório
 - [ ] Criar credenciais OAuth no Google Cloud Console
 - [ ] Cadastrar todas as 10 variáveis de ambiente na Vercel (tabela acima)

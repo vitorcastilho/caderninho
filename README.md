@@ -80,7 +80,7 @@ Copie `.env.example` para `.env.local` e preencha os valores.
 | `NEXT_PUBLIC_SUPABASE_URL` | URL da API do Supabase | Output de `npm run db:start` ou `npm run db:status` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Chave anônima do Supabase | Output de `npm run db:start` ou `npm run db:status` |
 | `SUPABASE_SERVICE_ROLE_KEY` | Chave de serviço (acesso admin) | Output de `npm run db:start` ou `npm run db:status` |
-| `DATABASE_URL` | Connection string do PostgreSQL | Local: `postgresql://postgres:postgres@localhost:54322/postgres` |
+| `DATABASE_URL` | Connection string do PostgreSQL **pelo pooler em modo transação** (mesmo caminho de staging/produção) | Local: `postgresql://postgres.pooler-dev:postgres@127.0.0.1:54329/postgres` (confira com `npm run db:status`) |
 | `BETTER_AUTH_SECRET` | Secret para assinatura de sessões (32+ chars) | Gerar com `openssl rand -base64 32` |
 | `BETTER_AUTH_URL` | URL base da aplicação | `http://localhost:3000` |
 | `NEXT_PUBLIC_APP_URL` | URL pública da aplicação | `http://localhost:3000` |
@@ -117,11 +117,27 @@ Copie `.env.example` para `.env.local` e preencha os valores.
 | `npm run db:stop` | Para o Supabase local |
 | `npm run db:status` | Mostra URLs e chaves do Supabase local |
 | `npm run db:generate` | Gera migration a partir de mudanças no schema Drizzle |
-| `npm run db:migrate` | Aplica migrations pendentes |
+| `npm run db:migrate` | Aplica migrations pendentes no banco local (`.env.local`) |
+| `npm run db:migrate -- --env staging` | Aplica no staging (`.env.staging.local`, exige porta 6543) |
+| `npm run db:migrate -- --env production --confirm-production` | Aplica em produção (`.env.production.local`, exige porta 6543 e confirmação) |
+| `npm run db:reset:local` | Zera o Supabase local e aplica todas as migrations do zero pelo pooler (destrói os dados locais) |
 | `npm run db:push` | Sincroniza schema direto no banco (dev only, sem migration) |
 | `npm run db:studio` | Abre Drizzle Studio (interface visual do banco) |
 
 ## Banco de Dados
+
+### Um só caminho de conexão em todos os ambientes (Story 1.13)
+
+| Ambiente | Conexão do app e das migrations | Arquivo local |
+|---|---|---|
+| Local | Pooler do Supabase local (Supavisor) em **modo transação**, porta `54329` | `.env.local` |
+| Staging | Pooler do Supabase em **modo transação**, porta `6543` | `.env.staging.local` |
+| Produção | Pooler do Supabase em **modo transação**, porta `6543` | `.env.production.local` |
+
+- O modo transação não aceita prepared statements: o cliente usa `prepare: false` (Story 1.10).
+- Testes de banco e de migrations valem só no Supabase (local zerado com `npm run db:reset:local`, staging ou produção) — nunca num Postgres "puro", que não tem `auth.uid()` e os demais objetos do Supabase.
+- Os arquivos `.env.*.local` espelham as variáveis da Vercel de cada ambiente e nunca são commitados.
+- No pipeline, as migrations de staging e produção rodam sozinhas depois do merge (ver "Migrations automáticas").
 
 O projeto usa **Drizzle ORM** com PostgreSQL (via Supabase). Schemas são definidos em TypeScript e migrations são versionadas.
 
@@ -131,7 +147,7 @@ O projeto usa **Drizzle ORM** com PostgreSQL (via Supabase). Schemas são defini
 # 1. Edite o schema em src/server/infrastructure/db/schema/
 # 2. Gere a migration
 npm run db:generate
-# Cria arquivo SQL em supabase/migrations/
+# Cria arquivo SQL em src/server/infrastructure/database/migrations/
 
 # 3. Aplique a migration
 npm run db:migrate
@@ -144,8 +160,8 @@ npm run db:studio
 ### Comandos úteis
 
 ```bash
-# Resetar banco local (destrói todos os dados)
-npm run db:stop && npm run db:start && npm run db:migrate
+# Resetar banco local e testar as migrations do zero (destrói todos os dados locais)
+npm run db:reset:local
 
 # Ver dados no banco
 npm run db:studio
@@ -376,7 +392,19 @@ Para um ambiente de staging com banco próprio:
    - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `DATABASE_URL` → apontando para o Supabase de staging
    - `BETTER_AUTH_SECRET` → secret diferente do de produção
    - `ENVIRONMENT` → `staging`
-3. Rodar migrations no banco de staging: `DATABASE_URL="..." npm run db:migrate`
+3. Migrations: automáticas pelo pipeline (abaixo). Manualmente, só se necessário: `npm run db:migrate -- --env staging` (lê `.env.staging.local`, exige porta 6543)
+
+### Migrations automáticas (Story 1.13)
+
+O workflow `CI` (`.github/workflows/ci.yml`) tem dois jobs de banco:
+
+- **`migrations`** (toda PR e push): sobe o Supabase no runner (Postgres + pooler Supavisor) e aplica **todas as migrations do zero pelo pooler em modo transação** — o mesmo caminho de staging e produção. Confere que o número de migrations aplicadas bate com o journal e que rodar de novo não muda nada.
+- **`deploy-migrations`** (push em `staging` ou `main`, depois do CI verde): aplica as migrations no banco do ambiente, com a URL guardada em **secrets do repositório**:
+  - `STAGING_DATABASE_URL` — URL do Supabase de staging, porta **6543**
+  - `PRODUCTION_DATABASE_URL` — URL do Supabase de produção, porta **6543**
+  - Configurar em GitHub → Settings → Secrets and variables → Actions → *New repository secret*. Sem o secret, o job só avisa e não falha.
+
+A migration e o deploy da Vercel começam juntos no push. Antes do lançamento isso é aceitável; depois dele, toda migration precisa ser retrocompatível com o código anterior.
 
 Para o guia completo de deploy em produção (criação de contas, env vars, checklist), veja [`docs/deploy-producao.md`](docs/deploy-producao.md).
 

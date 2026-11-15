@@ -3,18 +3,38 @@ import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
 
-config({ path: '.env.local' });
+import { parseMigrateArgs, envFileFor, describeTarget, checkTarget, type MigrateArgs } from './lib/migrate-env';
 
-const connectionString = process.env.DATABASE_URL;
-
-if (!connectionString) {
-  console.error('DATABASE_URL environment variable is not set');
+// Uso (Story 1.13):
+//   npm run db:migrate                                   → .env.local (padrão)
+//   npm run db:migrate -- --env staging                  → .env.staging.local
+//   npm run db:migrate -- --env production --confirm-production
+// No CI não há arquivo: o DATABASE_URL vem do secret do environment do GitHub.
+let args: MigrateArgs;
+try {
+  args = parseMigrateArgs(process.argv.slice(2));
+} catch (error) {
+  console.error((error as Error).message);
   process.exit(1);
 }
 
-// Use max: 1 for migrations — required by postgres.js for transactional DDL.
-// prepare: false — compatível com o pooler do Supabase em modo transação (6543).
-const migrationClient = postgres(connectionString, { max: 1, prepare: false });
+// O arquivo do ambiente prevalece sobre variáveis já definidas no shell.
+config({ path: envFileFor(args.env), override: true, quiet: true });
+
+const connectionString = process.env.DATABASE_URL;
+const check = checkTarget(args, connectionString);
+
+if (!check.ok || !connectionString) {
+  console.error(`Migration cancelada: ${check.ok ? 'DATABASE_URL ausente' : check.reason}`);
+  process.exit(1);
+}
+
+console.log(`Destino: ${describeTarget(args.env, connectionString)}`);
+
+// max: 1 — exigido pelo postgres.js para DDL transacional.
+// prepare: false — o pooler em modo transação (6543 remoto, 54329 local) não
+// suporta prepared statements (Story 1.10).
+const migrationClient = postgres(connectionString, { max: 1, prepare: false, onnotice: () => {} });
 const db = drizzle(migrationClient);
 
 async function main() {

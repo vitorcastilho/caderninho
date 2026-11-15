@@ -54,6 +54,7 @@ development_status:
   1-10-hotfix-pool-conexoes-modo-transacao: review
   1-11-hotfix-rate-limit-por-tipo-de-requisicao: review
   1-12-login-google-em-staging-e-producao: backlog  # refazer pelo create-story (correct course processo, Proposta 2)
+  1-13-ambiente-local-igual-staging-e-producao: in-progress
   1-14-protecoes-do-processo-bmad: done  # correct course processo, Proposta 5 — primeira da fila
   epic-1-retrospective: optional
 

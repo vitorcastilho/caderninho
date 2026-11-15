@@ -465,6 +465,22 @@ So that I don't need a separate password.
 
 **And** TDD para o botao/provedor condicional; validacao em staging; producao na release do Epic 3
 
+### Story 1.13: Ambiente Local Igual a Staging e Producao
+
+_(Criada em 2026-11-15 a partir do code review da Story 1.10; antes da Story 3.5.)_
+
+As a developer,
+I want the app and migrations to use the same connection path locally, in CI, staging and production,
+So that database problems show up before deploy.
+
+**Acceptance Criteria:**
+
+**Given** qualquer ambiente
+**When** o app ou as migrations conectam ao banco
+**Then** usam o pooler do Supabase em modo transacao (local 54329, staging/producao 6543)
+**And** `db:migrate --env <local|staging|production>` le o arquivo do ambiente, recusa staging/producao fora da 6543 e producao sem `--confirm-production`
+**And** o CI aplica todas as migrations do zero pelo pooler e, apos merge em staging/main, aplica no banco do ambiente via secret do repositorio
+
 ### Story 1.14: Protecoes do Processo BMAD
 
 _(Criada pelo correct course de 2026-11-15, `sprint-change-proposal-2026-11-15-processo.md`, Proposta 5.)_

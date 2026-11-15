@@ -18,6 +18,7 @@
     "db:status": "supabase status",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx scripts/migrate.ts",
+    "db:reset:local": "supabase db reset && tsx scripts/migrate.ts --env local",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio"
   },
