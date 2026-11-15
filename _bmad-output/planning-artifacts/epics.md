@@ -20,7 +20,7 @@ FR1: O usuario pode cadastrar contas bancarias com nome, banco e saldo inicial
 FR2: O usuario pode cadastrar cartoes de credito com nome, bandeira, limite total, data de fechamento e data de vencimento da fatura
 FR3: O usuario pode cadastrar investimentos com nome, instituicao, tipo, saldo atual, data de atualizacao e data de vencimento opcional
 FR4: O usuario pode cadastrar fontes de receita com nome, tipo de vinculo, recorrencia, valor base mensal e dia habitual de pagamento
-FR5: O usuario pode cadastrar categorias e subcategorias de gasto em estrutura hierarquica, com orcamento mensal planejado por categoria
+FR5: O usuario pode cadastrar classificacoes, categorias, subcategorias e estabelecimentos em estrutura hierarquica (FR38). Cada nivel pode ter, opcionalmente, orcamento mensal planejado (valor fixo ou faixa) e metodo de pagamento padrao. Ex.: Essenciais -> Alimentacao (R$5.500) -> Supermercado (R$2.500 a R$3.000, Latam Pass) -> Pao de Acucar
 FR6: O usuario pode editar qualquer item da estrutura financeira. Exclusao funciona como arquivamento
 FR7: O usuario pode visualizar o saldo atualizado de cada conta bancaria
 FR8: O usuario pode visualizar de cada cartao de credito: limite total, utilizado, disponivel, fatura estimada do ciclo atual, utilizado liquido e parcelas futuras agrupadas por mes de referencia
@@ -28,8 +28,8 @@ FR9: O usuario pode registrar transacoes de saida (gastos) com valor, categoria,
 FR10: O usuario pode registrar transacoes de entrada (receitas) com valor, origem e conta de destino
 FR11: O usuario pode registrar gastos parcelados no cartao de credito com numero de parcelas, gerando parcelas automaticas com contagem regressiva
 FR12: O usuario pode associar cada transacao a um metodo de pagamento especifico (cartao de credito, debito, Pix, Flash)
-FR13: O sistema exibe feedback do impacto da transacao antes da confirmacao — saldo/limite restante, orcamento da categoria consumido (< 500ms)
-FR14: O usuario pode registrar estabelecimentos e o sistema sugere os 5 estabelecimentos mais utilizados por categoria
+FR13: O sistema exibe feedback do impacto da transacao antes da confirmacao — saldo/limite restante e consumo dos orcamentos afetados (cada nivel da hierarquia da transacao com orcamento definido) (< 500ms)
+FR14: O usuario pode registrar estabelecimentos e o sistema sugere os 5 estabelecimentos mais utilizados na subcategoria (ultimos 90 dias)
 FR15: O usuario pode editar qualquer transacao registrada
 FR16: O usuario pode excluir transacoes registradas
 FR17: O sistema recalcula todos os totalizadores, saldos e orcamentos ao registrar, editar ou excluir transacoes (< 500ms)
@@ -45,7 +45,7 @@ FR26: O sistema exibe o progresso da checklist mensal (X de Y contas confirmadas
 FR27: O usuario pode visualizar a visao "o que falta pagar"
 FR28: O sistema notifica o usuario em 3 momentos para cada conta: 1 dia antes, no dia, e quando atrasa
 FR29: O usuario pode marcar contas como pagas a partir da notificacao ou dentro do app
-FR30: O usuario pode visualizar o total gasto no mes por categoria com barra de progresso
+FR30: O usuario pode visualizar o total gasto no mes por nivel da hierarquia (classificacao, categoria, subcategoria) com barra de progresso quando houver orcamento
 FR31: O usuario pode fazer drill-down de uma categoria para ver distribuicao por subcategoria e estabelecimento
 FR32: O usuario pode visualizar o total de contas a pagar restantes no mes
 FR33: O usuario pode visualizar a Regra de Ouro: comprometimento em cartoes vs. saldo disponivel
@@ -53,7 +53,7 @@ FR34: O sistema atualiza o dashboard quando outro usuario registra, edita ou exc
 FR35: O usuario pode visualizar a timeline de parcelas ativas com cartao associado, parcela atual/total e data de termino
 FR36: O sistema exibe quando uma parcela termina e quanto de orcamento sera liberado mensalmente
 FR37: O sistema exibe os gastos recorrentes nao-mensais posicionados na timeline com valor estimado e data prevista
-FR38: O usuario pode organizar gastos em hierarquia de ate 4 niveis (classificacao de essencialidade -> categoria -> subcategoria -> estabelecimento/contexto)
+FR38: O usuario pode organizar gastos em hierarquia de ate 4 niveis: classificacao de essencialidade (ex.: Essenciais) -> categoria, o grande grupo (ex.: Alimentacao, Transporte) -> subcategoria, o tipo de gasto (ex.: Supermercado, Gasolina, Pedagio) -> estabelecimento, onde gastou (ex.: Pao de Acucar). Toda transacao de gasto tem classificacao, categoria e subcategoria; o estabelecimento e opcional
 FR39: O sistema oferece classificacoes de essencialidade padrao iniciais (7 classificacoes)
 FR40: O usuario pode criar, renomear, mesclar e arquivar classificacoes de essencialidade
 FR41: O usuario pode reclassificar uma categoria com efeito retroativo em todas as visualizacoes
@@ -75,7 +75,7 @@ FR56: No fechamento do mes, o sistema apresenta o saldo final e o usuario regist
 FR57: O administrador pode visualizar o status dos backups e acionar restauracao manual
 FR58: O usuario pode registrar transferencias entre contas proprias e entre membros — nao contabilizadas como receita nem despesa
 FR59: O usuario pode tocar/clicar em qualquer valor exibido no dashboard para ver composicao e origem
-FR60: O sistema acompanha gasto realizado vs. orcamento planejado por categoria e exibe o valor disponivel livre
+FR60: O sistema acompanha gasto realizado vs. orcamento planejado em cada nivel com orcamento e exibe o valor disponivel livre
 FR61: O usuario pode configurar quais widgets exibir no dashboard e filtrar por perspectiva
 FR62: O sistema calcula e exibe a margem disponivel projetada por mes
 FR63: O sistema exibe mensagem de erro especifica quando uma operacao falha, preserva os dados digitados e oferece opcao de retry
@@ -86,7 +86,8 @@ FR67: Apos o pagamento da fatura anterior, o sistema recalcula as metricas do ca
 FR68: O usuario pode desmarcar transacoes durante a reconciliacao que nao apareceram na fatura real
 FR69: O usuario pode adicionar transacoes nao registradas diretamente na tela de reconciliacao
 FR70: O sistema exibe a diferenca entre o total reconciliado e o valor real da fatura em tempo real durante a reconciliacao
-FR71: O usuario pode configurar um metodo de pagamento padrao por categoria. Ao selecionar uma categoria no registro de transacao, o metodo de pagamento configurado e pre-selecionado automaticamente
+FR71: O usuario pode definir, opcionalmente, metodo de pagamento padrao em qualquer nivel da hierarquia. No registro, o metodo e preenchido do nivel mais especifico ao mais geral (estabelecimento -> subcategoria -> categoria -> classificacao): em cada nivel, o definido; senao, o habito (3 ultimos registros com o mesmo metodo); senao, sobe um nivel. Atalhos 'ultimo usado' e 'padrao do nivel acima'. Apos 90 dias como o mais usado num nivel, sugere defini-lo como padrao
+FR72: Quando um nivel tem orcamento e niveis abaixo tambem tem, o sistema exibe o saldo nao alocado. Nivel sem orcamento exibe barra neutra com percentual relativo ao nivel acima
 
 ### NonFunctional Requirements
 
@@ -148,8 +149,8 @@ NFR-U4: Feedback visual para toda acao: confirmacao de sucesso em < 1 segundo, a
 **Regras de Processo (acordadas com o usuario):**
 - UX valida obrigatoriamente toda tela e/ou componente visual desenvolvido pelo dev — nenhum componente visual e considerado "done" sem validacao da UX
 - Dev obrigatoriamente valida contra o prototipo HTML correspondente antes de considerar pronto — prototipos sao a fonte da verdade visual
-- Ao iniciar um novo epico: criar branch nova a partir de main
-- Ao finalizar um epico: commit + push + criar PR detalhado com o que foi entregue
+- Cada story: branch a partir de `staging` -> PR para `staging` -> validacao em staging (atualizado em 2026-11-15)
+- Ao finalizar o epico, sem pendencias em staging: PR `staging` -> `main` (merge commit, nunca squash; nao apagar `staging`) -> validacao em producao
 
 ### FR Coverage Map
 
@@ -157,7 +158,7 @@ FR1: Epic 2 — Cadastro de contas bancarias
 FR2: Epic 2 — Cadastro de cartoes de credito (estrutura)
 FR3: Epic 2 — Cadastro de investimentos
 FR4: Epic 2 — Cadastro de fontes de receita
-FR5: Epic 2 — Cadastro de categorias e subcategorias com orcamento
+FR5: Epic 2 — Cadastro da hierarquia | Epic 3 (Story 3.5) — orcamento e metodo opcionais nos 4 niveis
 FR6: Epic 2 — Edicao e arquivamento de itens da estrutura financeira
 FR7: Epic 2 — Visualizacao de saldo atualizado de contas
 FR8: Epic 5 — Metricas calculadas do cartao de credito (utilizado, disponivel, fatura estimada, utilizado liquido)
@@ -166,7 +167,7 @@ FR10: Epic 3 — Registro de transacoes de entrada (receitas)
 FR11: Epic 5 — Registro de gastos parcelados no cartao com parcelas automaticas e mes de referencia
 FR12: Epic 3 — Associacao de transacao a metodo de pagamento
 FR13: Epic 3 — Feedback de impacto antes da confirmacao
-FR14: Epic 3 — Sugestao de estabelecimentos frequentes por categoria
+FR14: Epic 3 — Sugestao de estabelecimentos frequentes por subcategoria
 FR15: Epic 3 — Edicao de transacoes
 FR16: Epic 3 — Exclusao de transacoes
 FR17: Epic 3 — Recalculo de totalizadores apos registro/edicao/exclusao
@@ -182,7 +183,7 @@ FR26: Epic 4 — Progresso da checklist mensal
 FR27: Epic 4 — Visao "o que falta pagar"
 FR28: Epic 4 — Notificacoes em 3 momentos (vespera, dia, atraso)
 FR29: Epic 4 — Marcar contas como pagas via notificacao ou app
-FR30: Epic 6 — Total gasto por categoria com barra de progresso
+FR30: Epic 6 — Total gasto por nivel da hierarquia com barra de progresso
 FR31: Epic 6 — Drill-down por subcategoria e estabelecimento
 FR32: Epic 6 — Total de contas a pagar restantes no mes
 FR33: Epic 6 — Regra de Ouro (cartoes vs. saldo)
@@ -223,7 +224,8 @@ FR67: Epic 5 — Recalculo de metricas apos pagamento de fatura
 FR68: Epic 5 — Desmarcar transacoes na reconciliacao
 FR69: Epic 5 — Adicionar transacoes nao registradas na reconciliacao
 FR70: Epic 5 — Diferenca em tempo real durante reconciliacao
-FR71: Epic 2 — Metodo de pagamento padrao por categoria
+FR71: Epic 2 (padrao por categoria) + Epic 3 (Stories 3.5 e 3.6 — todos os niveis e regra no registro)
+FR72: Epic 3 (Story 3.9) — Saldo nao alocado e barra neutra
 
 ## Epic List
 
@@ -237,7 +239,7 @@ O usuario pode configurar todo o perfil financeiro — contas bancarias, cartoes
 
 ### Epic 3: Registro e Gestao de Transacoes
 O usuario pode registrar gastos e receitas rapidamente (~5s), editar, excluir, transferir entre contas, reclassificar categorias retroativamente e acompanhar orcamento realizado vs. planejado. Jornada 1 (registro rapido) e Jornada 3 (correcao de erro) ficam completas.
-**FRs cobertos:** FR9, FR10, FR12, FR13, FR14, FR15, FR16, FR17, FR41, FR42, FR58, FR60
+**FRs cobertos:** FR9, FR10, FR12, FR13, FR14, FR15, FR16, FR17, FR41, FR42, FR58, FR60, FR71 (todos os niveis), FR72
 
 ### Epic 4: Gastos Recorrentes e Checklist Mensal
 O usuario pode cadastrar gastos recorrentes (5 tipos de recorrencia), ter a checklist mensal gerada automaticamente com confirmacao diferenciada por tipo de conta, acompanhar progresso de pagamentos e receber notificacoes nos 3 momentos (vespera, dia, atraso). Jornada 2 (ciclo mensal) fica completa.
@@ -554,6 +556,8 @@ So that I can budget by category and understand where my money goes.
 **And** TDD, Clean Architecture, auditoria
 **And** a UX valida a tela implementada
 
+**⚠️ Correção (correct-course 2026-11-15, `sprint-change-proposal-2026-11-15.md`):** orcamento e metodo de pagamento sao opcionais em todos os niveis (Stories 3.5 e 3.6). O exemplo "R$2.500 a R$3.000" e de subcategoria (Supermercado), nao de categoria.
+
 ### Story 2.5: Configuracao de Metodo de Pagamento Padrao por Categoria
 
 As a user,
@@ -574,6 +578,8 @@ So that common purchases are registered faster with fewer taps.
 **And** campo `default_payment_method_id` na tabela de categorias
 **And** TDD, auditoria
 **And** a UX valida a interacao
+
+**⚠️ Correção (correct-course 2026-11-15, `sprint-change-proposal-2026-11-15.md`):** o metodo padrao vale para todos os niveis (classificacao, categoria, subcategoria, estabelecimento), com regra de preenchimento por especificidade e habito (FR71) — Stories 3.5 e 3.6.
 
 ### Story 2.6: Onboarding — Setup Inicial Guiado
 
@@ -606,6 +612,8 @@ So that I can configure the basics quickly and start using the app.
 **And** o layout e validado contra `proto-08-onboarding.html`
 **And** a UX valida o fluxo implementado
 
+**⚠️ Correção (correct-course 2026-11-15, `sprint-change-proposal-2026-11-15.md`):** as categorias sugeridas devem seguir a hierarquia (ex.: Alimentacao › Supermercado, nao Supermercado como categoria) — Story 3.7.
+
 ---
 
 ## Epic 3: Registro e Gestao de Transacoes
@@ -632,6 +640,7 @@ So that I can capture spending in ~5 seconds at the moment it happens.
 **When** a categoria e selecionada
 **Then** os 5 estabelecimentos mais utilizados naquela categoria (ultimos 90 dias) sao sugeridos (FR14)
 **And** o metodo de pagamento padrao da categoria vem pre-selecionado (se configurado)
+_(Corrigido em 2026-11-15: estabelecimentos sugeridos por subcategoria; metodo pela regra do FR71 — Story 3.6.)_
 
 **Given** o usuario selecionou valor, categoria, estabelecimento e metodo de pagamento
 **When** o painel de impacto e exibido (antes de confirmar)
@@ -733,7 +742,99 @@ So that I can find and review past expenses and income.
 **And** paginacao ou scroll infinito para listas grandes
 **And** a UX valida a tela implementada
 
-### Story 3.5: Reclassificacao Retroativa de Categorias
+### Stories corretivas entregues (3.1b a 3.4f)
+
+Criadas durante a execucao do Epic 3 (detalhes em `implementation-artifacts/`): 3.1b entidade estabelecimento e correcoes de categorias, 3.1c cascade input alinhado ao proto-07, 3.1d budget bars na arvore de categorias, 3.1e side sheets e emoji picker, 3.4b componentes DS de transacoes, 3.4c refatoracao da tela de transacoes, 3.4d busca por nomes relacionados e empty state, 3.4e subcategorias sugeridas e criacao inline (sugestoes substituidas pela Story 3.7), 3.4f ajustes mobile, a11y e sidebar.
+
+### Story 3.5: Hierarquia Completa — Orcamento e Metodo Opcionais nos 4 Niveis
+
+_(Nova — correct-course 2026-11-15. Alinha o sistema a `decisao-modelo-categorizacao-v2.md`, ampliada.)_
+
+As a user,
+I want to optionally set a budget and a default payment method at any level of my spending hierarchy,
+So that I can plan and register expenses at the level of detail that makes sense for me.
+
+**Acceptance Criteria:**
+
+**Given** o usuario esta em `/categories`
+**When** edita uma classificacao, categoria, subcategoria ou estabelecimento
+**Then** pode definir, opcionalmente, orcamento mensal (valor fixo ou faixa) (FR5)
+**And** pode definir, opcionalmente, metodo de pagamento padrao (FR5, FR71)
+**And** pode remover qualquer um dos dois; o padrao e "sem orcamento / sem metodo"
+
+**Given** a hierarquia e exibida
+**When** um nivel tem orcamento ou metodo definido
+**Then** o valor aparece no proprio nivel (ex.: Supermercado — R$3.000 — Latam Pass)
+
+**Given** o modelo de dados
+**When** a story e entregue
+**Then** classificacao tem orcamento e metodo; subcategoria tem orcamento; estabelecimento separa metodo **definido** de metodo **aprendido**
+**And** toda transacao de gasto continua exigindo subcategoria; estabelecimento opcional (FR38)
+
+**Given** o sistema ainda nao foi lancado
+**When** a migration e aplicada
+**Then** o banco de staging e zerado (sem migracao de dados); o de producao e zerado na release do Epic 3
+
+**And** TDD, Clean Architecture, auditoria
+**And** a UX valida as telas implementadas
+
+### Story 3.6: Registro Rapido — Subcategorias Frequentes e Metodo de Pagamento
+
+_(Nova — correct-course 2026-11-15.)_
+
+As a user,
+I want the expense form to offer my frequent subcategories and pre-fill the payment method I actually use,
+So that I register an expense in ~3-5 seconds and only change what is an exception.
+
+**Acceptance Criteria:**
+
+**Given** o usuario digitou o valor no Novo Gasto
+**When** os atalhos sao exibidos
+**Then** aparecem as subcategorias mais usadas como chips com a categoria de contexto (ex.: "Supermercado · Alimentacao"); um toque define categoria e subcategoria
+**And** "Todas as categorias" abre o caminho completo (categoria -> subcategoria, com criacao inline da 3.4e)
+**And** os estabelecimentos sugeridos sao os 5 mais usados na subcategoria (FR14) e o estabelecimento continua opcional
+
+**Given** o usuario registra um gasto e escolhe a subcategoria (e opcionalmente o estabelecimento)
+**When** o metodo e resolvido
+**Then** o sistema percorre estabelecimento -> subcategoria -> categoria -> classificacao; em cada nivel usa o metodo definido, senao o habito (3 ultimos registros naquele nivel com o mesmo metodo), senao sobe um nivel (FR71)
+**And** o primeiro encontrado vem preenchido; se nenhum, o campo fica vazio
+
+**Given** ha alternativas ao metodo preenchido
+**When** o campo de metodo e exibido
+**Then** aparecem atalhos de um toque: "Ultimo usado" (subcategoria, ou estabelecimento quando informado) e o padrao do nivel acima quando diferente (ex.: "Alelo — padrao de Alimentacao"), sem repetir o metodo preenchido
+
+**Given** um metodo e o mais usado num nivel nos ultimos 90 dias e difere do padrao daquele nivel (ou nao ha padrao)
+**When** o usuario registra um gasto naquele nivel
+**Then** o sistema sugere: "Voce costuma pagar Supermercado com Latam Pass. Definir como padrao?"
+**And** se aceitar, o padrao do nivel e atualizado (com auditoria); se dispensar, a sugestao so volta se outro metodo passar a ser o mais usado
+
+**And** o usuario sempre pode trocar o metodo no registro
+**And** TDD da regra cobrindo: primeiras compras (padrao da categoria), habito apos 3 usos seguidos, quebra do habito, definido vence habito no mesmo nivel, sugestao com e sem padrao existente
+**And** a UX valida a interacao
+
+### Story 3.7: Onboarding com a Hierarquia Correta
+
+_(Nova — correct-course 2026-11-15. Substitui as sugestoes da Story 3.4e.)_
+
+As a new user,
+I want the onboarding to suggest a spending structure that follows classification -> category -> subcategory,
+So that I start with a correct structure and can register my first expense right away.
+
+**Acceptance Criteria:**
+
+**Given** o usuario esta na etapa de categorias do onboarding
+**When** as sugestoes sao exibidas
+**Then** seguem a hierarquia (ex.: Essenciais › Alimentacao › Supermercado, Padaria, Hortifruti; Essenciais › Transporte › Gasolina, Pedagio, Estacionamento) — lista final aprovada pelo PO na story
+**And** nenhuma subcategoria aparece como categoria (ex.: Supermercado e Gasolina nunca sao categorias)
+**And** toda categoria sugerida nasce com pelo menos uma subcategoria
+**And** orcamentos sugeridos podem estar em qualquer nivel (FR5)
+
+**And** a criacao de subcategoria inline no Novo Gasto (Story 3.4e) continua funcionando
+**And** TDD, validado contra `proto-08-onboarding.html`, a UX valida o fluxo
+
+### Story 3.8: Reclassificacao Retroativa de Categorias
+
+_(Era a Story 3.5 — renumerada em 2026-11-15.)_
 
 As a user,
 I want to reclassify a category's essentiality level with retroactive effect,
@@ -742,7 +843,7 @@ So that my historical analysis reflects the correct classification.
 **Acceptance Criteria:**
 
 **Given** o usuario tem categorias com transacoes registradas
-**When** altera a classificacao de essencialidade de uma categoria (ex: "Streaming" de "Essencial" para "Qualidade de Vida")
+**When** altera a classificacao de essencialidade de uma categoria (ex: "Assinaturas" de "Essenciais" para "Qualidade de Vida")
 **Then** a mudanca e aplicada retroativamente em todas as visualizacoes — passado, presente e futuro (FR41)
 **And** percentuais de essencialidade sao recalculados retroativamente
 **And** todas as analises e graficos sao recalculados em < 500ms (FR42, NFR-P3)
@@ -754,25 +855,34 @@ So that my historical analysis reflects the correct classification.
 **And** trilha de auditoria registra a reclassificacao
 **And** TDD com testes que validam o recalculo retroativo
 
-### Story 3.6: Acompanhamento de Orcamento por Categoria
+### Story 3.9: Acompanhamento de Orcamento Multinivel
+
+_(Era a Story 3.6 "Acompanhamento de Orcamento por Categoria" — renumerada e reescrita em 2026-11-15.)_
 
 As a user,
-I want to track my spending against planned budgets per category,
+I want to track my spending against the budgets I set at any level of the hierarchy,
 So that I know how much I can still spend and what's my free available amount.
 
 **Acceptance Criteria:**
 
-**Given** o usuario tem categorias com orcamento definido e transacoes registradas
+**Given** o usuario tem orcamentos definidos em um ou mais niveis e transacoes registradas
 **When** visualiza os orcamentos
-**Then** ve gasto realizado vs. planejado por categoria com barra de progresso (FR60)
-**And** barras usam escala semantica de cores: verde (< 70%), amarelo (70-85%), laranja (85-100%), vermelho (> 100%)
+**Then** ve gasto realizado vs. planejado em cada nivel com orcamento, com barra de progresso (FR60)
+**And** quando um nivel e seus filhos tem orcamento, ve o saldo nao alocado do nivel (FR72)
+**And** nivel sem orcamento mostra barra neutra (sem julgamento de cor) com percentual relativo ao nivel acima (FR72)
+**And** estouro mostra a parte alem de 100% em vermelho, com "+R$ X acima (Y%)"
+**And** a escala de cores segue o padrao canonico do DS (definido na revisao de UX deste correct-course)
+
+**Given** o usuario esta registrando um gasto
+**When** o painel de impacto e exibido
+**Then** mostra o consumo de todos os niveis da hierarquia da transacao que tem orcamento (FR13)
 
 **Given** o sistema calcula o valor disponivel livre
 **When** os dados sao apresentados
 **Then** o valor disponivel livre e: saldo total - despesas realizadas - despesas fixas pendentes - orcamentos planejados restantes (FR60)
-**And** quando uma categoria estoura o planejado, o impacto e refletido no disponivel livre (FR60)
+**And** quando um nivel estoura o planejado, o impacto e refletido no disponivel livre, sem contar o mesmo gasto duas vezes entre niveis
 
-**And** componente BudgetProgressBar implementado com variantes Inline, Expanded e Mini
+**And** componente BudgetProgressBar com variantes Inline, Expanded e Mini
 **And** validado contra `proto-09-budgets.html`
 **And** a UX valida o componente implementado
 
@@ -801,7 +911,7 @@ So that they are automatically pre-filled each month and reduce manual work.
 **When** um novo mês inicia
 **Then** os recorrentes são instanciados automaticamente com seus valores base
 
-**And** cada recorrente tem: nome, valor (centavos), tipo de recorrência, categoria, dia de vencimento, método de pagamento, tipo de conta (débito automático / agendado / recorrente no cartão / variável-fatura / manual)
+**And** cada recorrente tem: nome, valor (centavos), tipo de recorrência, categoria e subcategoria (estabelecimento opcional), dia de vencimento, método de pagamento, tipo de conta (débito automático / agendado / recorrente no cartão / variável-fatura / manual)
 **And** schema Drizzle `recurring_expenses` com campos adequados
 **And** TDD, Clean Architecture, auditoria
 
@@ -1094,7 +1204,7 @@ So that I can quickly understand where I stand and customize the view to my need
 
 **Given** o usuário está autenticado e tem dados financeiros
 **When** acessa o dashboard
-**Then** vê widgets com: total gasto no mês por categoria com barra de progresso (gasto/orçamento/restante) (FR30)
+**Then** vê widgets com: total gasto no mês por nível da hierarquia (classificação, categoria, subcategoria) com barra de progresso (gasto/orçamento/restante) quando houver orçamento (FR30, FR72)
 **And** vê total de contas a pagar restantes no mês com progresso (FR32)
 **And** dashboard carrega em < 2 segundos após login (NFR-P1)
 

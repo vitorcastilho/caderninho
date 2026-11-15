@@ -1,7 +1,9 @@
 ---
 stepsCompleted: ['step-01-init', 'step-02-discovery', 'step-02b-vision', 'step-02c-executive-summary', 'step-03-success', 'step-04-journeys', 'step-05-domain', 'step-06-innovation', 'step-07-project-type', 'step-08-scoping', 'step-09-functional', 'step-10-nonfunctional', 'step-11-polish', 'validation-fixes-2026-03-08', 'validation-fixes-round2-2026-03-08', 'edit-ux-business-rules-2026-03-12']
-lastEdited: '2026-03-12'
+lastEdited: '2026-11-15'
 editHistory:
+  - date: '2026-11-15'
+    changes: 'Correct course (hierarquia de gastos): alinha o PRD à decisão de modelo de categorização v2 (decisao-modelo-categorizacao-v2.md) e a amplia. Define os 4 níveis (classificação → categoria → subcategoria → estabelecimento opcional) com exemplos; orçamento e método de pagamento padrão opcionais em todos os níveis; regra de preenchimento do método (definido > hábito de 3 usos seguidos, do mais específico ao mais geral) com atalhos e sugestão de padrão; orçamento multinível com saldo não alocado (FR72). Jornadas 1, 3 e 8 corrigidas (Supermercado/Gasolina são subcategorias). Ver sprint-change-proposal-2026-11-15.md.'
   - date: '2026-03-12'
     changes: 'Incorporação de regras de negócio descobertas durante UX Design: modelo de cartão de crédito (mês de referência, fatura estimada, utilizado líquido), reconciliação de fatura (fluxo completo), tipos de conta a pagar (5 tipos com confirmação diferenciada), sistema de notificação em 3 momentos, nova Jornada 9 (reconciliação de fatura). Adicionados FR64-FR70 e must-haves 21-22.'
 inputDocuments: ['product-brief-finance-2026-03-05.md', 'brainstorming-session-2026-03-03-2100.md']
@@ -58,7 +60,7 @@ Psicóloga, empresa própria (Tamires Stasevskas Psicologia LTDA) com receita va
 ### Sucesso do Usuário
 
 **Marco 1 — Paridade com a Planilha (Meses 1-3):**
-Os números do Caderninho batem com os números da planilha por 3 meses consecutivos. Saldos de contas, totais de cartões e orçamentos por categoria convergem 100%. Ao final, Vitor sente confiança suficiente para parar de abrir a planilha.
+Os números do Caderninho batem com os números da planilha por 3 meses consecutivos. Saldos de contas, totais de cartões e orçamentos convergem 100%. Ao final, Vitor sente confiança suficiente para parar de abrir a planilha.
 
 **Marco 2 — Superação da Planilha (Meses 3-6):**
 O Caderninho entrega insights que a planilha nunca conseguiu: drill-down analítico por categoria/estabelecimento, projeção futura de parcelas com data de liberação de orçamento, classificação por essencialidade, e simulação de cenários ("se economizar R$350/mês, acumula R$4.200 até dezembro"). Vitor descobre informações sobre as próprias finanças que não sabia antes.
@@ -105,7 +107,7 @@ Como projeto pessoal/familiar, o sucesso não é comercial mas sim de **qualidad
 
 **Cena de abertura:** Vitor acabou de pagar R$87 no supermercado com o cartão Latam Pass. Ainda no estacionamento, com o celular na mão, abre o Caderninho.
 
-**Ação:** Digita 87, toca "Supermercado", vê os estabelecimentos frequentes — seleciona "Pão de Açúcar", seleciona "Latam Pass Visa". Antes de confirmar, o app mostra: "Limite disponível Latam: R$4.213 → R$4.126 | Orçamento Supermercado: R$2.122/R$3.000 — resta R$878". Confirma.
+**Ação:** Digita 87, toca "Alimentação" e depois "Supermercado" (subcategoria), vê os estabelecimentos frequentes — seleciona "Pão de Açúcar". O "Latam Pass Visa" já vem preenchido, porque é o método que Vitor vem usando em Supermercado. Antes de confirmar, o app mostra: "Limite disponível Latam: R$4.213 → R$4.126 | Supermercado: R$2.122/R$3.000 — resta R$878 | Alimentação: R$4.300/R$5.500". Confirma.
 
 **Clímax:** 6 segundos. Gasto registrado. Impacto visível. Vitor sabe exatamente onde está sem abrir planilha nenhuma.
 
@@ -135,11 +137,11 @@ Como projeto pessoal/familiar, o sucesso não é comercial mas sim de **qualidad
 
 ### Jornada 3: Vitor — Correção de Erro e Edição Retroativa
 
-**Cena de abertura:** Vitor percebe que registrou um almoço de R$65 como "Supermercado" quando deveria ser "Restaurante". Além disso, decidiu que a categoria "Streaming" deve ser reclassificada de "Essencial" para "Qualidade de Vida".
+**Cena de abertura:** Vitor percebe que registrou um almoço de R$65 em "Alimentação › Supermercado" quando deveria ser "Alimentação › Restaurante trabalho". Além disso, decidiu que a categoria "Assinaturas" deve ser reclassificada de "Essenciais" para "Qualidade de Vida".
 
-**Ação — correção pontual:** Encontra a transação no histórico, edita a categoria de "Supermercado" para "Restaurante". O app recalcula instantaneamente: orçamento de Supermercado recupera R$65, orçamento de Restaurante consome R$65. Barras de progresso atualizam em tempo real.
+**Ação — correção pontual:** Encontra a transação no histórico, edita a subcategoria de "Supermercado" para "Restaurante trabalho". O app recalcula instantaneamente: orçamento de Supermercado recupera R$65, orçamento de Restaurante trabalho consome R$65, e o total de Alimentação não muda. Barras de progresso atualizam em tempo real.
 
-**Ação — reclassificação retroativa:** Altera "Streaming" de "Essencial" para "Qualidade de Vida". O app aplica a mudança em todas as visualizações — gráficos do mês atual, histórico de meses anteriores, e projeções futuras refletem a nova classificação. O percentual de gastos não essenciais sobe retroativamente.
+**Ação — reclassificação retroativa:** Altera "Assinaturas" de "Essenciais" para "Qualidade de Vida". O app aplica a mudança em todas as visualizações — gráficos do mês atual, histórico de meses anteriores, e projeções futuras refletem a nova classificação. O percentual de gastos não essenciais sobe retroativamente.
 
 **Clímax:** Vitor vê que, com a reclassificação, 42% dos gastos são não essenciais — não 35% como parecia antes. Isso muda a análise de oportunidades de corte.
 
@@ -199,7 +201,7 @@ Como projeto pessoal/familiar, o sucesso não é comercial mas sim de **qualidad
 
 **Ação:** Abre o Caderninho no computador. Vai à visão por classificação de essencialidade. Vê: Essenciais 52% (R$9.100) | Qualidade de Vida 31% (R$5.400) | Proteção 8% (R$1.400) | Impostos e Obrigações 6% (R$1.050) | Doações 3% (R$500).
 
-**Drill-down:** Toca em "Qualidade de Vida R$5.400" — abre as categorias: Restaurante R$1.800 | Uber R$900 | Streaming R$450 | Lazer R$750 | Compras pessoais R$1.500. Toca em "Restaurante R$1.800" — abre subcategorias: Fast Food R$720 | Delivery R$630 | Restaurante tradicional R$450. Toca em "Fast Food R$720" — vê os estabelecimentos: McDonald's R$480 (67%) | Burger King R$160 (22%) | Outros R$80 (11%).
+**Drill-down:** Toca em "Qualidade de Vida R$5.400" — abre as categorias: Restaurante R$1.800 | Viagem R$1.200 | Assinaturas R$450 | Lazer R$750 | Compras pessoais R$1.200. Toca em "Restaurante R$1.800" — abre subcategorias: Fast Food R$720 | Delivery R$630 | Restaurante tradicional R$450. Toca em "Fast Food R$720" — vê os estabelecimentos: McDonald's R$480 (67%) | Burger King R$160 (22%) | Outros R$80 (11%).
 
 **Clímax:** Vitor descobre que gasta R$480/mês no McDonald's — quase R$6.000/ano. Na planilha, esse número estava escondido dentro de uma fórmula. No Caderninho, 4 toques revelam a verdade: a maior oportunidade de corte não está no supermercado (que é essencial), está no fast food (que é escolha).
 
@@ -340,12 +342,12 @@ Como projeto pessoal/familiar, o sucesso não é comercial mas sim de **qualidad
 **Capacidades Must-Have:**
 
 1. **Autenticação e segurança:** login social, email/senha como fallback, sessões com expiração e renovação automática, HTTPS, dados criptografados em repouso (AES-256 ou equivalente), domínio próprio em produção
-2. **Setup inicial:** cadastro de contas bancárias, cartões de crédito (com limite), investimentos (com tipo, rendimento previsível e vencimento opcional), categorias/subcategorias com orçamento mensal planejado (valor fixo ou faixa), classificações de essencialidade editáveis (7 classificações padrão), fontes de receita (com tipo de vínculo e recorrência)
+2. **Setup inicial:** cadastro de contas bancárias, cartões de crédito (com limite), investimentos (com tipo, rendimento previsível e vencimento opcional), hierarquia de gastos em 4 níveis (classificação de essencialidade → categoria → subcategoria → estabelecimento) com 7 classificações padrão editáveis — orçamento mensal (valor fixo ou faixa) e método de pagamento padrão opcionais em qualquer nível, fontes de receita (com tipo de vínculo e recorrência)
 3. **Registro completo de transações:** entrada/saída com valor, categoria, subcategoria, estabelecimento/contexto, método de pagamento. Suporte a gasto único, parcela de cartão com contagem regressiva, recorrente fixo, recorrente variável, fixo mínimo + variável. Fluxo cascata rápido (~5 segundos no celular)
 4. **Gastos recorrentes não-mensais:** frequência fixa (semanal a anual), a cada N meses, ou anual com mês fixo (sazonais) — troca de óleo, seguro do carro, rematrícula, material escolar. Visíveis na timeline de projeção. Próxima ocorrência calculada a partir da última realizada
 5. **Checklist mensal com tipos de conta:** 5 tipos de pagamento (débito automático, agendado no banco, recorrente no cartão, variável/fatura, manual) com confirmação diferenciada por tipo. Card dedicado com total faltante no mês e progresso visual
 6. **Notificações em 3 momentos:** 1 dia antes do vencimento, no dia, e quando atrasa — cada com prioridade visual diferente. Badge/sininho com lista de alertas visíveis até confirmação
-7. **Visão de controle:** saldo de cada conta, total gasto por categoria, contas a pagar, saldo disponível, drill-down categoria→subcategoria→estabelecimento
+7. **Visão de controle:** saldo de cada conta, total gasto por nível da hierarquia (classificação, categoria, subcategoria), contas a pagar, saldo disponível, drill-down classificação → categoria → subcategoria → estabelecimento
 8. **Projeção futura básica:** timeline de parcelas com cartão associado e data de término, indicador de liberação de orçamento, gastos recorrentes não-mensais posicionados na timeline
 9. **Edição e correção:** edição de transações, reclassificação retroativa de categorias com reflexo em todas as visualizações (passado, presente, futuro)
 10. **Real-time:** atualização instantânea entre usuários conectados — registro/edição/exclusão propagados sem recarregar página
@@ -354,7 +356,7 @@ Como projeto pessoal/familiar, o sucesso não é comercial mas sim de **qualidad
 13. **Design responsivo 100%:** desktop e mobile como experiências igualmente completas
 14. **Painel administrativo e ferramentas de desenvolvimento:** visão de usuários, monitoramento básico, impersonation em ambientes não-produção, restauração de base entre ambientes
 15. **Visibilidade de backup:** status dos backups verificável, integridade validável
-16. **Orçamento por categorias:** orçamento mensal planejado (valor fixo ou faixa) com acompanhamento realizado vs. planejado e cálculo do valor disponível livre
+16. **Orçamento multinível:** orçamento mensal planejado (valor fixo ou faixa), opcional em cada nível da hierarquia, com acompanhamento realizado vs. planejado, saldo não alocado visível em cada nível e cálculo do valor disponível livre
 17. **Transferências entre contas:** movimentações internas entre contas próprias e entre membros — não contabilizadas como receita nem despesa
 18. **Projeção agregada:** margem disponível projetada por mês considerando todos os compromissos previstos (receitas, recorrentes, parcelas, sazonais)
 19. **Rastreabilidade de valores (tap to trace):** tocar/clicar em qualquer valor do dashboard para ver composição e origem
@@ -420,7 +422,7 @@ Como projeto pessoal/familiar, o sucesso não é comercial mas sim de **qualidad
 - FR2: O usuário pode cadastrar cartões de crédito com nome, bandeira, limite total, data de fechamento (define o ciclo de faturamento e o mês de referência das transações) e data de vencimento da fatura
 - FR3: O usuário pode cadastrar investimentos com nome, instituição, tipo (renda fixa / renda variável / reserva), saldo atual, data de atualização e data de vencimento (opcional — aplicável a Tesouro Direto e CDBs). Tracking diferenciado por tipo: reserva e renda fixa rastreiam rendimento previsível (ex: % CDI), renda variável rastreia apenas saldo. Projeção de investimentos configurável até 10 anos
 - FR4: O usuário pode cadastrar fontes de receita com nome, tipo de vínculo (PJ própria / CLT / freelance / outro), recorrência (sim/não), valor base mensal (opcional — para projeção) e dia habitual de pagamento (opcional). Fonte de receita funciona como etiqueta de origem — sem saldo próprio no sistema
-- FR5: O usuário pode cadastrar categorias e subcategorias de gasto em estrutura hierárquica, com orçamento mensal planejado por categoria (valor fixo ou faixa — ex: supermercado R$2.500 a R$3.000)
+- FR5: O usuário pode cadastrar classificações, categorias, subcategorias e estabelecimentos em estrutura hierárquica (FR38). Cada nível pode ter, opcionalmente, orçamento mensal planejado (valor fixo ou faixa) e método de pagamento padrão. Ex.: Essenciais (classificação) → Alimentação (categoria, R$5.500) → Supermercado (subcategoria, R$2.500 a R$3.000, Latam Pass) → Pão de Açúcar (estabelecimento)
 - FR6: O usuário pode editar qualquer item da estrutura financeira (contas, cartões, fontes de receita). Exclusão funciona como arquivamento: itens arquivados ficam inativos — não aparecem para novas transações, mas o histórico permanece intacto. Itens arquivados podem ser reativados
 - FR7: O usuário pode visualizar o saldo atualizado de cada conta bancária
 - FR8: O usuário pode visualizar de cada cartão de crédito: limite total, utilizado (soma de todas as transações não liquidadas incluindo parcelas futuras), disponível (limite − utilizado), fatura estimada do ciclo atual (soma das transações cujo mês de referência = ciclo atual), utilizado líquido (utilizado − parcelas de ciclos futuros) e parcelas futuras agrupadas por mês de referência com valor e contagem
@@ -431,13 +433,17 @@ Como projeto pessoal/familiar, o sucesso não é comercial mas sim de **qualidad
 - FR10: O usuário pode registrar transações de entrada (receitas) com valor, origem e conta de destino
 - FR11: O usuário pode registrar gastos parcelados no cartão de crédito com número de parcelas, gerando parcelas automáticas com contagem regressiva. Cada parcela recebe automaticamente seu mês de referência na criação, baseado na data de fechamento do cartão (parcela 1 = próximo fechamento, parcela 2 = fechamento +1 mês, etc.)
 - FR12: O usuário pode associar cada transação a um método de pagamento específico (cartão de crédito, débito, Pix, Flash)
-- FR13: O sistema exibe feedback do impacto da transação antes da confirmação — saldo/limite restante, orçamento da categoria consumido (< 500ms conforme NFR P3)
-- FR14: O usuário pode registrar estabelecimentos e o sistema sugere os 5 estabelecimentos mais utilizados por categoria (ordenados por frequência de uso nos últimos 90 dias)
+- FR13: O sistema exibe feedback do impacto da transação antes da confirmação — saldo/limite restante e consumo dos orçamentos afetados (cada nível da hierarquia da transação que tiver orçamento definido) (< 500ms conforme NFR P3)
+- FR14: O usuário pode registrar estabelecimentos e o sistema sugere os 5 estabelecimentos mais utilizados na subcategoria (ordenados por frequência de uso nos últimos 90 dias)
 - FR15: O usuário pode editar qualquer transação registrada (valor, categoria, subcategoria, estabelecimento, método de pagamento)
 - FR16: O usuário pode excluir transações registradas
 - FR17: O sistema recalcula todos os totalizadores, saldos e orçamentos ao registrar, editar ou excluir transações (< 500ms conforme NFR P3)
 - FR58: O usuário pode registrar transferências entre contas próprias (ex: Itaú → Inter) e entre membros (ex: Tamires → Vitor). Transferências não são contabilizadas como receita nem despesa — são movimentações internas que afetam apenas os saldos das contas envolvidas
-- FR71: O usuário pode configurar um método de pagamento padrão por categoria. Ao selecionar uma categoria no registro de transação, o método de pagamento configurado é pré-selecionado automaticamente — o usuário só confirma ou altera quando for exceção
+- FR71: O usuário pode definir, opcionalmente, um método de pagamento padrão em qualquer nível da hierarquia (classificação, categoria, subcategoria, estabelecimento). Ao registrar um gasto:
+  - **Preenchimento automático:** o sistema percorre a hierarquia do mais específico ao mais geral (estabelecimento → subcategoria → categoria → classificação). Em cada nível, usa o método **definido**; se não houver, usa o **hábito** (os 3 últimos registros naquele nível com o mesmo método); se não houver nenhum dos dois, sobe um nível. O primeiro encontrado vem preenchido; se nenhum, o campo fica vazio
+  - **Atalhos de um toque** (sem repetir o método já preenchido): "último usado" (método do último registro na subcategoria, ou no estabelecimento quando informado) e o padrão do nível acima quando for diferente (ex.: "Alelo — padrão de Alimentação")
+  - **Sugestão de padrão:** quando um método é o mais usado num nível nos últimos 90 dias e difere do padrão daquele nível (ou o nível não tem padrão), o sistema sugere defini-lo como padrão ("Você costuma pagar Supermercado com Latam Pass. Definir como padrão?"). O usuário aceita ou dispensa; dispensada, a sugestão só volta se outro método passar a ser o mais usado
+  - O usuário sempre pode trocar o método no momento do registro
 
 ### Gastos Recorrentes
 
@@ -462,13 +468,14 @@ Como projeto pessoal/familiar, o sucesso não é comercial mas sim de **qualidad
 
 ### Visão de Controle e Dashboard
 
-- FR30: O usuário pode visualizar o total gasto no mês por categoria com barra de progresso (gasto/orçamento/restante)
+- FR30: O usuário pode visualizar o total gasto no mês por nível da hierarquia (classificação, categoria, subcategoria) com barra de progresso (gasto/orçamento/restante) quando houver orçamento definido
 - FR31: O usuário pode fazer drill-down de uma categoria para ver distribuição por subcategoria e estabelecimento
 - FR32: O usuário pode visualizar o total de contas a pagar restantes no mês
 - FR33: O usuário pode visualizar a Regra de Ouro: comprometimento em cartões (soma das faturas atuais/abertas de todos os cartões) vs. saldo disponível (soma dos saldos de todas as contas-corrente). Alerta visual quando comprometimento ≥ X% do saldo disponível, onde X é configurável pelo usuário
 - FR34: O sistema atualiza o dashboard quando outro usuário registra, edita ou exclui transações (propagação < 2s conforme NFR P4)
 - FR59: O usuário pode tocar/clicar em qualquer valor exibido no dashboard ou relatórios para visualizar a composição e origem daquele valor
-- FR60: O sistema acompanha gasto realizado vs. orçamento planejado por categoria e exibe o valor disponível livre — o que sobra depois de todas as despesas realizadas, despesas fixas pendentes e orçamentos planejados restantes. Quando uma categoria estoura o planejado, o impacto é refletido no valor disponível
+- FR60: O sistema acompanha gasto realizado vs. orçamento planejado em cada nível com orçamento e exibe o valor disponível livre — o que sobra depois de todas as despesas realizadas, despesas fixas pendentes e orçamentos planejados restantes. Quando um nível estoura o planejado, o impacto é refletido no valor disponível
+- FR72: Quando um nível tem orçamento e níveis abaixo dele também têm, o sistema exibe o saldo não alocado (orçamento do nível − soma dos orçamentos dos filhos). Nível sem orçamento exibe barra neutra, sem julgamento de cor, com o percentual relativo ao nível acima
 - FR61: O usuário pode configurar quais widgets exibir no dashboard e filtrar por perspectiva (meus gastos / gastos da família / todos)
 
 ### Projeção Futura
@@ -480,7 +487,13 @@ Como projeto pessoal/familiar, o sucesso não é comercial mas sim de **qualidad
 
 ### Categorização e Classificação
 
-- FR38: O usuário pode organizar gastos em hierarquia de até 4 níveis (classificação de essencialidade → categoria → subcategoria → estabelecimento/contexto), onde a mesma subcategoria pode existir em categorias diferentes com classificação de essencialidade diferente
+- FR38: O usuário pode organizar gastos em hierarquia de até 4 níveis:
+  - **Classificação de essencialidade:** como o gasto é visto (ex.: Essenciais, Qualidade de Vida)
+  - **Categoria:** o grande grupo de gasto (ex.: Alimentação, Transporte)
+  - **Subcategoria:** o tipo de gasto dentro da categoria (ex.: Alimentação › Supermercado, Padaria, Hortifrúti; Transporte › Gasolina, Pedágio, Estacionamento)
+  - **Estabelecimento:** onde o gasto foi feito (ex.: Supermercado › Pão de Açúcar, Fort Atacadista; Gasolina › Posto da esquina)
+  - Toda transação de gasto tem classificação, categoria e subcategoria; o estabelecimento é opcional (ex.: um gasto em Transporte › Pedágio pode ser registrado sem estabelecimento)
+  - A mesma subcategoria pode existir em categorias diferentes com classificação de essencialidade diferente
 - FR39: O sistema oferece classificações de essencialidade padrão iniciais (Essenciais, Qualidade de Vida, Investimentos, Proteção, Doações, Impostos e Obrigações, Dívidas) como ponto de partida
 - FR40: O usuário pode criar, renomear, mesclar e arquivar classificações de essencialidade. Renomear altera o nome preservando histórico. Mesclar migra todas as categorias e transações para outra classificação e desativa a original. Arquivar torna inativa — não aparece para novas transações, histórico preservado, pode ser reativada. O usuário pode reclassificar transações individualmente a qualquer momento. Classificações nunca são excluídas definitivamente
 - FR41: O usuário pode reclassificar uma categoria (ex: mudar de "Essencial" para "Qualidade de Vida") com efeito retroativo em todas as visualizações — passado, presente e futuro

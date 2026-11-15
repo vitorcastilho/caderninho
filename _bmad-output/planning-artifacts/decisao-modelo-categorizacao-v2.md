@@ -262,3 +262,19 @@ Assinaturas                    R$ 300,00 (5,00% de Essenciais fixos)
 ## 8. Questões em Aberto
 
 _(nenhuma — todas as decisões foram tomadas na discussão)_
+
+---
+
+## Adendo v2.1 — 2026-11-15 (correct-course)
+
+**Origem:** a Story 3.4e e a revisão do onboarding mostraram que esta decisão não tinha sido levada ao PRD, aos épicos, à UX nem ao onboarding implementado (Story 2.6 sugeria "Supermercado" e "Gasolina" como categorias, apesar do `proto-08` correto). Ver `sprint-change-proposal-2026-11-15.md`.
+
+**O que muda em relação à v2:**
+
+1. **Método de pagamento opcional em todos os níveis** — classificação, categoria, subcategoria e estabelecimento (a v2 dizia que categoria e classificação não teriam método). Substitui a seção 2.2 e a linha "Método de pagamento" da tabela da seção 5.
+2. **Regra de preenchimento no registro (substitui a "Prioridade na hora do registro" da seção 2.2):** do mais específico ao mais geral (estabelecimento → subcategoria → categoria → classificação); em cada nível, o padrão **definido**; senão o **hábito** (3 últimos registros no nível com o mesmo método); senão sobe um nível. Atalhos "último usado" e "padrão do nível acima". Após 90 dias como o mais usado num nível, o app sugere defini-lo como padrão (também quando já existe outro padrão); dispensada, a sugestão só volta se outro método passar a ser o mais usado.
+3. **Estabelecimento:** método **definido** pelo usuário e método **aprendido** pelo uso são campos separados.
+4. **Obrigatoriedade:** toda transação de gasto tem classificação, categoria e subcategoria; o estabelecimento é opcional (ex.: Transporte › Pedágio sem estabelecimento).
+5. **Política de dados:** antes do lançamento os bancos podem ser zerados para corrigir o modelo; depois, nunca.
+
+Todo o resto da v2 (classificações customizáveis, orçamento opcional em todos os níveis, saldo não alocado, regras visuais e exemplo da seção 4) continua valendo.
