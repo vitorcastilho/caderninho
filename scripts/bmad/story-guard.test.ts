@@ -126,6 +126,16 @@ describe('findLastWorkflow', () => {
     expect(findLastWorkflow(fixture('agente-sm-menu-create-story.jsonl'))).toBe('create-story');
   });
 
+  // Achado na Task 6.2 (teste real): um Bash que só CITA o caminho do workflow
+  // (ex.: heredoc de python criando fixtures) liberou a criação de story.
+  it('Bash que só cita o caminho do workflow.yaml não conta, mesmo com agente ativo', () => {
+    expect(findLastWorkflow(fixture('agente-citacao-em-bash.jsonl'))).toBe('dev-story');
+  });
+
+  it('leitura do workflow.yaml com chaves (wc -l …/{workflow.yaml,…}) conta com agente ativo', () => {
+    expect(findLastWorkflow(fixture('agente-leitura-com-chaves.jsonl'))).toBe('correct-course');
+  });
+
   it('texto do assistente, tool_result e subagente não contam', () => {
     expect(findLastWorkflow(fixture('so-citacoes.jsonl'))).toBeNull();
   });

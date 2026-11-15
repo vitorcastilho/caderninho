@@ -141,7 +141,30 @@ function commandNames(text) {
   return [...text.matchAll(/<command-name>\/bmad-([a-z0-9-]+)<\/command-name>/g)].map((m) => m[1]);
 }
 
-const WORKFLOW_PATH_RE = /_bmad\/bmm\/workflows\/4-implementation\/([a-z-]+)\/workflow\.yaml/g;
+// Caminho do workflow.yaml, também na forma com chaves: .../correct-course/{workflow.yaml,instructions.md}
+const WORKFLOW_PATH_RE =
+  /_bmad\/bmm\/workflows\/4-implementation\/([a-z-]+)\/(?:workflow\.yaml|\{[^}]*\bworkflow\.yaml\b[^}]*\})/g;
+
+// Comandos de leitura: só eles contam como "o agente carregou o workflow".
+// Um python/mkdir/echo que apenas cita o caminho não conta (achado da Task 6.2).
+const READ_COMMANDS = new Set(['cat', 'head', 'tail', 'less', 'more', 'bat', 'wc', 'sed', 'awk', 'grep']);
+
+/** @param {string} filePath @returns {string | null} */
+function workflowFromPath(filePath) {
+  let found = null;
+  for (const m of filePath.matchAll(WORKFLOW_PATH_RE)) if (WORKFLOWS.includes(m[1])) found = m[1];
+  return found;
+}
+
+/** Último workflow lido por um comando de leitura do Bash. @param {string} command @returns {string | null} */
+function workflowReadByCommand(command) {
+  let found = null;
+  for (const segment of command.split(/&&|\|\||;|\||\n/)) {
+    const first = segment.trim().split(/\s+/)[0] ?? '';
+    if (READ_COMMANDS.has(first)) found = workflowFromPath(segment) ?? found;
+  }
+  return found;
+}
 
 /**
  * Último workflow BMAD realmente invocado na sessão.
@@ -184,9 +207,12 @@ export function findLastWorkflow(lines) {
         const input = block.input ?? {};
         if (block.name === 'Skill' && typeof input.skill === 'string' && input.skill.startsWith('bmad-')) {
           register(input.skill.slice('bmad-'.length));
-        } else if ((block.name === 'Read' || block.name === 'Bash') && agentActive) {
-          const text = String(block.name === 'Read' ? input.file_path ?? '' : input.command ?? '');
-          for (const m of text.matchAll(WORKFLOW_PATH_RE)) if (WORKFLOWS.includes(m[1])) last = m[1];
+        } else if (block.name === 'Read' && agentActive) {
+          const wf = workflowFromPath(String(input.file_path ?? ''));
+          if (wf) last = wf;
+        } else if (block.name === 'Bash' && agentActive) {
+          const wf = workflowReadByCommand(String(input.command ?? ''));
+          if (wf) last = wf;
         }
       }
     }

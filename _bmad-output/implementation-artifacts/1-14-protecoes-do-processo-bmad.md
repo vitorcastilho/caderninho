@@ -65,7 +65,7 @@ Em 2026-11-15 o Claude Code criou as Stories 1.12 e 1.13 e implementou a 1.13 (P
   - [x] 5.2 README: seção curta "Processo BMAD e proteções" (as três camadas e os limites)
 - [ ] Task 6 (AC: #9): validação
   - [x] 6.1 `npx tsc --noEmit`, `npm run lint`, `npx vitest run`, `npx next build`
-  - [ ] 6.2 Teste real do hook: o Claude Code carrega os hooks no início da sessão e pede revisão de hooks alterados fora dela — o PO abre `/hooks` para aprovar o hook novo (ou reinicia a sessão). Depois, tentar uma escrita protegida sem workflow ativo e registrar o bloqueio (exit 2 + mensagem) no Debug Log; e uma leitura (`cat` da story) que deve passar
+  - [x] 6.2 Teste real do hook: o Claude Code carrega os hooks no início da sessão e pede revisão de hooks alterados fora dela — o PO abre `/hooks` para aprovar o hook novo (ou reinicia a sessão). Depois, tentar uma escrita protegida sem workflow ativo e registrar o bloqueio (exit 2 + mensagem) no Debug Log; e uma leitura (`cat` da story) que deve passar
   - [ ] 6.3 PR para `staging`; CI verde, incluindo `bmad-process`
 
 ## Dev Notes
@@ -179,7 +179,10 @@ Claude Opus 5.5 (claude-opus-5-5)
 - Desempenho do hook com o transcript real desta sessão (~13 MB, só leitura): alvo protegido 176 ms (decisão: permitido — último workflow `dev-story`); arquivo comum 40 ms sem ler o transcript.
 - Task 4 vermelho: `scripts/bmad/check-story-process.test.ts` → "FAIL … no tests" (módulo inexistente). Verde: 12/12 (total 62). CLI exercitado com stories reais (1.9 done, 1.11 review, 3.4c done, 3.4d review) → "Processo BMAD ok." (sem falso positivo no histórico).
 - Task 6.1: `tsc` 0 erros; `npm run lint` 0 avisos; `vitest` 146 arquivos / 1269 testes; `next build` ok.
-- Task 6.2 (1ª tentativa): `Write` de `9-99-teste-hook.md` com o último workflow `dev-story` **não** foi bloqueado — o hook novo ainda não foi carregado pela sessão (o Claude Code carrega hooks no início e pede revisão em `/hooks`). Arquivo removido em seguida. Aguardando o PO aprovar o hook em `/hooks`.
+- Task 6.2 (1ª tentativa): `Write` de `9-99-teste-hook.md` com o último workflow `dev-story` **não** foi bloqueado — o hook novo ainda não foi carregado pela sessão (o Claude Code carrega hooks no início e pede revisão em `/hooks`). Arquivo removido em seguida.
+- Task 6.2 (2ª tentativa, hook já registrado — visível em `/hooks`, menu só de leitura, sem aprovação necessária): **ainda não bloqueou**. O hook rodado à mão com o transcript real também permitia. Rastreio no transcript: um `Bash` meu (criação das fixtures, heredoc `python3`) **citava** `…/create-story/workflow.yaml`, e com o agente SM ativo isso contou como "leu o workflow" → último = `create-story`. Achado junto: a leitura legítima do menu do agente com chaves (`wc -l …/correct-course/{workflow.yaml,…}`) **não** era reconhecida.
+- Correção com TDD: fixtures `agente-citacao-em-bash.jsonl` e `agente-leitura-com-chaves.jsonl`; 2 testes vermelhos (45 passando, 2 falhando) → verde (64/64 no diretório). No `Bash`, só conta como leitura de workflow o caminho como argumento de comando de leitura (`cat`, `head`, `tail`, `less`, `more`, `bat`, `wc`, `sed`, `awk`, `grep`); o reconhecimento aceita a forma com chaves.
+- Task 6.2 (3ª tentativa): `Write` de `9-99-teste-hook.md` **bloqueado** pela sessão — "PreToolUse:Write hook error: … Bloqueado pelo processo BMAD: criar _bmad-output/implementation-artifacts/9-99-teste-hook.md exige o workflow create-story, mas o último invocado foi dev-story. …". Leituras passaram (`head` da story; `git show …sprint-status.yaml > /tmp/…`); o arquivo bloqueado não existe.
 
 ### Completion Notes List
 
@@ -199,7 +202,7 @@ Claude Opus 5.5 (claude-opus-5-5)
 - `scripts/bmad/story-guard-hook.test.ts` (novo)
 - `scripts/bmad/check-story-process.ts` (novo)
 - `scripts/bmad/check-story-process.test.ts` (novo)
-- `scripts/bmad/__fixtures__/*.jsonl` (novos, 8 transcripts sintéticos)
+- `scripts/bmad/__fixtures__/*.jsonl` (novos, 10 transcripts sintéticos)
 - `.github/workflows/ci.yml`
 - `_bmad-output/project-context.md`
 - `README.md`
