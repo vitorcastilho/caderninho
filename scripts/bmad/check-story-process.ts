@@ -9,11 +9,15 @@ import { readFileSync } from 'node:fs';
 const STORY_RE = /^_bmad-output\/implementation-artifacts\/\d+-\d+[a-z]?(?:-\d+[a-z]?)?-[^/]+\.md$/;
 const REVIEW_MARKERS = ['Review Follow-ups (AI)', 'Senior Developer Review (AI)', '[AI-Review]'];
 
-/** Conteúdo de uma seção `### Título` até o próximo cabeçalho. */
+/**
+ * Conteúdo de uma seção `### Título` até o próximo cabeçalho. Só casa o
+ * cabeçalho no início da linha — o título citado no texto (ex.: num AC) não conta.
+ */
 function section(content: string, title: string): string {
-  const start = content.indexOf(`### ${title}`);
-  if (start === -1) return '';
-  const rest = content.slice(start + title.length + 4);
+  const escaped = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const heading = new RegExp(`^### ${escaped}[ \\t]*$`, 'm').exec(content);
+  if (!heading) return '';
+  const rest = content.slice(heading.index + heading[0].length);
   const next = rest.search(/\n#{2,3} /);
   return next === -1 ? rest : rest.slice(0, next);
 }

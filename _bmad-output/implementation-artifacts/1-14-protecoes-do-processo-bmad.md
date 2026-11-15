@@ -183,6 +183,7 @@ Claude Opus 5.5 (claude-opus-5-5)
 - Task 6.2 (2ª tentativa, hook já registrado — visível em `/hooks`, menu só de leitura, sem aprovação necessária): **ainda não bloqueou**. O hook rodado à mão com o transcript real também permitia. Rastreio no transcript: um `Bash` meu (criação das fixtures, heredoc `python3`) **citava** `…/create-story/workflow.yaml`, e com o agente SM ativo isso contou como "leu o workflow" → último = `create-story`. Achado junto: a leitura legítima do menu do agente com chaves (`wc -l …/correct-course/{workflow.yaml,…}`) **não** era reconhecida.
 - Correção com TDD: fixtures `agente-citacao-em-bash.jsonl` e `agente-leitura-com-chaves.jsonl`; 2 testes vermelhos (45 passando, 2 falhando) → verde (64/64 no diretório). No `Bash`, só conta como leitura de workflow o caminho como argumento de comando de leitura (`cat`, `head`, `tail`, `less`, `more`, `bat`, `wc`, `sed`, `awk`, `grep`); o reconhecimento aceita a forma com chaves.
 - Task 6.2 (3ª tentativa): `Write` de `9-99-teste-hook.md` **bloqueado** pela sessão — "PreToolUse:Write hook error: … Bloqueado pelo processo BMAD: criar _bmad-output/implementation-artifacts/9-99-teste-hook.md exige o workflow create-story, mas o último invocado foi dev-story. …". Leituras passaram (`head` da story; `git show …sprint-status.yaml > /tmp/…`); o arquivo bloqueado não existe.
+- Passo 9 (definição de pronto) — dogfooding: com a story em `review`, o próprio `check-story-process` acusou a 1.14 (Agent Model / Completion Notes / File List "vazios"). Causa: o AC 6 cita `` `### Agent Model Used` `` no texto e o `section()` usava `indexOf`. Correção com TDD: teste vermelho (12 passando, 1 falhando) → cabeçalho casado só no início da linha → verde (65/65). Verificador reexecutado na 1.14 e em stories reais (1.9, 1.11, 3.4c, 3.4d): "Processo BMAD ok."
 
 ### Completion Notes List
 
@@ -212,3 +213,4 @@ Claude Opus 5.5 (claude-opus-5-5)
 
 - 2026-11-15 — Story criada pelo `create-story` (invocado); decisões do PO registradas (AC 3 refinado; janela pós-workflow aceita).
 - 2026-11-15 — `dev-story` (invocado): Camadas 1, 2 e 3 implementadas com TDD; `project-context.md` e README atualizados. Teste real da Task 6.2 revelou falso positivo na detecção de leitura de workflow via `Bash` e falso negativo na forma com chaves — corrigidos com TDD; bloqueio confirmado na sessão. PR #53, CI verde (`ci` + `bmad-process`). Status → review.
+- 2026-11-15 — Passo 9: dogfooding do `bmad-process` revelou leitura de título citado no texto; corrigido com TDD (cabeçalho só no início da linha).

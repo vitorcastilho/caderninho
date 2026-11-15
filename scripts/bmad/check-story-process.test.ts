@@ -42,6 +42,13 @@ describe('checkStory', () => {
     expect(checkStory(story('done', TEMPLATE_RECORD, '### Review Follow-ups (AI)\n'))).toHaveLength(3);
   });
 
+  // Achado no dogfooding da Story 1.14: o AC 6 cita "`### Agent Model Used`" no texto,
+  // e a busca por indexOf pegava a citação em vez do cabeçalho real.
+  it('ignora títulos citados no meio do texto e lê só os cabeçalhos de linha', () => {
+    const extra = 'AC: exige `### Agent Model Used` preenchido, `### Completion Notes List` e `### File List` com itens.\n';
+    expect(checkStory(story('review', FULL_RECORD, extra))).toEqual([]);
+  });
+
   it.each(['backlog', 'ready-for-dev', 'in-progress'])('status %s não é verificado', (status) => {
     expect(checkStory(story(status, TEMPLATE_RECORD))).toEqual([]);
   });
