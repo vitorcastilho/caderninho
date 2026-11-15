@@ -34,7 +34,7 @@ _This document builds collaboratively through step-by-step discovery. Sections a
 | Notificações | FR28-FR29 | 3 momentos por conta (véspera, dia, atraso), badge persistente até confirmação |
 | Dashboard e Controle | FR30-FR34, FR59-FR62 | Real-time, drill-down hierárquico 4 níveis, tap-to-trace, widgets configuráveis, filtro de perspectiva |
 | Projeção Futura | FR35-FR37, FR62 | Timeline de parcelas, gastos não-mensais, margem projetada por mês |
-| Categorização | FR38-FR44 | Hierarquia 4 níveis, reclassificação retroativa, 7 classificações de essencialidade editáveis |
+| Categorização | FR38-FR44, FR71, FR72 | Hierarquia 4 níveis (classificação → categoria → subcategoria → estabelecimento opcional) com orçamento e método opcionais em todos os níveis, reclassificação retroativa, 7 classificações de essencialidade editáveis — ver "Modelo da Hierarquia de Gastos" |
 | Gestão de Usuários | FR45-FR50 | Multi-tenant, papéis (Gestor/Acompanhante), permissões granulares, trilha de auditoria imutável |
 | Admin | FR51-FR54 | Impersonation (não-prod), restauração de base, monitoramento |
 | Modelo de Cartão | FR64-FR70 | Mês de referência automático, fatura estimada, reconciliação com loop até zero |
@@ -760,6 +760,33 @@ throw new Error("Saldo insuficiente"); // ERRADO — erro esperado não é exce�
 return { success: false, error: { code: "INSUFFICIENT_BALANCE", message: "Saldo insuficiente" } };
 ```
 
+## Modelo da Hierarquia de Gastos
+
+_(Adicionado em 2026-11-15 — correct-course. Fonte de produto: PRD FR5, FR38, FR71, FR72 e `decisao-modelo-categorizacao-v2.md` com adendo v2.1.)_
+
+**Níveis e tabelas:**
+
+| Nível | Tabela | Pai | Exemplo | Orçamento | Método padrão |
+|---|---|---|---|---|---|
+| Classificação | `essentiality_classifications` | — | Essenciais | opcional | opcional |
+| Categoria | `categories` | classificação | Alimentação, Transporte | opcional | opcional |
+| Subcategoria | `subcategories` | categoria | Supermercado, Gasolina, Pedágio | opcional | opcional |
+| Estabelecimento | `establishments` | subcategoria | Pão de Açúcar, Posto da esquina | opcional | opcional (definido) + aprendido |
+
+- **Orçamento:** `budget_min_cents` / `budget_max_cents` (nullable; valor fixo = min igual a max). Ausente = nível sem orçamento.
+- **Método padrão:** `default_payment_method_type` / `default_payment_method_id` (nullable) em todos os níveis. No estabelecimento, o método **definido** pelo usuário fica separado do método **aprendido** pelo uso.
+- **Transação de gasto:** `category_id` e `subcategory_id` obrigatórios; estabelecimento opcional. A classificação vem da categoria (reclassificação retroativa, FR41).
+- **Nunca** modelar um tipo de gasto (Supermercado, Gasolina) como categoria. Categoria é o grande grupo; subcategoria é o tipo de gasto.
+
+**Regra de preenchimento do método (FR71):** função pura de domínio `server/domain/categories/` (`resolve-payment-method`), sem acesso a banco, testada com TDD. Entrada: a cadeia estabelecimento → subcategoria → categoria → classificação com seus padrões e o histórico recente de métodos por nível. Saída: método preenchido + atalhos ("último usado", padrão do nível acima) + eventual sugestão de padrão. Em cada nível, do mais específico ao mais geral: padrão definido; senão hábito (3 últimos registros no nível com o mesmo método); senão sobe. Sugestão de padrão: método mais usado no nível nos últimos 90 dias, diferente do padrão atual (ou sem padrão), ainda não dispensado.
+
+**Orçamento multinível (FR60, FR72):**
+- Gasto realizado agregado por nível (cada transação conta no seu estabelecimento, subcategoria, categoria e classificação).
+- Saldo não alocado de um nível = orçamento do nível − soma dos orçamentos dos filhos diretos que têm orçamento.
+- Valor disponível livre: cada gasto é contado **uma única vez**, no nível mais específico da sua cadeia que tem orçamento — nunca somar o mesmo gasto em dois níveis.
+
+**Política de dados do modelo:** antes do lançamento, mudanças no modelo podem ser entregues com reset dos bancos de staging e produção (sem migração de dados), sempre com confirmação do PO. Depois do lançamento, apenas migrations que preservam dados.
+
 ## Project Structure & Boundaries
 
 ### Mapeamento de Subsistemas para Domínios
@@ -771,7 +798,7 @@ return { success: false, error: { code: "INSUFFICIENT_BALANCE", message: "Saldo 
 | `credit-cards` | Modelo de Cartão | FR64-FR70 | CreditCard, Invoice |
 | `recurring` | Gastos Recorrentes | FR18-FR22 | RecurringExpense |
 | `checklist` | Checklist Mensal | FR23-FR27 | ChecklistItem |
-| `categories` | Categorização | FR38-FR44 | Category (hierarquia 4 níveis) |
+| `categories` | Categorização | FR38-FR44, FR71, FR72 | Classification, Category, Subcategory, Establishment (orçamento e método opcionais em todos) |
 | `budgets` | Dashboard e Controle + Projeção Futura | FR30-FR37, FR59-FR62 | Budget, Projection |
 | `notifications` | Notificações | FR28-FR29 | Notification |
 | `users` | Gestão de Usuários | FR45-FR50 | User, Family, Permission |

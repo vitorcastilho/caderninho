@@ -6,6 +6,9 @@ inputDocuments:
   - product-brief-finance-2026-03-05.md
   - prd.md
   - prd-validation-report.md
+editHistory:
+  - date: '2026-11-15'
+    changes: 'Correct course (hierarquia de gastos): fluxo de registro com subcategoria e atalhos de subcategorias frequentes; regra de método de pagamento por nível (FR71); exemplos com categorias reais (Alimentação, Transporte…) e subcategorias (Supermercado, Gasolina…); impacto em todos os níveis com orçamento; cores da barra alinhadas ao DS (60/80/100). Ver sprint-change-proposal-2026-11-15.md.'
 ---
 
 # UX Design Specification Caderninho
@@ -51,7 +54,7 @@ Psicologa, 38 anos, empresa propria com receita variavel. Nao quer (nem precisa)
 
 O Caderninho tem duas interacoes igualmente criticas que se alimentam mutuamente:
 
-**1. Registrar e rapido (Input)** — O fluxo cascata progressiva de ~5 segundos (podendo chegar a ~3 segundos em categorias com pagamento padrao configurado) e o motor do sistema. Valor → Categoria → Estabelecimento → Pagamento → Parcelas. A tela se revela conforme contexto — nao e wizard multi-tela nem tela sobrecarregada. E uma tela que cresce. Teclado numerico abre direto. Cada selecao reduz as opcoes seguintes e pre-preenche inteligentemente (categoria "Gasolina" ja traz cartao PDA a vista como default configurado pelo usuario). Feedback de impacto antes de confirmar.
+**1. Registrar e rapido (Input)** — O fluxo cascata progressiva de ~5 segundos (podendo chegar a ~3 segundos em categorias com pagamento padrao configurado) e o motor do sistema. Valor → Categoria → Subcategoria → Estabelecimento (opcional) → Pagamento → Parcelas — com atalho de subcategorias frequentes, que definem categoria e subcategoria num toque. A tela se revela conforme contexto — nao e wizard multi-tela nem tela sobrecarregada. E uma tela que cresce. Teclado numerico abre direto. Cada selecao reduz as opcoes seguintes e pre-preenche inteligentemente (a subcategoria "Gasolina" ja traz o cartao PDA a vista — padrao definido pelo usuario ou habito aprendido). Feedback de impacto antes de confirmar.
 
 **2. Entender e instantaneo (Output)** — O dashboard que responde perguntas reais e o retorno do esforco. Nao e um painel de graficos — e um tradutor financeiro. "Quanto posso gastar em comida?" tem resposta visual direta. "A gente pode viajar?" tem resposta visual direta com dados concretos de onde economizar. Cada numero e tocavel e rastreavel a origem.
 
@@ -76,14 +79,15 @@ O Caderninho tem duas interacoes igualmente criticas que se alimentam mutuamente
 ### Interacoes Sem Esforco
 
 **Zero navegacao para o essencial:**
-- Abrir o app → dashboard ja responde as 4 perguntas fundamentais (contas a pagar, orcamento comida, orcamento gasolina, margem livre)
+- Abrir o app → dashboard ja responde as 4 perguntas fundamentais (contas a pagar, orcamento de Alimentacao, orcamento de Gasolina, margem livre)
 - Registrar gasto → uma tela, tudo visivel, sem "proximo", sem abas, sem carregamento
 - Ver impacto → feedback antes de confirmar, sem precisar navegar para outro lugar
 
 **Inteligencia que elimina digitacao:**
-- Categoria sugere estabelecimentos frequentes (top 5 dos ultimos 90 dias)
-- Categoria carrega regras de negocio (orcamento vinculado, subcategorias)
-- **Metodo de pagamento padrao por categoria**: o usuario configura a forma de pagamento preferida para cada categoria (ex: Gasolina → Cartao PDA a vista, Supermercado → Latam Pass a vista, Escola → Latam Pass a vista, compras online → Cartao X parcelado). Ao selecionar a categoria, o metodo de pagamento vem pre-selecionado — o usuario so confirma ou altera quando for excecao. Isso reduz toques e elimina decisao repetitiva
+- Subcategoria sugere estabelecimentos frequentes (top 5 dos ultimos 90 dias)
+- Subcategorias frequentes aparecem como atalho logo apos o valor (ex.: "Supermercado · Alimentacao")
+- Cada nivel carrega regras de negocio (orcamento e metodo de pagamento opcionais)
+- **Metodo de pagamento preenchido (FR71)**: o usuario pode definir um metodo padrao em qualquer nivel (classificacao, categoria, subcategoria, estabelecimento) — ex.: Alimentacao → Alelo, Supermercado → Latam Pass, Gasolina → Cartao PDA a vista. No registro, vale o mais especifico: em cada nivel, o padrao definido; senao, o habito (3 ultimos registros com o mesmo metodo); senao, sobe um nivel. Atalhos de um toque: "Ultimo usado" e o padrao do nivel acima. Quando um metodo e o mais usado num nivel por 90 dias, o app sugere defini-lo como padrao. O usuario so confirma ou altera quando for excecao
 - Recorrentes auto-preenchidos no inicio do mes — so confirmar ou atualizar
 - Parcelas so aparecem quando o metodo de pagamento selecionado e cartao de credito
 
@@ -95,7 +99,7 @@ O Caderninho tem duas interacoes igualmente criticas que se alimentam mutuamente
 ### Momentos Criticos de Sucesso
 
 **Momento 1 — "3 segundos, feito"** (Registro rapido com defaults)
-Vitor abastece e paga. Abre o app, digita 180, toca Gasolina — cartao PDA a vista ja vem selecionado, posto frequente ja aparece sugerido. Toca confirmar. Ve "Orcamento Gasolina: R$420/R$600 — resta R$180". Se esse fluxo travar, tiver loading, ou exigir decisoes que ja foram configuradas, o app falhou.
+Vitor abastece e paga. Abre o app, digita 180, toca Gasolina (atalho de subcategoria frequente) — cartao PDA a vista ja vem selecionado, posto frequente ja aparece sugerido. Toca confirmar. Ve "Orcamento Gasolina: R$420/R$600 — resta R$180". Se esse fluxo travar, tiver loading, ou exigir decisoes que ja foram configuradas, o app falhou.
 
 **Momento 2 — "Entendi sem perguntar"** (Dashboard da Tamires)
 Mes com cartao em R$22.000. Tamires abre, ve "Gastos regulares ✅ dentro do planejado | Fora do planejado: Viagem R$9.000 + Motor R$1.400". Se ela precisar perguntar ao Vitor o que aconteceu, o app falhou.
@@ -194,8 +198,8 @@ O Caderninho opera numa transformacao emocional especifica para cada perfil:
 
 | Gravidade | Exemplo | Tom Visual | Comportamento |
 |---|---|---|---|
-| **Informativo** | Categoria chegou a 80% do orcamento | Indicador sutil, cor neutra | Visivel mas nao intrusivo — o usuario nota quando olha |
-| **Atencao** | Categoria estourou o orcamento | Indicador visivel, cor de atencao | Destaque na barra de progresso, sem interromper fluxo |
+| **Informativo** | Um nivel da hierarquia chegou a 80% do orcamento | Indicador sutil, cor neutra | Visivel mas nao intrusivo — o usuario nota quando olha |
+| **Atencao** | Um nivel da hierarquia estourou o orcamento | Indicador visivel, cor de atencao | Destaque na barra de progresso, sem interromper fluxo |
 | **Alerta** | Regra de Ouro comprometida (cartoes > saldo) | Indicador claro, cor de alerta | Visivel no dashboard principal, com contexto do que causou |
 | **Critico** | Mes projetado para fechar negativo | Indicador proeminente, cor critica | Explicacao completa: o que causou, quanto falta, opcoes |
 
@@ -407,9 +411,9 @@ Tamires pensa em termos binarios: "estamos bem" ou "nao estamos". Sua entrada no
 **Modelo proposto pelo Caderninho:**
 O app propoe um modelo mental unificado baseado em **perguntas e respostas visuais com profundidade sob demanda**:
 - Superficie: resposta visual direta ("Gastos regulares ✅ dentro do planejado")
-- Segundo nivel: composicao ("Supermercado R$2.122/R$3.000, Gasolina R$420/R$600...")
-- Terceiro nivel: detalhe ("Supermercado → 80% Pao de Acucar, 12% Extra, 8% outros")
-- Quarto nivel: transacoes individuais
+- Segundo nivel: composicao por categoria ("Alimentacao R$4.300/R$5.500, Transporte R$1.020/R$1.500...")
+- Terceiro nivel: subcategorias ("Alimentacao → Supermercado 49%, Restaurante trabalho 35%, Feira/Hortifruti 16%")
+- Quarto nivel: estabelecimentos ("Supermercado → 80% Pao de Acucar, 12% Extra, 8% outros") e transacoes individuais
 
 Cada usuario navega ate o nivel que precisa. E em cada nivel, pode alternar o **modo de visualizacao**.
 
@@ -466,45 +470,51 @@ Cada usuario navega ate o nivel que precisa. E em cada nivel, pode alternar o **
 
 Usuario digita: 87
 
-[Apos digitar valor — categorias aparecem]
-┌─────────────────────────────┐
-│  R$ 87,00                   │
-│                             │
-│  Categorias frequentes:     │
-│  [Supermercado] [Gasolina]  │
-│  [Restaurante]  [Outros]    │
-│  [+ Todas categorias...]    │
-└─────────────────────────────┘
+[Apos digitar valor — subcategorias frequentes aparecem]
+┌─────────────────────────────────┐
+│  R$ 87,00                       │
+│                                 │
+│  Frequentes:                    │
+│  [🛒 Supermercado · Alimentacao] │
+│  [⛽ Gasolina · Transporte]      │
+│  [🍔 Fast Food · Restaurante]    │
+│  [+ Todas as categorias...]     │  ← caminho normal: categoria → subcategoria
+└─────────────────────────────────┘
 
-Usuario toca: Supermercado
+Usuario toca: Supermercado · Alimentacao (1 toque define categoria e subcategoria)
 
-[Apos categoria — estabelecimento + pagamento pre-selecionado]
-┌─────────────────────────────┐
-│  R$ 87,00 · Supermercado    │
-│                             │
-│  Onde?                      │
-│  [Pao de Acucar] [Extra]   │
-│  [Assai]  [+ Outro...]     │
-│                             │
-│  Pagamento: Latam Pass ▾   │  ← Default da categoria
-│  (a vista)                  │
-│                             │
-│  ┌─ Impacto ──────────────┐│
-│  │ Limite Latam:           ││
-│  │ R$4.213 → R$4.126      ││
-│  │                         ││
-│  │ Orcamento Supermercado: ││
-│  │ ████████░░ R$2.122/3.000││
-│  │ Resta R$878             ││
-│  └─────────────────────────┘│
-│                             │
-│       [✓ Confirmar]         │
-└─────────────────────────────┘
+[Apos subcategoria — estabelecimento (opcional) + pagamento preenchido]
+┌─────────────────────────────────┐
+│  R$ 87,00 · Alimentacao ›       │
+│             Supermercado        │
+│                                 │
+│  Onde? (opcional)               │
+│  [Pao de Acucar] [Extra]        │
+│  [Assai]  [+ Outro...]          │
+│                                 │
+│  Pagamento: Latam Pass ▾        │  ← mais usado em Supermercado
+│  [Ultimo usado: PDA Visa]       │
+│  [Alelo · padrao de Alimentacao]│
+│                                 │
+│  ┌─ Impacto ──────────────────┐ │
+│  │ Limite Latam:              │ │
+│  │ R$4.213 → R$4.126          │ │
+│  │                            │ │
+│  │ Supermercado:              │ │
+│  │ ████████░░ R$2.122/3.000   │ │
+│  │ Resta R$878                │ │
+│  │ Alimentacao:               │ │
+│  │ ███████░░░ R$4.300/5.500   │ │
+│  │ Resta R$1.200              │ │
+│  └────────────────────────────┘ │
+│                                 │
+│       [✓ Confirmar]             │
+└─────────────────────────────────┘
 ```
 
 **3. Feedback:**
-- Impacto financeiro visivel ANTES de confirmar — saldo/limite e barra de orcamento
-- Se o gasto estoura o orcamento da categoria, a barra muda de cor (atencao, nao panico)
+- Impacto financeiro visivel ANTES de confirmar — saldo/limite e uma barra para cada nivel da hierarquia com orcamento (subcategoria, categoria, classificacao)
+- Se o gasto estoura o orcamento de algum nivel, a barra muda de cor (atencao, nao panico)
 - Se o usuario muda o cartao, o impacto recalcula instantaneamente (< 100ms)
 - Ao selecionar cartao de credito, opcao de parcelas aparece
 
@@ -512,7 +522,7 @@ Usuario toca: Supermercado
 - Toque em "Confirmar" → transacao registrada
 - Feedback breve de sucesso (checkmark sutil, nao animacao)
 - Sheet/modal fecha automaticamente → usuario volta ao dashboard atualizado
-- Total de toques: 4-5 (valor + categoria + estabelecimento + confirmar). Com defaults: 3-4
+- Total de toques: 3-4 com atalho de subcategoria frequente (valor + subcategoria + [estabelecimento] + confirmar). Pelo caminho completo: 4-5 (valor + categoria + subcategoria + [estabelecimento] + confirmar)
 
 ### Mecanica Detalhada — Tap to Trace
 
@@ -584,22 +594,22 @@ Usuario toca "Faturas cartao R$7.180":
 
 **Visual (cards em grid uniforme 2 colunas):**
 ```
-┌─────────────────┬─────────────────┐
-│ 🛒 Supermercado │ 🎓 Escola       │
-│ ████████░░      │ ██████████      │
-│ R$2.122/R$3.000 │ R$2.800/R$2.800 │
-│ Resta R$878 70% │ Custo fixo 100% │
-├─────────────────┼─────────────────┤
-│ 🏠 Moradia      │ ⛽ Gasolina      │
-│ ██████░░░       │ ██████░░        │
-│ R$1.800/R$2.200 │ R$420/R$600     │
-│ Resta R$400 82% │ Resta R$180 70% │
-├─────────────────┼─────────────────┤
-│ 🚌 Transporte   │ 🌐 Internet     │
-│ ██████░░        │ ██████████      │
-│ R$380/R$500     │ R$158/R$158     │
-│ Resta R$120 76% │ Custo fixo 100% │
-└─────────────────┴─────────────────┘
+┌──────────────────┬──────────────────┐
+│ 🍽 Alimentacao   │ 🎓 Educacao      │
+│ ███████░░░       │ ██████████       │
+│ R$4.300/R$5.500  │ R$2.800/R$2.800  │
+│ Resta R$1.200 78%│ Custo fixo 100%  │
+├──────────────────┼──────────────────┤
+│ 🏠 Moradia       │ 🚗 Transporte    │
+│ █████████░       │ ██████░░░░       │
+│ R$3.600/R$4.000  │ R$1.020/R$1.500  │
+│ Resta R$400 90%  │ Resta R$480 68%  │
+├──────────────────┼──────────────────┤
+│ 📱 Assinaturas   │ 💊 Saude         │
+│ ██████████       │ ▒▒▒░░░░░░░ cinza │
+│ R$200/R$200      │ R$300 (sem orc.) │
+│ Custo fixo 100%  │ 5% de Essenciais │
+└──────────────────┴──────────────────┘
 ```
 Todos os cards com tamanho uniforme, grid fixo de 2 colunas.
 A visualizacao proporcional (tamanho variavel) fica exclusiva do modo Mapa (treemap).
@@ -607,12 +617,12 @@ A visualizacao proporcional (tamanho variavel) fica exclusiva do modo Mapa (tree
 **Lista:**
 ```
 Categoria      Gasto    Orcam.   Resta    Status
-Supermercado   R$2.122  R$3.000  R$878    ████████░░
-Escola         R$2.800  R$2.800  R$0      ██████████
-Moradia        R$1.800  R$2.200  R$400    ████████░░
-Gasolina       R$420    R$600    R$180    ███████░░░
-Internet       R$158    R$158    R$0      ██████████
-Outros         R$450    R$2.000  R$1.550  ██░░░░░░░░
+Alimentacao    R$4.300  R$5.500  R$1.200  ███████░░░
+Educacao       R$2.800  R$2.800  R$0      ██████████
+Moradia        R$3.600  R$4.000  R$400    █████████░
+Transporte     R$1.020  R$1.500  R$480    ██████░░░░
+Assinaturas    R$200    R$200    R$0      ██████████
+Saude          R$300    —        —        ▒▒▒ 5% de Essenciais
 ```
 
 **Timeline:**
@@ -853,10 +863,12 @@ flowchart TD
     B --> C[Digita valor]
     C --> D{Valor > 0?}
     D -->|Não| C
-    D -->|Sim| E[Exibe categorias frequentes como chips]
-    E --> F[Seleciona categoria]
-    F --> G[Carrega estabelecimentos frequentes da categoria]
-    F --> H[Pré-seleciona método de pagamento default da categoria]
+    D -->|Sim| E[Exibe subcategorias frequentes como chips com a categoria de contexto]
+    E -->|Toca atalho| F[Categoria + subcategoria definidas]
+    E -->|Todas as categorias| E2[Seleciona categoria] --> E3[Seleciona subcategoria ou cria inline]
+    E3 --> F
+    F --> G[Carrega estabelecimentos frequentes da subcategoria - opcional]
+    F --> H[Preenche método pela regra FR71: definido ou hábito, do mais específico ao mais geral]
     G --> I{Seleciona estabelecimento?}
     I -->|Seleciona existente| J[Estabelecimento confirmado]
     I -->|+ Outro| K[Campo de texto para novo estabelecimento]
@@ -871,8 +883,8 @@ flowchart TD
     P --> R[Seleciona parcelas - atualiza valor por parcela e meses]
     R --> S[Exibe painel de impacto]
     Q --> S
-    S --> T[Impacto: limite do cartão, orçamento da categoria, barra de progresso]
-    T --> U{Orçamento estourou?}
+    S --> T[Impacto: limite do cartão + barra de cada nível com orçamento]
+    T --> U{Algum orçamento estourou?}
     U -->|Não| V[Barra verde/azul + Resta R$X]
     U -->|Sim| W[Barra vermelha + Estourou R$X - tom de atenção, não pânico]
     V --> X[Botão Confirmar]
@@ -1031,11 +1043,11 @@ flowchart TD
     G --> H[Adiciona cartões com nome, limite, dia de fechamento e vencimento]
     H --> I{Mais cartões?}
     I -->|Sim| H
-    I -->|Não| J[Etapa 3: Categorias principais]
-    J --> K[Apresenta categorias sugeridas com valores base editáveis]
-    K --> L[Usuário ajusta orçamento por categoria]
-    L --> M{Configurar pagamento padrão por categoria?}
-    M -->|Sim| N[Define cartão/PIX default para cada categoria]
+    I -->|Não| J[Etapa 3: Classificações, categorias e subcategorias - proto-08]
+    J --> K[Apresenta hierarquia sugerida: classificação › categoria › subcategorias]
+    K --> L[Usuário ajusta orçamentos em qualquer nível - opcional]
+    L --> M{Configurar pagamento padrão?}
+    M -->|Sim| N[Define método padrão em qualquer nível - opcional]
     M -->|Depois| O[Pode configurar depois nas preferências]
     N --> P[Etapa 4: Gastos fixos mensais]
     O --> P
@@ -1462,9 +1474,9 @@ O Caderninho tem 4 níveis de ação, sempre consistentes:
 | Cor | Significado | Uso |
 |---|---|---|
 | **Indigo (#4F46E5)** | Ação, ativo, primário | Botões, links, item ativo, FAB, progresso |
-| **Verde (#22C55E)** | Positivo, confirmado, dentro do limite | Sucesso, pago, orçamento ok, trend positivo |
-| **Amarelo (#EAB308)** | Atenção, estimativa, approaching | Estimativa de fatura, orçamento 70-85%, alerta leve |
-| **Laranja (#F97316)** | Aviso, próximo do limite | Orçamento 85-100%, prazo se aproximando |
+| **Verde (#22C55E)** | Positivo, confirmado, dentro do limite | Sucesso, pago, orçamento até 60%, trend positivo |
+| **Amarelo (#EAB308)** | Atenção, estimativa, approaching | Estimativa de fatura, orçamento acima de 60% até 80%, alerta leve |
+| **Laranja (#F97316)** | Aviso, próximo do limite | Orçamento acima de 80% até 100%, prazo se aproximando |
 | **Vermelho (#DC2626)** | Crítico, atrasado, acima do limite | Conta atrasada, orçamento estourado, erro |
 | **Stone (neutros)** | Estrutura, texto, bordas | Background, texto secundário, separadores |
 

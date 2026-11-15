@@ -335,6 +335,8 @@ console.log(JSON.stringify({
 
 ### Critical Don't-Miss Rules
 
+- **Hierarquia de gastos (FR38):** classificação → categoria → subcategoria → estabelecimento (opcional). Categoria é o grande grupo (Alimentação, Transporte); subcategoria é o tipo de gasto (Supermercado, Gasolina, Pedágio). **Nunca** use uma subcategoria como categoria em código, seeds, sugestões, testes ou exemplos — siga o `proto-08` e a seção "Modelo da Hierarquia de Gastos" da arquitetura. Orçamento e método de pagamento são opcionais em todos os níveis.
+
 **Gotchas do Stack:**
 
 - **Tailwind v4**: NÃO criar `tailwind.config.ts` — config é via CSS (`@theme {}`)
