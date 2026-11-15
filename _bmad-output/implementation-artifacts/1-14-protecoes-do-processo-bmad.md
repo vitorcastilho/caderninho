@@ -1,6 +1,6 @@
 # Story 1.14: Proteções do processo BMAD
 
-Status: ready-for-dev
+Status: in-progress
 
 <!-- Criada pelo create-story (invocado) em 2026-11-15, a partir do correct course de processo: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-processo.md (Proposta 5). Primeira da fila aprovada na Proposta 6. -->
 
@@ -46,25 +46,25 @@ Em 2026-11-15 o Claude Code criou as Stories 1.12 e 1.13 e implementou a 1.13 (P
 
 <!-- Sem UI: a Fase 0 (Design System & Protótipos) não se aplica. -->
 
-- [ ] Task 1 (AC: #2, #3, #4, #5): lógica do guard com TDD — `scripts/bmad/story-guard.mjs`
-  - [ ] 1.1 Fixtures de transcript sintéticas (JSONL mínimo com os formatos reais da seção "Formato do transcript") em `scripts/bmad/__fixtures__/`. **Nunca** copiar trechos do transcript real (contém dados privados).
-  - [ ] 1.2 Testes vermelhos em `scripts/bmad/story-guard.test.ts` para todos os casos do AC 4 e AC 5; colar a saída vermelha no Debug Log
-  - [ ] 1.3 Implementar funções puras exportadas: `classifyTarget(toolName, toolInput, projectDir)` → `{ kind: 'story' | 'sprint-status' | 'other', action: 'create' | 'edit' | 'read', path }`; `findLastWorkflow(transcriptLines)` → `{ workflow | null }`; `decide(target, lastWorkflow)` → `{ allow: true } | { allow: false, reason }`
-  - [ ] 1.4 Verde + refatorar
-- [ ] Task 2 (AC: #2, #5): entrada do hook — `.claude/hooks/bmad-story-guard.mjs`
-  - [ ] 2.1 Lê o JSON do stdin, chama as funções do 1.3, sai `0` (sem saída) ou `2` (mensagem no stderr)
-  - [ ] 2.2 `.claude/settings.json` (versionado): `PreToolUse`, `matcher: "Write|Edit|MultiEdit|Bash"`, comando em forma exec com `${CLAUDE_PROJECT_DIR}`, `timeout` explícito
-  - [ ] 2.3 Teste de integração do entrypoint: rodar o script com `child_process` passando JSON no stdin e transcript fixture; conferir exit code e stderr
-- [ ] Task 3 (AC: #1, #8): `CLAUDE.md` na raiz com o conteúdo exato abaixo + seção "Limites das proteções"
-- [ ] Task 4 (AC: #6): job de CI `bmad-process`
-  - [ ] 4.1 Testes vermelhos em `scripts/bmad/check-story-process.test.ts` (story `review` completa/incompleta, story `done` com/sem review, placeholder do Agent Model, story não alterada ignorada)
-  - [ ] 4.2 `scripts/bmad/check-story-process.ts` (lógica pura + CLI que recebe a lista de arquivos alterados)
-  - [ ] 4.3 Job `bmad-process` em `.github/workflows/ci.yml`, só em `pull_request`: `actions/checkout@v4` com `fetch-depth: 0`; arquivos alterados via `git diff --name-only --diff-filter=AM origin/${{ github.base_ref }}...HEAD`; roda o CLI
-- [ ] Task 5 (AC: #7, #8): documentação
-  - [ ] 5.1 `_bmad-output/project-context.md` → "Development Workflow Rules → Git & Branching" atualizado (AC 7)
-  - [ ] 5.2 README: seção curta "Processo BMAD e proteções" (as três camadas e os limites)
+- [x] Task 1 (AC: #2, #3, #4, #5): lógica do guard com TDD — `scripts/bmad/story-guard.mjs`
+  - [x] 1.1 Fixtures de transcript sintéticas (JSONL mínimo com os formatos reais da seção "Formato do transcript") em `scripts/bmad/__fixtures__/`. **Nunca** copiar trechos do transcript real (contém dados privados).
+  - [x] 1.2 Testes vermelhos em `scripts/bmad/story-guard.test.ts` para todos os casos do AC 4 e AC 5; colar a saída vermelha no Debug Log
+  - [x] 1.3 Implementar funções puras exportadas: `classifyTarget(toolName, toolInput, projectDir)` → `{ kind: 'story' | 'sprint-status' | 'other', action: 'create' | 'edit' | 'read', path }`; `findLastWorkflow(transcriptLines)` → `{ workflow | null }`; `decide(target, lastWorkflow)` → `{ allow: true } | { allow: false, reason }`
+  - [x] 1.4 Verde + refatorar
+- [x] Task 2 (AC: #2, #5): entrada do hook — `.claude/hooks/bmad-story-guard.mjs`
+  - [x] 2.1 Lê o JSON do stdin, chama as funções do 1.3, sai `0` (sem saída) ou `2` (mensagem no stderr)
+  - [x] 2.2 `.claude/settings.json` (versionado): `PreToolUse`, `matcher: "Write|Edit|MultiEdit|Bash"`, comando em forma exec com `${CLAUDE_PROJECT_DIR}`, `timeout` explícito
+  - [x] 2.3 Teste de integração do entrypoint: rodar o script com `child_process` passando JSON no stdin e transcript fixture; conferir exit code e stderr
+- [x] Task 3 (AC: #1, #8): `CLAUDE.md` na raiz com o conteúdo exato abaixo + seção "Limites das proteções"
+- [x] Task 4 (AC: #6): job de CI `bmad-process`
+  - [x] 4.1 Testes vermelhos em `scripts/bmad/check-story-process.test.ts` (story `review` completa/incompleta, story `done` com/sem review, placeholder do Agent Model, story não alterada ignorada)
+  - [x] 4.2 `scripts/bmad/check-story-process.ts` (lógica pura + CLI que recebe a lista de arquivos alterados)
+  - [x] 4.3 Job `bmad-process` em `.github/workflows/ci.yml`, só em `pull_request`: `actions/checkout@v4` com `fetch-depth: 0`; arquivos alterados via `git diff --name-only --diff-filter=AM origin/${{ github.base_ref }}...HEAD`; roda o CLI
+- [x] Task 5 (AC: #7, #8): documentação
+  - [x] 5.1 `_bmad-output/project-context.md` → "Development Workflow Rules → Git & Branching" atualizado (AC 7)
+  - [x] 5.2 README: seção curta "Processo BMAD e proteções" (as três camadas e os limites)
 - [ ] Task 6 (AC: #9): validação
-  - [ ] 6.1 `npx tsc --noEmit`, `npm run lint`, `npx vitest run`, `npx next build`
+  - [x] 6.1 `npx tsc --noEmit`, `npm run lint`, `npx vitest run`, `npx next build`
   - [ ] 6.2 Teste real do hook: o Claude Code carrega os hooks no início da sessão e pede revisão de hooks alterados fora dela — o PO abre `/hooks` para aprovar o hook novo (ou reinicia a sessão). Depois, tentar uma escrita protegida sem workflow ativo e registrar o bloqueio (exit 2 + mensagem) no Debug Log; e uma leitura (`cat` da story) que deve passar
   - [ ] 6.3 PR para `staging`; CI verde, incluindo `bmad-process`
 
@@ -170,12 +170,37 @@ Depois dele, a seção "Limites das proteções" (AC 8).
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 5.5 (claude-opus-5-5)
 
 ### Debug Log References
 
+- Task 1 vermelho: `scripts/bmad/story-guard.test.ts` → "FAIL … no tests" (módulo `./story-guard.mjs` inexistente). Verde: 45/45. Uma falha intermediária era do próprio teste (passava caminho absoluto ao `decide`; o `classifyTarget` entrega o relativo) — teste corrigido para o formato real.
+- Task 2 vermelho: `scripts/bmad/story-guard-hook.test.ts` → 5/5 falharam (entrypoint inexistente). Verde: 5/5 (total do diretório: 50).
+- Desempenho do hook com o transcript real desta sessão (~13 MB, só leitura): alvo protegido 176 ms (decisão: permitido — último workflow `dev-story`); arquivo comum 40 ms sem ler o transcript.
+- Task 4 vermelho: `scripts/bmad/check-story-process.test.ts` → "FAIL … no tests" (módulo inexistente). Verde: 12/12 (total 62). CLI exercitado com stories reais (1.9 done, 1.11 review, 3.4c done, 3.4d review) → "Processo BMAD ok." (sem falso positivo no histórico).
+- Task 6.1: `tsc` 0 erros; `npm run lint` 0 avisos; `vitest` 146 arquivos / 1269 testes; `next build` ok.
+- Task 6.2 (1ª tentativa): `Write` de `9-99-teste-hook.md` com o último workflow `dev-story` **não** foi bloqueado — o hook novo ainda não foi carregado pela sessão (o Claude Code carrega hooks no início e pede revisão em `/hooks`). Arquivo removido em seguida. Aguardando o PO aprovar o hook em `/hooks`.
+
 ### Completion Notes List
 
+- Camada 2 (hook): lógica pura em `scripts/bmad/story-guard.mjs` (JS puro: Node 22.16 não executa TS); entrypoint `.claude/hooks/bmad-story-guard.mjs` (exit 0/2); registro em `.claude/settings.json` (forma exec com `${CLAUDE_PROJECT_DIR}`, timeout 10 s). Só invocações reais contam; leitura de `workflow.yaml` só com agente BMAD ativo (decisão do PO). Escrita via `Bash` detectada quando o protegido é o destino (`>`, `>>`, `tee`, `cp`/`mv` destino, `sed -i`, `perl -i`, `truncate`, `rm`) ou citado por `python`/`node`; leituras com redirecionamento para fora passam. Falha segura: transcript ilegível ou entrada inválida citando arquivo protegido → bloqueia.
+- Camada 1: `CLAUDE.md` com o texto aprovado + regra de worktrees + "Limites das proteções".
+- Camada 3: `scripts/bmad/check-story-process.ts` + job `bmad-process` (só em PR; `fetch-depth: 0`; diff `--diff-filter=AM` contra a base).
+- `project-context.md` (Git & Branching) e README (seção "Processo BMAD e proteções") atualizados.
 - 2026-11-15 (create-story): Ultimate context engine analysis completed - comprehensive developer guide created. Criada pelo workflow `create-story` invocado, a partir da Proposta 5 do correct course de processo; inclui a regra de worktrees aprovada pelo PO.
 
 ### File List
+
+- `CLAUDE.md` (novo)
+- `.claude/settings.json` (novo)
+- `.claude/hooks/bmad-story-guard.mjs` (novo)
+- `scripts/bmad/story-guard.mjs` (novo)
+- `scripts/bmad/story-guard.test.ts` (novo)
+- `scripts/bmad/story-guard-hook.test.ts` (novo)
+- `scripts/bmad/check-story-process.ts` (novo)
+- `scripts/bmad/check-story-process.test.ts` (novo)
+- `scripts/bmad/__fixtures__/*.jsonl` (novos, 8 transcripts sintéticos)
+- `.github/workflows/ci.yml`
+- `_bmad-output/project-context.md`
+- `README.md`
+- `_bmad-output/implementation-artifacts/1-14-protecoes-do-processo-bmad.md`, `_bmad-output/implementation-artifacts/sprint-status.yaml`

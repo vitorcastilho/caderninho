@@ -1,0 +1,2 @@
+{"type": "user", "isSidechain": false, "message": {"role": "user", "content": "crie a story"}}
+{"type": "assistant", "isSidechain": false, "message": {"role": "assistant", "content": [{"type": "tool_use", "id": "toolu_x", "name": "Skill", "input": {"skill": "bmad-bmm-create-story", "args": "1-14"}}]}}

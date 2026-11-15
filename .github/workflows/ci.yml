@@ -57,3 +57,29 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  # Story 1.14 — Camada 3 das proteções do processo BMAD: stories alteradas na
+  # PR precisam ter passado pelos workflows (dev-story → Dev Agent Record;
+  # code-review → registro de review). Sem proteção de branch, avisa mas não bloqueia.
+  bmad-process:
+    name: Processo BMAD (stories alteradas)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Conferir stories alteradas
+        run: git diff --name-only --diff-filter=AM "origin/${{ github.base_ref }}...HEAD" | npx tsx scripts/bmad/check-story-process.ts
