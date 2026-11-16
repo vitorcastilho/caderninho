@@ -1,6 +1,14 @@
 import { describe, it, expect } from 'vitest';
 
-import { parseMigrateArgs, envFileFor, describeTarget, checkTarget, resolveDatabaseUrl } from './migrate-env';
+import {
+  parseMigrateArgs,
+  envFileFor,
+  describeTarget,
+  checkTarget,
+  resolveDatabaseUrl,
+  databaseUrlFromEnvFile,
+  isGithubActions,
+} from './migrate-env';
 
 // Story 1.13 — `db:migrate` escolhe o banco pelo ambiente (arquivo .env do
 // ambiente), nunca por URL colada no terminal, e recusa destinos perigosos.
@@ -105,6 +113,33 @@ describe('resolveDatabaseUrl', () => {
 
     expect(result.ok).toBe(false);
     expect(!result.ok && result.reason).toMatch(/DATABASE_URL não definido/);
+  });
+});
+
+describe('databaseUrlFromEnvFile', () => {
+  it('sem arquivo não há valor', () => {
+    expect(databaseUrlFromEnvFile(undefined)).toBeUndefined();
+  });
+
+  it('lê o DATABASE_URL do conteúdo do arquivo (com aspas e comentários)', () => {
+    const content = '# banco\nNEXT_PUBLIC_APP_URL=http://localhost:3000\nDATABASE_URL="postgresql://u:p@h:6543/postgres"\n';
+
+    expect(databaseUrlFromEnvFile(content)).toBe('postgresql://u:p@h:6543/postgres');
+  });
+
+  it('arquivo sem DATABASE_URL não tem valor', () => {
+    expect(databaseUrlFromEnvFile('BETTER_AUTH_SECRET=x\n')).toBeUndefined();
+  });
+});
+
+describe('isGithubActions', () => {
+  it('reconhece o runner do GitHub Actions', () => {
+    expect(isGithubActions({ GITHUB_ACTIONS: 'true', CI: 'true' })).toBe(true);
+  });
+
+  it('CI=true sozinho (exportado no terminal) não libera o DATABASE_URL do shell', () => {
+    expect(isGithubActions({ CI: 'true' })).toBe(false);
+    expect(isGithubActions({})).toBe(false);
   });
 });
 

@@ -1,6 +1,5 @@
 import { existsSync, readFileSync } from 'node:fs';
 
-import { parse } from 'dotenv';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
@@ -11,6 +10,8 @@ import {
   describeTarget,
   checkTarget,
   resolveDatabaseUrl,
+  databaseUrlFromEnvFile,
+  isGithubActions,
   type MigrateArgs,
 } from './lib/migrate-env';
 
@@ -18,8 +19,9 @@ import {
 //   npm run db:migrate                                   → .env.local (padrão)
 //   npm run db:migrate -- --env staging                  → .env.staging.local
 //   npm run db:migrate -- --env production --confirm-production
-// Fora do CI a URL vem só do arquivo do ambiente (nunca do shell). No CI não há
-// arquivo: o DATABASE_URL vem da variável do job (secret do repositório).
+// Fora do CI (GitHub Actions) a URL vem só do arquivo do ambiente, nunca do
+// shell. No CI não há arquivo: o DATABASE_URL vem da variável do job (secret do
+// repositório).
 let args: MigrateArgs;
 try {
   args = parseMigrateArgs(process.argv.slice(2));
@@ -31,9 +33,9 @@ try {
 const envFile = envFileFor(args.env);
 const resolved = resolveDatabaseUrl({
   env: args.env,
-  fileValue: existsSync(envFile) ? parse(readFileSync(envFile)).DATABASE_URL : undefined,
+  fileValue: databaseUrlFromEnvFile(existsSync(envFile) ? readFileSync(envFile, 'utf8') : undefined),
   shellValue: process.env.DATABASE_URL,
-  isCi: process.env.CI === 'true',
+  isCi: isGithubActions(process.env),
 });
 
 if (!resolved.ok) {

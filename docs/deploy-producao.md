@@ -41,7 +41,7 @@ npm run db:migrate -- --env staging                         # lê .env.staging.l
 npm run db:migrate -- --env production --confirm-production # lê .env.production.local
 ```
 
-O script recusa staging/produção fora da porta 6543 e recusa produção sem `--confirm-production`. Nunca cole a URL com senha direto no terminal.
+O script lê o `DATABASE_URL` só do arquivo do ambiente (um `DATABASE_URL` exportado no terminal é ignorado), recusa staging/produção fora da porta 6543, produção sem `--confirm-production` e argumentos desconhecidos (inclusive sem o `--` depois de `npm run db:migrate`). Nunca cole a URL com senha direto no terminal.
 
 ### 2. Vercel — Hospedagem da Aplicação
 

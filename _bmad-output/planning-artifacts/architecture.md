@@ -375,7 +375,7 @@ async function createTransaction(input: CreateTransactionInput): Promise<Result<
 | **Production** | Pooler do projeto Supabase de produção, porta **6543** | `.env.production.local` |
 
 - Nunca a conexão direta (54322 local, 5432 remota) — nem no app, nem nas migrations
-- Migrations: `npm run db:migrate -- --env <local|staging|production>`; fora do CI o `DATABASE_URL` vem só do arquivo do ambiente (nunca do shell; no CI, da variável do job), o destino é impresso sem a senha, o local fora da 54329 e staging/produção fora da 6543 são recusados, argumentos desconhecidos são recusados e produção exige `--confirm-production`
+- Migrations: `npm run db:migrate -- --env <local|staging|production>`; fora do CI (GitHub Actions, `GITHUB_ACTIONS=true`) o `DATABASE_URL` vem só do arquivo do ambiente (nunca do shell; no CI, da variável do job), o destino é impresso sem a senha, o local fora da 54329 e staging/produção fora da 6543 são recusados, argumentos desconhecidos são recusados e produção exige `--confirm-production`
 - Testar migrations do zero: `npm run db:reset:local` (zera o Supabase local e aplica tudo pelo pooler). Testes de banco só no Supabase, nunca num Postgres "puro" (sem `auth.uid()`)
 
 #### CI/CD Pipeline: GitHub Actions + Vercel

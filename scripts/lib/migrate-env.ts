@@ -8,6 +8,8 @@
  * explícita.
  */
 
+import { parse } from 'dotenv';
+
 export type MigrateEnv = 'local' | 'staging' | 'production';
 
 export interface MigrateArgs {
@@ -33,6 +35,7 @@ const REMOTE_POOLER_PORT = '6543';
 const LOCAL_POOLER_PORT = '54329';
 const LOCAL_POOLER_URL = 'postgresql://postgres.pooler-dev:postgres@127.0.0.1:54329/postgres';
 const CI_SOURCE = 'variável DATABASE_URL do CI';
+const ENV_VALUE_REQUIRED = '--env exige um valor: local, staging ou production.';
 
 const ENV_FILES: Record<MigrateEnv, string> = {
   local: '.env.local',
@@ -78,8 +81,6 @@ export function parseMigrateArgs(argv: readonly string[]): MigrateArgs {
   return { env, confirmProduction };
 }
 
-const ENV_VALUE_REQUIRED = '--env exige um valor: local, staging ou production.';
-
 export function envFileFor(env: MigrateEnv): string {
   return ENV_FILES[env];
 }
@@ -87,6 +88,20 @@ export function envFileFor(env: MigrateEnv): string {
 export function describeTarget(env: MigrateEnv, databaseUrl: string): string {
   const url = new URL(databaseUrl);
   return `${env} → ${url.hostname}:${url.port || '5432'}`;
+}
+
+/** `DATABASE_URL` do conteúdo do arquivo `.env` do ambiente (undefined sem arquivo ou sem a chave). */
+export function databaseUrlFromEnvFile(content: string | undefined): string | undefined {
+  if (content === undefined) return undefined;
+  return parse(content).DATABASE_URL || undefined;
+}
+
+/**
+ * Só o runner do GitHub Actions conta como CI: um `CI=true` exportado no
+ * terminal não pode liberar o `DATABASE_URL` do shell.
+ */
+export function isGithubActions(processEnv: Readonly<Record<string, string | undefined>>): boolean {
+  return processEnv.GITHUB_ACTIONS === 'true';
 }
 
 /**
