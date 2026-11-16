@@ -1,0 +1,3 @@
+{"type": "user", "isSidechain": false, "message": {"role": "user", "content": "<command-message>bmad-agent-bmm-sm</command-message>\n<command-name>/bmad-agent-bmm-sm</command-name>"}}
+{"type": "assistant", "isSidechain": false, "message": {"role": "assistant", "content": [{"type": "tool_use", "id": "toolu_x", "name": "Skill", "input": {"skill": "bmad-bmm-dev-story"}}]}}
+{"type": "assistant", "isSidechain": false, "message": {"role": "assistant", "content": [{"type": "tool_use", "id": "toolu_x", "name": "Bash", "input": {"command": "mkdir -p fixtures && python3 - <<'EOF'\nx='_bmad/bmm/workflows/4-implementation/create-story/workflow.yaml'\nEOF"}}]}}

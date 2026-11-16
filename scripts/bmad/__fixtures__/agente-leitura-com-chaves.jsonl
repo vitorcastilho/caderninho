@@ -1,0 +1,2 @@
+{"type": "user", "isSidechain": false, "message": {"role": "user", "content": "<command-message>bmad-agent-bmm-sm</command-message>\n<command-name>/bmad-agent-bmm-sm</command-name>"}}
+{"type": "assistant", "isSidechain": false, "message": {"role": "assistant", "content": [{"type": "tool_use", "id": "toolu_x", "name": "Bash", "input": {"command": "wc -l _bmad/core/tasks/workflow.xml _bmad/bmm/workflows/4-implementation/correct-course/{workflow.yaml,instructions.md,checklist.md}"}}]}}

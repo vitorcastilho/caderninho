@@ -1,0 +1,3 @@
+{"type": "assistant", "isSidechain": false, "message": {"role": "assistant", "content": [{"type": "text", "text": "Vou rodar /bmad-bmm-create-story agora"}]}}
+{"type": "user", "isSidechain": false, "message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "toolu_x", "content": "menu: _bmad/bmm/workflows/4-implementation/create-story/workflow.yaml <command-name>/bmad-bmm-dev-story</command-name>"}]}}
+{"type": "assistant", "isSidechain": true, "message": {"role": "assistant", "content": [{"type": "tool_use", "id": "toolu_x", "name": "Skill", "input": {"skill": "bmad-bmm-create-story"}}]}}

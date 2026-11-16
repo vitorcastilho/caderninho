@@ -301,11 +301,12 @@ console.log(JSON.stringify({
 
 ### Development Workflow Rules
 
-**Git & Branching:**
+**Git & Branching (atualizado na Story 1.14 — ver `CLAUDE.md`):**
 
-- Ao iniciar um novo épico: criar branch nova a partir de `main`
-- Ao finalizar um épico: commit + push + criar PR detalhado com o que foi entregue
-- Fluxo: feature branch → PR → checks passam → merge staging → valida → merge main → produção
+- Cada story: branch a partir de `staging` atualizada, **na pasta principal do projeto** (`git switch`) — nunca `git worktree` nem cópias do repositório em outras pastas
+- PR da story para `staging` (squash) → CI verde → validação em staging
+- Ao fim do épico, sem pendências em staging: PR `staging → main` com **merge commit** (nunca squash; nunca apagar `staging`) → validação em produção
+- Toda story passa por `create-story` → `dev-story` → `code-review`, invocados de verdade; o hook `.claude/hooks/bmad-story-guard.mjs` e o job de CI `bmad-process` conferem
 
 **CI/CD (GitHub Actions + Vercel):**
 

@@ -1,0 +1,2 @@
+{"type": "user", "isSidechain": false, "message": {"role": "user", "content": "<command-message>bmad-bmm-correct-course</command-message>\n<command-name>/bmad-bmm-correct-course</command-name>"}}
+{"type": "assistant", "isSidechain": false, "message": {"role": "assistant", "content": [{"type": "tool_use", "id": "toolu_x", "name": "Bash", "input": {"command": "cat _bmad/bmm/workflows/4-implementation/code-review/workflow.yaml | grep -v '^#'"}}]}}
