@@ -1,6 +1,6 @@
 # Story 1.14: Proteções do processo BMAD
 
-Status: review
+Status: done
 
 <!-- Criada pelo create-story (invocado) em 2026-11-15, a partir do correct course de processo: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-processo.md (Proposta 5). Primeira da fila aprovada na Proposta 6. -->
 
@@ -203,14 +203,37 @@ Claude Opus 5.5 (claude-opus-5-5)
 - `scripts/bmad/story-guard-hook.test.ts` (novo)
 - `scripts/bmad/check-story-process.ts` (novo)
 - `scripts/bmad/check-story-process.test.ts` (novo)
-- `scripts/bmad/__fixtures__/*.jsonl` (novos, 10 transcripts sintéticos)
+- `scripts/bmad/__fixtures__/*.jsonl` (novos, 12 transcripts sintéticos — 2 do code review)
 - `.github/workflows/ci.yml`
 - `_bmad-output/project-context.md`
 - `README.md`
 - `_bmad-output/implementation-artifacts/1-14-protecoes-do-processo-bmad.md`, `_bmad-output/implementation-artifacts/sprint-status.yaml`
+
+## Senior Developer Review (AI)
+
+- **Revisor:** Claude Opus 5.5, workflow `code-review` invocado (`/bmad-bmm-code-review`), 2026-11-15
+- **Resultado:** aprovado após correções (PO escolheu "corrigir automaticamente"). Git × File List: sem divergências. Todos os ACs implementados; brechas dos ACs 2, 3 e 6 confirmadas executando o código e corrigidas com TDD (14 testes vermelhos → verde).
+
+### Achados e correções
+
+- [x] [AI-Review][HIGH] CI aprovava `done` sem review quando a story só citava os marcadores no texto (o AC 6 desta story cita `Senior Developer Review (AI)` e `[AI-Review]`): registro de review agora só conta como cabeçalho (`##`–`####`) ou item de lista no início da linha [scripts/bmad/check-story-process.ts:10]
+- [x] [AI-Review][MEDIUM] Agente BMAD ficava "ativo" a sessão inteira: um `cat …/code-review/workflow.yaml` horas depois de um `/bmad-agent-…` contava como invocação. Workflow invocado direto (comando/Skill) agora encerra o contexto do agente; limite remanescente documentado no `CLAUDE.md` [scripts/bmad/story-guard.mjs — `findLastWorkflow`]
+- [x] [AI-Review][MEDIUM] Variações dos padrões documentados passavam como leitura: `>|`, `sed --in-place`, `cd … && sed -i <arquivo>`, caminhos com `~`/`$CLAUDE_PROJECT_DIR`/`${…}`. O `Bash` agora é analisado por trecho, acompanhando `cd` [scripts/bmad/story-guard.mjs — `writeDestinations`, `toProjectRelative`]
+- [x] [AI-Review][MEDIUM] `git checkout <ref> -- story`, `git restore`, `git mv`, `git rm` eram tratados como leitura; agora são escrita. Limites restantes (`awk -i`, `dd`, `rsync`, troca de branch) listados no `CLAUDE.md` [scripts/bmad/story-guard.mjs]
+- [x] [AI-Review][MEDIUM] Job `bmad-process` ignorava stories renomeadas na PR: `--diff-filter=AMR` [.github/workflows/ci.yml]
+- [ ] [AI-Review][LOW] `Completion Notes List` sempre tem item desde o create-story (nota "Ultimate context engine…"); na prática só `Agent Model Used` e `File List` provam o dev-story [scripts/bmad/check-story-process.ts]
+- [x] [AI-Review][LOW] Filtro do transcript era `bmad` (AC 5 diz `bmad-`): agora `bmad-` ou `_bmad/` [scripts/bmad/story-guard.mjs]
+- [ ] [AI-Review][LOW] Texto colado pelo usuário contendo `<command-name>/bmad-bmm-…</command-name>` conta como invocação (risco baixo, entrada do próprio usuário)
+
+### Validação após as correções
+
+- `npx vitest run scripts/bmad`: 83/83. Suíte completa: 146 arquivos / 1290 testes. `npx tsc --noEmit` 0 erros; `npm run lint` 0 avisos; `next build` ok.
+- Hook com o transcript real desta sessão (último workflow `code-review`): `Edit` da story → exit 0; `Write` de `9-99-x.md` → exit 2 com a mensagem do AC 2; `git restore <story>` → exit 0 (edição permitida pelo code-review); ~60–80 ms.
+- `check-story-process` nas stories reais 1.9, 1.11, 1.14, 3.4c, 3.4d → "Processo BMAD ok."
 
 ## Change Log
 
 - 2026-11-15 — Story criada pelo `create-story` (invocado); decisões do PO registradas (AC 3 refinado; janela pós-workflow aceita).
 - 2026-11-15 — `dev-story` (invocado): Camadas 1, 2 e 3 implementadas com TDD; `project-context.md` e README atualizados. Teste real da Task 6.2 revelou falso positivo na detecção de leitura de workflow via `Bash` e falso negativo na forma com chaves — corrigidos com TDD; bloqueio confirmado na sessão. PR #53, CI verde (`ci` + `bmad-process`). Status → review.
 - 2026-11-15 — Passo 9: dogfooding do `bmad-process` revelou leitura de título citado no texto; corrigido com TDD (cabeçalho só no início da linha).
+- 2026-11-15 — `code-review` (invocado): 1 HIGH, 4 MEDIUM e 3 LOW encontrados; HIGH, MEDIUM e 1 LOW corrigidos com TDD; `CLAUDE.md` (limites) atualizado. Status → done.

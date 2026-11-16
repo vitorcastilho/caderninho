@@ -49,6 +49,16 @@ describe('checkStory', () => {
     expect(checkStory(story('review', FULL_RECORD, extra))).toEqual([]);
   });
 
+  // Code review da 1.14: o AC 6 desta story cita os marcadores no texto, e a busca
+  // em qualquer lugar do arquivo aprovava "done" sem review nenhum.
+  it('marcadores de review citados no meio do texto não contam como review', () => {
+    const extra =
+      'AC: se done → exige `Review Follow-ups (AI)`, `Senior Developer Review (AI)` ou item `[AI-Review]`.\n';
+    expect(checkStory(story('done', FULL_RECORD, extra))).toEqual([
+      'status done sem registro de code review (Review Follow-ups (AI), Senior Developer Review (AI) ou [AI-Review])',
+    ]);
+  });
+
   it.each(['backlog', 'ready-for-dev', 'in-progress'])('status %s não é verificado', (status) => {
     expect(checkStory(story(status, TEMPLATE_RECORD))).toEqual([]);
   });

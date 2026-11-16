@@ -3,11 +3,14 @@
 // Confere as stories alteradas numa PR:
 // - `review` (ou `done`): Dev Agent Record preenchido pelo dev-story
 // - `done`: registro de code review
-// Uso: git diff --name-only --diff-filter=AM origin/<base>...HEAD | npx tsx scripts/bmad/check-story-process.ts
+// Uso: git diff --name-only --diff-filter=AMR origin/<base>...HEAD | npx tsx scripts/bmad/check-story-process.ts
 import { readFileSync } from 'node:fs';
 
 const STORY_RE = /^_bmad-output\/implementation-artifacts\/\d+-\d+[a-z]?(?:-\d+[a-z]?)?-[^/]+\.md$/;
-const REVIEW_MARKERS = ['Review Follow-ups (AI)', 'Senior Developer Review (AI)', '[AI-Review]'];
+// Registro de review só conta como cabeçalho ou item de lista no início da linha:
+// a mesma expressão citada no texto (ex.: o AC 6 da 1.14) não conta.
+const REVIEW_RECORD_RE =
+  /^#{2,4} +(?:Review Follow-ups \(AI\)|Senior Developer Review \(AI\))|^\s*[-*] +(?:\[[ xX]\] +)?\[AI-Review\]/m;
 
 /**
  * Conteúdo de uma seção `### Título` até o próximo cabeçalho. Só casa o
@@ -36,7 +39,7 @@ export function checkStory(content: string): string[] {
   if (!hasListItem(section(content, 'Completion Notes List'))) problems.push('Completion Notes List sem itens');
   if (!hasListItem(section(content, 'File List'))) problems.push('File List sem itens');
 
-  if (status === 'done' && !REVIEW_MARKERS.some((marker) => content.includes(marker))) {
+  if (status === 'done' && !REVIEW_RECORD_RE.test(content)) {
     problems.push(
       'status done sem registro de code review (Review Follow-ups (AI), Senior Developer Review (AI) ou [AI-Review])',
     );

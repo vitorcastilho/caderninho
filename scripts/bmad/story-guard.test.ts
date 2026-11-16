@@ -70,6 +70,20 @@ describe('classifyTarget', () => {
       `mv /tmp/x.md "_bmad-output/implementation-artifacts/1-9-hotfix-cookie-sessao-https-no-proxy.md"`,
       `rm _bmad-output/implementation-artifacts/1-9-hotfix-cookie-sessao-https-no-proxy.md`,
       `node -e "fs.writeFileSync('_bmad-output/implementation-artifacts/sprint-status.yaml','')"`,
+      // Code review da 1.14: variações dos padrões documentados que passavam como leitura
+      `echo x >| _bmad-output/implementation-artifacts/sprint-status.yaml`,
+      `sed --in-place 's/a/b/' _bmad-output/implementation-artifacts/sprint-status.yaml`,
+      `sed --in-place=.bak 's/a/b/' _bmad-output/implementation-artifacts/sprint-status.yaml`,
+      `cd _bmad-output/implementation-artifacts && sed -i s/a/b/ 1-9-hotfix-cookie-sessao-https-no-proxy.md`,
+      `sed -i s/a/b/ ~/caderninho/_bmad-output/implementation-artifacts/sprint-status.yaml`,
+      `sed -i s/a/b/ "$CLAUDE_PROJECT_DIR"/_bmad-output/implementation-artifacts/sprint-status.yaml`,
+      `sed -i s/a/b/ \${CLAUDE_PROJECT_DIR}/_bmad-output/implementation-artifacts/sprint-status.yaml`,
+      // Code review da 1.14: git que sobrescreve, move ou apaga a story
+      `git checkout origin/staging -- _bmad-output/implementation-artifacts/sprint-status.yaml`,
+      `git restore _bmad-output/implementation-artifacts/1-9-hotfix-cookie-sessao-https-no-proxy.md`,
+      `git restore --source=origin/staging -- _bmad-output/implementation-artifacts/sprint-status.yaml`,
+      `git mv _bmad-output/implementation-artifacts/1-9-hotfix-cookie-sessao-https-no-proxy.md /tmp/x.md`,
+      `git rm _bmad-output/implementation-artifacts/1-9-hotfix-cookie-sessao-https-no-proxy.md`,
     ])('escrita: %s', (command) => {
       expect(bash(command).action).not.toBe('read');
       expect(bash(command).kind).not.toBe('other');
@@ -83,6 +97,9 @@ describe('classifyTarget', () => {
       `git show origin/staging:_bmad-output/implementation-artifacts/sprint-status.yaml > /tmp/ss.yaml`,
       `git diff origin/staging -- _bmad-output/implementation-artifacts/1-9-hotfix-cookie-sessao-https-no-proxy.md`,
       `cp _bmad-output/implementation-artifacts/sprint-status.yaml /tmp/backup.yaml`,
+      `git checkout staging && cat _bmad-output/implementation-artifacts/sprint-status.yaml`,
+      `git log --oneline -- _bmad-output/implementation-artifacts/sprint-status.yaml | head -5`,
+      `cd _bmad-output/implementation-artifacts && cat 1-9-hotfix-cookie-sessao-https-no-proxy.md`,
     ])('leitura: %s', (command) => {
       expect(bash(command).action).toBe('read');
     });
@@ -134,6 +151,16 @@ describe('findLastWorkflow', () => {
 
   it('leitura do workflow.yaml com chaves (wc -l …/{workflow.yaml,…}) conta com agente ativo', () => {
     expect(findLastWorkflow(fixture('agente-leitura-com-chaves.jsonl'))).toBe('correct-course');
+  });
+
+  // Code review da 1.14: o agente ficava "ativo" a sessão inteira. Um workflow
+  // invocado direto encerra o contexto do agente; a leitura seguinte não conta.
+  it('workflow invocado direto encerra o agente: leitura posterior do workflow.yaml não conta', () => {
+    expect(findLastWorkflow(fixture('agente-depois-workflow-direto.jsonl'))).toBe('sprint-status');
+  });
+
+  it('agente invocado de novo volta a valer para a leitura do menu', () => {
+    expect(findLastWorkflow(fixture('agente-reativado.jsonl'))).toBe('dev-story');
   });
 
   it('texto do assistente, tool_result e subagente não contam', () => {

@@ -40,10 +40,21 @@ const ACTION_LABEL = { create: 'criar', edit: 'editar' };
 
 /**
  * Caminho relativo à raiz do projeto, ou null se estiver fora dele.
- * @param {string} rawPath @param {ClassifyContext} ctx
+ * Caminho que começa por `~` ou por variável (`$CLAUDE_PROJECT_DIR`, `${PWD}`…)
+ * não é expandido aqui: se citar `_bmad-output/`, é tratado como relativo à raiz
+ * (code review da 1.14 — antes escapava como "fora do projeto").
+ * @param {string} rawPath @param {ClassifyContext} ctx @param {string} [cwd]
  */
-function toProjectRelative(rawPath, ctx) {
-  const abs = path.resolve(ctx.cwd, rawPath);
+function toProjectRelative(rawPath, ctx, cwd = ctx.cwd) {
+  let target = rawPath.replace(/['"]/g, '');
+  let base = cwd;
+  if (/^[~$]/.test(target)) {
+    const fromRoot = target.indexOf('_bmad-output/');
+    if (fromRoot === -1) return null;
+    target = target.slice(fromRoot);
+    base = ctx.projectDir;
+  }
+  const abs = path.resolve(base, target);
   const rel = path.relative(ctx.projectDir, abs);
   if (!rel || rel.startsWith('..') || path.isAbsolute(rel)) return null;
   return { abs, rel: rel.split(path.sep).join('/') };
@@ -57,9 +68,9 @@ function kindOf(rel) {
   return 'other';
 }
 
-/** Remove aspas simples/duplas das pontas de um token. @param {string} token */
+/** Remove aspas simples/duplas do token. @param {string} token */
 function unquote(token) {
-  return token.replace(/^['"]|['"]$/g, '');
+  return token.replace(/['"]/g, '');
 }
 
 /**
@@ -76,28 +87,52 @@ function protectedMentions(command, ctx) {
   return found;
 }
 
-/**
- * Destinos de escrita do comando (o que é alvo de >, >>, tee, cp, mv, sed -i…).
- * @param {string} command
- * @returns {{ targets: string[], scriptWrites: boolean }}
- */
-function writeDestinations(command) {
-  const targets = [];
-  // Redirecionamentos: "> alvo" e ">> alvo" (ignora 2>&1, &>…, >&2)
-  for (const m of command.matchAll(/(^|[^0-9&>])>>?\s*(?!&)(['"]?)([^\s'";|&]+)\2/g)) targets.push(m[3]);
-  // tee [-a] alvo
-  for (const m of command.matchAll(/\btee\s+(?:-a\s+)?(['"]?)([^\s'";|&]+)\1/g)) targets.push(m[2]);
+// Separadores de comandos: &&, ||, ;, | (menos o de ">|") e quebra de linha.
+const SEGMENT_SPLIT = /&&|\|\||;|(?<!>)\||\n/;
+// Subcomandos do git que sobrescrevem, movem ou apagam arquivos do working tree.
+const GIT_WRITES = new Set(['checkout', 'restore', 'mv', 'rm']);
 
+/**
+ * Destinos de escrita do comando (o que é alvo de >, >>, >|, tee, cp, mv,
+ * sed -i, git checkout/restore/mv/rm…), já resolvidos pelo cwd de cada trecho
+ * (acompanha `cd` dentro do próprio comando).
+ * @param {string} command @param {ClassifyContext} ctx
+ * @returns {{ targets: Array<{ abs: string, rel: string }>, scriptWrites: boolean }}
+ */
+function writeDestinations(command, ctx) {
+  const targets = [];
   let scriptWrites = false;
-  for (const segment of command.split(/&&|\|\||;|\||\n/)) {
+  let cwd = ctx.cwd;
+
+  for (const segment of command.split(SEGMENT_SPLIT)) {
+    const raw = [];
+    // Redirecionamentos: "> alvo", ">> alvo", ">| alvo" (ignora 2>&1, &>…, >&2)
+    for (const m of segment.matchAll(/(^|[^0-9&>])>[>|]?\s*(?!&)(['"]?)([^\s'";|&]+)\2/g)) raw.push(m[3]);
+    // tee [-a] alvo
+    for (const m of segment.matchAll(/\btee\s+(?:-a\s+)?(['"]?)([^\s'";|&]+)\1/g)) raw.push(m[2]);
+
     const tokens = segment.trim().split(/\s+/).filter(Boolean).map(unquote);
-    if (tokens.length === 0) continue;
     const [cmd, ...args] = tokens;
     const operands = args.filter((a) => !a.startsWith('-'));
-    if ((cmd === 'cp' || cmd === 'mv') && operands.length >= 2) targets.push(operands[operands.length - 1]);
-    if ((cmd === 'sed' || cmd === 'perl') && args.some((a) => /^-i/.test(a) || /^-[a-zA-Z]*i/.test(a))) targets.push(...operands);
-    if (cmd === 'truncate' || cmd === 'rm') targets.push(...operands);
-    if (/^(python3?|node)$/.test(cmd)) scriptWrites = true;
+    if (cmd === 'cd') {
+      cwd = operands[0] ? path.resolve(cwd, operands[0]) : ctx.projectDir;
+      continue;
+    }
+    if ((cmd === 'cp' || cmd === 'mv') && operands.length >= 2) raw.push(operands[operands.length - 1]);
+    if (
+      (cmd === 'sed' || cmd === 'perl') &&
+      args.some((a) => /^-[a-zA-Z]*i/.test(a) || a.startsWith('--in-place'))
+    ) {
+      raw.push(...operands);
+    }
+    if (cmd === 'truncate' || cmd === 'rm') raw.push(...operands);
+    if (cmd === 'git' && GIT_WRITES.has(operands[0] ?? '')) raw.push(...operands.slice(1));
+    if (cmd && /^(python3?|node)$/.test(cmd)) scriptWrites = true;
+
+    for (const t of raw) {
+      const resolved = toProjectRelative(t, ctx, cwd);
+      if (resolved && kindOf(resolved.rel) !== 'other') targets.push(resolved);
+    }
   }
   return { targets, scriptWrites };
 }
@@ -121,16 +156,12 @@ export function classifyTarget(toolName, toolInput, ctx) {
 
   if (toolName === 'Bash') {
     const command = typeof toolInput.command === 'string' ? toolInput.command : '';
+    const { targets, scriptWrites } = writeDestinations(command, ctx);
     const mentions = protectedMentions(command, ctx);
-    if (mentions.length === 0) return { kind: 'other', action: 'read', path: '' };
-
-    const { targets, scriptWrites } = writeDestinations(command);
-    const written = targets
-      .map((t) => toProjectRelative(t, ctx))
-      .filter((r) => r && kindOf(r.rel) !== 'other');
-    const hit = written[0] ?? (scriptWrites ? mentions[0] : null);
-    if (!hit) return { kind: kindOf(mentions[0].rel), action: 'read', path: mentions[0].rel };
-    return { kind: kindOf(hit.rel), action: ctx.exists(hit.abs) ? 'edit' : 'create', path: hit.rel };
+    const hit = targets[0] ?? (scriptWrites ? mentions[0] : undefined);
+    if (hit) return { kind: kindOf(hit.rel), action: ctx.exists(hit.abs) ? 'edit' : 'create', path: hit.rel };
+    if (mentions.length > 0) return { kind: kindOf(mentions[0].rel), action: 'read', path: mentions[0].rel };
+    return { kind: 'other', action: 'read', path: '' };
   }
 
   return { kind: 'other', action: 'read', path: '' };
@@ -159,7 +190,7 @@ function workflowFromPath(filePath) {
 /** Último workflow lido por um comando de leitura do Bash. @param {string} command @returns {string | null} */
 function workflowReadByCommand(command) {
   let found = null;
-  for (const segment of command.split(/&&|\|\||;|\||\n/)) {
+  for (const segment of command.split(SEGMENT_SPLIT)) {
     const first = segment.trim().split(/\s+/)[0] ?? '';
     if (READ_COMMANDS.has(first)) found = workflowFromPath(segment) ?? found;
   }
@@ -178,13 +209,19 @@ export function findLastWorkflow(lines) {
   let last = null;
   let agentActive = false;
 
+  // Um workflow invocado direto (comando ou Skill) encerra o contexto do agente:
+  // depois dele, ler um workflow.yaml só volta a contar se um agente for invocado
+  // de novo (code review da 1.14 — antes o agente valia a sessão inteira).
   const register = (/** @type {string} */ name) => {
     if (name.startsWith('agent-')) agentActive = true;
-    else if (name.startsWith('bmm-') && WORKFLOWS.includes(name.slice(4))) last = name.slice(4);
+    else if (name.startsWith('bmm-') && WORKFLOWS.includes(name.slice(4))) {
+      last = name.slice(4);
+      agentActive = false;
+    }
   };
 
   for (const line of lines) {
-    if (!line.includes('bmad')) continue;
+    if (!line.includes('bmad-') && !line.includes('_bmad/')) continue;
     let entry;
     try {
       entry = JSON.parse(line);

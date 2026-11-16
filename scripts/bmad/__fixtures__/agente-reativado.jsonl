@@ -1,0 +1,3 @@
+{"type": "user", "isSidechain": false, "message": {"role": "user", "content": "<command-message>bmad-bmm-correct-course</command-message>\n<command-name>/bmad-bmm-correct-course</command-name>"}}
+{"type": "user", "isSidechain": false, "message": {"role": "user", "content": "<command-message>bmad-agent-bmm-dev</command-message>\n<command-name>/bmad-agent-bmm-dev</command-name>"}}
+{"type": "assistant", "isSidechain": false, "message": {"role": "assistant", "content": [{"type": "tool_use", "id": "toolu_c", "name": "Read", "input": {"file_path": "/repo/_bmad/bmm/workflows/4-implementation/dev-story/workflow.yaml"}}]}}
