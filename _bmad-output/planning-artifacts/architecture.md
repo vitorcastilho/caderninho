@@ -364,16 +364,41 @@ async function createTransaction(input: CreateTransactionInput): Promise<Result<
 - Cada ambiente com **banco Supabase separado** (isolamento total de dados)
 - Variáveis de ambiente configuradas por ambiente na Vercel
 - Drizzle-kit roda migrations em cada ambiente independentemente
-- Development 100% local via Docker (Supabase CLI): `supabase start` + `npm run dev`
+- Development 100% local via Docker (Supabase CLI): `npm run db:start` + `npm run dev`
+
+**Um só caminho de conexão (Story 1.13):** app e migrations conectam pelo **pooler do Supabase (Supavisor) em modo transação**, com `prepare: false` no driver, em todos os ambientes — problemas de conexão aparecem no local ou no CI, não depois do deploy.
+
+| Ambiente | Conexão (`DATABASE_URL`) | Arquivo local das migrations |
+|---|---|---|
+| **Development** | Pooler local, porta **54329** (`postgresql://postgres.pooler-dev:postgres@127.0.0.1:54329/postgres`) | `.env.local` |
+| **Staging** | Pooler do projeto Supabase de staging, porta **6543** | `.env.staging.local` |
+| **Production** | Pooler do projeto Supabase de produção, porta **6543** | `.env.production.local` |
+
+- Nunca a conexão direta (54322 local, 5432 remota) — nem no app, nem nas migrations
+- Migrations: `npm run db:migrate -- --env <local|staging|production>`; fora do CI o `DATABASE_URL` vem só do arquivo do ambiente (nunca do shell; no CI, da variável do job), o destino é impresso sem a senha, o local fora da 54329 e staging/produção fora da 6543 são recusados, argumentos desconhecidos são recusados e produção exige `--confirm-production`
+- Testar migrations do zero: `npm run db:reset:local` (zera o Supabase local e aplica tudo pelo pooler). Testes de banco só no Supabase, nunca num Postgres "puro" (sem `auth.uid()`)
 
 #### CI/CD Pipeline: GitHub Actions + Vercel
 
 | Evento | Ação Automática |
 |---|---|
 | Push em feature branch | Vercel cria preview deploy |
-| Pull Request aberto | GitHub Actions: lint + type-check + testes (Vitest) |
-| Merge em `staging` | Vercel deploy staging + migrations Supabase staging |
-| Merge em `main` | Vercel deploy produção + migrations Supabase produção |
+| Pull Request aberto | GitHub Actions: lint + type-check + testes (Vitest) + build; migrations do zero pelo pooler |
+| Merge em `staging` | Vercel deploy staging + migrations Supabase staging (job `deploy-migrations`) |
+| Merge em `main` | Vercel deploy produção + migrations Supabase produção (job `deploy-migrations`) |
+
+**Jobs do `.github/workflows/ci.yml`** (PR e push em `staging`/`main`; não há `deploy.yml`):
+
+| Job | Quando | O que faz |
+|---|---|---|
+| `ci` | PR e push | Lint, type-check, Vitest e `next build` |
+| `bmad-process` | PR | Confere se as stories alteradas passaram pelos workflows BMAD (Story 1.14) |
+| `migrations` | PR e push | Sobe o Supabase (Postgres + Supavisor) e aplica **todas as migrations do zero pelo pooler em modo transação** (54329); roda de novo e confere que todas do journal foram aplicadas |
+| `deploy-migrations` | Push em `staging`/`main`, depois de `ci` e `migrations` | Aplica as migrations no banco do ambiente com a URL do **secret do repositório** (`STAGING_DATABASE_URL` ou `PRODUCTION_DATABASE_URL`, porta 6543). Em `main` roda com `--confirm-production` — o merge `staging → main` é a confirmação. Sem o secret, avisa e não falha |
+
+- Secrets do repositório, não Environments do GitHub (o plano gratuito não tem Environments em repositório privado)
+- Só execuções de PR são canceladas pela concorrência; um push novo nunca interrompe uma migration em andamento
+- Migration e deploy da Vercel começam juntos no push: depois do lançamento, migrations precisam ser retrocompatíveis
 
 **Checks obrigatórios antes de merge:**
 - ESLint passa
@@ -829,8 +854,7 @@ caderninho/
 │   └── copy-prod-db.sh                  # Cópia de base produção → dev/staging
 ├── .github/
 │   └── workflows/
-│       ├── ci.yml                       # Lint + type-check + testes (Vitest)
-│       ├── deploy.yml                   # Migrations por ambiente
+│       ├── ci.yml                       # Jobs ci, bmad-process, migrations e deploy-migrations
 │       └── copy-db.yml                  # Workflow manual para cópia de base
 ├── e2e/                                 # Testes E2E (Playwright)
 │   ├── auth.spec.ts

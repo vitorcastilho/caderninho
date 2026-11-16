@@ -42,13 +42,23 @@ so that problemas de banco aparecem no meu computador ou no CI, e não depois do
 - [x] Task 4 (AC: #8): job `deploy-migrations` em `staging`/`main` com secrets do repositório
 - [x] Task 5 (AC: #9): README, `docs/deploy-producao.md`, `project-context.md`
 - [x] Task 6 (AC: #10): validação completa + PR para `staging`
-- [ ] Task 7 (AC: #9): `architecture.md`
-  - [ ] 7.1 Seção "3 Ambientes Isolados": Development pelo pooler local (54329), staging/produção pelo pooler 6543, sempre em modo transação com `prepare: false`
-  - [ ] 7.2 Seção "CI/CD Pipeline": jobs `migrations` (toda PR/push) e `deploy-migrations` (push em `staging`/`main`, secrets do repositório) no `ci.yml`
-  - [ ] 7.3 Árvore de arquivos: trocar `deploy.yml` (não existe) pelos jobs do `ci.yml`
-- [ ] Task 8 (AC: #1, #7): resquícios da conexão direta (54322)
-  - [ ] 8.1 Job `ci` do `.github/workflows/ci.yml`: `DATABASE_URL` pela URL do pooler local (54329); o job não sobe banco, mas o valor deve seguir o caminho único
-  - [ ] 8.2 Fixture de `src/server/infrastructure/database/client.test.ts`: URL do pooler local (54329)
+- [x] Task 7 (AC: #9): `architecture.md`
+  - [x] 7.1 Seção "3 Ambientes Isolados": Development pelo pooler local (54329), staging/produção pelo pooler 6543, sempre em modo transação com `prepare: false`
+  - [x] 7.2 Seção "CI/CD Pipeline": jobs `migrations` (toda PR/push) e `deploy-migrations` (push em `staging`/`main`, secrets do repositório) no `ci.yml`
+  - [x] 7.3 Árvore de arquivos: trocar `deploy.yml` (não existe) pelos jobs do `ci.yml`
+- [x] Task 8 (AC: #1, #7): resquícios da conexão direta (54322)
+  - [x] 8.1 Job `ci` do `.github/workflows/ci.yml`: `DATABASE_URL` pela URL do pooler local (54329); o job não sobe banco, mas o valor deve seguir o caminho único
+  - [x] 8.2 Fixture de `src/server/infrastructure/database/client.test.ts`: URL do pooler local (54329)
+
+### Review Follow-ups (AI)
+
+- [x] [AI-Review][High] (AC: #8) `deploy-migrations`: `github.ref_name == 'main' && secrets.PRODUCTION_DATABASE_URL || secrets.STAGING_DATABASE_URL` cai no secret de staging quando o de produção está vazio — em `main` roda `--env production --confirm-production` no banco de staging e não avisa. Escolher o secret no shell pelo `TARGET_ENV`, sem a cadeia `&&`/`||` [.github/workflows/ci.yml, job deploy-migrations, step "Aplicar migrations"]
+- [x] [AI-Review][Medium] (AC: #2, #3) Sem o arquivo do ambiente (ou sem `DATABASE_URL` nele), o `DATABASE_URL` do shell prevalece: `--env staging` com uma URL de produção (6543) exportada migra produção sem `--confirm-production` e imprime "staging"; a mensagem de erro cita o arquivo mesmo quando o valor veio do shell. Exigir o arquivo fora do CI (ou registrar a origem da URL), com teste [scripts/migrate.ts:22]
+- [x] [AI-Review][Medium] (AC: #6) `checkTarget` aceita qualquer porta no local (o teste afirma "pooler 54329 ou Postgres direto"), contradizendo o `architecture.md` ("nunca a conexão direta, 54322 local"); com `.env.local` na 54322, o `db:reset:local` aplica as migrations sem o pooler. Recusar (ou avisar) a 54322 no local [scripts/lib/migrate-env.ts:71, scripts/lib/migrate-env.test.ts:82]
+- [ ] [AI-Review][Medium] Mudanças das Tasks 7–8 (`ci.yml`, `client.test.ts`, `architecture.md`, story, `sprint-status.yaml`) não commitadas e fora da PR #51 — o CI da PR não as validou [working tree]
+- [x] [AI-Review][Low] Comentários desatualizados: "secret do environment do GitHub" (agora secrets do repositório) e o aviso do `deploy-migrations` citando "Story 1.13, Task 7" (configuração dos secrets é a ação P3 do PO) [scripts/migrate.ts:12, .github/workflows/ci.yml job deploy-migrations]
+- [x] [AI-Review][Low] `parseMigrateArgs` ignora argumentos desconhecidos: `npm run db:migrate --env staging` (sem `--`) roda no local em silêncio; `--confim-production` passa despercebido. Recusar argumentos desconhecidos [scripts/lib/migrate-env.ts:33]
+- [x] [AI-Review][Low] Testes ausentes: `--env` sem valor, `describeTarget` com URL sem porta, precedência arquivo × shell [scripts/lib/migrate-env.test.ts]
 
 ### Ações do PO (pós-merge)
 
@@ -93,17 +103,39 @@ Claude Opus 5.5
 - Vermelho: `scripts/lib/migrate-env.test.ts` falhou com o módulo inexistente; verde com 13/13.
 - Recusas do `db:migrate` exercitadas com URLs fictícias: arquivo ausente, ambiente inválido, staging na 5432, produção sem `--confirm-production`.
 - CI da PR #51, job `migrations`: `Destino: local → 127.0.0.1:54329` → `Migrations applied successfully!` (2×) → `migrations no journal: 18 | aplicadas: 18`.
+- 2026-11-16 (review follow-ups): vermelho com 10 testes novos falhando em `migrate-env.test.ts` (`resolveDatabaseUrl` inexistente, argumentos aceitos, 54322 aceita no local); verde com 23/23. `scripts/migrate.ts` exercitado com URLs fictícias: shell com URL de produção e `--env staging` sem arquivo → recusa; `--confim-production` → recusa; `npm run db:migrate staging` (sem `--`) → recusa citando o `--`; `.env.local` na 54322 → recusa indicando a URL do pooler; CI com staging na 5432 → recusa citando "variável DATABASE_URL do CI"; `--env` sem valor → recusa. `npm run db:migrate` no Supabase local: `Destino: local → 127.0.0.1:54329` → `Migrations applied successfully!`. Suíte: `tsc` 0, `eslint` 0, `vitest` 147 arquivos / 1313 testes, `next build` ok.
+- 2026-11-16 (Tasks 7–8): `tsc` 0 erros, `eslint` 0 warnings, `vitest` 147 arquivos / 1303 testes, `next build` ok. Task 8 só troca valores de fixture/variável (sem lógica nova), sem fase vermelha.
 
 ### Completion Notes List
 
 - 2026-11-15: story criada fora do workflow `create-story`, a partir do code review da 1.10 e do pedido do PO; Tasks 1–6 implementadas fora do `dev-story`.
 - 2026-11-15 (dev): Environments do GitHub não existem em repositório privado no plano gratuito → secrets do repositório `STAGING_DATABASE_URL`/`PRODUCTION_DATABASE_URL`. Concorrência do CI deixou de cancelar execuções de push (não interrompe migration).
 - 2026-11-16 (create-story, validação pelo checklist — correct course processo, Proposta 3): AC 8 alinhado aos secrets do repositório; AC 9 inclui `architecture.md`; ações do usuário separadas em "Ações do PO"; Tasks 7–8 abertas; status volta a `in-progress` para o `dev-story`.
+- 2026-11-16 (dev-story, Tasks 7–8): `architecture.md` — "3 Ambientes Isolados" com o caminho único (pooler em modo transação, 54329 local / 6543 remoto, `prepare: false`), comandos `db:migrate --env` e `db:reset:local`; "CI/CD Pipeline" com os jobs `ci`, `bmad-process`, `migrations` e `deploy-migrations` do `ci.yml` (secrets do repositório, concorrência, retrocompatibilidade); árvore sem o `deploy.yml`. `DATABASE_URL` do job `ci` e a fixture do `client.test.ts` passam ao pooler local (54329). A 54322 que sobra no `supabase/config.toml` é a porta do próprio Postgres local, que o pooler usa.
+- Observação para o code review: o aviso do `deploy-migrations` sem secret cita "Story 1.13, Task 7", mas a configuração dos secrets agora é a ação P3 do PO. Não alterei porque nenhuma task cobre isso.
+- 2026-11-16 (dev-story, review follow-ups):
+  - ✅ Resolved review finding [High]: `deploy-migrations` com um passo por ambiente (`if: github.ref_name == 'staging'` / `'main'`), cada um lendo só o próprio secret; um secret de produção vazio não cai mais no de staging.
+  - ✅ Resolved review finding [Medium]: nova função pura `resolveDatabaseUrl` — fora do CI a URL vem só do arquivo do ambiente (o shell é ignorado); no CI (`CI=true`), sem arquivo, vem da variável do job. `checkTarget` recebe a origem e a cita nos erros. `migrate.ts` lê o arquivo com `dotenv.parse` em vez de `config({ override })`.
+  - ✅ Resolved review finding [Medium]: `checkTarget` recusa no local qualquer porta diferente de 54329 e indica a URL do pooler; o teste que aceitava "Postgres direto" foi substituído.
+  - ✅ Resolved review finding [Low]: comentário do `migrate.ts` sem "environment do GitHub"; avisos do `deploy-migrations` citam a ação P3 do PO.
+  - ✅ Resolved review finding [Low]: `parseMigrateArgs` recusa argumentos desconhecidos, argumento solto (lembra do `--` do npm) e `--env` sem valor.
+  - ✅ Resolved review finding [Low]: testes de `--env` sem valor, `describeTarget` sem porta e precedência arquivo × shell (`resolveDatabaseUrl`).
+  - `architecture.md` ("3 Ambientes Isolados") atualizado com a nova regra de origem da URL, as recusas no local e os argumentos desconhecidos.
+  - A story não tem a seção "Senior Developer Review (AI) → Action Items"; os itens foram marcados só em "Review Follow-ups (AI)".
 
 ### File List
 
-- `scripts/lib/migrate-env.ts` (novo), `scripts/lib/migrate-env.test.ts` (novo), `scripts/migrate.ts`
+- `scripts/lib/migrate-env.ts` (novo; review: `resolveDatabaseUrl`, recusas), `scripts/lib/migrate-env.test.ts` (novo; review: +10 testes), `scripts/migrate.ts` (review)
 - `supabase/config.toml`, `.env.example`, `package.json`
-- `.github/workflows/ci.yml`
+- `.github/workflows/ci.yml` (review: um passo por ambiente no `deploy-migrations`)
 - `README.md`, `docs/deploy-producao.md`, `_bmad-output/project-context.md`
+- `_bmad-output/planning-artifacts/architecture.md`, `src/server/infrastructure/database/client.test.ts`
 - `_bmad-output/planning-artifacts/epics.md`, `_bmad-output/implementation-artifacts/sprint-status.yaml`
+
+## Change Log
+
+- 2026-11-15: Tasks 1–6 — `db:migrate --env`, pooler local, jobs `migrations` e `deploy-migrations`, documentação.
+- 2026-11-16: story validada pelo checklist do `create-story`; Tasks 7–8 abertas.
+- 2026-11-16: Tasks 7–8 — `architecture.md` com o caminho único de conexão e os jobs do CI; job `ci` e fixture do `client.test.ts` pelo pooler local (54329). Status → review.
+- 2026-11-16: code review (AI) — 1 High, 3 Medium, 3 Low registrados em "Review Follow-ups (AI)"; ACs 6 e 8 parciais. Status → in-progress.
+- 2026-11-16: Addressed code review findings - 6 items resolved (Date: 2026-11-16): secret por ambiente no `deploy-migrations`, URL só do arquivo fora do CI, 54322 recusada no local, argumentos desconhecidos recusados, comentários e testes.

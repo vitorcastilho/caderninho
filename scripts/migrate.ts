@@ -1,15 +1,25 @@
-import { config } from 'dotenv';
+import { existsSync, readFileSync } from 'node:fs';
+
+import { parse } from 'dotenv';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
 
-import { parseMigrateArgs, envFileFor, describeTarget, checkTarget, type MigrateArgs } from './lib/migrate-env';
+import {
+  parseMigrateArgs,
+  envFileFor,
+  describeTarget,
+  checkTarget,
+  resolveDatabaseUrl,
+  type MigrateArgs,
+} from './lib/migrate-env';
 
 // Uso (Story 1.13):
 //   npm run db:migrate                                   → .env.local (padrão)
 //   npm run db:migrate -- --env staging                  → .env.staging.local
 //   npm run db:migrate -- --env production --confirm-production
-// No CI não há arquivo: o DATABASE_URL vem do secret do environment do GitHub.
+// Fora do CI a URL vem só do arquivo do ambiente (nunca do shell). No CI não há
+// arquivo: o DATABASE_URL vem da variável do job (secret do repositório).
 let args: MigrateArgs;
 try {
   args = parseMigrateArgs(process.argv.slice(2));
@@ -18,14 +28,24 @@ try {
   process.exit(1);
 }
 
-// O arquivo do ambiente prevalece sobre variáveis já definidas no shell.
-config({ path: envFileFor(args.env), override: true, quiet: true });
+const envFile = envFileFor(args.env);
+const resolved = resolveDatabaseUrl({
+  env: args.env,
+  fileValue: existsSync(envFile) ? parse(readFileSync(envFile)).DATABASE_URL : undefined,
+  shellValue: process.env.DATABASE_URL,
+  isCi: process.env.CI === 'true',
+});
 
-const connectionString = process.env.DATABASE_URL;
-const check = checkTarget(args, connectionString);
+if (!resolved.ok) {
+  console.error(`Migration cancelada: ${resolved.reason}`);
+  process.exit(1);
+}
 
-if (!check.ok || !connectionString) {
-  console.error(`Migration cancelada: ${check.ok ? 'DATABASE_URL ausente' : check.reason}`);
+const connectionString = resolved.url;
+const check = checkTarget(args, connectionString, resolved.source);
+
+if (!check.ok) {
+  console.error(`Migration cancelada: ${check.reason}`);
   process.exit(1);
 }
 

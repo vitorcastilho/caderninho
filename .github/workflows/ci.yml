@@ -20,7 +20,7 @@ jobs:
       NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
       NEXT_PUBLIC_SUPABASE_ANON_KEY: dummy-anon-key-for-ci
       SUPABASE_SERVICE_ROLE_KEY: dummy-service-role-key-for-ci
-      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+      DATABASE_URL: postgresql://postgres.pooler-dev:postgres@127.0.0.1:54329/postgres
       BETTER_AUTH_SECRET: ci-test-secret-minimum-32-chars-long-for-testing
       BETTER_AUTH_URL: http://localhost:3000
       NEXT_PUBLIC_APP_URL: http://localhost:3000
@@ -145,17 +145,26 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Aplicar migrations
+      # Um passo por ambiente, cada um com o seu secret: sem a cadeia `&&`/`||`
+      # das expressões, um secret de produção vazio nunca cai no de staging.
+      - name: Aplicar migrations em staging
+        if: github.ref_name == 'staging'
         env:
-          DATABASE_URL: ${{ github.ref_name == 'main' && secrets.PRODUCTION_DATABASE_URL || secrets.STAGING_DATABASE_URL }}
-          TARGET_ENV: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
+          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
         run: |
           if [ -z "$DATABASE_URL" ]; then
-            echo "::warning::Secret do $TARGET_ENV (STAGING_DATABASE_URL / PRODUCTION_DATABASE_URL) não configurado — migrations não aplicadas (Story 1.13, Task 7)."
+            echo "::warning::Secret STAGING_DATABASE_URL não configurado — migrations de staging não aplicadas (Story 1.13, ação P3 do PO)."
             exit 0
           fi
-          if [ "$TARGET_ENV" = "production" ]; then
-            npx tsx scripts/migrate.ts --env production --confirm-production
-          else
-            npx tsx scripts/migrate.ts --env staging
+          npx tsx scripts/migrate.ts --env staging
+
+      - name: Aplicar migrations em produção
+        if: github.ref_name == 'main'
+        env:
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::warning::Secret PRODUCTION_DATABASE_URL não configurado — migrations de produção não aplicadas (Story 1.13, ação P3 do PO)."
+            exit 0
           fi
+          npx tsx scripts/migrate.ts --env production --confirm-production
