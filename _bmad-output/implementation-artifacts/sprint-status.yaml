@@ -54,7 +54,7 @@ development_status:
   1-10-hotfix-pool-conexoes-modo-transacao: review
   1-11-hotfix-rate-limit-por-tipo-de-requisicao: review
   1-12-login-google-em-staging-e-producao: backlog  # refazer pelo create-story (correct course processo, Proposta 2)
-  1-13-ambiente-local-igual-staging-e-producao: in-progress  # code review 3ª rodada (2026-11-17, correct course 2026-11-16 Proposta 3): 1 High, 2 Medium, 5 Low em follow-ups; merge da #51 só depois; P3 do PO
+  1-13-ambiente-local-igual-staging-e-producao: done  # code review 4ª rodada (2026-11-17): Medium corrigido, 6 Low registrados para o PO; merge da #51 liberado; P3 e P4 do PO no merge em staging
   1-14-protecoes-do-processo-bmad: done  # correct course processo, Proposta 5 — primeira da fila
   1-15-pedir-permissao-e-proteger-bancos-remotos: backlog  # correct course 2026-11-16 (sprint-change-proposal-2026-11-16.md), Proposta 1
   epic-1-retrospective: optional
