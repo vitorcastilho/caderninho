@@ -55,10 +55,17 @@ export const PROJECT_REFS: Readonly<Record<Exclude<MigrateEnv, 'local'>, string>
   production: 'qtjpozslalbqilbvyyje',
 };
 
+/**
+ * Arquivo de cada ambiente. Staging e produção usam `.env.migrate.*`, só com o
+ * `DATABASE_URL` (no `.gitignore`): nunca um nome que o Next carregue
+ * (`.env.{modo}` / `.env.{modo}.local`). Com `.env.production.local`, todo
+ * `next build`/`next start` local usaria o banco e os segredos de produção
+ * (correct course 2026-11-17).
+ */
 const ENV_FILES: Record<MigrateEnv, string> = {
   local: '.env.local',
-  staging: '.env.staging.local',
-  production: '.env.production.local',
+  staging: '.env.migrate.staging',
+  production: '.env.migrate.production',
 };
 
 function isMigrateEnv(value: string): value is MigrateEnv {
@@ -190,10 +197,11 @@ export function checkTarget(args: MigrateArgs, databaseUrl: string, source = env
 
   // O Next (@next/env) expande $VAR/${VAR} do .env.local; o dotenv.parse daqui
   // não. Com `$` na URL, app e migrate falariam com bancos (ou senhas) diferentes.
-  if (databaseUrl.includes('$')) {
+  // Só vale para URL lida de arquivo: a do CI vem do secret, sem expansão nenhuma.
+  if (source !== CI_SOURCE && databaseUrl.includes('$')) {
     return {
       ok: false,
-      reason: `DATABASE_URL com "$" em ${source}: o app (Next) expande $VAR e o migrate não, e as URLs divergiriam. Escreva a URL completa, sem variáveis, com "$" da senha codificado como %24`,
+      reason: `DATABASE_URL com "$" em ${source}: o Next expande $VAR nos arquivos .env e o migrate não, e as URLs do app e da migration divergiriam. Escreva a URL completa, sem variáveis, com "$" da senha codificado como %24`,
     };
   }
 

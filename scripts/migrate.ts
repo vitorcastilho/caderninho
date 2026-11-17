@@ -18,8 +18,10 @@ import {
 
 // Uso (Story 1.13):
 //   npm run db:migrate                                   → .env.local (padrão)
-//   npm run db:migrate -- --env staging                  → .env.staging.local
-//   npm run db:migrate -- --env production --confirm-production
+//   npm run db:migrate -- --env staging                  → .env.migrate.staging
+//   npm run db:migrate -- --env production --confirm-production → .env.migrate.production
+// Os arquivos .env.migrate.* têm só o DATABASE_URL e nunca se chamam
+// .env.production.local: o Next carrega esse nome em todo next build/start.
 // Fora do CI (GitHub Actions) a URL vem só do arquivo do ambiente, nunca do
 // shell. No CI não há arquivo: o DATABASE_URL vem da variável do job (secret do
 // repositório).

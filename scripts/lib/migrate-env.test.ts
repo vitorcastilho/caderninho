@@ -77,15 +77,25 @@ describe('parseMigrateArgs — combinações ambíguas (5ª rodada)', () => {
 describe('envFilePath', () => {
   it('monta o caminho do arquivo do ambiente a partir da raiz do repositório (não do diretório atual)', () => {
     expect(envFilePath('local', '/repo')).toBe('/repo/.env.local');
-    expect(envFilePath('production', '/repo')).toBe('/repo/.env.production.local');
+    expect(envFilePath('production', '/repo')).toBe('/repo/.env.migrate.production');
   });
 });
 
 describe('envFileFor', () => {
   it('mapeia cada ambiente para o seu arquivo', () => {
     expect(envFileFor('local')).toBe('.env.local');
-    expect(envFileFor('staging')).toBe('.env.staging.local');
-    expect(envFileFor('production')).toBe('.env.production.local');
+    expect(envFileFor('staging')).toBe('.env.migrate.staging');
+    expect(envFileFor('production')).toBe('.env.migrate.production');
+  });
+
+  // Correct course 2026-11-17: o Next carrega `.env.production.local` (e
+  // `.env.{modo}`/`.env.{modo}.local`) em todo `next build`/`next start`; o
+  // arquivo da migration remota não pode ter um nome que o Next leia.
+  it('staging e produção não usam nomes que o Next carrega (.env.{modo}[.local])', () => {
+    for (const env of ['staging', 'production'] as const) {
+      expect(envFileFor(env)).not.toMatch(/^\.env\.(production|development|test|staging)(\.local)?$/);
+      expect(envFileFor(env)).toMatch(/^\.env\.migrate\./);
+    }
   });
 });
 
@@ -116,7 +126,7 @@ describe('resolveDatabaseUrl', () => {
     expect(resolveDatabaseUrl({ env: 'staging', fileValue: FILE_URL, shellValue: SHELL_URL, isCi: false })).toEqual({
       ok: true,
       url: FILE_URL,
-      source: '.env.staging.local',
+      source: '.env.migrate.staging',
     });
   });
 
@@ -124,7 +134,7 @@ describe('resolveDatabaseUrl', () => {
     const result = resolveDatabaseUrl({ env: 'staging', fileValue: undefined, shellValue: SHELL_URL, isCi: false });
 
     expect(result.ok).toBe(false);
-    expect(!result.ok && result.reason).toMatch(/DATABASE_URL não definido em \.env\.staging\.local/);
+    expect(!result.ok && result.reason).toMatch(/DATABASE_URL não definido em \.env\.migrate\.staging/);
   });
 
   it('no CI (sem arquivo) usa o DATABASE_URL da variável do job', () => {
@@ -292,6 +302,17 @@ describe('checkTarget', () => {
     expect(result.ok).toBe(false);
   });
 
+  it('sem origem explícita, cita o arquivo de migration do ambiente (.env.migrate.*)', () => {
+    const staging = checkTarget({ env: 'staging', confirmProduction: false }, STAGING_5432);
+    const production = checkTarget(
+      { env: 'production', confirmProduction: true },
+      `postgresql://postgres.${PRODUCTION_REF}:p@${POOLER_HOST}:5432/postgres`,
+    );
+
+    expect(!staging.ok && staging.reason).toMatch(/\.env\.migrate\.staging/);
+    expect(!production.ok && production.reason).toMatch(/\.env\.migrate\.production/);
+  });
+
   it('cita a origem da URL na mensagem de erro', () => {
     const result = checkTarget({ env: 'staging', confirmProduction: false }, STAGING_5432, 'variável DATABASE_URL do CI');
 
@@ -390,6 +411,29 @@ describe('checkTarget', () => {
     expect(result.ok).toBe(false);
     expect(!result.ok && result.reason).toMatch(/\$.*%24/);
     expect(!result.ok && result.reason).toMatch(/\.env\.local/);
+  });
+
+  // 6ª rodada: a URL do CI vem do secret do repositório e não passa pelo Next;
+  // um "$" literal na senha não diverge de nada e não pode ser recusado.
+  it('aceita "$" na URL vinda da variável do CI (não passa pelo Next)', () => {
+    expect(
+      checkTarget(
+        { env: 'staging', confirmProduction: false },
+        `postgresql://postgres.${STAGING_REF}:a$b@${POOLER_HOST}:6543/postgres`,
+        'variável DATABASE_URL do CI',
+      ),
+    ).toEqual({ ok: true });
+  });
+
+  it('recusa "$" na URL do arquivo de migration remota, sem citar o .env.local', () => {
+    const result = checkTarget(
+      { env: 'staging', confirmProduction: false },
+      `postgresql://postgres.${STAGING_REF}:a$b@${POOLER_HOST}:6543/postgres`,
+    );
+
+    expect(result.ok).toBe(false);
+    expect(!result.ok && result.reason).toMatch(/\.env\.migrate\.staging/);
+    expect(!result.ok && result.reason).toMatch(/%24/);
   });
 
   it('aceita "$" codificado como %24 na senha', () => {

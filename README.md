@@ -118,8 +118,8 @@ Copie `.env.example` para `.env.local` e preencha os valores.
 | `npm run db:status` | Mostra URLs e chaves do Supabase local |
 | `npm run db:generate` | Gera migration a partir de mudanças no schema Drizzle |
 | `npm run db:migrate` | Aplica migrations pendentes no banco local (`.env.local`, exige o pooler na porta 54329) |
-| `npm run db:migrate -- --env staging` | Aplica no staging (`.env.staging.local`, exige porta 6543) |
-| `npm run db:migrate -- --env production --confirm-production` | Aplica em produção (`.env.production.local`, exige porta 6543 e confirmação) |
+| `npm run db:migrate -- --env staging` | Aplica no staging (`.env.migrate.staging`, exige porta 6543) |
+| `npm run db:migrate -- --env production --confirm-production` | Aplica em produção (`.env.migrate.production`, exige porta 6543 e confirmação) |
 | `npm run db:reset:local` | Zera o Supabase local e aplica todas as migrations do zero pelo pooler (destrói os dados locais) |
 | `npm run db:push` | Sincroniza schema direto no banco local (dev only, sem migration; `db:push`/`db:studio` só aceitam o `.env.local` no pooler 54329 desta máquina — o `db:generate` não conecta no banco e não precisa do `.env.local`) |
 | `npm run db:studio` | Abre Drizzle Studio (interface visual do banco) |
@@ -128,16 +128,17 @@ Copie `.env.example` para `.env.local` e preencha os valores.
 
 ### Um só caminho de conexão em todos os ambientes (Story 1.13)
 
-| Ambiente | Conexão do app e das migrations | Arquivo local |
+| Ambiente | Conexão do app e das migrations | Arquivo local das migrations |
 |---|---|---|
 | Local | Pooler do Supabase local (Supavisor) em **modo transação**, porta `54329` | `.env.local` |
-| Staging | Pooler do Supabase em **modo transação**, porta `6543` | `.env.staging.local` |
-| Produção | Pooler do Supabase em **modo transação**, porta `6543` | `.env.production.local` |
+| Staging | Pooler do Supabase em **modo transação**, porta `6543` | `.env.migrate.staging` |
+| Produção | Pooler do Supabase em **modo transação**, porta `6543` | `.env.migrate.production` |
 
 - O modo transação não aceita prepared statements: o cliente usa `prepare: false` (Story 1.10).
 - Testes de banco e de migrations valem só no Supabase (local zerado com `npm run db:reset:local`, staging ou produção) — nunca num Postgres "puro", que não tem `auth.uid()` e os demais objetos do Supabase.
-- Os arquivos `.env.*.local` espelham as variáveis da Vercel de cada ambiente e nunca são commitados.
-- O `db:migrate` lê o `DATABASE_URL` **só do arquivo do ambiente**: um `DATABASE_URL` exportado no terminal é ignorado (só o GitHub Actions usa a variável do job). Ele recusa o local fora de `127.0.0.1:54329`, staging/produção fora da 6543 ou com o project ref de outro ambiente (staging e produção têm o mesmo host:porta no pooler compartilhado; o ref vem do usuário `postgres.<ref>` ou, no pooler dedicado, do host `db.<ref>.supabase.co`; os refs ficam só em `scripts/lib/migrate-env.ts`), produção sem `--confirm-production`, URL com `$` (o Next expande `$VAR` no `.env.local` e o migrate não; codifique `$` da senha como `%24`), `--env` repetido, `--confirm-production` fora de produção, usuário e host com project refs diferentes e argumentos desconhecidos — inclusive o esquecimento do `--` (`npm run db:migrate -- --env staging`). Os arquivos `.env*.local` são lidos da raiz do repositório, de qualquer diretório.
+- Os arquivos `.env.migrate.staging` e `.env.migrate.production` têm **só o `DATABASE_URL`** do ambiente (pooler 6543), ficam no `.gitignore` e **não** espelham a Vercel: os demais segredos de staging/produção ficam só na Vercel.
+- **Nunca crie `.env.production.local`** (nem `.env.production` ou `.env.development*`): o Next carrega esses arquivos em todo `npm run build`/`npm run start` (ou `npm run dev`) local, com prioridade sobre o `.env.local`, e o app local passaria a usar o banco e os segredos de produção (correct course 2026-11-17). O app local usa só o `.env.local`.
+- O `db:migrate` lê o `DATABASE_URL` **só do arquivo do ambiente**: um `DATABASE_URL` exportado no terminal é ignorado (só o GitHub Actions usa a variável do job). Ele recusa o local fora de `127.0.0.1:54329`, staging/produção fora da 6543 ou com o project ref de outro ambiente (staging e produção têm o mesmo host:porta no pooler compartilhado; o ref vem do usuário `postgres.<ref>` ou, no pooler dedicado, do host `db.<ref>.supabase.co`; os refs ficam só em `scripts/lib/migrate-env.ts`), produção sem `--confirm-production`, URL com `$` lida de arquivo (o Next expande `$VAR` nos arquivos `.env` e o migrate não; codifique `$` da senha como `%24` — a URL do secret do CI não passa por essa checagem), `--env` repetido, `--confirm-production` fora de produção, usuário e host com project refs diferentes e argumentos desconhecidos — inclusive o esquecimento do `--` (`npm run db:migrate -- --env staging`). Os arquivos do ambiente são lidos da raiz do repositório, de qualquer diretório.
 - No pipeline, as migrations de staging e produção rodam sozinhas depois do merge (ver "Migrations automáticas").
 
 O projeto usa **Drizzle ORM** com PostgreSQL (via Supabase). Schemas são definidos em TypeScript e migrations são versionadas.
@@ -393,7 +394,7 @@ Para um ambiente de staging com banco próprio:
    - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `DATABASE_URL` → apontando para o Supabase de staging
    - `BETTER_AUTH_SECRET` → secret diferente do de produção
    - `ENVIRONMENT` → `staging`
-3. Migrations: automáticas pelo pipeline (abaixo). Manualmente, só se necessário: `npm run db:migrate -- --env staging` (lê `.env.staging.local`, exige porta 6543)
+3. Migrations: automáticas pelo pipeline (abaixo). Manualmente, só se necessário: `npm run db:migrate -- --env staging` (lê `.env.migrate.staging`, só com o `DATABASE_URL`; exige porta 6543)
 
 ### Migrations automáticas (Story 1.13)
 

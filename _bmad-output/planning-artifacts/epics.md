@@ -524,7 +524,7 @@ So that I stay in control of the process and of the staging and production data.
 **Then** o `CLAUDE.md` carrega as regras "Quem conduz" (nunca invocar workflow/agente BMAD nem iniciar a proxima etapa sem o sim do PO; aviso de estado nao e pedido de execucao; agente ativo mantido ate o PO encerrar; escopo das opcoes e o do workflow) e "Bancos remotos" (comandos em staging/producao sao do PO)
 
 **Given** o hook `PreToolUse`
-**When** o `Bash` tenta rodar o `migrate`/`db:migrate` com `--env staging|production` ou ler `.env.staging.local`/`.env.production.local`
+**When** o `Bash` tenta rodar o `migrate`/`db:migrate` com `--env staging|production` ou ler `.env.migrate.staging`/`.env.migrate.production` (ou os nomes antigos `.env.staging.local`/`.env.production.local`, caso ainda existam em alguma maquina)
 **Then** a acao e bloqueada com "Comandos em bancos remotos sao do PO"
 **And** testes cobrem o caso real de 2026-11-16 (`CI=true DATABASE_URL=... npx tsx scripts/migrate.ts --env staging`)
 

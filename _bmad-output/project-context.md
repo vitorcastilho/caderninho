@@ -322,8 +322,10 @@ console.log(JSON.stringify({
 **3 Ambientes isolados:**
 
 - **Development**: Supabase CLI + Docker local (`npm run db:start` + `npm run dev`); `.env.local` pelo pooler local `postgresql://postgres.pooler-dev:postgres@127.0.0.1:54329/postgres`
-- **Staging**: Vercel preview + projeto Supabase de staging; `.env.staging.local` pelo pooler 6543
-- **Production**: Vercel production + projeto Supabase de produção; `.env.production.local` pelo pooler 6543
+- **Staging**: Vercel preview + projeto Supabase de staging; migrations manuais pelo `.env.migrate.staging` (pooler 6543)
+- **Production**: Vercel production + projeto Supabase de produção; migrations manuais pelo `.env.migrate.production` (pooler 6543)
+- Arquivos `.env.migrate.*`: só o `DATABASE_URL`, no `.gitignore`. Nunca criar `.env.production.local`
+  (nem `.env.production`/`.env.development*`): o Next carrega esses arquivos e o app local usaria outro banco
 - Cada ambiente com banco Supabase separado (isolamento total de dados)
 - Migrations com `npm run db:migrate -- --env <local|staging|production>` (`scripts/migrate.ts`), nunca `drizzle-kit migrate`/`push` em banco remoto; `db:push`/`db:studio` só no banco local
 
@@ -340,7 +342,7 @@ console.log(JSON.stringify({
 
 ### Critical Don't-Miss Rules
 
-- **Um só caminho de conexão (Story 1.13):** app e migrations usam o pooler do Supabase em **modo transação** em todos os ambientes (local `54329`, staging/produção `6543`), com `prepare: false`. Migrations: `npm run db:migrate -- --env <local|staging|production>` (produção exige `--confirm-production`); nunca colar URL com senha no terminal. O `db:migrate` recusa: `DATABASE_URL` do shell fora do GitHub Actions (vale só o arquivo do ambiente), local fora de `127.0.0.1:54329`, staging/produção fora da 6543 ou com o project ref de outro ambiente (refs só em `scripts/lib/migrate-env.ts`), produção sem `--confirm-production`, URL com `$` (o Next expande `$VAR` no `.env.local` e o migrate não; codifique `$` da senha como `%24`), `--env` repetido, `--confirm-production` fora de produção, usuário e host com project refs diferentes e argumentos desconhecidos (inclusive sem o `--` do npm). Staging e produção recebem migrations pelo job `deploy-migrations` depois do merge. Testes de banco/migration só no Supabase (local zerado com `npm run db:reset:local`), nunca num Postgres "puro".
+- **Um só caminho de conexão (Story 1.13):** app e migrations usam o pooler do Supabase em **modo transação** em todos os ambientes (local `54329`, staging/produção `6543`), com `prepare: false`. Migrations: `npm run db:migrate -- --env <local|staging|production>` (produção exige `--confirm-production`); nunca colar URL com senha no terminal. O `db:migrate` recusa: `DATABASE_URL` do shell fora do GitHub Actions (vale só o arquivo do ambiente), local fora de `127.0.0.1:54329`, staging/produção fora da 6543 ou com o project ref de outro ambiente (refs só em `scripts/lib/migrate-env.ts`), produção sem `--confirm-production`, URL com `$` lida de arquivo (o Next expande `$VAR` nos arquivos `.env` e o migrate não; codifique `$` da senha como `%24`), `--env` repetido, `--confirm-production` fora de produção, usuário e host com project refs diferentes e argumentos desconhecidos (inclusive sem o `--` do npm). Staging e produção recebem migrations pelo job `deploy-migrations` depois do merge. Testes de banco/migration só no Supabase (local zerado com `npm run db:reset:local`), nunca num Postgres "puro".
 - **Hierarquia de gastos (FR38):** classificação → categoria → subcategoria → estabelecimento (opcional). Categoria é o grande grupo (Alimentação, Transporte); subcategoria é o tipo de gasto (Supermercado, Gasolina, Pedágio). **Nunca** use uma subcategoria como categoria em código, seeds, sugestões, testes ou exemplos — siga o `proto-08` e a seção "Modelo da Hierarquia de Gastos" da arquitetura. Orçamento e método de pagamento são opcionais em todos os níveis.
 
 **Gotchas do Stack:**

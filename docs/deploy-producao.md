@@ -34,14 +34,16 @@ Você precisa criar conta em **3 serviços** (todos têm plano gratuito):
 
 - **Use sempre a URL do pooler em modo transação (porta 6543)** — no app (Vercel), nas migrations e nos arquivos locais.
 - **Caminho normal:** guardar a URL no secret do repositório (`STAGING_DATABASE_URL` ou `PRODUCTION_DATABASE_URL`, em GitHub → Settings → Secrets and variables → Actions). O job `deploy-migrations` do CI aplica as migrations a cada merge em `staging`/`main`.
-- **Manual (só se necessário):** salvar a URL no arquivo local do ambiente e rodar
+- **Manual (só se necessário):** salvar a URL no arquivo de migration do ambiente — `.env.migrate.staging` ou `.env.migrate.production`, com **só o `DATABASE_URL`** (no `.gitignore`; os demais segredos ficam só na Vercel) — e rodar
 
 ```bash
-npm run db:migrate -- --env staging                         # lê .env.staging.local
-npm run db:migrate -- --env production --confirm-production # lê .env.production.local
+npm run db:migrate -- --env staging                         # lê .env.migrate.staging
+npm run db:migrate -- --env production --confirm-production # lê .env.migrate.production
 ```
 
-O script lê o `DATABASE_URL` só do arquivo do ambiente (um `DATABASE_URL` exportado no terminal é ignorado), recusa staging/produção fora da porta 6543 ou com o project ref de outro ambiente (usuário `postgres.<ref>` no pooler compartilhado ou host `db.<ref>.supabase.co` no pooler dedicado; o ref de cada projeto fica só em `scripts/lib/migrate-env.ts` — atualize ao criar um projeto novo), produção sem `--confirm-production`, URL com `$` (o Next expande `$VAR` no `.env.local` e o migrate não; codifique `$` da senha como `%24`), `--env` repetido, `--confirm-production` fora de produção, usuário e host com project refs diferentes e argumentos desconhecidos (inclusive sem o `--` depois de `npm run db:migrate`). Nunca cole a URL com senha direto no terminal.
+O script lê o `DATABASE_URL` só do arquivo do ambiente (um `DATABASE_URL` exportado no terminal é ignorado), recusa staging/produção fora da porta 6543 ou com o project ref de outro ambiente (usuário `postgres.<ref>` no pooler compartilhado ou host `db.<ref>.supabase.co` no pooler dedicado; o ref de cada projeto fica só em `scripts/lib/migrate-env.ts` — atualize ao criar um projeto novo), produção sem `--confirm-production`, URL com `$` lida de arquivo (o Next expande `$VAR` nos arquivos `.env` e o migrate não; codifique `$` da senha como `%24`), `--env` repetido, `--confirm-production` fora de produção, usuário e host com project refs diferentes e argumentos desconhecidos (inclusive sem o `--` depois de `npm run db:migrate`). Nunca cole a URL com senha direto no terminal.
+
+> **Nunca use `.env.production.local` para a migration** (nem copie para ele os segredos de produção): o Next carrega esse arquivo em todo `npm run build`/`npm run start` local, com prioridade sobre o `.env.local`, e o app local passaria a usar o banco e os segredos de produção (correct course 2026-11-17).
 
 ### 2. Vercel — Hospedagem da Aplicação
 

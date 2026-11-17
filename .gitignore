@@ -40,6 +40,8 @@ yarn-error.log*
 .env
 .env.local
 .env*.local
+# Arquivos de migration remota (Story 1.13): só o DATABASE_URL de staging/produção.
+.env.migrate.*
 
 # vercel
 .vercel
