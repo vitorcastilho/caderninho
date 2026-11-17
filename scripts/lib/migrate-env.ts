@@ -1,5 +1,7 @@
 /**
- * Lógica de ambiente do `db:migrate` (Story 1.13). Funções puras, testadas.
+ * Lógica de ambiente do `db:migrate` (Story 1.13). Funções sem I/O, testadas:
+ * quem lê arquivos e o `process.env` é o chamador (`scripts/migrate.ts`,
+ * `drizzle.config.ts`), que repassa o conteúdo ou uma função de leitura.
  *
  * O banco é escolhido pelo ambiente — cada um com seu arquivo `.env` local —
  * em vez de uma URL colada no terminal. Staging e produção só aceitam o
@@ -9,6 +11,8 @@
  * compartilhado, o project ref (usuário `postgres.<ref>`, ou host
  * `db.<ref>.supabase.co` no pooler dedicado) precisa ser o do ambiente.
  */
+
+import { join } from 'node:path';
 
 import { parse } from 'dotenv';
 
@@ -39,6 +43,7 @@ const LOCAL_POOLER_URL = 'postgresql://postgres.pooler-dev:postgres@127.0.0.1:54
 const CI_SOURCE = 'variável DATABASE_URL do CI';
 const ENV_VALUE_REQUIRED = '--env exige um valor: local, staging ou production.';
 const LOOPBACK_HOSTS: readonly string[] = ['127.0.0.1', 'localhost', '[::1]'];
+const ENV_REPEATED = '--env só pode aparecer uma vez.';
 
 /**
  * Project ref do Supabase de cada ambiente remoto — fonte única (os testes
@@ -61,17 +66,19 @@ function isMigrateEnv(value: string): value is MigrateEnv {
 }
 
 export function parseMigrateArgs(argv: readonly string[]): MigrateArgs {
-  let env = 'local';
+  let env: string | undefined;
   let confirmProduction = false;
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === '--env') {
+      if (env !== undefined) throw new Error(ENV_REPEATED);
       const value = argv[i + 1];
       if (value === undefined || value.startsWith('--')) throw new Error(ENV_VALUE_REQUIRED);
       env = value;
       i++;
     } else if (arg.startsWith('--env=')) {
+      if (env !== undefined) throw new Error(ENV_REPEATED);
       env = arg.slice('--env='.length);
       if (!env) throw new Error(ENV_VALUE_REQUIRED);
     } else if (arg === '--confirm-production') {
@@ -87,8 +94,12 @@ export function parseMigrateArgs(argv: readonly string[]): MigrateArgs {
     }
   }
 
+  env ??= 'local';
   if (!isMigrateEnv(env)) {
     throw new Error(`Ambiente inválido: "${env}". Use local, staging ou production.`);
+  }
+  if (confirmProduction && env !== 'production') {
+    throw new Error(`--confirm-production só vale com --env production (ambiente pedido: ${env}).`);
   }
 
   return { env, confirmProduction };
@@ -98,6 +109,29 @@ export function envFileFor(env: MigrateEnv): string {
   return ENV_FILES[env];
 }
 
+/** Caminho do arquivo do ambiente a partir da raiz do repositório, não do diretório atual. */
+export function envFilePath(env: MigrateEnv, rootDir: string): string {
+  return join(rootDir, envFileFor(env));
+}
+
+/** Usuário da URL decodificado; undefined se a codificação `%` for inválida. */
+function decodedUsername(url: URL): string | undefined {
+  try {
+    return decodeURIComponent(url.username);
+  } catch {
+    return undefined;
+  }
+}
+
+function refFromUser(url: URL): string | undefined {
+  const user = decodedUsername(url);
+  return user === undefined ? undefined : /^postgres\.(.+)$/.exec(user)?.[1];
+}
+
+function refFromHost(url: URL): string | undefined {
+  return /^db\.([a-z0-9]+)\.supabase\.co$/.exec(url.hostname)?.[1];
+}
+
 /**
  * Project ref do Supabase na URL: usuário `postgres.<ref>` (pooler
  * compartilhado) ou host `db.<ref>.supabase.co` (pooler dedicado). Undefined
@@ -105,10 +139,7 @@ export function envFileFor(env: MigrateEnv): string {
  */
 export function projectRefFromUrl(databaseUrl: string): string | undefined {
   const url = new URL(databaseUrl);
-  const user = decodeURIComponent(url.username);
-  const fromUser = /^postgres\.(.+)$/.exec(user)?.[1];
-  if (fromUser) return fromUser;
-  return /^db\.([a-z0-9]+)\.supabase\.co$/.exec(url.hostname)?.[1];
+  return refFromUser(url) ?? refFromHost(url);
 }
 
 export function describeTarget(env: MigrateEnv, databaseUrl: string): string {
@@ -157,6 +188,19 @@ export function checkTarget(args: MigrateArgs, databaseUrl: string, source = env
     return { ok: false, reason: `DATABASE_URL inválido em ${source}` };
   }
 
+  // O Next (@next/env) expande $VAR/${VAR} do .env.local; o dotenv.parse daqui
+  // não. Com `$` na URL, app e migrate falariam com bancos (ou senhas) diferentes.
+  if (databaseUrl.includes('$')) {
+    return {
+      ok: false,
+      reason: `DATABASE_URL com "$" em ${source}: o app (Next) expande $VAR e o migrate não, e as URLs divergiriam. Escreva a URL completa, sem variáveis, com "$" da senha codificado como %24`,
+    };
+  }
+
+  if (decodedUsername(url) === undefined) {
+    return { ok: false, reason: `usuário da DATABASE_URL com codificação % inválida em ${source}` };
+  }
+
   const port = url.port || '5432';
 
   if (args.env === 'local' && !LOOPBACK_HOSTS.includes(url.hostname)) {
@@ -182,7 +226,15 @@ export function checkTarget(args: MigrateArgs, databaseUrl: string, source = env
 
   if (args.env !== 'local') {
     const expected = PROJECT_REFS[args.env];
-    const ref = projectRefFromUrl(databaseUrl);
+    const userRef = refFromUser(url);
+    const hostRef = refFromHost(url);
+    if (userRef && hostRef && userRef !== hostRef) {
+      return {
+        ok: false,
+        reason: `a URL em ${source} mistura projetos: usuário postgres.${userRef} e host db.${hostRef}.supabase.co`,
+      };
+    }
+    const ref = userRef ?? hostRef;
     if (!ref) {
       return {
         ok: false,

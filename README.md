@@ -137,7 +137,7 @@ Copie `.env.example` para `.env.local` e preencha os valores.
 - O modo transação não aceita prepared statements: o cliente usa `prepare: false` (Story 1.10).
 - Testes de banco e de migrations valem só no Supabase (local zerado com `npm run db:reset:local`, staging ou produção) — nunca num Postgres "puro", que não tem `auth.uid()` e os demais objetos do Supabase.
 - Os arquivos `.env.*.local` espelham as variáveis da Vercel de cada ambiente e nunca são commitados.
-- O `db:migrate` lê o `DATABASE_URL` **só do arquivo do ambiente**: um `DATABASE_URL` exportado no terminal é ignorado (só o GitHub Actions usa a variável do job). Ele recusa o local fora de `127.0.0.1:54329`, staging/produção fora da 6543 ou com o project ref de outro ambiente (staging e produção têm o mesmo host:porta no pooler compartilhado; o ref vem do usuário `postgres.<ref>` ou, no pooler dedicado, do host `db.<ref>.supabase.co`; os refs ficam só em `scripts/lib/migrate-env.ts`), produção sem `--confirm-production` e argumentos desconhecidos — inclusive o esquecimento do `--` (`npm run db:migrate -- --env staging`).
+- O `db:migrate` lê o `DATABASE_URL` **só do arquivo do ambiente**: um `DATABASE_URL` exportado no terminal é ignorado (só o GitHub Actions usa a variável do job). Ele recusa o local fora de `127.0.0.1:54329`, staging/produção fora da 6543 ou com o project ref de outro ambiente (staging e produção têm o mesmo host:porta no pooler compartilhado; o ref vem do usuário `postgres.<ref>` ou, no pooler dedicado, do host `db.<ref>.supabase.co`; os refs ficam só em `scripts/lib/migrate-env.ts`), produção sem `--confirm-production`, URL com `$` (o Next expande `$VAR` no `.env.local` e o migrate não; codifique `$` da senha como `%24`), `--env` repetido, `--confirm-production` fora de produção, usuário e host com project refs diferentes e argumentos desconhecidos — inclusive o esquecimento do `--` (`npm run db:migrate -- --env staging`). Os arquivos `.env*.local` são lidos da raiz do repositório, de qualquer diretório.
 - No pipeline, as migrations de staging e produção rodam sozinhas depois do merge (ver "Migrations automáticas").
 
 O projeto usa **Drizzle ORM** com PostgreSQL (via Supabase). Schemas são definidos em TypeScript e migrations são versionadas.
@@ -145,7 +145,7 @@ O projeto usa **Drizzle ORM** com PostgreSQL (via Supabase). Schemas são defini
 ### Fluxo de trabalho com migrations
 
 ```bash
-# 1. Edite o schema em src/server/infrastructure/db/schema/
+# 1. Edite o schema em src/server/infrastructure/database/schema/
 # 2. Gere a migration
 npm run db:generate
 # Cria arquivo SQL em src/server/infrastructure/database/migrations/

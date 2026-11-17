@@ -9,6 +9,9 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   # Só cancela execuções de PR: um push novo nunca interrompe migrations em andamento.
+  # Limite: o GitHub guarda só uma execução pendente por grupo — em pushes seguidos,
+  # a do meio é cancelada antes de começar; o deploy da Vercel desse commit fica sem
+  # as migrations dele até a execução seguinte (que aplica todas as pendentes) terminar.
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
@@ -87,6 +90,9 @@ jobs:
 
   # Story 1.13 — as migrations rodam do zero no mesmo caminho de staging e
   # produção: Supabase (Postgres com auth.uid() etc.) + pooler em modo transação.
+  # Limite: sem gotrue/storage-api, os schemas auth/storage ficam no estado base da
+  # imagem, não no das migrations do GoTrue de staging/produção — migration que
+  # dependa de colunas de auth/storage precisa de conferência manual em staging.
   migrations:
     name: Migrations do zero (pooler em modo transação)
     runs-on: ubuntu-latest

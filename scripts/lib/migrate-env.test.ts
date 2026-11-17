@@ -11,6 +11,7 @@ import {
   drizzleKitDatabaseUrl,
   drizzleKitCredentials,
   projectRefFromUrl,
+  envFilePath,
   PROJECT_REFS,
 } from './migrate-env';
 
@@ -56,6 +57,27 @@ describe('parseMigrateArgs', () => {
 
   it('recusa argumento solto e lembra do "--" do npm (npm run db:migrate --env staging)', () => {
     expect(() => parseMigrateArgs(['staging'])).toThrow(/npm run db:migrate -- --env/);
+  });
+});
+
+describe('parseMigrateArgs — combinações ambíguas (5ª rodada)', () => {
+  it('recusa --env repetido (não vale "o último" em silêncio)', () => {
+    expect(() => parseMigrateArgs(['--env', 'production', '--env', 'local'])).toThrow(/--env.*uma vez/);
+    expect(() => parseMigrateArgs(['--env=staging', '--env', 'staging'])).toThrow(/--env.*uma vez/);
+  });
+
+  it('recusa --confirm-production fora de produção', () => {
+    expect(() => parseMigrateArgs(['--confirm-production'])).toThrow(/--confirm-production.*production/);
+    expect(() => parseMigrateArgs(['--env', 'staging', '--confirm-production'])).toThrow(
+      /--confirm-production.*production/,
+    );
+  });
+});
+
+describe('envFilePath', () => {
+  it('monta o caminho do arquivo do ambiente a partir da raiz do repositório (não do diretório atual)', () => {
+    expect(envFilePath('local', '/repo')).toBe('/repo/.env.local');
+    expect(envFilePath('production', '/repo')).toBe('/repo/.env.production.local');
   });
 });
 
@@ -214,6 +236,11 @@ describe('projectRefFromUrl', () => {
     expect(projectRefFromUrl(`postgresql://postgres:p@db.${STAGING_REF}.supabase.co:6543/postgres`)).toBe(STAGING_REF);
   });
 
+  it('usuário com codificação % inválida não lança (não há ref)', () => {
+    expect(() => projectRefFromUrl(`postgresql://postgres.%E0:p@${POOLER_HOST}:6543/postgres`)).not.toThrow();
+    expect(projectRefFromUrl(`postgresql://postgres.%E0:p@${POOLER_HOST}:6543/postgres`)).toBeUndefined();
+  });
+
   it('sem o formato postgres.<ref> não há ref', () => {
     expect(projectRefFromUrl('postgresql://postgres:p@db.example.com:6543/postgres')).toBeUndefined();
     expect(projectRefFromUrl('postgresql://u:p@db.example.com/postgres')).toBeUndefined();
@@ -320,6 +347,55 @@ describe('checkTarget', () => {
 
     expect(result.ok).toBe(false);
     expect(!result.ok && result.reason).toMatch(/54329/);
+  });
+
+  it('recusa usuário com codificação % inválida, com mensagem de migration cancelada (sem URIError)', () => {
+    const run = () =>
+      checkTarget({ env: 'staging', confirmProduction: false }, `postgresql://postgres.%E0:p@${POOLER_HOST}:6543/postgres`);
+
+    expect(run).not.toThrow();
+    const result = run();
+    expect(result.ok).toBe(false);
+    expect(!result.ok && result.reason).toMatch(/usuário.*codificação/);
+  });
+
+  it('recusa refs divergentes entre o usuário e o host (postgres.<staging>@db.<produção>.supabase.co)', () => {
+    const result = checkTarget(
+      { env: 'staging', confirmProduction: false },
+      `postgresql://postgres.${STAGING_REF}:p@db.${PRODUCTION_REF}.supabase.co:6543/postgres`,
+    );
+
+    expect(result.ok).toBe(false);
+    expect(!result.ok && result.reason).toMatch(new RegExp(`${STAGING_REF}.*${PRODUCTION_REF}`));
+  });
+
+  it('aceita usuário e host com o mesmo ref (postgres.<ref>@db.<ref>.supabase.co)', () => {
+    expect(
+      checkTarget(
+        { env: 'staging', confirmProduction: false },
+        `postgresql://postgres.${STAGING_REF}:p@db.${STAGING_REF}.supabase.co:6543/postgres`,
+      ),
+    ).toEqual({ ok: true });
+  });
+
+  // O Next (@next/env) expande $VAR/${VAR} no .env.local; o dotenv.parse do
+  // migrate não. Com `$` na URL, app e migrate usariam URLs diferentes.
+  it('recusa "$" na URL (o Next expande $VAR, o migrate não) e indica o %24', () => {
+    const result = checkTarget(
+      { env: 'local', confirmProduction: false },
+      'postgresql://postgres.pooler-dev:${DB_PASS}@127.0.0.1:54329/postgres',
+      '.env.local',
+    );
+
+    expect(result.ok).toBe(false);
+    expect(!result.ok && result.reason).toMatch(/\$.*%24/);
+    expect(!result.ok && result.reason).toMatch(/\.env\.local/);
+  });
+
+  it('aceita "$" codificado como %24 na senha', () => {
+    expect(
+      checkTarget({ env: 'local', confirmProduction: false }, 'postgresql://postgres.pooler-dev:a%24b@127.0.0.1:54329/postgres'),
+    ).toEqual({ ok: true });
   });
 
   it('recusa URL inválida', () => {

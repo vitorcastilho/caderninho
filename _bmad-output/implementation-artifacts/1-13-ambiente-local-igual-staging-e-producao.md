@@ -1,6 +1,6 @@
 # Story 1.13: Ambiente local igual a staging e produção
 
-Status: done
+Status: review
 
 <!-- Criada em 2026-11-15 a partir do code review da Story 1.10. Pedido do PO: "precisamos ter um ambiente local igual ao ambiente de prod e staging". Deve ser concluída antes da Story 3.5 (primeira story com migration e reset de banco). -->
 
@@ -72,6 +72,12 @@ so that problemas de banco aparecem no meu computador ou no CI, e não depois do
 - [x] [AI-Review][Low] (3ª rodada) `describeTarget` no local imprime "(projeto pooler-dev)": `pooler-dev` é o tenant do Supavisor, não um project ref [scripts/lib/migrate-env.ts, `describeTarget`]
 - [x] [AI-Review][Low] (3ª rodada) Job `migrations` só compara a contagem do journal com as aplicadas; não detecta divergência entre `schema/*.ts` e as migrations (migration esquecida) [.github/workflows/ci.yml, job migrations]
 - [x] [AI-Review][Low] (3ª rodada) Exigir usuário `postgres.<ref>` recusa o pooler dedicado do Supabase (`db.<ref>.supabase.co:6543`, usuário `postgres`) com mensagem sobre "project ref" que não explica a causa [scripts/lib/migrate-env.ts, `checkTarget`]
+- [x] [AI-Review][Medium] (5ª rodada) Os 6 Low da 4ª rodada ficaram só no texto do Completion Notes, sem item rastreável, com a story `done`. Resolver cada um (ou registrar a decisão do PO de não corrigir): (a) `projectRefFromUrl` — `decodeURIComponent` lança `URIError` com `%` mal formado no usuário (ex.: `postgres.%E0`), fora da mensagem "Migration cancelada" [scripts/lib/migrate-env.ts:108]; (b) refs divergentes entre usuário e host (`postgres.<staging>@db.<produção>.supabase.co`) passam como staging [scripts/lib/migrate-env.ts:106]; (c) `parseMigrateArgs` aceita `--env` repetido (vale o último: `--env production --env local` → local) e `--confirm-production` fora de produção em silêncio [scripts/lib/migrate-env.ts:63]; (d) `drizzleKitCredentials` depende de o drizzle-kit não ler `dbCredentials` no `generate` (comportamento interno, sem comentário/teste de integração); cabeçalho "Funções puras" impreciso [drizzle.config.ts, scripts/lib/migrate-env.ts:236]; (e) README com o caminho `src/server/infrastructure/db/schema/` (correto: `database/schema/`) [README.md:148]; (f) já resolvido na 4ª rodada (File List com o `sprint-change-proposal-2026-11-16.md`) — só marcar
+- [x] [AI-Review][Low] (5ª rodada) `databaseUrlFromEnvFile` usa `dotenv.parse` sem expansão, e o `@next/env` do app expande `${VAR}`: com `DATABASE_URL=…:${DB_PASS}@…` no `.env.local`, app e migrate usam URLs diferentes (o migrate recebe o `${DB_PASS}` literal). Expandir igual ao Next ou recusar `${` com mensagem clara [scripts/lib/migrate-env.ts:124]
+- [x] [AI-Review][Low] (5ª rodada) Concorrência do CI: com `cancel-in-progress: false`, o GitHub ainda cancela a execução **pendente** do mesmo grupo quando chega outro push; em dois merges seguidos em `staging`, o deploy da Vercel do commit do meio fica no ar sem as migrations dele até a execução seguinte terminar. Documentar no comentário e no `architecture.md` (CI/CD Pipeline) [.github/workflows/ci.yml:11]
+- [x] [AI-Review][Low] (5ª rodada) Job `migrations` sobe o Supabase sem `gotrue`/`storage-api`: os schemas `auth`/`storage` ficam no estado base da imagem, não no das migrations do GoTrue de staging/produção. Hoje só `auth.uid()` é usado (existe na imagem); documentar o limite (ou não excluir `gotrue`) [.github/workflows/ci.yml, job migrations]
+- [x] [AI-Review][Low] (5ª rodada) Caminhos relativos ao diretório atual (`.env*.local`, `migrationsFolder`, `ENV_LOCAL` do `drizzle.config.ts`): `npx tsx scripts/migrate.ts` fora da raiz diz "DATABASE_URL não definido em .env.local", o que engana. Resolver a partir da raiz do repositório [scripts/migrate.ts:278, scripts/migrate.ts:310, drizzle.config.ts]
+- [x] [AI-Review][Low] (5ª rodada) File List com entradas repetidas (`migrate-env.ts`, teste, `ci.yml`, README, `deploy-producao.md`, `architecture.md`, `project-context.md` na linha original e na "3ª rodada"); consolidar uma entrada por arquivo [story, File List]
 
 ### Ações do PO (pós-merge)
 
@@ -166,17 +172,30 @@ Claude Opus 5.5
   - ✅ Corrigido [Medium]: AC 8 e parte do AC 10 (`deploy-migrations` verde) sem comprovação e o aviso da 2ª rodada sobre o banco de staging sem item rastreável → "Ações do PO" explica que esses ACs se comprovam com P3/P4; P3 passa a citar o AC 10; nova P4 para conferir `drizzle.__drizzle_migrations` de staging contra o journal.
   - Low não corrigidos (pelo workflow, a opção 1 só corrige High/Medium), registrados para decisão do PO: (1) `projectRefFromUrl` — `decodeURIComponent` lança `URIError` com `%` mal formado no usuário, fora da mensagem "Migration cancelada" [scripts/lib/migrate-env.ts:108]; (2) refs divergentes entre usuário e host (`postgres.<staging>@db.<produção>.supabase.co`) passam como staging [scripts/lib/migrate-env.ts:106]; (3) `parseMigrateArgs` aceita `--env` repetido e `--confirm-production` fora de produção em silêncio [scripts/lib/migrate-env.ts:63]; (4) `drizzleKitCredentials` depende de o drizzle-kit não ler `dbCredentials` no `generate` (comportamento interno, sem teste/comentário); cabeçalho "Funções puras" impreciso [drizzle.config.ts, scripts/lib/migrate-env.ts:236]; (5) README com o caminho `src/server/infrastructure/db/schema/` (correto: `database/schema/`) [README.md, "Fluxo de trabalho com migrations"]; (6) `sprint-change-proposal-2026-11-16.md` commitado em `6022ef1` fora da File List — este, por ser só registro, foi incluído na File List.
 
+- 2026-11-17 (dev-story, follow-ups da 5ª rodada):
+  - TDD: 7 testes vermelhos → 55/55 verdes em `migrate-env.test.ts`.
+  - ✅ Resolved review finding [Medium]: os 6 Low da 4ª rodada — (a) `projectRefFromUrl` não lança mais com `%` inválido e `checkTarget` recusa "usuário da DATABASE_URL com codificação % inválida"; (b) `checkTarget` recusa usuário `postgres.<ref>` e host `db.<ref>.supabase.co` de projetos diferentes; (c) `parseMigrateArgs` recusa `--env` repetido e `--confirm-production` fora de produção; (d) cabeçalho do módulo corrigido ("sem I/O", não "puras") e comentário no `drizzle.config.ts` explicando a dependência do getter e que o job `migrations` (generate sem `.env.local` nem `DATABASE_URL`) é quem detecta mudança no drizzle-kit; (e) README com `src/server/infrastructure/database/schema/`; (f) já resolvido na 4ª rodada.
+  - ✅ Resolved review finding [Low]: `checkTarget` recusa `$` na URL (o Next expande `$VAR`, o migrate não) e indica `%24`; nova dependência não foi necessária.
+  - ✅ Resolved review finding [Low]: limite da concorrência (execução pendente cancelada em pushes seguidos) documentado no `ci.yml` e no `architecture.md`.
+  - ✅ Resolved review finding [Low]: limite do job `migrations` sem `gotrue`/`storage-api` documentado no `ci.yml` e no `architecture.md` (optei por documentar, não ligar o `gotrue`).
+  - ✅ Resolved review finding [Low]: `envFilePath(env, rootDir)`; `migrate.ts` resolve `.env*.local` e `migrationsFolder` a partir da raiz (`__dirname/..`); `drizzle.config.ts` lê o `.env.local` ao lado do arquivo (`out`/`schema` seguem relativos, como o drizzle-kit espera). Conferido: `npx tsx ../scripts/migrate.ts` dentro de `src/` → `local → 127.0.0.1:54329`, `Migrations applied successfully!`.
+  - ✅ Resolved review finding [Low]: File List consolidada, uma entrada por arquivo.
+  - Recusas exercitadas no script: `--env production --env local` → "--env só pode aparecer uma vez."; `--env staging --confirm-production` → recusa. `drizzle-kit generate` → "No schema changes"; `dbCredentials.url` do `drizzle.config.ts` → `.env.local` local (54329).
+  - README, `docs/deploy-producao.md`, `project-context.md` e `architecture.md` com as recusas novas.
+  - Validação: `tsc` 0, `eslint` 0, `vitest` 147 arquivos / 1345 testes, `next build` ok. Nenhum comando em banco remoto.
+  - A story não tem a seção "Senior Developer Review (AI) → Action Items"; os itens foram marcados só em "Review Follow-ups (AI)".
+
 ### File List
 
-- `scripts/lib/migrate-env.ts` (novo; review: `resolveDatabaseUrl`, recusas), `scripts/lib/migrate-env.test.ts` (novo; review: +10 testes), `scripts/migrate.ts` (review)
+- `scripts/lib/migrate-env.ts` (novo), `scripts/lib/migrate-env.test.ts` (novo), `scripts/migrate.ts`
+- `drizzle.config.ts`
 - `supabase/config.toml`, `.env.example`, `package.json`
-- `.github/workflows/ci.yml` (review: um passo por ambiente no `deploy-migrations`)
-- `README.md`, `docs/deploy-producao.md`, `_bmad-output/project-context.md`
-- `_bmad-output/planning-artifacts/architecture.md`, `src/server/infrastructure/database/client.test.ts`
-- `_bmad-output/planning-artifacts/epics.md`, `_bmad-output/implementation-artifacts/sprint-status.yaml`
+- `.github/workflows/ci.yml`
+- `src/server/infrastructure/database/client.test.ts`
+- `README.md`, `docs/deploy-producao.md`
+- `_bmad-output/project-context.md`, `_bmad-output/planning-artifacts/architecture.md`, `_bmad-output/planning-artifacts/epics.md`
 - `_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-16.md` (correct course de 2026-11-16, commit `6022ef1`)
-- `drizzle.config.ts` (review 2ª rodada; 3ª rodada: `drizzleKitCredentials`)
-- 3ª rodada: `scripts/lib/migrate-env.ts`, `scripts/lib/migrate-env.test.ts`, `.github/workflows/ci.yml` (passo de migration esquecida), `README.md`, `docs/deploy-producao.md`, `_bmad-output/planning-artifacts/architecture.md`, `_bmad-output/project-context.md`
+- `_bmad-output/implementation-artifacts/sprint-status.yaml`
 
 ## Change Log
 
@@ -189,3 +208,5 @@ Claude Opus 5.5
 - 2026-11-17: code review (AI), 3ª rodada — review completo pedido pelo correct course de 2026-11-16 (Proposta 3). ACs 1–8 e 10 implementados; AC 9 parcial (`project-context.md`). 1 High, 2 Medium, 5 Low registrados em "Review Follow-ups (AI)". Validação: `migrate-env.test.ts` 37/37, `tsc` 0, `eslint` 0; PR #51 (`7771318`) com CI verde. Status → in-progress.
 - 2026-11-17: Addressed code review findings - 7 items resolved (Date: 2026-11-17): `project-context.md` com os jobs de migration e as recusas; drizzle-kit com URL preguiçosa (`db:generate` sem `.env.local`); refs numa fonte só; loopback no local; `describeTarget` local sem projeto; CI pega migration esquecida; pooler dedicado aceito. Mudanças de project ref/drizzle-kit fora da story registradas. Commit `6022ef1` na PR #51 com CI verde. Status → review.
 - 2026-11-17: code review (AI), 4ª rodada — 0 High, 1 Medium, 6 Low. Medium corrigido (comprovação dos ACs 8/10 amarrada a P3 e à nova P4, conferência do banco de staging). Low registrados no Dev Agent Record para decisão do PO; File List com o `sprint-change-proposal-2026-11-16.md`. Status → done. P3 e P4 seguem com o PO.
+- 2026-11-17: code review (AI), 5ª rodada (pedida pelo PO com a story `done`) — 0 High, 1 Medium, 5 Low registrados em "Review Follow-ups (AI)" (PO escolheu action items). ACs 1–9 implementados; AC 8 e parte do AC 10 dependem de P3/P4. Conferido: `migrate-env.test.ts` 46/46; PR #51 (`55bcf99`) com `ci`, `bmad-process` e `migrations` verdes; working tree limpo e File List cobre os 17 arquivos do diff contra `staging`. Casos de borda exercitados: `URIError` com `%E0` no usuário, `--env` repetido, `${VAR}` sem expansão. Status → in-progress.
+- 2026-11-17: Addressed code review findings - 6 items resolved (Date: 2026-11-17): Low da 4ª rodada (`URIError`, refs divergentes, `--env` repetido, `--confirm-production` fora de produção, comentário do drizzle-kit, caminho do README), `$` na URL recusado, limites de concorrência e do job `migrations` documentados, caminhos a partir da raiz, File List consolidada. Status → review.

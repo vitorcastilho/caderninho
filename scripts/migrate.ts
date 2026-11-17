@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
@@ -6,7 +7,7 @@ import { migrate } from 'drizzle-orm/postgres-js/migrator';
 
 import {
   parseMigrateArgs,
-  envFileFor,
+  envFilePath,
   describeTarget,
   checkTarget,
   resolveDatabaseUrl,
@@ -22,6 +23,10 @@ import {
 // Fora do CI (GitHub Actions) a URL vem só do arquivo do ambiente, nunca do
 // shell. No CI não há arquivo: o DATABASE_URL vem da variável do job (secret do
 // repositório).
+// Caminhos a partir da raiz do repositório: o script funciona de qualquer
+// diretório (`npx tsx scripts/migrate.ts` fora da raiz lê o mesmo arquivo).
+const ROOT_DIR = resolve(__dirname, '..');
+
 let args: MigrateArgs;
 try {
   args = parseMigrateArgs(process.argv.slice(2));
@@ -30,7 +35,7 @@ try {
   process.exit(1);
 }
 
-const envFile = envFileFor(args.env);
+const envFile = envFilePath(args.env, ROOT_DIR);
 const resolved = resolveDatabaseUrl({
   env: args.env,
   fileValue: databaseUrlFromEnvFile(existsSync(envFile) ? readFileSync(envFile, 'utf8') : undefined),
@@ -62,7 +67,7 @@ const db = drizzle(migrationClient);
 async function main() {
   console.log('Running migrations...');
   await migrate(db, {
-    migrationsFolder: './src/server/infrastructure/database/migrations',
+    migrationsFolder: join(ROOT_DIR, 'src/server/infrastructure/database/migrations'),
   });
   console.log('Migrations applied successfully!');
   await migrationClient.end();

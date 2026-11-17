@@ -375,7 +375,7 @@ async function createTransaction(input: CreateTransactionInput): Promise<Result<
 | **Production** | Pooler do projeto Supabase de produção, porta **6543** | `.env.production.local` |
 
 - Nunca a conexão direta (54322 local, 5432 remota) — nem no app, nem nas migrations
-- Migrations: `npm run db:migrate -- --env <local|staging|production>`; fora do CI (GitHub Actions, `GITHUB_ACTIONS=true`) o `DATABASE_URL` vem só do arquivo do ambiente (nunca do shell; no CI, da variável do job), o destino é impresso sem a senha, o local fora de `127.0.0.1:54329` e staging/produção fora da 6543 ou com o project ref de outro ambiente (usuário `postgres.<ref>` no pooler compartilhado ou host `db.<ref>.supabase.co` no pooler dedicado; refs só em `scripts/lib/migrate-env.ts`) são recusados, `db:push`/`db:studio` só aceitam o `.env.local` no pooler local (o `db:generate` não conecta no banco), argumentos desconhecidos são recusados e produção exige `--confirm-production`
+- Migrations: `npm run db:migrate -- --env <local|staging|production>`; fora do CI (GitHub Actions, `GITHUB_ACTIONS=true`) o `DATABASE_URL` vem só do arquivo do ambiente (nunca do shell; no CI, da variável do job), o destino é impresso sem a senha, o local fora de `127.0.0.1:54329` e staging/produção fora da 6543 ou com o project ref de outro ambiente (usuário `postgres.<ref>` no pooler compartilhado ou host `db.<ref>.supabase.co` no pooler dedicado; refs só em `scripts/lib/migrate-env.ts`) são recusados, `db:push`/`db:studio` só aceitam o `.env.local` no pooler local (o `db:generate` não conecta no banco), argumentos desconhecidos, `--env` repetido, `--confirm-production` fora de produção, URL com `$` (o Next expande `$VAR`, o migrate não — `$` da senha vai como `%24`) e usuário/host com project refs diferentes são recusados, produção exige `--confirm-production` e os `.env*.local` são lidos da raiz do repositório
 - Testar migrations do zero: `npm run db:reset:local` (zera o Supabase local e aplica tudo pelo pooler). Testes de banco só no Supabase, nunca num Postgres "puro" (sem `auth.uid()`)
 
 #### CI/CD Pipeline: GitHub Actions + Vercel
@@ -397,7 +397,8 @@ async function createTransaction(input: CreateTransactionInput): Promise<Result<
 | `deploy-migrations` | Push em `staging`/`main`, depois de `ci` e `migrations` | Aplica as migrations no banco do ambiente com a URL do **secret do repositório** (`STAGING_DATABASE_URL` ou `PRODUCTION_DATABASE_URL`, porta 6543). Em `main` roda com `--confirm-production` — o merge `staging → main` é a confirmação. Sem o secret, avisa e não falha |
 
 - Secrets do repositório, não Environments do GitHub (o plano gratuito não tem Environments em repositório privado)
-- Só execuções de PR são canceladas pela concorrência; um push novo nunca interrompe uma migration em andamento
+- Só execuções de PR são canceladas pela concorrência; um push novo nunca interrompe uma migration em andamento. Mas o GitHub mantém só **uma** execução pendente por grupo: em pushes seguidos no mesmo branch, a do meio é cancelada antes de começar, e o deploy da Vercel desse commit fica no ar sem as migrations dele até a execução seguinte (que aplica todas as pendentes) terminar
+- O job `migrations` sobe o Supabase sem `gotrue`/`storage-api`: os schemas `auth`/`storage` ficam no estado base da imagem do Postgres, não no das migrations do GoTrue de staging/produção. Hoje só `auth.uid()` é usado (existe na imagem); uma migration que dependa de colunas de `auth`/`storage` precisa de conferência manual em staging
 - Migration e deploy da Vercel começam juntos no push: depois do lançamento, migrations precisam ser retrocompatíveis
 
 **Checks obrigatórios antes de merge:**

@@ -41,7 +41,7 @@ npm run db:migrate -- --env staging                         # lê .env.staging.l
 npm run db:migrate -- --env production --confirm-production # lê .env.production.local
 ```
 
-O script lê o `DATABASE_URL` só do arquivo do ambiente (um `DATABASE_URL` exportado no terminal é ignorado), recusa staging/produção fora da porta 6543 ou com o project ref de outro ambiente (usuário `postgres.<ref>` no pooler compartilhado ou host `db.<ref>.supabase.co` no pooler dedicado; o ref de cada projeto fica só em `scripts/lib/migrate-env.ts` — atualize ao criar um projeto novo), produção sem `--confirm-production` e argumentos desconhecidos (inclusive sem o `--` depois de `npm run db:migrate`). Nunca cole a URL com senha direto no terminal.
+O script lê o `DATABASE_URL` só do arquivo do ambiente (um `DATABASE_URL` exportado no terminal é ignorado), recusa staging/produção fora da porta 6543 ou com o project ref de outro ambiente (usuário `postgres.<ref>` no pooler compartilhado ou host `db.<ref>.supabase.co` no pooler dedicado; o ref de cada projeto fica só em `scripts/lib/migrate-env.ts` — atualize ao criar um projeto novo), produção sem `--confirm-production`, URL com `$` (o Next expande `$VAR` no `.env.local` e o migrate não; codifique `$` da senha como `%24`), `--env` repetido, `--confirm-production` fora de produção, usuário e host com project refs diferentes e argumentos desconhecidos (inclusive sem o `--` depois de `npm run db:migrate`). Nunca cole a URL com senha direto no terminal.
 
 ### 2. Vercel — Hospedagem da Aplicação
 
