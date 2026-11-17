@@ -104,6 +104,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Migration esquecida: se `schema/*.ts` mudou sem `db:generate`, o generate
+      # cria arquivos novos em migrations/ e o job falha. (Não conecta no banco.)
+      - name: Conferir que o schema não tem mudança sem migration
+        run: |
+          npx drizzle-kit generate
+          changes=$(git status --porcelain -- src/server/infrastructure/database/migrations)
+          if [ -n "$changes" ]; then
+            echo "::error::schema/*.ts tem mudanças sem migration. Rode npm run db:generate e commite a migration gerada."
+            echo "$changes"
+            exit 1
+          fi
+
       - name: Subir Supabase (só Postgres + pooler Supavisor)
         run: npx supabase start -x gotrue,realtime,storage-api,imgproxy,kong,mailpit,postgrest,postgres-meta,studio,edge-runtime,logflare,vector
 

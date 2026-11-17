@@ -1,6 +1,6 @@
 # Story 1.13: Ambiente local igual a staging e produção
 
-Status: done
+Status: in-progress
 
 <!-- Criada em 2026-11-15 a partir do code review da Story 1.10. Pedido do PO: "precisamos ter um ambiente local igual ao ambiente de prod e staging". Deve ser concluída antes da Story 3.5 (primeira story com migration e reset de banco). -->
 
@@ -64,6 +64,14 @@ so that problemas de banco aparecem no meu computador ou no CI, e não depois do
 - [x] [AI-Review][Low] (2ª rodada) `CI=true` exportado no terminal liberava o `DATABASE_URL` do shell; usar `GITHUB_ACTIONS` [scripts/migrate.ts]
 - [x] [AI-Review][Low] (2ª rodada) `ENV_VALUE_REQUIRED` declarado depois da função que o usa [scripts/lib/migrate-env.ts]
 - [x] [AI-Review][Low] (2ª rodada) Montagem do `migrate.ts` (leitura do arquivo e detecção do CI) sem teste automatizado [scripts/migrate.ts]
+- [x] [AI-Review][High] (3ª rodada, AC: #9) `project-context.md` não descreve os jobs de migration (`migrations`, `deploy-migrations`) nem as recusas do `db:migrate`; o AC 9 exige os quatro documentos [_bmad-output/project-context.md:339]
+- [ ] [AI-Review][Medium] (3ª rodada) Mudanças não commitadas e fora da story: checagem de project ref em staging/produção, `drizzleKitDatabaseUrl`, `projectRefFromUrl`, novo `drizzle.config.ts` e textos de README/`deploy-producao.md`/`architecture.md`. Sem registro no Dev Agent Record, File List e Change Log; o teste cita uma "3ª rodada" inexistente; fora da PR #51 (CI não validou) [scripts/lib/migrate-env.ts, scripts/lib/migrate-env.test.ts, drizzle.config.ts, README.md, docs/deploy-producao.md, architecture.md]
+- [x] [AI-Review][Medium] (3ª rodada) `drizzle.config.ts` chama `drizzleKitDatabaseUrl` ao carregar: `npm run db:generate` (que não conecta no banco) falha sem `.env.local` ou com `.env.local` fora da 54329 (ex.: clone novo) [drizzle.config.ts:18]
+- [x] [AI-Review][Low] (3ª rodada) Project refs de staging/produção fixos no código e repetidos no teste; trocar de projeto exige editar os dois, e o teste não pega divergência [scripts/lib/migrate-env.ts:45, scripts/lib/migrate-env.test.ts:16]
+- [x] [AI-Review][Low] (3ª rodada) `checkTarget` no local só confere a porta: host remoto na 54329 passaria (sem checar loopback) [scripts/lib/migrate-env.ts, `checkTarget`]
+- [x] [AI-Review][Low] (3ª rodada) `describeTarget` no local imprime "(projeto pooler-dev)": `pooler-dev` é o tenant do Supavisor, não um project ref [scripts/lib/migrate-env.ts, `describeTarget`]
+- [x] [AI-Review][Low] (3ª rodada) Job `migrations` só compara a contagem do journal com as aplicadas; não detecta divergência entre `schema/*.ts` e as migrations (migration esquecida) [.github/workflows/ci.yml, job migrations]
+- [x] [AI-Review][Low] (3ª rodada) Exigir usuário `postgres.<ref>` recusa o pooler dedicado do Supabase (`db.<ref>.supabase.co:6543`, usuário `postgres`) com mensagem sobre "project ref" que não explica a causa [scripts/lib/migrate-env.ts, `checkTarget`]
 
 ### Ações do PO (pós-merge)
 
@@ -138,6 +146,19 @@ Claude Opus 5.5
   - Validação: `tsc` 0, `eslint` 0, `vitest` 147 arquivos / 1318 testes, `next build` ok, `npm run db:migrate` local → `127.0.0.1:54329` ok.
   - ⚠️ Na conferência manual, `CI=true … migrate.ts --env staging` usou (como deve) o `.env.staging.local` e **rodou `migrate` no banco real de staging** (`Migrations applied successfully!`). Não foi possível conferir se havia migrations pendentes; o PO deve verificar `drizzle.__drizzle_migrations` de staging contra o journal.
 
+- 2026-11-17 (dev-story, follow-ups da 3ª rodada):
+  - Mudanças encontradas no working tree e cobertas pelo follow-up Medium "fora da story" (feitas depois da 2ª rodada, sem registro): checagem do project ref em staging/produção (`PROJECT_REFS`, `projectRefFromUrl`), `drizzleKitDatabaseUrl` (drizzle-kit preso ao banco local), `drizzle.config.ts` usando-a e textos de README, `docs/deploy-producao.md` e `architecture.md`. Mantidas (testadas) e registradas aqui; o comentário do teste que citava uma "3ª rodada" inexistente foi corrigido.
+  - TDD: 8 testes vermelhos → 46/46 verdes em `migrate-env.test.ts`.
+  - ✅ Resolved review finding [High]: `project-context.md` descreve os jobs `ci`, `bmad-process`, `migrations` e `deploy-migrations`, as recusas do `db:migrate`, os arquivos `.env.*.local` por ambiente e o drizzle-kit só no local.
+  - ✅ Resolved review finding [Medium]: `drizzleKitCredentials` devolve um getter: a URL só é lida e validada quando o drizzle-kit a usa. Conferido numa cópia sem `.env.local` (scratchpad): `drizzle-kit generate` → "No schema changes"; `drizzle-kit push` → "drizzle-kit cancelado: DATABASE_URL não definido em .env.local".
+  - ✅ Resolved review finding [Low]: `PROJECT_REFS` exportado e importado pelos testes (fonte única).
+  - ✅ Resolved review finding [Low]: `checkTarget` no local recusa host fora de `127.0.0.1`/`localhost`/`[::1]`.
+  - ✅ Resolved review finding [Low]: `describeTarget` não cita projeto no local (`local → 127.0.0.1:54329`).
+  - ✅ Resolved review finding [Low]: job `migrations` roda `drizzle-kit generate` e falha se aparecer arquivo novo em `migrations/`. Script do passo simulado num repositório git no scratchpad: sem mudança → exit 0; coluna nova no schema → `::error::` com `0018_*.sql`, snapshot e journal, exit 1.
+  - ✅ Resolved review finding [Low]: `projectRefFromUrl` lê o ref também do host `db.<ref>.supabase.co` (pooler dedicado, usuário `postgres`); a recusa sem ref explica os dois formatos.
+  - Validação: `tsc` 0, `eslint` 0, `vitest` 147 arquivos / 1336 testes, `next build` ok, `drizzle-kit generate` no repositório sem mudanças, `npm run db:migrate` local → `local → 127.0.0.1:54329` ok. Nenhum comando em banco remoto.
+  - A story não tem a seção "Senior Developer Review (AI) → Action Items"; os itens foram marcados só em "Review Follow-ups (AI)".
+
 ### File List
 
 - `scripts/lib/migrate-env.ts` (novo; review: `resolveDatabaseUrl`, recusas), `scripts/lib/migrate-env.test.ts` (novo; review: +10 testes), `scripts/migrate.ts` (review)
@@ -146,7 +167,8 @@ Claude Opus 5.5
 - `README.md`, `docs/deploy-producao.md`, `_bmad-output/project-context.md`
 - `_bmad-output/planning-artifacts/architecture.md`, `src/server/infrastructure/database/client.test.ts`
 - `_bmad-output/planning-artifacts/epics.md`, `_bmad-output/implementation-artifacts/sprint-status.yaml`
-- `drizzle.config.ts` (review 2ª rodada)
+- `drizzle.config.ts` (review 2ª rodada; 3ª rodada: `drizzleKitCredentials`)
+- 3ª rodada: `scripts/lib/migrate-env.ts`, `scripts/lib/migrate-env.test.ts`, `.github/workflows/ci.yml` (passo de migration esquecida), `README.md`, `docs/deploy-producao.md`, `_bmad-output/planning-artifacts/architecture.md`, `_bmad-output/project-context.md`
 
 ## Change Log
 
@@ -156,3 +178,5 @@ Claude Opus 5.5
 - 2026-11-16: code review (AI) — 1 High, 3 Medium, 3 Low registrados em "Review Follow-ups (AI)"; ACs 6 e 8 parciais. Status → in-progress.
 - 2026-11-16: Addressed code review findings - 7 items resolved (Date: 2026-11-16): secret por ambiente no `deploy-migrations`, URL só do arquivo fora do CI, 54322 recusada no local, argumentos desconhecidos recusados, comentários e testes. Commit `0eea64e` na PR #51 com CI verde; P1 e P2 conferidos; P3 com secrets criados. Status → review.
 - 2026-11-16: code review (AI), 2ª rodada — follow-ups da 1ª rodada conferidos; 5 Low corrigidos (`drizzle.config.ts`, docs, `GITHUB_ACTIONS`, constante, testes da montagem do `migrate.ts`). Status → done. P3 (conferir `deploy-migrations` no merge em `staging`) segue com o PO.
+- 2026-11-17: code review (AI), 3ª rodada — review completo pedido pelo correct course de 2026-11-16 (Proposta 3). ACs 1–8 e 10 implementados; AC 9 parcial (`project-context.md`). 1 High, 2 Medium, 5 Low registrados em "Review Follow-ups (AI)". Validação: `migrate-env.test.ts` 37/37, `tsc` 0, `eslint` 0; PR #51 (`7771318`) com CI verde. Status → in-progress.
+- 2026-11-17: Addressed code review findings - 7 items resolved (Date: 2026-11-17): `project-context.md` com os jobs de migration e as recusas; drizzle-kit com URL preguiçosa (`db:generate` sem `.env.local`); refs numa fonte só; loopback no local; `describeTarget` local sem projeto; CI pega migration esquecida; pooler dedicado aceito. Mudanças de project ref/drizzle-kit fora da story registradas. Falta commit e push na PR #51 (aguardando o PO).

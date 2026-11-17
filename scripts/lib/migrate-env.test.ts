@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 import {
   parseMigrateArgs,
@@ -8,7 +8,16 @@ import {
   resolveDatabaseUrl,
   databaseUrlFromEnvFile,
   isGithubActions,
+  drizzleKitDatabaseUrl,
+  drizzleKitCredentials,
+  projectRefFromUrl,
+  PROJECT_REFS,
 } from './migrate-env';
+
+// Project refs vêm do próprio módulo: uma só fonte, o teste não diverge do código.
+const STAGING_REF = PROJECT_REFS.staging;
+const PRODUCTION_REF = PROJECT_REFS.production;
+const POOLER_HOST = 'aws-1-us-east-1.pooler.supabase.com';
 
 // Story 1.13 — `db:migrate` escolhe o banco pelo ambiente (arquivo .env do
 // ambiente), nunca por URL colada no terminal, e recusa destinos perigosos.
@@ -59,15 +68,17 @@ describe('envFileFor', () => {
 });
 
 describe('describeTarget', () => {
-  it('descreve host e porta sem expor usuário nem senha', () => {
-    const text = describeTarget(
-      'staging',
-      'postgresql://postgres.abc:SuperSecreta@aws-1-us-east-1.pooler.supabase.com:6543/postgres',
-    );
+  it('descreve host, porta e projeto sem expor a senha', () => {
+    const text = describeTarget('staging', `postgresql://postgres.${STAGING_REF}:SuperSecreta@${POOLER_HOST}:6543/postgres`);
 
-    expect(text).toBe('staging → aws-1-us-east-1.pooler.supabase.com:6543');
+    expect(text).toBe(`staging → ${POOLER_HOST}:6543 (projeto ${STAGING_REF})`);
     expect(text).not.toContain('SuperSecreta');
-    expect(text).not.toContain('postgres.abc');
+  });
+
+  it('no local não cita projeto (pooler-dev é o tenant do Supavisor, não um project ref)', () => {
+    expect(describeTarget('local', 'postgresql://postgres.pooler-dev:postgres@127.0.0.1:54329/postgres')).toBe(
+      'local → 127.0.0.1:54329',
+    );
   });
 
   it('usa a porta padrão 5432 quando a URL não tem porta', () => {
@@ -143,9 +154,116 @@ describe('isGithubActions', () => {
   });
 });
 
+// drizzle-kit (`db:push`, `db:studio`) só no banco local, com as mesmas regras do
+// `db:migrate --env local` (correção feita depois da 2ª rodada do code review da 1.13).
+describe('drizzleKitDatabaseUrl', () => {
+  const POOLER = 'postgresql://postgres.pooler-dev:postgres@127.0.0.1:54329/postgres';
+  const REMOTE = 'postgresql://postgres.abc:x@aws-1-us-east-1.pooler.supabase.com:6543/postgres';
+
+  it('usa o DATABASE_URL do .env.local, ignorando o do shell', () => {
+    expect(drizzleKitDatabaseUrl(`DATABASE_URL=${POOLER}\n`, { DATABASE_URL: REMOTE })).toBe(POOLER);
+  });
+
+  it('sem .env.local recusa o DATABASE_URL do shell', () => {
+    expect(() => drizzleKitDatabaseUrl(undefined, { DATABASE_URL: REMOTE })).toThrow(
+      /drizzle-kit cancelado: DATABASE_URL não definido em \.env\.local/,
+    );
+  });
+
+  it('recusa .env.local apontando para um banco remoto (6543)', () => {
+    expect(() => drizzleKitDatabaseUrl(`DATABASE_URL=${REMOTE}\n`, {})).toThrow(/drizzle-kit cancelado: .*54329/);
+  });
+
+  it('no GitHub Actions, sem arquivo, aceita a variável do job (só o pooler local)', () => {
+    expect(drizzleKitDatabaseUrl(undefined, { GITHUB_ACTIONS: 'true', DATABASE_URL: POOLER })).toBe(POOLER);
+    expect(() => drizzleKitDatabaseUrl(undefined, { GITHUB_ACTIONS: 'true', DATABASE_URL: REMOTE })).toThrow(
+      /54329/,
+    );
+  });
+});
+
+// O `db:generate` não conecta no banco: a URL só é lida e validada quando o
+// drizzle-kit a usa (`db:push`, `db:studio`) — um clone novo sem `.env.local` gera migrations.
+describe('drizzleKitCredentials', () => {
+  const POOLER = 'postgresql://postgres.pooler-dev:postgres@127.0.0.1:54329/postgres';
+
+  it('não lê o .env.local nem valida ao montar o config', () => {
+    const readEnvLocal = vi.fn(() => undefined);
+
+    expect(() => drizzleKitCredentials(readEnvLocal, {})).not.toThrow();
+    expect(readEnvLocal).not.toHaveBeenCalled();
+  });
+
+  it('valida quando a URL é usada', () => {
+    const credentials = drizzleKitCredentials(() => undefined, { DATABASE_URL: POOLER });
+
+    expect(() => credentials.url).toThrow(/drizzle-kit cancelado: DATABASE_URL não definido em \.env\.local/);
+  });
+
+  it('devolve a URL do .env.local quando válida', () => {
+    expect(drizzleKitCredentials(() => `DATABASE_URL=${POOLER}\n`, {}).url).toBe(POOLER);
+  });
+});
+
+describe('projectRefFromUrl', () => {
+  it('extrai o project ref do usuário postgres.<ref> do pooler', () => {
+    expect(projectRefFromUrl(`postgresql://postgres.${STAGING_REF}:p@${POOLER_HOST}:6543/postgres`)).toBe(STAGING_REF);
+  });
+
+  it('extrai o project ref do host db.<ref>.supabase.co do pooler dedicado (usuário postgres)', () => {
+    expect(projectRefFromUrl(`postgresql://postgres:p@db.${STAGING_REF}.supabase.co:6543/postgres`)).toBe(STAGING_REF);
+  });
+
+  it('sem o formato postgres.<ref> não há ref', () => {
+    expect(projectRefFromUrl('postgresql://postgres:p@db.example.com:6543/postgres')).toBeUndefined();
+    expect(projectRefFromUrl('postgresql://u:p@db.example.com/postgres')).toBeUndefined();
+  });
+});
+
 describe('checkTarget', () => {
-  const STAGING_6543 = 'postgresql://u:p@aws-1-us-east-1.pooler.supabase.com:6543/postgres';
-  const STAGING_5432 = 'postgresql://u:p@aws-1-us-east-1.pooler.supabase.com:5432/postgres';
+  const STAGING_6543 = `postgresql://postgres.${STAGING_REF}:p@${POOLER_HOST}:6543/postgres`;
+  const STAGING_5432 = `postgresql://postgres.${STAGING_REF}:p@${POOLER_HOST}:5432/postgres`;
+  const PRODUCTION_6543 = `postgresql://postgres.${PRODUCTION_REF}:p@${POOLER_HOST}:6543/postgres`;
+
+  it('recusa staging com a URL do projeto de produção (mesmo host e porta)', () => {
+    const result = checkTarget({ env: 'staging', confirmProduction: false }, PRODUCTION_6543);
+
+    expect(result.ok).toBe(false);
+    expect(!result.ok && result.reason).toMatch(new RegExp(`${STAGING_REF}.*${PRODUCTION_REF}`));
+  });
+
+  it('recusa produção com a URL do projeto de staging, mesmo com --confirm-production', () => {
+    const result = checkTarget({ env: 'production', confirmProduction: true }, STAGING_6543);
+
+    expect(result.ok).toBe(false);
+    expect(!result.ok && result.reason).toMatch(new RegExp(`${PRODUCTION_REF}.*${STAGING_REF}`));
+  });
+
+  it('recusa staging/produção sem project ref no usuário', () => {
+    const result = checkTarget(
+      { env: 'staging', confirmProduction: false },
+      `postgresql://postgres:p@${POOLER_HOST}:6543/postgres`,
+    );
+
+    expect(result.ok).toBe(false);
+    expect(!result.ok && result.reason).toMatch(/project ref/);
+    expect(!result.ok && result.reason).toMatch(/postgres\.<ref>.*db\.<ref>\.supabase\.co/);
+  });
+
+  it('aceita staging pelo pooler dedicado (db.<ref>.supabase.co:6543, usuário postgres)', () => {
+    expect(
+      checkTarget({ env: 'staging', confirmProduction: false }, `postgresql://postgres:p@db.${STAGING_REF}.supabase.co:6543/postgres`),
+    ).toEqual({ ok: true });
+  });
+
+  it('recusa produção pelo pooler dedicado do projeto de staging', () => {
+    const result = checkTarget(
+      { env: 'production', confirmProduction: true },
+      `postgresql://postgres:p@db.${STAGING_REF}.supabase.co:6543/postgres`,
+    );
+
+    expect(result.ok).toBe(false);
+  });
 
   it('cita a origem da URL na mensagem de erro', () => {
     const result = checkTarget({ env: 'staging', confirmProduction: false }, STAGING_5432, 'variável DATABASE_URL do CI');
@@ -165,20 +283,36 @@ describe('checkTarget', () => {
   });
 
   it('recusa produção sem --confirm-production', () => {
-    const result = checkTarget({ env: 'production', confirmProduction: false }, STAGING_6543);
+    const result = checkTarget({ env: 'production', confirmProduction: false }, PRODUCTION_6543);
 
     expect(result.ok).toBe(false);
     expect(!result.ok && result.reason).toMatch(/--confirm-production/);
   });
 
   it('aceita produção na 6543 com --confirm-production', () => {
-    expect(checkTarget({ env: 'production', confirmProduction: true }, STAGING_6543)).toEqual({ ok: true });
+    expect(checkTarget({ env: 'production', confirmProduction: true }, PRODUCTION_6543)).toEqual({ ok: true });
   });
 
   it('no local aceita o pooler em modo transação (54329)', () => {
     expect(
       checkTarget({ env: 'local', confirmProduction: false }, 'postgresql://p:p@127.0.0.1:54329/postgres'),
     ).toEqual({ ok: true });
+  });
+
+  it('no local aceita localhost e ::1 na 54329', () => {
+    expect(checkTarget({ env: 'local', confirmProduction: false }, 'postgresql://p:p@localhost:54329/postgres')).toEqual({
+      ok: true,
+    });
+    expect(checkTarget({ env: 'local', confirmProduction: false }, 'postgresql://p:p@[::1]:54329/postgres')).toEqual({
+      ok: true,
+    });
+  });
+
+  it('no local recusa host remoto, mesmo na 54329', () => {
+    const result = checkTarget({ env: 'local', confirmProduction: false }, 'postgresql://p:p@db.example.com:54329/postgres');
+
+    expect(result.ok).toBe(false);
+    expect(!result.ok && result.reason).toMatch(/127\.0\.0\.1/);
   });
 
   it('no local recusa a conexão direta (54322) e indica a URL do pooler', () => {

@@ -375,7 +375,7 @@ async function createTransaction(input: CreateTransactionInput): Promise<Result<
 | **Production** | Pooler do projeto Supabase de produção, porta **6543** | `.env.production.local` |
 
 - Nunca a conexão direta (54322 local, 5432 remota) — nem no app, nem nas migrations
-- Migrations: `npm run db:migrate -- --env <local|staging|production>`; fora do CI (GitHub Actions, `GITHUB_ACTIONS=true`) o `DATABASE_URL` vem só do arquivo do ambiente (nunca do shell; no CI, da variável do job), o destino é impresso sem a senha, o local fora da 54329 e staging/produção fora da 6543 são recusados, argumentos desconhecidos são recusados e produção exige `--confirm-production`
+- Migrations: `npm run db:migrate -- --env <local|staging|production>`; fora do CI (GitHub Actions, `GITHUB_ACTIONS=true`) o `DATABASE_URL` vem só do arquivo do ambiente (nunca do shell; no CI, da variável do job), o destino é impresso sem a senha, o local fora de `127.0.0.1:54329` e staging/produção fora da 6543 ou com o project ref de outro ambiente (usuário `postgres.<ref>` no pooler compartilhado ou host `db.<ref>.supabase.co` no pooler dedicado; refs só em `scripts/lib/migrate-env.ts`) são recusados, `db:push`/`db:studio` só aceitam o `.env.local` no pooler local (o `db:generate` não conecta no banco), argumentos desconhecidos são recusados e produção exige `--confirm-production`
 - Testar migrations do zero: `npm run db:reset:local` (zera o Supabase local e aplica tudo pelo pooler). Testes de banco só no Supabase, nunca num Postgres "puro" (sem `auth.uid()`)
 
 #### CI/CD Pipeline: GitHub Actions + Vercel
@@ -393,7 +393,7 @@ async function createTransaction(input: CreateTransactionInput): Promise<Result<
 |---|---|---|
 | `ci` | PR e push | Lint, type-check, Vitest e `next build` |
 | `bmad-process` | PR | Confere se as stories alteradas passaram pelos workflows BMAD (Story 1.14) |
-| `migrations` | PR e push | Sobe o Supabase (Postgres + Supavisor) e aplica **todas as migrations do zero pelo pooler em modo transação** (54329); roda de novo e confere que todas do journal foram aplicadas |
+| `migrations` | PR e push | Sobe o Supabase (Postgres + Supavisor) e aplica **todas as migrations do zero pelo pooler em modo transação** (54329); roda de novo e confere que todas do journal foram aplicadas; antes, falha se `drizzle-kit generate` gerar arquivo novo (schema sem migration) |
 | `deploy-migrations` | Push em `staging`/`main`, depois de `ci` e `migrations` | Aplica as migrations no banco do ambiente com a URL do **secret do repositório** (`STAGING_DATABASE_URL` ou `PRODUCTION_DATABASE_URL`, porta 6543). Em `main` roda com `--confirm-production` — o merge `staging → main` é a confirmação. Sem o secret, avisa e não falha |
 
 - Secrets do repositório, não Environments do GitHub (o plano gratuito não tem Environments em repositório privado)
