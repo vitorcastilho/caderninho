@@ -15,19 +15,20 @@ const NO_PROMPT_MODES = new Set(['bypassPermissions', 'dontAsk']);
 
 /**
  * @param {unknown} value
- * @returns {boolean} skill BMAD, aceitando `/` inicial, prefixo de plugin `<nome>:`, espaços e maiúsculas
+ * @returns {string | null} nome normalizado (sem espaços, em minúsculas, sem `/` inicial) se for skill BMAD,
+ *   aceitando prefixo de plugin `<nome>:`; senão `null`
  */
-function isBmadSkill(value) {
-  if (typeof value !== 'string') return false;
+function bmadSkillName(value) {
+  if (typeof value !== 'string') return null;
   const name = value.trim().toLowerCase().replace(/^\//, '');
   const bare = name.slice(name.lastIndexOf(':') + 1);
-  return bare.startsWith('bmad-');
+  return bare.startsWith('bmad-') ? name : null;
 }
 
-/** @param {string} skill @returns {SkillDecision} */
+/** @param {string} skill nome normalizado @returns {SkillDecision} */
 const deny = (skill) => ({
   decision: 'deny',
-  reason: `Bloqueado pelo processo BMAD: invocar ${skill} exige o sim do PO. Peça ao PO para digitar /${skill.replace(/^\//, '')}.`,
+  reason: `Bloqueado pelo processo BMAD: invocar ${skill} exige o sim do PO. Peça ao PO para digitar /${skill}.`,
 });
 
 /**
@@ -36,9 +37,9 @@ const deny = (skill) => ({
  */
 export function decideSkill(input) {
   const toolInput = input.tool_input && typeof input.tool_input === 'object' ? /** @type {Record<string, unknown>} */ (input.tool_input) : {};
-  const skill = toolInput.skill;
-  if (!isBmadSkill(skill)) return { decision: 'none' };
-  const name = /** @type {string} */ (skill);
+  // Mensagens com o nome normalizado (`' BMAD-help'` → `bmad-help`; code review 1.15).
+  const name = bmadSkillName(toolInput.skill);
+  if (!name) return { decision: 'none' };
   if (typeof input.permission_mode === 'string' && NO_PROMPT_MODES.has(input.permission_mode)) return deny(name);
   return {
     decision: 'ask',

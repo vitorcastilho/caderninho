@@ -121,6 +121,84 @@ describe('classifyRemoteAccess — Bash bloqueado', () => {
     'npx -p supabase supabase db push',
     'supabase --workdir . link --project-ref abcdefgh',
     'supabase db --workdir . pull',
+    // code review 1.15 (3ª rodada): busca recursiva sobre a raiz ou um diretório pai
+    'grep -rn DATABASE_URL .',
+    'grep -rn pooler .',
+    'grep -R DATABASE_URL',
+    'grep --recursive DATABASE_URL ./',
+    'grep -r -e DATABASE_URL',
+    'grep -rl DATABASE_URL ..',
+    'grep -rn DATABASE_URL ../caderninho',
+    'grep -rn DATABASE_URL /home/x/repo',
+    'grep -rn DATABASE_URL ~',
+    'grep -rn DATABASE_URL $PWD',
+    'grep -d recurse DATABASE_URL .',
+    'grep --directories=recurse DATABASE_URL .',
+    'grep -rn DATABASE_URL src .',
+    'grep -rn -A 3 DATABASE_URL .',
+    'egrep -r DATABASE_URL .',
+    'rgrep DATABASE_URL .',
+    'git status && grep -rn DATABASE_URL .',
+    'timeout 5 grep -rn DATABASE_URL .',
+    'rg --no-ignore DATABASE_URL',
+    'rg -uu DATABASE_URL',
+    'rg -u DATABASE_URL .',
+    'rg --hidden --no-ignore DATABASE_URL .',
+    'rg --no-ignore-vcs -n pooler',
+    'rg -n --unrestricted DATABASE_URL',
+    // code review 1.15 (3ª rodada): migrate sem extensão ou com outra extensão
+    'npx tsx scripts/migrate --env staging',
+    'tsx scripts/migrate --env=production',
+    'npx tsx scripts/migrate.mts --env staging',
+    'node --import tsx ./scripts/migrate.js --env production',
+    // code review 1.15 (3ª rodada): valor do --env montado com \ ou crase
+    'npx tsx scripts/migrate.ts --env stag\\ing',
+    'npx tsx scripts/migrate.ts --env=prod\\uction',
+    'npx tsx scripts/migrate.ts --env `echo staging`',
+    'npm run db:migrate -- --env=`cat env.txt`',
+    // code review 1.15 (3ª rodada): nome do arquivo dentro de chaves
+    'cat {.env.migrate.staging,README.md}',
+    'cat {README.md,.env.migrate.production}',
+    'cat {README.md,config/.env.staging.local}',
+    // code review 1.15 (3ª rodada): glob que não começa por .env literal
+    'cat .*staging',
+    'cat .e*.staging',
+    'cat .[e]nv.migrate.staging',
+    'cat .??v.migrate.production',
+    'cat config/.*production*',
+    'cat ".env.migrate."*',
+    'cat <.*staging',
+    // code review 1.15 (3ª rodada): supabase com --project-ref/--project-id
+    'supabase gen types typescript --project-id abcdefgh',
+    'supabase gen types typescript --project-ref=abcdefgh',
+    'npx supabase functions deploy --project-ref abcdefgh',
+    // code review 1.15 (4ª rodada): glob positivo do rg passa por cima do .gitignore e dos ocultos
+    "rg -g '*staging' DATABASE_URL",
+    'rg --glob=*.production DATABASE_URL',
+    "rg -g '*' DATABASE_URL",
+    "rg -g '*.{staging,production}' DATABASE_URL",
+    "rg -g '**/*staging' DATABASE_URL .",
+    'rg -g*staging DATABASE_URL',
+    "rg --iglob '*STAGING' DATABASE_URL",
+    "rg --glob-case-insensitive -g '*PRODUCTION' DATABASE_URL",
+    "rg -n -g '*.ts' -g '*.local' DATABASE_URL ..",
+    "rg -g '/*staging' DATABASE_URL",
+    "timeout 5 rg -g '*' pooler",
+    // code review 1.15 (4ª rodada): git grep que lê arquivos ignorados
+    'git grep --untracked --no-exclude-standard DATABASE_URL',
+    'git grep --no-index DATABASE_URL',
+    'git grep --no-index -n DATABASE_URL .',
+    'git grep --untracked --no-exclude-standard -e DATABASE_URL -- .',
+    'git --no-pager grep --no-index pooler',
+    // code review 1.15 (4ª rodada): dotglob/GLOBIGNORE fazem globs alcançarem arquivos ocultos
+    'shopt -s dotglob; cat *staging',
+    'shopt -s dotglob && grep -rn DATABASE_URL *',
+    'GLOBIGNORE=x; cat *staging',
+    'GLOBIGNORE=. grep -rn DATABASE_URL *',
+    'setopt globdots; cat *staging',
+    // code review 1.15 (4ª rodada): expansão de chaves grande demais para conferir
+    `echo ${'{a,b}'.repeat(25)}; cat .[e]nv.migrate.staging`,
+    `echo ${'{a,b}'.repeat(25)}`,
   ])('bloqueia: %s', (command) => {
     expect(bash(command)).toMatchObject({ blocked: true });
   });
@@ -175,6 +253,43 @@ describe('classifyRemoteAccess — Bash permitido', () => {
     'supabase --workdir . start',
     'npx -p supabase supabase db reset',
     'cat ".env.local"',
+    // busca, migrate, --env e globs em comandos locais (3ª rodada)
+    'grep -rn DATABASE_URL src',
+    'grep -rn DATABASE_URL ./scripts docs/',
+    'grep -n DATABASE_URL README.md',
+    'grep -rn -A 3 DATABASE_URL scripts/lib',
+    'grep -rn -e DATABASE_URL -e pooler src',
+    'grep -rn --include=*.ts DATABASE_URL src',
+    'git grep -n DATABASE_URL',
+    'rg DATABASE_URL',
+    'rg -n DATABASE_URL .',
+    'rg -n --hidden DATABASE_URL .github',
+    'rg --no-ignore DATABASE_URL src',
+    'rg -t ts -r X DATABASE_URL',
+    'npx tsx scripts/migrate --env local',
+    'npx tsx scripts/migrate.ts --env loc\\al',
+    'ls *',
+    'rm -rf .next/*',
+    'grep -n ".*" README.md',
+    "sed -n 's/.*//p' README.md",
+    'ls src/{client,server}',
+    'cat {README.md,package.json}',
+    'ls .github/*',
+    'cat .gitignore',
+    'supabase gen types typescript --local',
+    // rg, git grep, shopt e chaves em comandos locais (4ª rodada)
+    "rg -g '*.ts' DATABASE_URL",
+    "rg -g '*staging' DATABASE_URL src",
+    "rg -g '!*staging' DATABASE_URL",
+    "rg -g '*.ts' -g '!*.test.ts' DATABASE_URL .",
+    "rg --iglob '*.MD' DATABASE_URL",
+    'git grep --untracked DATABASE_URL',
+    'git grep --no-index --exclude-standard DATABASE_URL',
+    'git grep --no-index DATABASE_URL src',
+    'git log --grep staging',
+    'shopt -s nullglob; ls *.ts',
+    'echo GLOBIGNORE',
+    `echo ${'{a,b}'.repeat(9)}`,
   ])('permite: %s', (command) => {
     expect(bash(command)).toEqual({ blocked: false });
   });
@@ -198,6 +313,11 @@ describe('classifyRemoteAccess — limites documentados', () => {
     'exec npx tsx scripts/migrate.ts --env staging',
     'supabase migration list',
     'supabase inspect db bloat',
+    // 3ª rodada: nome montado por variável e outras ferramentas que percorrem diretórios
+    'F=.env.migrate; cat $F.staging',
+    'cd .. && grep -rn DATABASE_URL caderninho',
+    'cd / && grep -rn DATABASE_URL home/x/caderninho',
+    'find . -type f -exec cat {} +',
   ])('não detectado (fora do AC; documentado): %s', (command) => {
     expect(bash(command)).toEqual({ blocked: false });
   });
@@ -239,8 +359,39 @@ describe('classifyRemoteAccess — ferramentas de arquivo', () => {
     ['Grep', { pattern: 'DATABASE_URL', glob: '.env*' }],
     ['Grep', { pattern: 'DATABASE_URL', glob: '.env.migrate.*' }],
     ['Grep', { pattern: 'DATABASE_URL', path: '/repo', glob: '**/.env*' }],
+    // 3ª rodada: glob que não começa por .env literal
+    ['Grep', { pattern: 'DATABASE_URL', glob: '.*staging' }],
+    ['Grep', { pattern: 'DATABASE_URL', glob: '**/.[e]nv.migrate.*' }],
+    ['Grep', { pattern: 'DATABASE_URL', glob: '{*.ts,.e*}' }],
+    // 4ª rodada: o glob da ferramenta vai para o `rg --glob` (sem a regra do `.` inicial)
+    ['Grep', { pattern: 'DATABASE_URL', glob: '*staging' }],
+    ['Grep', { pattern: 'DATABASE_URL', glob: '*' }],
+    ['Grep', { pattern: 'DATABASE_URL', glob: '**/*staging' }],
+    ['Grep', { pattern: 'DATABASE_URL', glob: '*.{staging,production}' }],
+    ['Grep', { pattern: 'DATABASE_URL', glob: '*.local' }],
+    ['Grep', { pattern: 'DATABASE_URL', path: '/repo', glob: '*' }],
+    ['Grep', { pattern: 'DATABASE_URL', glob: `${'{a,b}'.repeat(25)}` }],
   ])('bloqueia %s %j', (tool, input) => {
     expect(classifyRemoteAccess(tool, input)).toMatchObject({ blocked: true });
+  });
+
+  it('Grep com glob em subdiretório do cwd passa; na raiz ou fora dela, bloqueia', () => {
+    const grep = { pattern: 'DATABASE_URL', glob: '*' };
+    expect(classifyRemoteAccess('Grep', { ...grep, path: '/repo/src' }, '/repo')).toEqual({ blocked: false });
+    expect(classifyRemoteAccess('Grep', { ...grep, path: 'src' }, '/repo')).toEqual({ blocked: false });
+    expect(classifyRemoteAccess('Grep', { ...grep, path: '/repo' }, '/repo')).toMatchObject({ blocked: true });
+    expect(classifyRemoteAccess('Grep', { ...grep, path: '/' }, '/repo')).toMatchObject({ blocked: true });
+    expect(classifyRemoteAccess('Grep', grep, '/repo')).toMatchObject({ blocked: true });
+    expect(
+      evaluateRemote({ tool_name: 'Grep', cwd: '/repo', tool_input: { ...grep, path: '/repo/scripts' } }),
+    ).toEqual({ allow: true });
+  });
+
+  it('expansão de chaves grande é decidida rápido (abaixo do timeout do hook)', () => {
+    const start = performance.now();
+    expect(bash(`echo ${'{a,b}'.repeat(40)}; cat .[e]nv.migrate.staging`)).toMatchObject({ blocked: true });
+    expect(classifyRemoteAccess('Grep', { pattern: 'x', glob: '{a,b}'.repeat(40) })).toMatchObject({ blocked: true });
+    expect(performance.now() - start).toBeLessThan(1000);
   });
 
   it.each([
@@ -253,6 +404,8 @@ describe('classifyRemoteAccess — ferramentas de arquivo', () => {
     ['Grep', { pattern: 'env\\.migrate', path: '/repo/scripts' }],
     ['Grep', { pattern: 'DATABASE_URL' }],
     ['Grep', { pattern: 'x', glob: '*.ts' }],
+    ['Grep', { pattern: 'x', glob: '**/*.{ts,tsx}' }],
+    ['Grep', { pattern: 'x', glob: '.github/**/*.yml' }],
     ['Glob', { pattern: '.env*' }],
   ])('permite %s %j', (tool, input) => {
     expect(classifyRemoteAccess(tool, input)).toEqual({ blocked: false });

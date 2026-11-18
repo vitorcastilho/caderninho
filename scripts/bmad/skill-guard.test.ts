@@ -55,6 +55,25 @@ describe('decideSkill', () => {
     },
   );
 
+  // code review 1.15 (3ª rodada): mensagens com o nome normalizado
+  it.each([
+    [' BMAD-help', 'bmad-help'],
+    ['/bmad-bmm-dev-story ', 'bmad-bmm-dev-story'],
+    ['Meu-Plugin:BMAD-bmm-code-review', 'meu-plugin:bmad-bmm-code-review'],
+  ])('deny usa o nome normalizado: %j', (name, normalized) => {
+    expect(skill(name, 'bypassPermissions')).toEqual({
+      decision: 'deny',
+      reason: `Bloqueado pelo processo BMAD: invocar ${normalized} exige o sim do PO. Peça ao PO para digitar /${normalized}.`,
+    });
+  });
+
+  it('ask usa o nome normalizado', () => {
+    expect(skill(' /Bmad-bmm-dev-story', 'default')).toMatchObject({
+      decision: 'ask',
+      reason: expect.stringContaining('invocar bmad-bmm-dev-story por conta própria'),
+    });
+  });
+
   it('modo desconhecido ainda pede confirmação', () => {
     expect(skill('bmad-help', 'algum-modo-novo')).toMatchObject({ decision: 'ask' });
   });

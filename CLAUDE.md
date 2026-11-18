@@ -50,13 +50,25 @@ Elas não cobrem tudo:
   workflow terminou). Neste intervalo, valem as regras deste arquivo.
 - Bancos remotos: o hook reconhece o migrate remoto só quando o comando do trecho é um executor
   (`npm`, `pnpm`, `yarn`, `npx`, `tsx`, `node`, `bun`, `bunx`, `ts-node`, `sh`, `bash`, `zsh`, `env`,
-  `time`, `nohup`, `timeout`, `xargs`); bloqueia os nomes dos quatro arquivos e globs `.env*` em
-  qualquer comando, inclusive em buscas (para procurar o texto, use `env\.migrate`); hosts
-  `*.pooler.supabase.com`/`*.supabase.co`; `supabase link`/`--linked`/`--db-url`/`db push|pull|dump`
+  `time`, `nohup`, `timeout`, `xargs`), com o arquivo `migrate` com ou sem extensão; bloqueia os nomes
+  dos quatro arquivos e globs ou chaves que os alcancem (`.env*`, `.*staging`, `.[e]nv.migrate.*`,
+  `{README.md,.env.migrate.staging}`) em qualquer comando, inclusive em buscas (para procurar o texto,
+  use `env\.migrate`); busca recursiva (`grep -r|-R`, `rgrep`, `rg -u|--no-ignore|--hidden`, `rg -g|--glob|--iglob`
+  com glob que alcança os arquivos, `git grep --no-index` ou `--untracked --no-exclude-standard`) sem caminho
+  ou sobre `.`, um diretório pai, caminho absoluto, `~` ou variável (busque num subdiretório, ex.:
+  `grep -rn x src`, ou use a ferramenta `Grep`); ferramenta `Grep` com `glob` que alcança os arquivos
+  (semântica do ripgrep: `*staging`, `*`, `**/*.local`), salvo com `path` num subdiretório da sessão;
+  `shopt -s dotglob`, `-O dotglob`, `GLOBIGNORE=` e `setopt globdots`; expansão de chaves com mais de
+  1000 alternativas; hosts `*.pooler.supabase.com`/`*.supabase.co`;
+  `supabase link`/`--linked`/`--db-url`/`--project-ref`/`--project-id`/`db push|pull|dump`
   (inclusive `supabase@<versão>` e dentro de `( … )`, `$( … )` ou crases).
-  Não cobre: URL remota já exportada numa variável do shell, scripts que leem os arquivos por conta
-  própria, `vercel env pull`, servidores MCP de banco, `Grep` sem `path`/`glob` que percorra a raiz
-  (os arquivos estão no `.gitignore`), prefixos fora da lista de executores (ex.: `sudo`, `command`,
+  Não cobre: URL remota já exportada numa variável do shell, nome do arquivo montado por variável
+  (ex.: `F=.env.migrate; cat $F.staging`), scripts que leem os arquivos por conta
+  própria, outras ferramentas que percorrem diretórios (`find … -exec`, `tar`), busca recursiva depois
+  de um `cd` para fora do projeto, que o hook não acompanha (ex.: `cd .. && grep -r x caderninho`,
+  `cd / && grep -rn x home/…/caderninho`), `vercel env pull`, servidores MCP de banco, `Grep` sem `glob`
+  (o ripgrep respeita o `.gitignore`, onde estão os arquivos; um `glob` positivo passaria por cima dele,
+  por isso o hook confere o `glob`), prefixos fora da lista de executores (ex.: `sudo`, `command`,
   `nice`, `exec` antes do migrate) e subcomandos do CLI `supabase` que usam o projeto linkado por
   padrão (ex.: `migration list|repair`, `inspect db …`; hoje sem projeto linkado, e `link` é bloqueado).
   A divisão em trechos não respeita aspas: texto entre aspas com `;`, `&&`, `|`, `(`, `$(` ou quebra
