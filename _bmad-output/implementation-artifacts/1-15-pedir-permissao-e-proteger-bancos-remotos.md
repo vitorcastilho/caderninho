@@ -1,6 +1,6 @@
 # Story 1.15: Pedir permissão e proteger bancos remotos
 
-Status: in-progress
+Status: review
 
 <!-- Criada pelo create-story (comando /bmad-bmm-create-story 1-15 digitado pelo PO) em 2026-11-17, a partir do correct course de 2026-11-16 (_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-16.md, Proposta 1), com os nomes de arquivo do correct course de 2026-11-17 (sprint-change-proposal-2026-11-17.md, 4.6). -->
 
@@ -96,7 +96,7 @@ Nada foi aplicado em staging: 18/18 migrations, igual ao journal. Mas as duas br
 - [x] [AI-Review][Medium] Nome de arquivo montado com aspas ou barra invertida escapa da regra (b): `cat .env.migrate.sta"ging"`, `cat ".env.migrate."staging`, `cat .env.migrate.stag\ing`. Aplicar `ENV_FILE_RE`/`ENV_GLOB_RE` também ao comando sem aspas e sem `\` [scripts/bmad/remote-db-guard.mjs:116-118]
 - [x] [AI-Review][Medium] Opção com valor antes do subcomando escapa da regra (d): `supabase --workdir . db push` e `npx -p supabase supabase db push` (1º posicional vira `.`/`supabase`). Procurar `link` e `db` + `push|pull|dump` em qualquer posição dos argumentos; testes com TDD para todos os itens desta rodada no `it.each` [scripts/bmad/remote-db-guard.mjs:90-99; scripts/bmad/remote-db-guard.test.ts]
 - [x] [AI-Review][Low] `isBmadSkill` não normaliza o nome: `' bmad-help'` e `BMAD-help` recebem `none`. Aplicar `trim()` e `toLowerCase()` antes de comparar [scripts/bmad/skill-guard.mjs:17-22]
-- [ ] [AI-Review][Low] Follow-ups da 1ª rodada ainda não commitados: o "CI verde" do AC 8 (PR #54) vale para `15b099e`. Commitar, dar push e conferir o CI de novo [AC 8]
+- [x] [AI-Review][Low] Follow-ups da 1ª rodada ainda não commitados: o "CI verde" do AC 8 (PR #54) vale para `15b099e`. Commitar, dar push e conferir o CI de novo [AC 8]
 
 ## Dev Notes
 
@@ -252,6 +252,7 @@ Claude Opus 5.5 (claude-opus-5-5)
 - Follow-ups (validação): `npx tsc --noEmit` 0 erros; `npm run lint` 0 avisos; `npx vitest run` 151 arquivos, 1534 testes ok; testes da 1.14: 83/83; `npx next build` ok. Sessão real: `echo $(npx tsx scripts/nao-existe/migrate.ts --env staging)` → bloqueado (`Comandos em bancos remotos são do PO: roda o migrate em staging.`).
 - Follow-ups da 2ª rodada (vermelho): `npx vitest run scripts/bmad/remote-db-guard.test.ts scripts/bmad/skill-guard.test.ts` → `Tests 32 failed | 176 passed (208)`; ex.: `× bloqueia: if true; then npx tsx scripts/migrate.ts --env staging; fi`, `× bloqueia: sleep 1 & npx tsx scripts/migrate.ts --env staging`, `× bloqueia: E=staging; npx tsx scripts/migrate.ts --env $E`, `× bloqueia: npx tsx scripts/migrate.ts --env staging>out.log`, `× bloqueia: cat .env.migrate.sta"ging"`, `× bloqueia: supabase --workdir . db push`, `× qualquer skill BMAD (agentes, plugins) → ask: BMAD-help`. Verde: `scripts/bmad` 300/300.
 - Follow-ups da 2ª rodada (validação): `npx tsc --noEmit` 0 erros; `npm run lint` 0 avisos; `npx vitest run` 151 arquivos, 1577 testes ok; testes da 1.14: 83/83; `npx next build` ok. Sessão real: `if true; then npx tsx scripts/nao-existe/migrate.ts --env staging; fi` → bloqueado (`Comandos em bancos remotos são do PO: roda o migrate em staging.`).
+- Follow-ups da 2ª rodada (commit e CI): `be7c0bb` (follow-ups da 1ª e da 2ª rodada) no push da PR #54; CI verde (`ci`, `Processo BMAD (stories alteradas)`, `Migrations do zero`; `Migrations no banco do ambiente` pulado, como esperado em PR). `check-story-process` local: "Processo BMAD ok."
 
 ### Completion Notes List
 
