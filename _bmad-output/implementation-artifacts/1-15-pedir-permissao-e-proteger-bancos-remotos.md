@@ -1,6 +1,6 @@
 # Story 1.15: Pedir permissão e proteger bancos remotos
 
-Status: in-progress
+Status: review
 
 <!-- Criada pelo create-story (comando /bmad-bmm-create-story 1-15 digitado pelo PO) em 2026-11-17, a partir do correct course de 2026-11-16 (_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-16.md, Proposta 1), com os nomes de arquivo do correct course de 2026-11-17 (sprint-change-proposal-2026-11-17.md, 4.6). -->
 
@@ -66,7 +66,7 @@ Nada foi aplicado em staging: 18/18 migrations, igual ao journal. Mas as duas br
   - [x] 3.3 Teste de integração com `child_process` (como `scripts/bmad/story-guard-hook.test.ts`): bloqueio do caso real do migrate (exit 2, stderr com "Comandos em bancos remotos são do PO"); comando comum (exit 0, sem saída); Skill BMAD → stdout com o JSON `ask`; Skill BMAD em `bypassPermissions` → exit 2; entradas inválidas (AC 6)
 - [x] Task 4 (AC: #1, #7): `CLAUDE.md` com o conteúdo novo e a seção "Limites das proteções" atualizada
 - [x] Task 5 (AC: #7): README ("Processo BMAD e proteções": linhas dos hooks novos na tabela e limites) e `_bmad-output/project-context.md` ("Git & Branching": item apontando para "Quem conduz" e "Bancos remotos" do `CLAUDE.md`)
-- [ ] Task 6 (AC: #8): validação
+- [x] Task 6 (AC: #8): validação
   - [x] 6.1 `npx tsc --noEmit`, `npm run lint`, `npx vitest run`, `npx next build`
   - [x] 6.2 Teste real na sessão. O Claude Code carrega os hooks no início da sessão: o PO abre `/hooks` (ou reinicia a sessão) antes. **Só comandos inofensivos se o hook não estiver ativo:**
     - `npx tsx scripts/nao-existe/migrate.ts --env staging` → deve ser bloqueado (sem hook, falha por arquivo inexistente, sem conectar em nada);
@@ -75,7 +75,7 @@ Nada foi aplicado em staging: 18/18 migrations, igual ao journal. Mas as duas br
     - Skill `bmad-help`: **avisar o PO antes**; deve aparecer a confirmação nativa e o PO recusa;
     - `npm run db:status` e `cat README.md` → passam.
     Registrar resultados no Debug Log.
-  - [ ] 6.3 PR para `staging`; CI verde
+  - [x] 6.3 PR para `staging`; CI verde
 
 ## Dev Notes
 
@@ -226,6 +226,7 @@ Claude Opus 5.5 (claude-opus-5-5)
 - Task 3.3 (vermelho): `guard-hooks.test.ts` → `Tests 9 failed (9)` (entrypoints inexistentes, `settings.json` sem os hooks novos). Verde: `scripts/bmad` 224/224.
 - Task 6.1: `npx tsc --noEmit` apontou `tool_name` fora do tipo JSDoc de `decideSkill` no teste; corrigido o `@param` (sem desligar checagem) → 0 erros. `npm run lint` 0 avisos. `npx vitest run` 151 arquivos, 1501 testes ok. Testes da 1.14 (`story-guard`, `story-guard-hook`, `check-story-process`): 83/83. `npx next build` ok.
 - Task 6.2 (sessão real, depois de o PO abrir `/hooks` e a sessão recarregar os hooks): `npx tsx scripts/nao-existe/migrate.ts --env staging` → bloqueado (`PreToolUse:Bash hook error: … remote-db-guard.mjs: Comandos em bancos remotos são do PO: roda o migrate em staging. Passe o comando para o PO rodar.`); `test -f .env.migrate.staging` → bloqueado (`… cita .env.migrate.staging …`); `npm run db:status` e `cat README.md` → passaram; Skill `bmad-help` (PO avisado antes) → abriu a confirmação nativa e o PO recusou ("funcionou"). `Read` do arquivo de banco remoto não foi usado no teste, como manda a story.
+- Task 6.3: PR #54 para `staging`; CI verde (`ci`, `Processo BMAD (stories alteradas)`, `Migrations do zero`; `Migrations no banco do ambiente` pulado, como esperado em PR).
 
 ### Completion Notes List
 
