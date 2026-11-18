@@ -29,7 +29,19 @@ describe('decideSkill', () => {
     });
   });
 
-  it.each(['bmad-help', 'bmad-agent-bmm-dev', 'bmad-party-mode', 'meu-plugin:bmad-bmm-code-review', '/bmad-bmm-code-review'])(
+  it.each([
+    'bmad-help',
+    'bmad-agent-bmm-dev',
+    'bmad-party-mode',
+    'meu-plugin:bmad-bmm-code-review',
+    '/bmad-bmm-code-review',
+    // code review 1.15 (2ª rodada): nome sem normalização
+    ' bmad-help',
+    'bmad-help ',
+    'BMAD-help',
+    'Meu-Plugin:BMAD-bmm-code-review',
+    ' /Bmad-bmm-dev-story',
+  ])(
     'qualquer skill BMAD (agentes, plugins) → ask: %s',
     (name) => {
       expect(skill(name, 'default')).toMatchObject({ decision: 'ask' });

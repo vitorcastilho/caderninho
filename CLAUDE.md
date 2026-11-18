@@ -52,10 +52,16 @@ Elas não cobrem tudo:
   (`npm`, `pnpm`, `yarn`, `npx`, `tsx`, `node`, `bun`, `bunx`, `ts-node`, `sh`, `bash`, `zsh`, `env`,
   `time`, `nohup`, `timeout`, `xargs`); bloqueia os nomes dos quatro arquivos e globs `.env*` em
   qualquer comando, inclusive em buscas (para procurar o texto, use `env\.migrate`); hosts
-  `*.pooler.supabase.com`/`*.supabase.co`; `supabase link`/`--linked`/`--db-url`/`db push|pull|dump`.
+  `*.pooler.supabase.com`/`*.supabase.co`; `supabase link`/`--linked`/`--db-url`/`db push|pull|dump`
+  (inclusive `supabase@<versão>` e dentro de `( … )`, `$( … )` ou crases).
   Não cobre: URL remota já exportada numa variável do shell, scripts que leem os arquivos por conta
   própria, `vercel env pull`, servidores MCP de banco, `Grep` sem `path`/`glob` que percorra a raiz
-  (os arquivos estão no `.gitignore`).
+  (os arquivos estão no `.gitignore`), prefixos fora da lista de executores (ex.: `sudo`, `command`,
+  `nice`, `exec` antes do migrate) e subcomandos do CLI `supabase` que usam o projeto linkado por
+  padrão (ex.: `migration list|repair`, `inspect db …`; hoje sem projeto linkado, e `link` é bloqueado).
+  A divisão em trechos não respeita aspas: texto entre aspas com `;`, `&&`, `|`, `(`, `$(` ou quebra
+  de linha antes de um migrate remoto é bloqueado (ex.: `echo "a; npx tsx migrate.ts --env staging"`).
+  Para commit e PR com esses textos, use `git commit -F <arquivo>` e `gh pr create --body-file <arquivo>`.
 - Skill BMAD: o hook pede confirmação a cada invocação pela ferramenta Skill; o comando digitado
   pelo PO não passa por ele. Em `bypassPermissions`/`dontAsk`, bloqueia. Não vê o Claude "assumindo"
   uma etapa sem a Skill (ex.: seguir um `workflow.yaml` lido sem agente): a Camada 1 e o hook da

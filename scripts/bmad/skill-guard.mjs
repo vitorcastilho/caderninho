@@ -13,10 +13,13 @@
 // Modos em que o `ask` pode não abrir a confirmação (a doc não descreve).
 const NO_PROMPT_MODES = new Set(['bypassPermissions', 'dontAsk']);
 
-/** @param {unknown} value @returns {boolean} skill BMAD, aceitando `/` inicial e prefixo de plugin `<nome>:` */
+/**
+ * @param {unknown} value
+ * @returns {boolean} skill BMAD, aceitando `/` inicial, prefixo de plugin `<nome>:`, espaços e maiúsculas
+ */
 function isBmadSkill(value) {
   if (typeof value !== 'string') return false;
-  const name = value.replace(/^\//, '');
+  const name = value.trim().toLowerCase().replace(/^\//, '');
   const bare = name.slice(name.lastIndexOf(':') + 1);
   return bare.startsWith('bmad-');
 }

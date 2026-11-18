@@ -1,6 +1,6 @@
 # Story 1.15: Pedir permissão e proteger bancos remotos
 
-Status: review
+Status: in-progress
 
 <!-- Criada pelo create-story (comando /bmad-bmm-create-story 1-15 digitado pelo PO) em 2026-11-17, a partir do correct course de 2026-11-16 (_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-16.md, Proposta 1), com os nomes de arquivo do correct course de 2026-11-17 (sprint-change-proposal-2026-11-17.md, 4.6). -->
 
@@ -76,6 +76,27 @@ Nada foi aplicado em staging: 18/18 migrations, igual ao journal. Mas as duas br
     - `npm run db:status` e `cat README.md` → passam.
     Registrar resultados no Debug Log.
   - [x] 6.3 PR para `staging`; CI verde
+
+### Review Follow-ups (AI)
+
+- [x] [AI-Review][High] Subshell escapa da regra (a)/(d): `(npx tsx scripts/migrate.ts --env staging)`, `echo $(npx tsx … --env staging)` e a forma com crases passam, porque o 1º token vira `(npx`/`$(npx`, fora de `EXECUTORS`. Tirar `(`, `$(` e a crase do início do token (e tratar o conteúdo de `$(…)`/crases como trecho) [scripts/bmad/remote-db-guard.mjs:53-58, :72]
+- [x] [AI-Review][High] `npx supabase@latest db push` e `npx supabase@2 link …` passam: `supabaseReason` compara o basename com `'supabase'` exato. Aceitar `supabase@<versão>` [scripts/bmad/remote-db-guard.mjs:81-86]
+- [x] [AI-Review][Medium] Expansão de chaves escapa da regra (b): `cat .env.migrate.{staging,production}` e `cat .env.{migrate.staging,x}` passam, porque `ENV_GLOB_RE` só reconhece `*`, `?`, `[`. Incluir `{` [scripts/bmad/remote-db-guard.mjs:40]
+- [x] [AI-Review][Medium] Redirecionamento colado ao nome passa: `echo x >.env.migrate.staging` e `echo x>>.env.migrate.production` (o lookbehind do `ENV_FILE_RE` aceita `<` mas não `>`), permitindo sobrescrever as credenciais do PO [scripts/bmad/remote-db-guard.mjs:38]
+- [x] [AI-Review][Medium] Testes das variações acima ausentes (subshell, crases, `supabase@x`, chaves, `>` colado): acrescentar ao `it.each` com TDD (vermelho no Debug Log) [scripts/bmad/remote-db-guard.test.ts]
+- [x] [AI-Review][Low] Falsos positivos contra o AC 2 ("passam … `echo …`"): `echo "a; npx tsx migrate.ts --env staging"` e `git commit -m` com quebra de linha real antes do migrate remoto são bloqueados, porque o `SEGMENT_SPLIT` ignora aspas. Corrigir ou documentar nos limites [scripts/bmad/remote-db-guard.mjs:101; CLAUDE.md "Limites das proteções"]
+- [x] [AI-Review][Low] Subcomandos do CLI `supabase` que usam o projeto linkado por padrão passam (`migration list`, `migration repair`, `inspect db …`). Hoje o risco é baixo (sem `project-ref` em `supabase/.temp`, `link` bloqueado); documentar nos limites [CLAUDE.md; README.md]
+- [x] [AI-Review][Low] Prefixos fora da lista de executores (`sudo`, `command`, `nice`, `exec`) antes do migrate remoto passam; segue o AC, mas citar os exemplos em "Limites das proteções" [CLAUDE.md; README.md]
+
+#### 2ª rodada (code review de 2026-11-17, depois dos follow-ups)
+
+- [x] [AI-Review][High] Palavras-chave do shell e `&` simples escapam da regra (a): `if true; then npx tsx scripts/migrate.ts --env staging; fi`, `for e in x; do npx tsx … --env staging; done`, `{ npx tsx … --env staging; }`, `! npx tsx … --env staging` e `sleep 1 & npx tsx … --env staging` passam (1º token `then`/`do`/`{`/`!`/`sleep`; `&` simples fora do `SEGMENT_SPLIT`). Pular palavras-chave (`then`, `do`, `else`, `elif`, `{`, `!`) e dividir também por `&` simples (não `&&`, `&>`, `>&`) [scripts/bmad/remote-db-guard.mjs:56-61, :105-115]
+- [x] [AI-Review][Medium] `--env` com variável passa: `for e in staging production; do npm run db:migrate -- --env $e; done` e `E=staging; npx tsx scripts/migrate.ts --env $E`. No migrate, tratar como remoto o valor de `--env` que começa por `$` [scripts/bmad/remote-db-guard.mjs:64-71]
+- [x] [AI-Review][Medium] Redirecionamento ou `&` colado ao valor do `--env` passa: `… --env staging>out.log`, `… --env staging&` (token `staging>out.log`). Cortar o valor em `>`, `<`, `&`, `|` antes de comparar [scripts/bmad/remote-db-guard.mjs:64-71]
+- [x] [AI-Review][Medium] Nome de arquivo montado com aspas ou barra invertida escapa da regra (b): `cat .env.migrate.sta"ging"`, `cat ".env.migrate."staging`, `cat .env.migrate.stag\ing`. Aplicar `ENV_FILE_RE`/`ENV_GLOB_RE` também ao comando sem aspas e sem `\` [scripts/bmad/remote-db-guard.mjs:116-118]
+- [x] [AI-Review][Medium] Opção com valor antes do subcomando escapa da regra (d): `supabase --workdir . db push` e `npx -p supabase supabase db push` (1º posicional vira `.`/`supabase`). Procurar `link` e `db` + `push|pull|dump` em qualquer posição dos argumentos; testes com TDD para todos os itens desta rodada no `it.each` [scripts/bmad/remote-db-guard.mjs:90-99; scripts/bmad/remote-db-guard.test.ts]
+- [x] [AI-Review][Low] `isBmadSkill` não normaliza o nome: `' bmad-help'` e `BMAD-help` recebem `none`. Aplicar `trim()` e `toLowerCase()` antes de comparar [scripts/bmad/skill-guard.mjs:17-22]
+- [ ] [AI-Review][Low] Follow-ups da 1ª rodada ainda não commitados: o "CI verde" do AC 8 (PR #54) vale para `15b099e`. Commitar, dar push e conferir o CI de novo [AC 8]
 
 ## Dev Notes
 
@@ -227,6 +248,10 @@ Claude Opus 5.5 (claude-opus-5-5)
 - Task 6.1: `npx tsc --noEmit` apontou `tool_name` fora do tipo JSDoc de `decideSkill` no teste; corrigido o `@param` (sem desligar checagem) → 0 erros. `npm run lint` 0 avisos. `npx vitest run` 151 arquivos, 1501 testes ok. Testes da 1.14 (`story-guard`, `story-guard-hook`, `check-story-process`): 83/83. `npx next build` ok.
 - Task 6.2 (sessão real, depois de o PO abrir `/hooks` e a sessão recarregar os hooks): `npx tsx scripts/nao-existe/migrate.ts --env staging` → bloqueado (`PreToolUse:Bash hook error: … remote-db-guard.mjs: Comandos em bancos remotos são do PO: roda o migrate em staging. Passe o comando para o PO rodar.`); `test -f .env.migrate.staging` → bloqueado (`… cita .env.migrate.staging …`); `npm run db:status` e `cat README.md` → passaram; Skill `bmad-help` (PO avisado antes) → abriu a confirmação nativa e o PO recusou ("funcionou"). `Read` do arquivo de banco remoto não foi usado no teste, como manda a story.
 - Task 6.3: PR #54 para `staging`; CI verde (`ci`, `Processo BMAD (stories alteradas)`, `Migrations do zero`; `Migrations no banco do ambiente` pulado, como esperado em PR).
+- Follow-ups do code review (vermelho): `npx vitest run scripts/bmad/remote-db-guard.test.ts` → `Tests 16 failed | 125 passed (141)`; ex.: `× bloqueia: (npx tsx scripts/migrate.ts --env staging)`, `× bloqueia: npx supabase@latest db push`, `× bloqueia: cat .env.migrate.{staging,production}`, `× bloqueia: echo x >.env.migrate.staging`. Verde: 141/141.
+- Follow-ups (validação): `npx tsc --noEmit` 0 erros; `npm run lint` 0 avisos; `npx vitest run` 151 arquivos, 1534 testes ok; testes da 1.14: 83/83; `npx next build` ok. Sessão real: `echo $(npx tsx scripts/nao-existe/migrate.ts --env staging)` → bloqueado (`Comandos em bancos remotos são do PO: roda o migrate em staging.`).
+- Follow-ups da 2ª rodada (vermelho): `npx vitest run scripts/bmad/remote-db-guard.test.ts scripts/bmad/skill-guard.test.ts` → `Tests 32 failed | 176 passed (208)`; ex.: `× bloqueia: if true; then npx tsx scripts/migrate.ts --env staging; fi`, `× bloqueia: sleep 1 & npx tsx scripts/migrate.ts --env staging`, `× bloqueia: E=staging; npx tsx scripts/migrate.ts --env $E`, `× bloqueia: npx tsx scripts/migrate.ts --env staging>out.log`, `× bloqueia: cat .env.migrate.sta"ging"`, `× bloqueia: supabase --workdir . db push`, `× qualquer skill BMAD (agentes, plugins) → ask: BMAD-help`. Verde: `scripts/bmad` 300/300.
+- Follow-ups da 2ª rodada (validação): `npx tsc --noEmit` 0 erros; `npm run lint` 0 avisos; `npx vitest run` 151 arquivos, 1577 testes ok; testes da 1.14: 83/83; `npx next build` ok. Sessão real: `if true; then npx tsx scripts/nao-existe/migrate.ts --env staging; fi` → bloqueado (`Comandos em bancos remotos são do PO: roda o migrate em staging.`).
 
 ### Completion Notes List
 
@@ -237,6 +262,22 @@ Claude Opus 5.5 (claude-opus-5-5)
 - Entrypoints finos em `.claude/hooks/` (stdin → decisão; o de Skill imprime o JSON `ask` com exit 0) e registro no `.claude/settings.json` com `node` e `timeout: 10`, mantendo o hook da 1.14.
 - `CLAUDE.md` com "Quem conduz", "Bancos remotos", primeiro item de "Processo BMAD" ajustado e "Limites das proteções" com os hooks novos; README (tabela e frase de abertura) e `project-context.md` ("Git & Branching").
 - Testes: 108 (remote-db-guard) + 24 (skill-guard) + 9 (integração dos entrypoints e `settings.json`). Hooks testados de verdade na sessão (Task 6.2).
+- 2026-11-17 (dev-story, follow-ups do code review):
+  - ✅ Resolved review finding [High]: subshell escapava das regras (a)/(d). `classifyCommand` confere o trecho inteiro **e** cada pedaço separado por `(`, `)`, `$(` e crase (`SUBSHELL_SPLIT`); manter o trecho inteiro preserva casos já bloqueados, como `npx tsx $(pwd)/scripts/migrate.ts --env staging`. `SEGMENT_SPLIT` da 1.14 intocado.
+  - ✅ Resolved review finding [High]: `supabase@<versão>` (npx/bunx/pnpm dlx) reconhecido como CLI (`isSupabase`).
+  - ✅ Resolved review finding [Medium]: `{` incluído no `ENV_GLOB_RE` (expansão de chaves).
+  - ✅ Resolved review finding [Medium]: `>` incluído no lookbehind do `ENV_FILE_RE` e do `ENV_GLOB_RE` (`>.env…`, `>>.env…`, `&>.env…`).
+  - ✅ Resolved review finding [Medium]: 20 casos novos de bloqueio e 7 de permissão no `it.each` (TDD, vermelho no Debug Log).
+  - ✅ Resolved review finding [Low]: falso positivo com aspas **documentado** (não corrigido) em "Limites das proteções" do `CLAUDE.md`, com a saída `git commit -F`/`gh pr create --body-file`; corrigir exigiria um analisador de shell próprio no lugar do `SEGMENT_SPLIT` reutilizado (Task 1.2). Teste fixa o comportamento.
+  - ✅ Resolved review finding [Low]: subcomandos do CLI `supabase` que usam o projeto linkado documentados nos limites; teste fixa o comportamento.
+  - ✅ Resolved review finding [Low]: prefixos `sudo`/`command`/`nice`/`exec` documentados nos limites; teste fixa o comportamento. O README não mudou: a frase de limites continua apontando para o `CLAUDE.md` (Dev Notes, "Limites a documentar").
+- 2026-11-17 (dev-story, follow-ups da 2ª rodada do code review):
+  - ✅ Resolved review finding [High]: palavras-chave do shell e `&` simples. `segmentTokens` pula `then`, `do`, `else`, `elif`, `{`, `!` e também `if`, `while`, `until` (mesmo problema: `if npx tsx … --env production; then`), misturados com `VAR=valor`. `classifyCommand` divide cada trecho também por `&` simples (`BACKGROUND_SPLIT`, sem `&&`, `&>`, `>&`); o `SEGMENT_SPLIT` da 1.14 continua intocado.
+  - ✅ Resolved review finding [Medium]: valor do `--env` que começa por `$` (`$e`, `$E`, `"${E}"`) é tratado como remoto, com o motivo "roda o migrate com --env vindo de variável" (sem repetir o comando).
+  - ✅ Resolved review finding [Medium]: valor do `--env` cortado em `<`, `>`, `&`, `|` antes de comparar (`staging>out.log`, `staging&`, `--env=production>>log`).
+  - ✅ Resolved review finding [Medium]: `ENV_FILE_RE`/`ENV_GLOB_RE` conferidos também no comando sem aspas e sem `\` (`.env.migrate.sta"ging"`, `".env.migrate."staging`, `.env.migrate.stag\ing`, `.e"nv"*`).
+  - ✅ Resolved review finding [Medium]: CLI `supabase`: `link` e `db` seguido de `push|pull|dump` procurados em qualquer posição dos argumentos (`supabase --workdir . db push`, `npx -p supabase supabase db push`); `--local` continua liberando. 30 casos novos de bloqueio e 10 de permissão no `it.each` (TDD, vermelho no Debug Log).
+  - ✅ Resolved review finding [Low]: `isBmadSkill` aplica `trim()` e `toLowerCase()` antes de comparar; 5 casos novos no `skill-guard.test.ts`.
 
 ### File List
 
@@ -259,3 +300,7 @@ Claude Opus 5.5 (claude-opus-5-5)
 
 - 2026-11-17: Story criada pelo `create-story` (comando do PO); decisões de criação listadas para confirmação do PO.
 - 2026-11-17: Implementação pelo `dev-story`: hooks `remote-db-guard` e `bmad-skill-guard` com TDD, `CLAUDE.md` (Quem conduz, Bancos remotos, limites), README e project-context.
+- 2026-11-17: Code review (`/bmad-bmm-code-review 1-15`, comando do PO): 2 High, 3 Medium, 3 Low; o PO escolheu criar action items ("Review Follow-ups (AI)"). Status → in-progress.
+- 2026-11-17: Addressed code review findings - 8 items resolved (Date: 2026-11-17). `dev-story` (comando do PO): subshell/crases, `supabase@<versão>`, chaves e `>` colado no `remote-db-guard` com TDD; 3 limites documentados no `CLAUDE.md`. Status → review.
+- 2026-11-17: Code review, 2ª rodada (`/bmad-bmm-code-review 1-15`, comando do PO): 1 High, 4 Medium, 2 Low; o PO escolheu criar action items ("Review Follow-ups (AI)", 2ª rodada). Status → in-progress.
+- 2026-11-17: Addressed code review findings - 7 items resolved (Date: 2026-11-17). `dev-story` (comando do PO), 2ª rodada: palavras-chave do shell e `&` simples, `--env` com variável ou colado a redirecionamento, nomes `.env.migrate.*` montados com aspas/`\`, subcomando do `supabase` em qualquer posição e nome da Skill normalizado, com TDD; commit, push e CI da PR #54 conferido de novo. Status → review.

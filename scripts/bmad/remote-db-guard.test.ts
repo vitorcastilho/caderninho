@@ -66,6 +66,61 @@ describe('classifyRemoteAccess — Bash bloqueado', () => {
     'supabase db push --db-url postgresql://x',
     'supabase db reset --db-url=postgresql://x',
     'supabase db reset --linked',
+    // code review 1.15: subshell, substituição de comando e crases
+    '(npx tsx scripts/migrate.ts --env staging)',
+    'echo $(npx tsx scripts/migrate.ts --env staging)',
+    'echo `npx tsx scripts/migrate.ts --env staging`',
+    'echo "$(npm run db:migrate -- --env production)"',
+    'x=$(npm run db:migrate -- --env=staging)',
+    '(supabase db push)',
+    'echo $(npx supabase link --project-ref abcdefgh)',
+    'npx tsx $(pwd)/scripts/migrate.ts --env staging',
+    // code review 1.15: CLI supabase com versão
+    'npx supabase@latest db push',
+    'npx supabase@2 link --project-ref abcdefgh',
+    'bunx supabase@1.200.0 db pull',
+    'pnpm dlx supabase@latest db dump -f x.sql',
+    // code review 1.15: expansão de chaves
+    'cat .env.migrate.{staging,production}',
+    'cat .env.{migrate.staging,x}',
+    // code review 1.15: redirecionamento colado ao nome
+    'echo x >.env.migrate.staging',
+    'echo x>>.env.migrate.production',
+    'echo x &>.env.staging.local',
+    'echo x >| .env.production.local',
+    // code review 1.15 (2ª rodada): palavras-chave do shell e `&` simples
+    'if true; then npx tsx scripts/migrate.ts --env staging; fi',
+    'for e in x; do npx tsx scripts/migrate.ts --env staging; done',
+    '{ npx tsx scripts/migrate.ts --env staging; }',
+    '! npx tsx scripts/migrate.ts --env staging',
+    'sleep 1 & npx tsx scripts/migrate.ts --env staging',
+    'if npx tsx scripts/migrate.ts --env production; then echo ok; fi',
+    'until npm run db:migrate -- --env staging; do sleep 1; done',
+    'if false; then :; else npm run db:migrate -- --env production; fi',
+    'if false; then :; elif npx tsx scripts/migrate.ts --env staging; then :; fi',
+    'if true; then supabase db push; fi',
+    // code review 1.15 (2ª rodada): --env com variável
+    'for e in staging production; do npm run db:migrate -- --env $e; done',
+    'E=staging; npx tsx scripts/migrate.ts --env $E',
+    'npx tsx scripts/migrate.ts --env=$E',
+    'npx tsx scripts/migrate.ts --env "${E}"',
+    // code review 1.15 (2ª rodada): redirecionamento ou `&` colado ao valor do --env
+    'npx tsx scripts/migrate.ts --env staging>out.log',
+    'npx tsx scripts/migrate.ts --env staging&',
+    'npm run db:migrate -- --env=production>>migrate.log 2>&1',
+    'npx tsx scripts/migrate.ts --env staging<input.txt',
+    // code review 1.15 (2ª rodada): nome de arquivo montado com aspas ou barra invertida
+    'cat .env.migrate.sta"ging"',
+    'cat ".env.migrate."staging',
+    "cat '.env.migrate.'production",
+    'cat .env.migrate.stag\\ing',
+    'cat .env.stag"ing".local',
+    'cat .e"nv"*',
+    // code review 1.15 (2ª rodada): opção com valor antes do subcomando do supabase
+    'supabase --workdir . db push',
+    'npx -p supabase supabase db push',
+    'supabase --workdir . link --project-ref abcdefgh',
+    'supabase db --workdir . pull',
   ])('bloqueia: %s', (command) => {
     expect(bash(command)).toMatchObject({ blocked: true });
   });
@@ -101,7 +156,49 @@ describe('classifyRemoteAccess — Bash permitido', () => {
     'cat README.md',
     'ls -la',
     'git status',
+    // subshell e versão do CLI em comandos locais
+    'echo $(date)',
+    '(cd src && ls)',
+    'echo `git rev-parse HEAD`',
+    'x=$(npm run db:migrate -- --env local)',
+    'npx supabase@latest start',
+    'npx supabase@latest db reset',
+    'npx supabase@2 db push --local',
+    // palavras-chave, `&` e variáveis em comandos locais (2ª rodada)
+    'if true; then npm run db:migrate -- --env local; fi',
+    'npm run lint & npm run test',
+    'npm run build 2>&1 | tail -5',
+    'echo x &>/dev/null',
+    'npm run db:migrate -- --env local>out.log',
+    'echo $E staging',
+    'supabase --workdir . db push --local',
+    'supabase --workdir . start',
+    'npx -p supabase supabase db reset',
+    'cat ".env.local"',
   ])('permite: %s', (command) => {
+    expect(bash(command)).toEqual({ blocked: false });
+  });
+});
+
+// Limites documentados no CLAUDE.md ("Limites das proteções"): a divisão de
+// trechos não respeita aspas, e prefixos fora da lista de executores passam.
+// Estes testes fixam o comportamento atual para que uma mudança seja consciente.
+describe('classifyRemoteAccess — limites documentados', () => {
+  it.each([
+    'echo "a; npx tsx scripts/migrate.ts --env staging"',
+    'git commit -m "docs: ajuste\nnpm run db:migrate -- --env production"',
+  ])('falso positivo aceito (texto entre aspas tratado como trecho): %s', (command) => {
+    expect(bash(command)).toMatchObject({ blocked: true });
+  });
+
+  it.each([
+    'sudo npx tsx scripts/migrate.ts --env staging',
+    'command npx tsx scripts/migrate.ts --env staging',
+    'nice npm run db:migrate -- --env production',
+    'exec npx tsx scripts/migrate.ts --env staging',
+    'supabase migration list',
+    'supabase inspect db bloat',
+  ])('não detectado (fora do AC; documentado): %s', (command) => {
     expect(bash(command)).toEqual({ blocked: false });
   });
 });
