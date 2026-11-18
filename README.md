@@ -414,15 +414,17 @@ Para o guia completo de deploy em produção (criação de contas, env vars, che
 
 ## Processo BMAD e proteções
 
-O projeto é desenvolvido com agentes e workflows BMAD: toda story passa por `create-story` → `dev-story` → `code-review` (comandos `/bmad-bmm-…` no Claude Code). Três camadas impedem que isso seja pulado (Story 1.14):
+O projeto é desenvolvido com agentes e workflows BMAD: toda story passa por `create-story` → `dev-story` → `code-review` (comandos `/bmad-bmm-…` no Claude Code). Três camadas impedem que isso seja pulado e protegem os bancos remotos (Stories 1.14 e 1.15):
 
 | Camada | Onde | O que faz |
 |---|---|---|
-| Instrução | `CLAUDE.md` | Carregado pelo Claude Code em toda sessão: só workflows BMAD alteram stories; fora disso, parar e perguntar; nunca `git worktree` |
+| Instrução | `CLAUDE.md` | Carregado pelo Claude Code em toda sessão: só workflows BMAD alteram stories; fora disso, parar e perguntar; o PO conduz (o Claude pergunta "posso assumir?"); comandos em bancos remotos são do PO; nunca `git worktree` |
 | Bloqueio na sessão | `.claude/settings.json` → `.claude/hooks/bmad-story-guard.mjs` (lógica em `scripts/bmad/story-guard.mjs`) | Hook `PreToolUse` que barra escrita em stories e no `sprint-status.yaml` quando o último workflow BMAD invocado não permite |
+| Bloqueio na sessão | `.claude/hooks/remote-db-guard.mjs` (lógica em `scripts/bmad/remote-db-guard.mjs`) | Hook `PreToolUse` (`Bash`, `Read`, `Grep`, `Write`, `Edit`, `MultiEdit`) que barra migrate em staging/produção, arquivos `.env.migrate.*` (e os nomes antigos, inclusive por glob ou busca recursiva), hosts remotos do Supabase e CLI `supabase` remoto: o Claude passa o comando para o PO rodar |
+| Confirmação na sessão | `.claude/hooks/bmad-skill-guard.mjs` (lógica em `scripts/bmad/skill-guard.mjs`) | Hook `PreToolUse` da ferramenta `Skill`: skill BMAD chamada pelo Claude abre a confirmação nativa do Claude Code (em `bypassPermissions`/`dontAsk`, bloqueia); o comando `/bmad-…` digitado pelo PO não passa por ele |
 | CI | job `bmad-process` em `.github/workflows/ci.yml` (`scripts/bmad/check-story-process.ts`) | Story alterada em `review`/`done` precisa do Dev Agent Record; em `done`, do registro de code review |
 
-Limites: ver a seção "Limites das proteções" do `CLAUDE.md`. Ao alterar o hook, o Claude Code pede revisão em `/hooks` (os hooks são carregados no início da sessão).
+Limites: ver a seção "Limites das proteções" do `CLAUDE.md`. Ao alterar um hook, o Claude Code pede revisão em `/hooks` (os hooks são carregados no início da sessão).
 
 ## Decisões Técnicas
 
