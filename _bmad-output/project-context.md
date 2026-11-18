@@ -301,12 +301,13 @@ console.log(JSON.stringify({
 
 ### Development Workflow Rules
 
-**Git & Branching (atualizado na Story 1.14 — ver `CLAUDE.md`):**
+**Git & Branching (atualizado nas Stories 1.14 e 1.15 — ver `CLAUDE.md`):**
 
 - Cada story: branch a partir de `staging` atualizada, **na pasta principal do projeto** (`git switch`) — nunca `git worktree` nem cópias do repositório em outras pastas
 - PR da story para `staging` (squash) → CI verde → validação em staging
 - Ao fim do épico, sem pendências em staging: PR `staging → main` com **merge commit** (nunca squash; nunca apagar `staging`) → validação em produção
 - Toda story passa por `create-story` → `dev-story` → `code-review`, invocados de verdade; o hook `.claude/hooks/bmad-story-guard.mjs` e o job de CI `bmad-process` conferem
+- O PO conduz: o Claude não invoca workflow/agente BMAD nem começa a próxima etapa sem o sim do PO, e não roda comandos em staging/produção nem lê `.env.migrate.*` (Story 1.15 — ver "Quem conduz" e "Bancos remotos" no `CLAUDE.md`; hooks `bmad-skill-guard.mjs` e `remote-db-guard.mjs`)
 
 **CI/CD (GitHub Actions + Vercel):**
 

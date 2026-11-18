@@ -56,7 +56,7 @@ development_status:
   1-12-login-google-em-staging-e-producao: backlog  # refazer pelo create-story (correct course processo, Proposta 2)
   1-13-ambiente-local-igual-staging-e-producao: done  # code review 7ª rodada ok (2026-11-17); P5 concluída; P3 e P4 com o PO no merge em staging
   1-14-protecoes-do-processo-bmad: done  # correct course processo, Proposta 5 — primeira da fila
-  1-15-pedir-permissao-e-proteger-bancos-remotos: backlog  # correct course 2026-11-16 (sprint-change-proposal-2026-11-16.md), Proposta 1
+  1-15-pedir-permissao-e-proteger-bancos-remotos: in-progress  # correct course 2026-11-16 (sprint-change-proposal-2026-11-16.md), Proposta 1
   epic-1-retrospective: optional
 
   # Epic 2: Estrutura Financeira e Categorizacao
