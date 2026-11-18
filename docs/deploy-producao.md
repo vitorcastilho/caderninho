@@ -43,7 +43,7 @@ npm run db:migrate -- --env production --confirm-production # lê .env.migrate.p
 
 O script lê o `DATABASE_URL` só do arquivo do ambiente (um `DATABASE_URL` exportado no terminal é ignorado), recusa staging/produção fora da porta 6543 ou com o project ref de outro ambiente (usuário `postgres.<ref>` no pooler compartilhado ou host `db.<ref>.supabase.co` no pooler dedicado; o ref de cada projeto fica só em `scripts/lib/migrate-env.ts` — atualize ao criar um projeto novo), produção sem `--confirm-production`, URL com `$` lida de arquivo (o Next expande `$VAR` nos arquivos `.env` e o migrate não; codifique `$` da senha como `%24`), `--env` repetido, `--confirm-production` fora de produção, usuário e host com project refs diferentes e argumentos desconhecidos (inclusive sem o `--` depois de `npm run db:migrate`). Nunca cole a URL com senha direto no terminal.
 
-> **Nunca use `.env.production.local` para a migration** (nem copie para ele os segredos de produção): o Next carrega esse arquivo em todo `npm run build`/`npm run start` local, com prioridade sobre o `.env.local`, e o app local passaria a usar o banco e os segredos de produção (correct course 2026-11-17).
+> **Nunca use `.env.production.local` para a migration** (nem copie para ele os segredos de produção): o Next carrega esse arquivo em todo `npm run build`/`npm run start` local, com prioridade sobre o `.env.local`, e o app local passaria a usar o banco e os segredos de produção (correct course 2026-11-17). Se esse arquivo (ou o antigo `.env.staging.local`) existir na raiz, o app local e o `db:migrate` recusam rodar até ele ser renomeado para `.env.migrate.*`; o `db:migrate` também recusa um `.env.migrate.*` com outra chave além do `DATABASE_URL`.
 
 ### 2. Vercel — Hospedagem da Aplicação
 

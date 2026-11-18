@@ -7,6 +7,9 @@ import {
   checkTarget,
   resolveDatabaseUrl,
   databaseUrlFromEnvFile,
+  checkEnvFileKeys,
+  legacyEnvFilesError,
+  LEGACY_ENV_FILES,
   isGithubActions,
   drizzleKitDatabaseUrl,
   drizzleKitCredentials,
@@ -172,6 +175,68 @@ describe('databaseUrlFromEnvFile', () => {
 
   it('arquivo sem DATABASE_URL não tem valor', () => {
     expect(databaseUrlFromEnvFile('BETTER_AUTH_SECRET=x\n')).toBeUndefined();
+  });
+});
+
+// 7ª rodada: um arquivo com o nome antigo esquecido (outra máquina, backup)
+// recoloca o banco e os segredos de produção no `next build`/`next start` local.
+describe('legacyEnvFilesError', () => {
+  it('cobre os dois nomes antigos dos arquivos de banco remoto', () => {
+    expect(LEGACY_ENV_FILES).toEqual(['.env.staging.local', '.env.production.local']);
+  });
+
+  it('sem arquivo antigo não há erro', () => {
+    expect(legacyEnvFilesError([])).toBeUndefined();
+  });
+
+  it('com arquivo antigo, cita o nome e o nome novo para renomear', () => {
+    const message = legacyEnvFilesError(['.env.production.local']);
+
+    expect(message).toContain('.env.production.local');
+    expect(message).toContain('.env.migrate.production');
+    expect(message).not.toContain('.env.migrate.staging');
+  });
+
+  it('com os dois arquivos antigos, cita os dois', () => {
+    const message = legacyEnvFilesError([...LEGACY_ENV_FILES]);
+
+    expect(message).toContain('.env.staging.local → .env.migrate.staging');
+    expect(message).toContain('.env.production.local → .env.migrate.production');
+  });
+});
+
+// 7ª rodada (AC 2): os arquivos de migration remota têm só o DATABASE_URL —
+// garantido pelo código, não só pela documentação.
+describe('checkEnvFileKeys', () => {
+  const URL_LINE = `DATABASE_URL=postgresql://postgres.${STAGING_REF}:p@${POOLER_HOST}:6543/postgres\n`;
+
+  it('aceita arquivo de staging/produção só com o DATABASE_URL (comentários e linhas vazias permitidos)', () => {
+    expect(checkEnvFileKeys('staging', `# staging\n\n${URL_LINE}`)).toEqual({ ok: true });
+    expect(checkEnvFileKeys('production', URL_LINE)).toEqual({ ok: true });
+  });
+
+  it('recusa staging/produção com outras chaves e cita só os nomes (nunca os valores)', () => {
+    const content = `${URL_LINE}BETTER_AUTH_SECRET=segredo-de-verdade\nGOOGLE_CLIENT_SECRET=outro-segredo\n`;
+
+    for (const env of ['staging', 'production'] as const) {
+      const result = checkEnvFileKeys(env, content);
+
+      expect(result.ok).toBe(false);
+      const reason = !result.ok ? result.reason : '';
+      expect(reason).toContain(envFileFor(env));
+      expect(reason).toContain('BETTER_AUTH_SECRET');
+      expect(reason).toContain('GOOGLE_CLIENT_SECRET');
+      expect(reason).not.toContain('segredo-de-verdade');
+      expect(reason).not.toContain('outro-segredo');
+    }
+  });
+
+  it('no local não restringe: o .env.local é o arquivo do app inteiro', () => {
+    expect(checkEnvFileKeys('local', `${URL_LINE}BETTER_AUTH_SECRET=x\n`)).toEqual({ ok: true });
+  });
+
+  it('sem arquivo (CI, URL do secret) não há o que conferir', () => {
+    expect(checkEnvFileKeys('production', undefined)).toEqual({ ok: true });
   });
 });
 

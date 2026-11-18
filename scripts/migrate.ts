@@ -12,6 +12,9 @@ import {
   checkTarget,
   resolveDatabaseUrl,
   databaseUrlFromEnvFile,
+  checkEnvFileKeys,
+  legacyEnvFilesError,
+  LEGACY_ENV_FILES,
   isGithubActions,
   type MigrateArgs,
 } from './lib/migrate-env';
@@ -37,10 +40,24 @@ try {
   process.exit(1);
 }
 
+const legacyError = legacyEnvFilesError(LEGACY_ENV_FILES.filter((file) => existsSync(join(ROOT_DIR, file))));
+if (legacyError) {
+  console.error(`Migration cancelada: ${legacyError}`);
+  process.exit(1);
+}
+
 const envFile = envFilePath(args.env, ROOT_DIR);
+const envFileContent = existsSync(envFile) ? readFileSync(envFile, 'utf8') : undefined;
+
+const keysCheck = checkEnvFileKeys(args.env, envFileContent);
+if (!keysCheck.ok) {
+  console.error(`Migration cancelada: ${keysCheck.reason}`);
+  process.exit(1);
+}
+
 const resolved = resolveDatabaseUrl({
   env: args.env,
-  fileValue: databaseUrlFromEnvFile(existsSync(envFile) ? readFileSync(envFile, 'utf8') : undefined),
+  fileValue: databaseUrlFromEnvFile(envFileContent),
   shellValue: process.env.DATABASE_URL,
   isCi: isGithubActions(process.env),
 });

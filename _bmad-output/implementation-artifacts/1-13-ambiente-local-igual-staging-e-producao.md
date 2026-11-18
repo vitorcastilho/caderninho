@@ -1,6 +1,6 @@
 # Story 1.13: Ambiente local igual a staging e produção
 
-Status: review
+Status: done
 
 <!-- Criada em 2026-11-15 a partir do code review da Story 1.10. Pedido do PO: "precisamos ter um ambiente local igual ao ambiente de prod e staging". Deve ser concluída antes da Story 3.5 (primeira story com migration e reset de banco). -->
 
@@ -94,6 +94,10 @@ so that problemas de banco aparecem no meu computador ou no CI, e não depois do
 - [x] [AI-Review][Low] (6ª rodada) A recusa de `$` também vale para a URL do CI (secret do repositório), que não passa pelo Next: uma senha com `$` literal é recusada com mensagem sobre o "app (Next)". Restringir a checagem à origem arquivo ou ajustar a mensagem [scripts/lib/migrate-env.ts:193]
 - [x] [AI-Review][Low] (6ª rodada) Change Log/Completion Notes da 5ª rodada sem o commit `4217e9e` e sem o resultado do CI (as rodadas anteriores registraram ambos); CI da PR #51 nesse commit: `ci`, `bmad-process` e `migrations` verdes [story, Change Log]
 - [x] [AI-Review][Low] (6ª rodada) README ("Um só caminho de conexão": "Os arquivos `.env.*.local` espelham as variáveis da Vercel") e `docs/deploy-producao.md` não avisam que `npm run build`/`npm run start` locais carregam o `.env.production.local`; o texto incentiva copiar todos os segredos de produção para ele [README.md, docs/deploy-producao.md] — atendido pela Task 9.5
+- [x] [AI-Review][High] (7ª rodada) Task 9.6 marcada [x] com a P5 aberta, contra a própria regra ("fecha só depois da P5 do PO") — resolvido com a P5 concluída pelo PO nesta rodada [story, Task 9.6 / P5]
+- [x] [AI-Review][Medium] (7ª rodada, AC: #2) "Só o `DATABASE_URL`" nos arquivos de migration dependia só de disciplina manual: `databaseUrlFromEnvFile` aceitava qualquer outra chave. Recusar chaves extras em `.env.migrate.*`, com teste [scripts/lib/migrate-env.ts, scripts/migrate.ts]
+- [x] [AI-Review][Low] (7ª rodada) Um `.env.production.local`/`.env.staging.local` esquecido não era detectado: o Next voltaria a carregar segredos de produção em silêncio e o `db:migrate` só dizia "DATABASE_URL não definido" [scripts/migrate.ts, next.config.ts]
+- [x] [AI-Review][Low] (7ª rodada) README:140 dizia que `.env.production`/`.env.development*` têm prioridade sobre o `.env.local` (só os `.env.{modo}.local` têm) e não avisava que `.env.production` ficava fora do `.gitignore` [README.md, .gitignore]
 
 ### Ações do PO (pós-merge)
 
@@ -103,7 +107,7 @@ Fora do escopo do dev; validam os ACs 1, 8 e 10 nos ambientes reais. O job `depl
 - [x] P2 (AC: #3): `.env.production.local` na porta 6543 (renomeado na P5 para `.env.migrate.production`)
 - [ ] P3 (AC: #8, #10): criar os secrets do repositório `STAGING_DATABASE_URL` e `PRODUCTION_DATABASE_URL` (porta 6543) em GitHub → Settings → Secrets and variables → Actions; conferir o job `deploy-migrations` verde no próximo merge em `staging`
 - [ ] P4 (AC: #8): conferir o banco de staging, onde a conferência manual da 2ª rodada rodou `migrate` sem checar pendências — `select count(*) from drizzle.__drizzle_migrations` igual ao número de entradas de `src/server/infrastructure/database/migrations/meta/_journal.json` (no merge em `staging`, o log do `deploy-migrations` também serve: `Migrations applied successfully!` sem erro)
-- [ ] P5 (AC: #2): depois que a 9.3 (`.gitignore` com `.env.migrate.*`) estiver commitada no branch, renomear os arquivos locais
+- [x] P5 (AC: #2): depois que a 9.3 (`.gitignore` com `.env.migrate.*`) estiver commitada no branch, renomear os arquivos locais
       e deixar neles só o `DATABASE_URL`:
       `mv .env.staging.local .env.migrate.staging && mv .env.production.local .env.migrate.production`;
       apagar as outras linhas (`BETTER_AUTH_SECRET`, `NEXT_PUBLIC_APP_URL`, chaves do Google, `ENVIRONMENT`);
@@ -243,10 +247,18 @@ Claude Opus 5.5
   - Validação pelo checklist (o `validate-workflow.xml` não existe no projeto; checklist aplicado direto). Melhorias aprovadas pelo PO: armadilhas do `loadEnvConfig` no teste da 9.4 (modo `test` no vitest, cache, controle positivo); P5 depois da 9.3 commitada, e a 9.6 só fecha depois da P5; Dev Notes com a decisão, a ordem, a proibição de mexer nos arquivos do PO e a lista dos nomes antigos; nota "atendido pela Task 9.5" no Low da documentação; proposta em References e na File List.
   - Status mantido em `in-progress` (decisão do PO, como no correct course de 2026-11-16); `sprint-status.yaml` sem mudança.
 
+- 2026-11-17 (code review, 7ª rodada — 1 High, 1 Medium, 2 Low; PO escolheu corrigir automaticamente e pediu também os Low):
+  - Conferido: ACs 1–9 implementados (AC 8 e parte do AC 10 seguem dependendo de P3/P4); Tasks 1–9 com evidência; PR #51 (`ebace6d`) com `ci`, `bmad-process` e `migrations` verdes; working tree limpo e File List cobre o diff contra `staging`.
+  - ✅ [High] P5 concluída pelo PO nesta rodada: conferidos só os nomes das chaves (sem valores) — `.env.migrate.staging` e `.env.migrate.production` só com `DATABASE_URL`; sem `.env.production.local`/`.env.staging.local` na raiz. O PO rodou `npm run db:migrate -- --env staging`: `Destino: staging → aws-1-us-east-1.pooler.supabase.com:6543 (projeto bohdzhnbgeqodsgevoxm)`, `Migrations applied successfully!`. Com isso a regra de fechamento da 9.6 está cumprida.
+  - ✅ [Medium] `checkEnvFileKeys` (TDD: 4 vermelhos → verdes): staging/produção recusam chave além do `DATABASE_URL`, citando só os nomes; `.env.local` e CI sem restrição. Usado pelo `migrate.ts` antes de resolver a URL.
+  - ✅ [Low] `LEGACY_ENV_FILES`/`legacyEnvFilesError` (TDD: 4 vermelhos → verdes): `migrate.ts` e `next.config.ts` recusam rodar com `.env.production.local`/`.env.staging.local` na raiz e indicam o nome novo. Conferido com um `.env.staging.local` vazio criado e apagado na hora: `migrate` → "Migration cancelada: … Renomeie (.env.staging.local → .env.migrate.staging)", exit 1; `next build` → "Caderninho não sobe: …".
+  - ✅ [Low] `.gitignore` com `.env*` e `!.env.example` (`git check-ignore`: `.env.production`/`.env.development` ignorados, `.env.example` versionado); README corrigido (só os `.env.{modo}.local` têm prioridade sobre o `.env.local`; os `.env.{modo}` preenchem o que falta). README, `docs/deploy-producao.md`, `project-context.md` e `architecture.md` com as recusas novas.
+  - Validação: `tsc` 0, `eslint` 0, `vitest` 148 arquivos / 1360 testes, `next build` ok ("Environments: .env.local"), `npm run db:migrate` local → `local → 127.0.0.1:54329` ok. Nenhum comando em banco remoto pelo Claude.
+
 ### File List
 
 - `scripts/lib/migrate-env.ts` (novo), `scripts/lib/migrate-env.test.ts` (novo), `scripts/lib/next-env-files.test.ts` (novo), `scripts/migrate.ts`
-- `drizzle.config.ts`
+- `drizzle.config.ts`, `next.config.ts`
 - `supabase/config.toml`, `.env.example`, `package.json`, `.gitignore`
 - `.github/workflows/ci.yml`
 - `src/server/infrastructure/database/client.test.ts`
@@ -273,3 +285,4 @@ Claude Opus 5.5
 - 2026-11-17: story atualizada pelo `create-story` a partir do correct course de 2026-11-17 (AC 2, Task 9, P2, P5) e validada pelo checklist (Dev Notes da Task 9, P5 depois da 9.3). Status segue in-progress.
 - 2026-11-17: Task 9.1–9.5 — arquivos de migration remota renomeados para `.env.migrate.staging`/`.env.migrate.production` (código, `.gitignore`, teste do `loadEnvConfig` do Next, documentação). Addressed code review findings - 3 items resolved (Date: 2026-11-17): `$` só recusado em URL de arquivo, Change Log da 5ª rodada com commit e CI, docs sem incentivo a copiar segredos para `.env.production.local`. 9.6 e o High da 6ª rodada aguardam a P5 do PO.
 - 2026-11-17: Task 9.6 — com os arquivos renomeados pelo PO, `loadEnvConfig` e `next build` locais usam só o `.env.local`; validação completa verde. High da 6ª rodada resolvido. P5 segue com o PO (remover as chaves além do `DATABASE_URL` e conferir `db:migrate --env staging`). Status → review.
+- 2026-11-17: code review (AI), 7ª rodada — 1 High, 1 Medium, 2 Low, todos corrigidos (PO pediu também os Low). High resolvido com a P5 concluída pelo PO (arquivos só com `DATABASE_URL`, `db:migrate --env staging` no projeto certo). Código: recusa de chaves extras em `.env.migrate.*`, recusa de `.env.production.local`/`.env.staging.local` no `db:migrate` e no `next.config.ts`, `.gitignore` com `.env*` exceto `.env.example`, README corrigido. `vitest` 1360 testes, `tsc`/`eslint` 0, `next build` ok. Status → done. P3 e P4 seguem com o PO.

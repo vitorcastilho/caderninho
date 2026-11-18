@@ -324,7 +324,7 @@ console.log(JSON.stringify({
 - **Development**: Supabase CLI + Docker local (`npm run db:start` + `npm run dev`); `.env.local` pelo pooler local `postgresql://postgres.pooler-dev:postgres@127.0.0.1:54329/postgres`
 - **Staging**: Vercel preview + projeto Supabase de staging; migrations manuais pelo `.env.migrate.staging` (pooler 6543)
 - **Production**: Vercel production + projeto Supabase de produção; migrations manuais pelo `.env.migrate.production` (pooler 6543)
-- Arquivos `.env.migrate.*`: só o `DATABASE_URL`, no `.gitignore`. Nunca criar `.env.production.local`
+- Arquivos `.env.migrate.*`: só o `DATABASE_URL` (o `db:migrate` recusa outras chaves), no `.gitignore` (todo `.env*`, exceto `.env.example`). Nunca criar `.env.production.local`: `next.config.ts` e `db:migrate` recusam rodar com ele (ou com `.env.staging.local`) na raiz
   (nem `.env.production`/`.env.development*`): o Next carrega esses arquivos e o app local usaria outro banco
 - Cada ambiente com banco Supabase separado (isolamento total de dados)
 - Migrations com `npm run db:migrate -- --env <local|staging|production>` (`scripts/migrate.ts`), nunca `drizzle-kit migrate`/`push` em banco remoto; `db:push`/`db:studio` só no banco local

@@ -377,7 +377,9 @@ async function createTransaction(input: CreateTransactionInput): Promise<Result<
 - Os arquivos `.env.migrate.*` têm só o `DATABASE_URL`, ficam no `.gitignore` e não espelham a Vercel.
   O nome não pode ser `.env.production.local`: o Next carrega esse arquivo em todo `next build`/`next start`
   local, com prioridade sobre o `.env.local`, e o app local passaria a usar o banco e os segredos de produção
-  (correct course 2026-11-17).
+  (correct course 2026-11-17). Garantias no código: o `db:migrate` recusa chave além do `DATABASE_URL` nesses
+  arquivos, e `next.config.ts` e `db:migrate` recusam rodar com `.env.production.local`/`.env.staging.local`
+  na raiz. Todo `.env*` fica no `.gitignore`, exceto o `.env.example`.
 
 - Nunca a conexão direta (54322 local, 5432 remota) — nem no app, nem nas migrations
 - Migrations: `npm run db:migrate -- --env <local|staging|production>`; fora do CI (GitHub Actions, `GITHUB_ACTIONS=true`) o `DATABASE_URL` vem só do arquivo do ambiente (nunca do shell; no CI, da variável do job), o destino é impresso sem a senha, o local fora de `127.0.0.1:54329` e staging/produção fora da 6543 ou com o project ref de outro ambiente (usuário `postgres.<ref>` no pooler compartilhado ou host `db.<ref>.supabase.co` no pooler dedicado; refs só em `scripts/lib/migrate-env.ts`) são recusados, `db:push`/`db:studio` só aceitam o `.env.local` no pooler local (o `db:generate` não conecta no banco), argumentos desconhecidos, `--env` repetido, `--confirm-production` fora de produção, URL com `$` lida de arquivo (o Next expande `$VAR`, o migrate não — `$` da senha vai como `%24`; a URL do secret do CI não passa por essa checagem) e usuário/host com project refs diferentes são recusados, produção exige `--confirm-production` e os arquivos do ambiente são lidos da raiz do repositório

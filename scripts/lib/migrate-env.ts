@@ -68,6 +68,29 @@ const ENV_FILES: Record<MigrateEnv, string> = {
   production: '.env.migrate.production',
 };
 
+/**
+ * Nomes antigos dos arquivos de banco remoto (até o correct course 2026-11-17).
+ * O Next carrega o `.env.production.local` em todo `next build`/`next start`;
+ * um arquivo esquecido (outra máquina, backup) traria de volta o banco e os
+ * segredos de produção para o app local. `migrate.ts` e `next.config.ts` recusam
+ * rodar enquanto algum existir.
+ */
+export const LEGACY_ENV_FILES = ['.env.staging.local', '.env.production.local'] as const;
+
+const LEGACY_RENAMES: Record<(typeof LEGACY_ENV_FILES)[number], string> = {
+  '.env.staging.local': ENV_FILES.staging,
+  '.env.production.local': ENV_FILES.production,
+};
+
+/** Mensagem de recusa para os arquivos antigos presentes; undefined se não há nenhum. */
+export function legacyEnvFilesError(present: readonly string[]): string | undefined {
+  const found = LEGACY_ENV_FILES.filter((file) => present.includes(file));
+  if (found.length === 0) return undefined;
+
+  const renames = found.map((file) => `${file} → ${LEGACY_RENAMES[file]}`).join(', ');
+  return `arquivo de banco remoto com o nome antigo na raiz do repositório (o Next carrega o .env.production.local em todo next build/start, com o banco e os segredos de produção). Renomeie (${renames}) e deixe nele só o DATABASE_URL.`;
+}
+
 function isMigrateEnv(value: string): value is MigrateEnv {
   return (ENVS as readonly string[]).includes(value);
 }
@@ -160,6 +183,24 @@ export function describeTarget(env: MigrateEnv, databaseUrl: string): string {
 export function databaseUrlFromEnvFile(content: string | undefined): string | undefined {
   if (content === undefined) return undefined;
   return parse(content).DATABASE_URL || undefined;
+}
+
+/**
+ * Arquivo de migration remota (`.env.migrate.*`) só com o `DATABASE_URL` (AC 2):
+ * os demais segredos de staging/produção ficam só na Vercel. A recusa cita só os
+ * nomes das chaves, nunca os valores. O `.env.local` (app inteiro) e a URL do CI
+ * (sem arquivo) não são restringidos.
+ */
+export function checkEnvFileKeys(env: MigrateEnv, content: string | undefined): TargetCheck {
+  if (env === 'local' || content === undefined) return { ok: true };
+
+  const extras = Object.keys(parse(content)).filter((key) => key !== 'DATABASE_URL');
+  if (extras.length === 0) return { ok: true };
+
+  return {
+    ok: false,
+    reason: `${envFileFor(env)} deve ter só o DATABASE_URL; remova também: ${extras.join(', ')} (os demais segredos de ${env} ficam só na Vercel)`,
+  };
 }
 
 /**
