@@ -311,17 +311,23 @@ console.log(JSON.stringify({
 **CI/CD (GitHub Actions + Vercel):**
 
 - Push em feature branch → Vercel cria preview deploy
-- PR aberto → GitHub Actions: ESLint + TypeScript type-check + Vitest
-- Merge em `main` → Vercel deploy produção
-- Checks obrigatórios: lint passa, TS compila, testes passam, build sucede
+- Workflow único `.github/workflows/ci.yml`, em PR e push para `staging`/`main`:
+  - `ci`: ESLint + type-check + Vitest + `next build`
+  - `bmad-process` (só PR): stories alteradas passaram pelos workflows BMAD (Story 1.14)
+  - `migrations` (Story 1.13): falha se `schema/*.ts` mudou sem migration (`drizzle-kit generate`); sobe o Supabase (Postgres + Supavisor) e aplica **todas as migrations do zero pelo pooler em modo transação** (54329), rodando duas vezes e conferindo a contagem com o journal
+  - `deploy-migrations` (Story 1.13, só push em `staging`/`main`, depois de `ci` e `migrations`): aplica as migrations no banco do ambiente com a URL do **secret do repositório** (`STAGING_DATABASE_URL`/`PRODUCTION_DATABASE_URL`, porta 6543); em `main` com `--confirm-production` (o merge `staging → main` é a confirmação). Sem o secret, avisa e não falha
+- Merge em `staging`/`main` → Vercel deploy + `deploy-migrations` começam juntos: depois do lançamento, toda migration precisa ser retrocompatível
+- Checks obrigatórios: lint passa, TS compila, testes passam, build sucede, migrations do zero passam
 
 **3 Ambientes isolados:**
 
-- **Development**: Supabase CLI + Docker local (`supabase start` + `npm run dev`)
-- **Staging**: Vercel preview + projeto Supabase de staging
-- **Production**: Vercel production + projeto Supabase de produção
+- **Development**: Supabase CLI + Docker local (`npm run db:start` + `npm run dev`); `.env.local` pelo pooler local `postgresql://postgres.pooler-dev:postgres@127.0.0.1:54329/postgres`
+- **Staging**: Vercel preview + projeto Supabase de staging; migrations manuais pelo `.env.migrate.staging` (pooler 6543)
+- **Production**: Vercel production + projeto Supabase de produção; migrations manuais pelo `.env.migrate.production` (pooler 6543)
+- Arquivos `.env.migrate.*`: só o `DATABASE_URL` (o `db:migrate` recusa outras chaves), no `.gitignore` (todo `.env*`, exceto `.env.example`). Nunca criar `.env.production.local`: `next.config.ts` e `db:migrate` recusam rodar com ele (ou com `.env.staging.local`) na raiz
+  (nem `.env.production`/`.env.development*`): o Next carrega esses arquivos e o app local usaria outro banco
 - Cada ambiente com banco Supabase separado (isolamento total de dados)
-- Drizzle-kit roda migrations em cada ambiente independentemente
+- Migrations com `npm run db:migrate -- --env <local|staging|production>` (`scripts/migrate.ts`), nunca `drizzle-kit migrate`/`push` em banco remoto; `db:push`/`db:studio` só no banco local
 
 **Processo de validação visual:**
 
@@ -336,6 +342,7 @@ console.log(JSON.stringify({
 
 ### Critical Don't-Miss Rules
 
+- **Um só caminho de conexão (Story 1.13):** app e migrations usam o pooler do Supabase em **modo transação** em todos os ambientes (local `54329`, staging/produção `6543`), com `prepare: false`. Migrations: `npm run db:migrate -- --env <local|staging|production>` (produção exige `--confirm-production`); nunca colar URL com senha no terminal. O `db:migrate` recusa: `DATABASE_URL` do shell fora do GitHub Actions (vale só o arquivo do ambiente), local fora de `127.0.0.1:54329`, staging/produção fora da 6543 ou com o project ref de outro ambiente (refs só em `scripts/lib/migrate-env.ts`), produção sem `--confirm-production`, URL com `$` lida de arquivo (o Next expande `$VAR` nos arquivos `.env` e o migrate não; codifique `$` da senha como `%24`), `--env` repetido, `--confirm-production` fora de produção, usuário e host com project refs diferentes e argumentos desconhecidos (inclusive sem o `--` do npm). Staging e produção recebem migrations pelo job `deploy-migrations` depois do merge. Testes de banco/migration só no Supabase (local zerado com `npm run db:reset:local`), nunca num Postgres "puro".
 - **Hierarquia de gastos (FR38):** classificação → categoria → subcategoria → estabelecimento (opcional). Categoria é o grande grupo (Alimentação, Transporte); subcategoria é o tipo de gasto (Supermercado, Gasolina, Pedágio). **Nunca** use uma subcategoria como categoria em código, seeds, sugestões, testes ou exemplos — siga o `proto-08` e a seção "Modelo da Hierarquia de Gastos" da arquitetura. Orçamento e método de pagamento são opcionais em todos os níveis.
 
 **Gotchas do Stack:**
@@ -390,4 +397,4 @@ console.log(JSON.stringify({
 - Revisar periodicamente para remover regras que se tornaram óbvias
 - Adicionar novas regras quando padrões emergirem durante o desenvolvimento
 
-Last Updated: 2026-04-04
+Last Updated: 2026-11-17

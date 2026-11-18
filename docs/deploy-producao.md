@@ -30,12 +30,20 @@ Você precisa criar conta em **3 serviços** (todos têm plano gratuito):
    - `Connection string` (URI) → será o `DATABASE_URL`
    - Substituir `[YOUR-PASSWORD]` pela senha que você definiu no passo 4
 
-**Após criar o projeto, rodar as migrations:**
+**Após criar o projeto, aplicar as migrations (Story 1.13):**
+
+- **Use sempre a URL do pooler em modo transação (porta 6543)** — no app (Vercel), nas migrations e nos arquivos locais.
+- **Caminho normal:** guardar a URL no secret do repositório (`STAGING_DATABASE_URL` ou `PRODUCTION_DATABASE_URL`, em GitHub → Settings → Secrets and variables → Actions). O job `deploy-migrations` do CI aplica as migrations a cada merge em `staging`/`main`.
+- **Manual (só se necessário):** salvar a URL no arquivo de migration do ambiente — `.env.migrate.staging` ou `.env.migrate.production`, com **só o `DATABASE_URL`** (no `.gitignore`; os demais segredos ficam só na Vercel) — e rodar
 
 ```bash
-# Configurar a DATABASE_URL do Supabase remoto temporariamente
-DATABASE_URL="postgresql://postgres.[ref]:[senha]@aws-0-sa-east-1.pooler.supabase.com:6543/postgres" npm run db:migrate
+npm run db:migrate -- --env staging                         # lê .env.migrate.staging
+npm run db:migrate -- --env production --confirm-production # lê .env.migrate.production
 ```
+
+O script lê o `DATABASE_URL` só do arquivo do ambiente (um `DATABASE_URL` exportado no terminal é ignorado), recusa staging/produção fora da porta 6543 ou com o project ref de outro ambiente (usuário `postgres.<ref>` no pooler compartilhado ou host `db.<ref>.supabase.co` no pooler dedicado; o ref de cada projeto fica só em `scripts/lib/migrate-env.ts` — atualize ao criar um projeto novo), produção sem `--confirm-production`, URL com `$` lida de arquivo (o Next expande `$VAR` nos arquivos `.env` e o migrate não; codifique `$` da senha como `%24`), `--env` repetido, `--confirm-production` fora de produção, usuário e host com project refs diferentes e argumentos desconhecidos (inclusive sem o `--` depois de `npm run db:migrate`). Nunca cole a URL com senha direto no terminal.
+
+> **Nunca use `.env.production.local` para a migration** (nem copie para ele os segredos de produção): o Next carrega esse arquivo em todo `npm run build`/`npm run start` local, com prioridade sobre o `.env.local`, e o app local passaria a usar o banco e os segredos de produção (correct course 2026-11-17). Se esse arquivo (ou o antigo `.env.staging.local`) existir na raiz, o app local e o `db:migrate` recusam rodar até ele ser renomeado para `.env.migrate.*`; o `db:migrate` também recusa um `.env.migrate.*` com outra chave além do `DATABASE_URL`.
 
 ### 2. Vercel — Hospedagem da Aplicação
 
@@ -114,7 +122,7 @@ Se quiser um staging com banco separado, cadastrar as mesmas variáveis acima ma
 
 - [ ] Criar conta no Supabase e criar projeto `caderninho` (região São Paulo)
 - [ ] Copiar as 4 credenciais do Supabase (URL, anon key, service role key, DATABASE_URL)
-- [ ] Rodar migrations no banco remoto (`DATABASE_URL=... npm run db:migrate`)
+- [ ] Guardar a URL (porta 6543) no secret `PRODUCTION_DATABASE_URL` do repositório — as migrations rodam no merge em `main` (manual: `npm run db:migrate -- --env production --confirm-production`)
 - [ ] Criar conta na Vercel e importar o repositório
 - [ ] Criar credenciais OAuth no Google Cloud Console
 - [ ] Cadastrar todas as 10 variáveis de ambiente na Vercel (tabela acima)

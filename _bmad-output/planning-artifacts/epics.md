@@ -152,6 +152,7 @@ NFR-U4: Feedback visual para toda acao: confirmacao de sucesso em < 1 segundo, a
 - Cada story: branch a partir de `staging` -> PR para `staging` -> validacao em staging (atualizado em 2026-11-15)
 - Ao finalizar o epico, sem pendencias em staging: PR `staging` -> `main` (merge commit, nunca squash; nao apagar `staging`) -> validacao em producao
 - Toda story passa por `create-story` -> `dev-story` -> `code-review`, sempre invocados (comando ou ferramenta Skill) e seguidos pelo `workflow.xml`. O Claude Code nunca cria, implementa ou revisa story fora desses workflows; se um passo parecer nao se aplicar, pergunta ao PO (correct course de 2026-11-15)
+- O PO conduz o processo: o Claude Code nunca invoca workflow/agente BMAD nem inicia a proxima etapa por conta propria — pergunta "posso assumir?" e espera o sim; com agente ativo, mantem a persona ate o PO encerrar. Comandos contra bancos de staging/producao sao sempre do PO (correct course de 2026-11-16)
 
 ### FR Coverage Map
 
@@ -465,6 +466,22 @@ So that I don't need a separate password.
 
 **And** TDD para o botao/provedor condicional; validacao em staging; producao na release do Epic 3
 
+### Story 1.13: Ambiente Local Igual a Staging e Producao
+
+_(Criada em 2026-11-15 a partir do code review da Story 1.10; antes da Story 3.5.)_
+
+As a developer,
+I want the app and migrations to use the same connection path locally, in CI, staging and production,
+So that database problems show up before deploy.
+
+**Acceptance Criteria:**
+
+**Given** qualquer ambiente
+**When** o app ou as migrations conectam ao banco
+**Then** usam o pooler do Supabase em modo transacao (local 54329, staging/producao 6543)
+**And** `db:migrate --env <local|staging|production>` le o arquivo do ambiente, recusa staging/producao fora da 6543 e producao sem `--confirm-production`
+**And** o CI aplica todas as migrations do zero pelo pooler e, apos merge em staging/main, aplica no banco do ambiente via secret do repositorio
+
 ### Story 1.14: Protecoes do Processo BMAD
 
 _(Criada pelo correct course de 2026-11-15, `sprint-change-proposal-2026-11-15-processo.md`, Proposta 5.)_
@@ -491,6 +508,32 @@ So that the process is never taken over silently in the middle of our work.
 **Then** story em `review` sem Dev Agent Record preenchido (Agent Model, Completion Notes, File List) ou story em `done` sem registro de code review (`Review Follow-ups (AI)`, `Senior Developer Review (AI)` ou `[AI-Review]`) deixa o job vermelho, dizendo a story e o que falta
 
 **And** limites documentados: o hook do `Bash` reconhece so os padroes de escrita listados; sem protecao de branch, o CI vermelho avisa mas nao bloqueia o merge
+
+### Story 1.15: Pedir Permissao e Proteger Bancos Remotos
+
+_(Criada pelo correct course de 2026-11-16, `sprint-change-proposal-2026-11-16.md`, Proposta 1.)_
+
+As a PO,
+I want Claude Code to ask before taking over any BMAD step and never to run commands against remote databases,
+So that I stay in control of the process and of the staging and production data.
+
+**Acceptance Criteria:**
+
+**Given** qualquer sessao do Claude Code no repositorio
+**When** a sessao inicia
+**Then** o `CLAUDE.md` carrega as regras "Quem conduz" (nunca invocar workflow/agente BMAD nem iniciar a proxima etapa sem o sim do PO; aviso de estado nao e pedido de execucao; agente ativo mantido ate o PO encerrar; escopo das opcoes e o do workflow) e "Bancos remotos" (comandos em staging/producao sao do PO)
+
+**Given** o hook `PreToolUse`
+**When** o `Bash` tenta rodar o `migrate`/`db:migrate` com `--env staging|production` ou ler `.env.migrate.staging`/`.env.migrate.production` (ou os nomes antigos `.env.staging.local`/`.env.production.local`, caso ainda existam em alguma maquina)
+**Then** a acao e bloqueada com "Comandos em bancos remotos sao do PO"
+**And** testes cobrem o caso real de 2026-11-16 (`CI=true DATABASE_URL=... npx tsx scripts/migrate.ts --env staging`)
+
+**Given** o hook `PreToolUse`
+**When** a ferramenta Skill tenta invocar workflow/agente BMAD sem que a ultima mensagem do PO seja um comando `/bmad-...` ou uma confirmacao explicita
+**Then** a acao e bloqueada (viabilidade e criterio exato definidos no `create-story`)
+**And** testes cobrem o caso real de 2026-11-16 ("voltou para review" -> `code-review` invocado)
+
+**And** a secao "Limites das protecoes" do `CLAUDE.md` e atualizada
 
 ---
 

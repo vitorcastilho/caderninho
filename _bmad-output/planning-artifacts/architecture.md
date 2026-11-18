@@ -364,16 +364,49 @@ async function createTransaction(input: CreateTransactionInput): Promise<Result<
 - Cada ambiente com **banco Supabase separado** (isolamento total de dados)
 - Variáveis de ambiente configuradas por ambiente na Vercel
 - Drizzle-kit roda migrations em cada ambiente independentemente
-- Development 100% local via Docker (Supabase CLI): `supabase start` + `npm run dev`
+- Development 100% local via Docker (Supabase CLI): `npm run db:start` + `npm run dev`
+
+**Um só caminho de conexão (Story 1.13):** app e migrations conectam pelo **pooler do Supabase (Supavisor) em modo transação**, com `prepare: false` no driver, em todos os ambientes — problemas de conexão aparecem no local ou no CI, não depois do deploy.
+
+| Ambiente | Conexão (`DATABASE_URL`) | Arquivo local das migrations |
+|---|---|---|
+| **Development** | Pooler local, porta **54329** (`postgresql://postgres.pooler-dev:postgres@127.0.0.1:54329/postgres`) | `.env.local` |
+| **Staging** | Pooler do projeto Supabase de staging, porta **6543** | `.env.migrate.staging` |
+| **Production** | Pooler do projeto Supabase de produção, porta **6543** | `.env.migrate.production` |
+
+- Os arquivos `.env.migrate.*` têm só o `DATABASE_URL`, ficam no `.gitignore` e não espelham a Vercel.
+  O nome não pode ser `.env.production.local`: o Next carrega esse arquivo em todo `next build`/`next start`
+  local, com prioridade sobre o `.env.local`, e o app local passaria a usar o banco e os segredos de produção
+  (correct course 2026-11-17). Garantias no código: o `db:migrate` recusa chave além do `DATABASE_URL` nesses
+  arquivos, e `next.config.ts` e `db:migrate` recusam rodar com `.env.production.local`/`.env.staging.local`
+  na raiz. Todo `.env*` fica no `.gitignore`, exceto o `.env.example`.
+
+- Nunca a conexão direta (54322 local, 5432 remota) — nem no app, nem nas migrations
+- Migrations: `npm run db:migrate -- --env <local|staging|production>`; fora do CI (GitHub Actions, `GITHUB_ACTIONS=true`) o `DATABASE_URL` vem só do arquivo do ambiente (nunca do shell; no CI, da variável do job), o destino é impresso sem a senha, o local fora de `127.0.0.1:54329` e staging/produção fora da 6543 ou com o project ref de outro ambiente (usuário `postgres.<ref>` no pooler compartilhado ou host `db.<ref>.supabase.co` no pooler dedicado; refs só em `scripts/lib/migrate-env.ts`) são recusados, `db:push`/`db:studio` só aceitam o `.env.local` no pooler local (o `db:generate` não conecta no banco), argumentos desconhecidos, `--env` repetido, `--confirm-production` fora de produção, URL com `$` lida de arquivo (o Next expande `$VAR`, o migrate não — `$` da senha vai como `%24`; a URL do secret do CI não passa por essa checagem) e usuário/host com project refs diferentes são recusados, produção exige `--confirm-production` e os arquivos do ambiente são lidos da raiz do repositório
+- Testar migrations do zero: `npm run db:reset:local` (zera o Supabase local e aplica tudo pelo pooler). Testes de banco só no Supabase, nunca num Postgres "puro" (sem `auth.uid()`)
 
 #### CI/CD Pipeline: GitHub Actions + Vercel
 
 | Evento | Ação Automática |
 |---|---|
 | Push em feature branch | Vercel cria preview deploy |
-| Pull Request aberto | GitHub Actions: lint + type-check + testes (Vitest) |
-| Merge em `staging` | Vercel deploy staging + migrations Supabase staging |
-| Merge em `main` | Vercel deploy produção + migrations Supabase produção |
+| Pull Request aberto | GitHub Actions: lint + type-check + testes (Vitest) + build; migrations do zero pelo pooler |
+| Merge em `staging` | Vercel deploy staging + migrations Supabase staging (job `deploy-migrations`) |
+| Merge em `main` | Vercel deploy produção + migrations Supabase produção (job `deploy-migrations`) |
+
+**Jobs do `.github/workflows/ci.yml`** (PR e push em `staging`/`main`; não há `deploy.yml`):
+
+| Job | Quando | O que faz |
+|---|---|---|
+| `ci` | PR e push | Lint, type-check, Vitest e `next build` |
+| `bmad-process` | PR | Confere se as stories alteradas passaram pelos workflows BMAD (Story 1.14) |
+| `migrations` | PR e push | Sobe o Supabase (Postgres + Supavisor) e aplica **todas as migrations do zero pelo pooler em modo transação** (54329); roda de novo e confere que todas do journal foram aplicadas; antes, falha se `drizzle-kit generate` gerar arquivo novo (schema sem migration) |
+| `deploy-migrations` | Push em `staging`/`main`, depois de `ci` e `migrations` | Aplica as migrations no banco do ambiente com a URL do **secret do repositório** (`STAGING_DATABASE_URL` ou `PRODUCTION_DATABASE_URL`, porta 6543). Em `main` roda com `--confirm-production` — o merge `staging → main` é a confirmação. Sem o secret, avisa e não falha |
+
+- Secrets do repositório, não Environments do GitHub (o plano gratuito não tem Environments em repositório privado)
+- Só execuções de PR são canceladas pela concorrência; um push novo nunca interrompe uma migration em andamento. Mas o GitHub mantém só **uma** execução pendente por grupo: em pushes seguidos no mesmo branch, a do meio é cancelada antes de começar, e o deploy da Vercel desse commit fica no ar sem as migrations dele até a execução seguinte (que aplica todas as pendentes) terminar
+- O job `migrations` sobe o Supabase sem `gotrue`/`storage-api`: os schemas `auth`/`storage` ficam no estado base da imagem do Postgres, não no das migrations do GoTrue de staging/produção. Hoje só `auth.uid()` é usado (existe na imagem); uma migration que dependa de colunas de `auth`/`storage` precisa de conferência manual em staging
+- Migration e deploy da Vercel começam juntos no push: depois do lançamento, migrations precisam ser retrocompatíveis
 
 **Checks obrigatórios antes de merge:**
 - ESLint passa
@@ -829,8 +862,7 @@ caderninho/
 │   └── copy-prod-db.sh                  # Cópia de base produção → dev/staging
 ├── .github/
 │   └── workflows/
-│       ├── ci.yml                       # Lint + type-check + testes (Vitest)
-│       ├── deploy.yml                   # Migrations por ambiente
+│       ├── ci.yml                       # Jobs ci, bmad-process, migrations e deploy-migrations
 │       └── copy-db.yml                  # Workflow manual para cópia de base
 ├── e2e/                                 # Testes E2E (Playwright)
 │   ├── auth.spec.ts

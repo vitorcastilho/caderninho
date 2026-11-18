@@ -37,9 +37,11 @@ yarn-error.log*
 .supabase/
 
 # env files
-.env
-.env.local
-.env*.local
+# Todo .env* fica fora do git (inclusive .env.production/.env.development, que o
+# Next carrega); só o modelo .env.example é versionado (Story 1.13, 7ª rodada).
+# Os arquivos de migration remota (.env.migrate.*) têm só o DATABASE_URL.
+.env*
+!.env.example
 
 # vercel
 .vercel

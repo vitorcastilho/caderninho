@@ -8,7 +8,11 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Só cancela execuções de PR: um push novo nunca interrompe migrations em andamento.
+  # Limite: o GitHub guarda só uma execução pendente por grupo — em pushes seguidos,
+  # a do meio é cancelada antes de começar; o deploy da Vercel desse commit fica sem
+  # as migrations dele até a execução seguinte (que aplica todas as pendentes) terminar.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   ci:
@@ -19,7 +23,7 @@ jobs:
       NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
       NEXT_PUBLIC_SUPABASE_ANON_KEY: dummy-anon-key-for-ci
       SUPABASE_SERVICE_ROLE_KEY: dummy-service-role-key-for-ci
-      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+      DATABASE_URL: postgresql://postgres.pooler-dev:postgres@127.0.0.1:54329/postgres
       BETTER_AUTH_SECRET: ci-test-secret-minimum-32-chars-long-for-testing
       BETTER_AUTH_URL: http://localhost:3000
       NEXT_PUBLIC_APP_URL: http://localhost:3000
@@ -83,3 +87,102 @@ jobs:
 
       - name: Conferir stories alteradas
         run: git diff --name-only --diff-filter=AMR "origin/${{ github.base_ref }}...HEAD" | npx tsx scripts/bmad/check-story-process.ts
+
+  # Story 1.13 — as migrations rodam do zero no mesmo caminho de staging e
+  # produção: Supabase (Postgres com auth.uid() etc.) + pooler em modo transação.
+  # Limite: sem gotrue/storage-api, os schemas auth/storage ficam no estado base da
+  # imagem, não no das migrations do GoTrue de staging/produção — migration que
+  # dependa de colunas de auth/storage precisa de conferência manual em staging.
+  migrations:
+    name: Migrations do zero (pooler em modo transação)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Migration esquecida: se `schema/*.ts` mudou sem `db:generate`, o generate
+      # cria arquivos novos em migrations/ e o job falha. (Não conecta no banco.)
+      - name: Conferir que o schema não tem mudança sem migration
+        run: |
+          npx drizzle-kit generate
+          changes=$(git status --porcelain -- src/server/infrastructure/database/migrations)
+          if [ -n "$changes" ]; then
+            echo "::error::schema/*.ts tem mudanças sem migration. Rode npm run db:generate e commite a migration gerada."
+            echo "$changes"
+            exit 1
+          fi
+
+      - name: Subir Supabase (só Postgres + pooler Supavisor)
+        run: npx supabase start -x gotrue,realtime,storage-api,imgproxy,kong,mailpit,postgrest,postgres-meta,studio,edge-runtime,logflare,vector
+
+      - name: Aplicar todas as migrations pelo pooler (porta 54329, modo transação)
+        env:
+          DATABASE_URL: postgresql://postgres.pooler-dev:postgres@127.0.0.1:54329/postgres
+        run: npx tsx scripts/migrate.ts --env local
+
+      - name: Conferir que todas foram aplicadas e que rodar de novo não muda nada
+        env:
+          DATABASE_URL: postgresql://postgres.pooler-dev:postgres@127.0.0.1:54329/postgres
+        run: |
+          npx tsx scripts/migrate.ts --env local
+          expected=$(node -e "console.log(require('./src/server/infrastructure/database/migrations/meta/_journal.json').entries.length)")
+          applied=$(docker exec supabase_db_caderninho psql -U postgres -tAc "select count(*) from drizzle.__drizzle_migrations")
+          echo "migrations no journal: $expected | aplicadas: $applied"
+          test "$expected" = "$applied"
+
+  # Story 1.13 — depois do merge (push) com o CI verde, aplica as migrations no
+  # banco do ambiente. A URL fica em secret do repositório (STAGING_DATABASE_URL /
+  # PRODUCTION_DATABASE_URL) — ninguém cola senha no terminal. (Environments do
+  # GitHub não existem em repositório privado no plano gratuito.)
+  deploy-migrations:
+    name: Migrations no banco do ambiente (staging ou produção)
+    if: github.event_name == 'push'
+    needs: [ci, migrations]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Um passo por ambiente, cada um com o seu secret: sem a cadeia `&&`/`||`
+      # das expressões, um secret de produção vazio nunca cai no de staging.
+      - name: Aplicar migrations em staging
+        if: github.ref_name == 'staging'
+        env:
+          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::warning::Secret STAGING_DATABASE_URL não configurado — migrations de staging não aplicadas (Story 1.13, ação P3 do PO)."
+            exit 0
+          fi
+          npx tsx scripts/migrate.ts --env staging
+
+      - name: Aplicar migrations em produção
+        if: github.ref_name == 'main'
+        env:
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::warning::Secret PRODUCTION_DATABASE_URL não configurado — migrations de produção não aplicadas (Story 1.13, ação P3 do PO)."
+            exit 0
+          fi
+          npx tsx scripts/migrate.ts --env production --confirm-production

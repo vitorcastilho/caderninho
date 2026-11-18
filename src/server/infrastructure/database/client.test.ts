@@ -19,7 +19,7 @@ describe('Database Client', () => {
   });
 
   it('should export db when DATABASE_URL is set', async () => {
-    process.env.DATABASE_URL = 'postgresql://postgres:postgres@localhost:54322/postgres';
+    process.env.DATABASE_URL = 'postgresql://postgres.pooler-dev:postgres@127.0.0.1:54329/postgres';
 
     const { db } = await import('./client');
 
