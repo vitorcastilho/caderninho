@@ -1,6 +1,6 @@
 # Story 1.15: Pedir permissão e proteger bancos remotos
 
-Status: in-progress
+Status: review
 
 <!-- Criada pelo create-story (comando /bmad-bmm-create-story 1-15 digitado pelo PO) em 2026-11-17, a partir do correct course de 2026-11-16 (_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-16.md, Proposta 1), com os nomes de arquivo do correct course de 2026-11-17 (sprint-change-proposal-2026-11-17.md, 4.6). -->
 
@@ -117,7 +117,7 @@ Nada foi aplicado em staging: 18/18 migrations, igual ao journal. Mas as duas br
 - [x] [AI-Review][Medium] `git grep --untracked --no-exclude-standard DATABASE_URL` lê arquivos ignorados (conferido) e passa; os limites citam só `git grep --no-index`. Bloquear ou documentar [scripts/bmad/remote-db-guard.mjs:213-238; CLAUDE.md "Limites das proteções"]
 - [x] [AI-Review][Low] `shopt -s dotglob` e `GLOBIGNORE=…` fazem `cat *staging` e `grep -rn x *` alcançarem os arquivos com `.` inicial (conferido no bash); o guard supõe o padrão do shell. Bloquear essas formas ou documentar [scripts/bmad/remote-db-guard.mjs:313; CLAUDE.md]
 - [x] [AI-Review][Low] Limite do `cd` estreito demais: além de `cd .. && grep -r x caderninho`, qualquer `cd` para fora do projeto passa (ex.: `cd / && grep -rn x home/…/caderninho`). Ampliar a redação [CLAUDE.md "Limites das proteções"]
-- [ ] [AI-Review][Low] Follow-ups da 3ª rodada não commitados: o "CI verde" do AC 8 vale para `b16acb7`. Commitar, dar push e conferir o CI de novo [AC 8]
+- [x] [AI-Review][Low] Follow-ups da 3ª rodada não commitados: o "CI verde" do AC 8 vale para `b16acb7`. Commitar, dar push e conferir o CI de novo [AC 8]
 
 ## Dev Notes
 
@@ -278,6 +278,7 @@ Claude Opus 5.5 (claude-opus-5-5)
 - Follow-ups da 3ª rodada (validação): `npx tsc --noEmit` 0 erros; `npm run lint` 0 avisos; `npx vitest run` 151 arquivos, 1658 testes ok; testes da 1.14: 83/83; `npx next build` ok; `check-story-process` local: "Processo BMAD ok.". Sessão real: `grep -rn <texto inexistente> .` → bloqueado (`busca recursiva que alcança os arquivos de banco remoto …`); `npx tsx scripts/nao-existe/migrate --env staging` → bloqueado (`roda o migrate em staging`); `test -f .[e]nv.migrate.staging` → bloqueado (`cita um glob que alcança .env.migrate.staging`); `grep -rn <texto inexistente> scripts/bmad` → passou.
 - Follow-ups da 4ª rodada (vermelho): `npx vitest run scripts/bmad/remote-db-guard.test.ts` (com `-t` excluindo os 4 casos de chaves exponenciais, que travariam o guard antigo por 2^25+ alternativas) → `Tests 28 failed | 268 passed | 4 skipped (300)`; ex.: `× bloqueia: rg -g '*staging' DATABASE_URL`, `× bloqueia: rg --iglob '*STAGING' DATABASE_URL`, `× bloqueia: git grep --untracked --no-exclude-standard DATABASE_URL`, `× bloqueia: git grep --no-index DATABASE_URL`, `× bloqueia: shopt -s dotglob; cat *staging`, `× bloqueia: GLOBIGNORE=x; cat *staging`, `× bloqueia Grep {"pattern":"DATABASE_URL","glob":"*staging"}`, `× Grep com glob em subdiretório do cwd passa; na raiz ou fora dela, bloqueia`. Verde: `scripts/bmad` 425/425 (inclusive `{a,b}`×40 decidido em menos de 1 s).
 - Follow-ups da 4ª rodada (validação): `npx tsc --noEmit` 0 erros; `npm run lint` 0 avisos; `npx vitest run` 151 arquivos, 1702 testes ok; testes da 1.14: 83/83; `npx next build` ok. Sessão real: `rg -g '*staging' <texto inexistente>` → bloqueado (`busca recursiva que alcança os arquivos de banco remoto …`); `git grep --no-index <texto inexistente>` → bloqueado (mesmo motivo); `rg -g '*.ts' -c <texto inexistente> scripts/bmad` → passou. A ferramenta `Grep` não estava disponível na sessão: o caso dela fica coberto pelos testes.
+- Follow-ups da 4ª rodada (commit e CI): `fdd5684` (follow-ups da 3ª e da 4ª rodada) no push da PR #54. 1ª execução: `ci` e `Processo BMAD (stories alteradas)` verdes; `Migrations do zero` falhou por infraestrutura (`error from registry: Data limit exceeded` ao baixar a imagem do Postgres do Supabase, antes de qualquer migration). Job refeito (`gh run rerun --failed`): verde. `Migrations no banco do ambiente` pulado, como esperado em PR.
 
 ### Completion Notes List
 
@@ -319,6 +320,7 @@ Claude Opus 5.5 (claude-opus-5-5)
   - ✅ Resolved review finding [Medium]: expansão de chaves com orçamento de `MAX_BRACE_ALTERNATIVES` (1000) por chamada, compartilhado entre os globs do `Bash`, do `rg` e da ferramenta `Grep`; acima dele, bloqueia ("expansão de chaves grande demais para conferir"). Teste de desempenho com `{a,b}`×40 abaixo de 1 s.
   - ✅ Resolved review finding [Medium]: `git grep` com `--no-index` (sem `--exclude-standard`) ou `--untracked`/`--no-index` com `--no-exclude-standard` **bloqueado** sem caminho ou sobre a raiz (pula opções globais do git, como `--no-pager` e `-C x`); `git grep --untracked`, `--no-index --exclude-standard` e `--no-index … src` passam. `git grep --no-index` saiu da lista "Não cobre" do `CLAUDE.md`.
   - ✅ Resolved review finding [Low]: `shopt -s dotglob`, `-O dotglob`, `GLOBIGNORE=` e `setopt globdots` **bloqueados**; `shopt -s nullglob` e `echo GLOBIGNORE` passam.
+  - ✅ Resolved review finding [Low]: follow-ups da 3ª e da 4ª rodada commitados (`fdd5684`), push na PR #54 e CI conferido de novo (verde; um job refeito por falha de infraestrutura do registro de imagens).
   - ✅ Resolved review finding [Low]: limite do `cd` reescrito no `CLAUDE.md` ("busca recursiva depois de um `cd` para fora do projeto, que o hook não acompanha", com os dois exemplos); teste fixa `cd / && grep -rn … home/x/caderninho`.
 
 ### File List
