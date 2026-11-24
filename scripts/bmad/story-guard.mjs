@@ -69,7 +69,7 @@ function kindOf(rel) {
 }
 
 /** Remove aspas simples/duplas do token. @param {string} token */
-function unquote(token) {
+export function unquote(token) {
   return token.replace(/['"]/g, '');
 }
 
@@ -88,7 +88,7 @@ function protectedMentions(command, ctx) {
 }
 
 // Separadores de comandos: &&, ||, ;, | (menos o de ">|") e quebra de linha.
-const SEGMENT_SPLIT = /&&|\|\||;|(?<!>)\||\n/;
+export const SEGMENT_SPLIT = /&&|\|\||;|(?<!>)\||\n/;
 // Subcomandos do git que sobrescrevem, movem ou apagam arquivos do working tree.
 const GIT_WRITES = new Set(['checkout', 'restore', 'mv', 'rm']);
 
