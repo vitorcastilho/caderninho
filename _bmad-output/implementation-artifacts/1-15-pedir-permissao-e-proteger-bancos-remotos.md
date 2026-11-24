@@ -1,6 +1,6 @@
 # Story 1.15: Pedir permissão e proteger bancos remotos
 
-Status: review
+Status: in-progress
 
 <!-- Criada pelo create-story (comando /bmad-bmm-create-story 1-15 digitado pelo PO) em 2026-11-17, a partir do correct course de 2026-11-16 (_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-16.md, Proposta 1), com os nomes de arquivo do correct course de 2026-11-17 (sprint-change-proposal-2026-11-17.md, 4.6). -->
 
@@ -118,6 +118,16 @@ Nada foi aplicado em staging: 18/18 migrations, igual ao journal. Mas as duas br
 - [x] [AI-Review][Low] `shopt -s dotglob` e `GLOBIGNORE=…` fazem `cat *staging` e `grep -rn x *` alcançarem os arquivos com `.` inicial (conferido no bash); o guard supõe o padrão do shell. Bloquear essas formas ou documentar [scripts/bmad/remote-db-guard.mjs:313; CLAUDE.md]
 - [x] [AI-Review][Low] Limite do `cd` estreito demais: além de `cd .. && grep -r x caderninho`, qualquer `cd` para fora do projeto passa (ex.: `cd / && grep -rn x home/…/caderninho`). Ampliar a redação [CLAUDE.md "Limites das proteções"]
 - [x] [AI-Review][Low] Follow-ups da 3ª rodada não commitados: o "CI verde" do AC 8 vale para `b16acb7`. Commitar, dar push e conferir o CI de novo [AC 8]
+
+#### 5ª rodada (code review de 2026-11-17, depois dos follow-ups da 4ª rodada)
+
+- [ ] [AI-Review][High] Nomes gerados durante a execução escapam do guard e não estão nos limites: `ls -A | xargs grep DATABASE_URL`, `git ls-files -o -i --exclude-standard | xargs cat`, `git status --ignored --porcelain | cut -c4- | xargs cat`, `cat $(ls -A | grep migrate)` e `git add -f . && git diff --cached` (este também deixa o segredo pronto para commit e push) passam. Bloquear as formas comuns (`ls -a|-A` ou `git ls-files -o|-i`/`git status --ignored` alimentando `xargs`, `git add -f|--force` sem caminho ou sobre a raiz) e documentar a classe ("nomes produzidos em tempo de execução") em "Limites das proteções" [scripts/bmad/remote-db-guard.mjs:472-501; CLAUDE.md]
+- [ ] [AI-Review][Medium] Expansões que viram texto vazio montam o nome ou o valor do `--env`: `cat .env.migrate.staging$NOPE`, `.env.migrate.sta$()ging`, `` .env.migrate.sta``ging ``, `.env.migrate.sta$''ging`, `cat $'\x2eenv.migrate.staging'`; `--env staging$NOPE`, `--env sta$()ging`, `--env stag$'i'ng`. Tratar como dinâmico (remoto) valor do `--env` que contenha `$` ou crase; conferir os nomes também com essas expansões removidas e `$'…'` decodificado; testes com TDD no `it.each` [scripts/bmad/remote-db-guard.mjs:124-130, :489-493; scripts/bmad/remote-db-guard.test.ts]
+- [ ] [AI-Review][Medium] Prefixos e `xargs` deixam o migrate remoto passar: `eval npx tsx scripts/migrate.ts --env staging` (builtin, fora dos limites), `stdbuf`, `watch`, `corepack pnpm db:migrate --env staging`; `echo staging | xargs -I{} npx tsx scripts/migrate.ts --env {}` e `… | xargs npx tsx scripts/migrate.ts --env`. Incluir `eval`; com `xargs`, tratar `--env` sem valor ou com `{}` como dinâmico; documentar os demais prefixos [scripts/bmad/remote-db-guard.mjs:31-34, :133-150; CLAUDE.md]
+- [x] [AI-Review][Medium] Abordagem no limite: 5ª rodada de casos que escapam de uma lista de bloqueio sobre o texto do shell (guard com 589 linhas, analisador de shell feito à mão). Levar ao PO a proposta de um `/bmad-bmm-correct-course` para avaliar um controle no nível do sistema (tirar os `.env.migrate.*` da pasta do repositório, decisão da Story 1.13, ou sandbox do Claude Code bloqueando a leitura desses arquivos), com o hook como segunda camada. Fora do escopo desta story: registrar a decisão do PO no Dev Agent Record [scripts/bmad/remote-db-guard.mjs]
+- [ ] [AI-Review][Low] Outras ferramentas de busca não cobertas nem documentadas: `ag -u`, `ag --hidden --skip-vcs-ignores`, `ugrep -r`, `ack`, e `RIPGREP_CONFIG_PATH=… rg` com config que ative `--no-ignore`. Documentar nos limites (ou bloquear) [CLAUDE.md "Limites das proteções"]
+- [ ] [AI-Review][Low] Hosts não são conferidos no comando sem aspas, ao contrário dos nomes: `psql -h aws-1.pooler.supa""base.com` passa. Aplicar `HOST_RES` também ao texto sem aspas e sem `\` [scripts/bmad/remote-db-guard.mjs:499]
+- [ ] [AI-Review][Low] O item "Bancos remotos" de "Limites das proteções" virou um bullet único de ~30 linhas, carregado em toda sessão e difícil de conferir contra o código. Dividir em "Bloqueia" e "Não cobre", um exemplo por item [CLAUDE.md]
 
 ## Dev Notes
 
@@ -322,6 +332,8 @@ Claude Opus 5.5 (claude-opus-5-5)
   - ✅ Resolved review finding [Low]: `shopt -s dotglob`, `-O dotglob`, `GLOBIGNORE=` e `setopt globdots` **bloqueados**; `shopt -s nullglob` e `echo GLOBIGNORE` passam.
   - ✅ Resolved review finding [Low]: follow-ups da 3ª e da 4ª rodada commitados (`fdd5684`), push na PR #54 e CI conferido de novo (verde; um job refeito por falha de infraestrutura do registro de imagens).
   - ✅ Resolved review finding [Low]: limite do `cd` reescrito no `CLAUDE.md` ("busca recursiva depois de um `cd` para fora do projeto, que o hook não acompanha", com os dois exemplos); teste fixa `cd / && grep -rn … home/x/caderninho`.
+- 2026-11-17 (dev-story, follow-ups da 5ª rodada do code review):
+  - ✅ Resolved review finding [Medium]: proposta levada ao PO. Decisão do PO: **correct course antes** dos demais follow-ups da 5ª rodada (`/bmad-bmm-correct-course`, a ser invocado pelo PO), porque um controle no nível do sistema (arquivos `.env.migrate.*` fora da pasta do repositório ou sandbox do Claude Code) pode mudar o que vale a pena corrigir no hook. O dev-story parou (HALT) com os outros 6 itens da 5ª rodada pendentes; nenhum código foi alterado.
 
 ### File List
 
@@ -352,3 +364,4 @@ Claude Opus 5.5 (claude-opus-5-5)
 - 2026-11-17: Addressed code review findings - 8 items resolved (Date: 2026-11-17). `dev-story` (comando do PO), 3ª rodada: busca recursiva (`grep -r`, `rg --no-ignore`…) sobre a raiz, migrate sem extensão, `--env` com `\` ou crase, globs e chaves que alcançam os arquivos (Bash e `Grep`), `supabase --project-ref|--project-id` e nome normalizado nas mensagens da Skill, com TDD; limites no `CLAUDE.md` e linha do README. Status → review.
 - 2026-11-17: Code review, 4ª rodada (`/bmad-bmm-code-review 1-15`, comando do PO): 2 High, 2 Medium, 3 Low; o PO escolheu criar action items ("Review Follow-ups (AI)", 4ª rodada). Status → in-progress.
 - 2026-11-17: Addressed code review findings - 7 items resolved (Date: 2026-11-17). `dev-story` (comando do PO), 4ª rodada: globs do `rg -g|--glob|--iglob` e da ferramenta `Grep` com a semântica do ripgrep, limite de 1000 alternativas na expansão de chaves, `git grep --no-index`/`--untracked --no-exclude-standard`, `dotglob`/`GLOBIGNORE`/`globdots` bloqueados, com TDD; limites do `CLAUDE.md` (`Grep` sem `glob`, `cd` para fora do projeto); commit, push e CI da PR #54 conferido de novo. Status → review.
+- 2026-11-17: Code review, 5ª rodada (`/bmad-bmm-code-review 1-15`, comando do PO): 1 High, 3 Medium, 3 Low; o PO escolheu criar action items ("Review Follow-ups (AI)", 5ª rodada). Status → in-progress.
